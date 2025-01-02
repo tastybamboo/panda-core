@@ -5,10 +5,10 @@ require_relative "lib/panda/core/version"
 Gem::Specification.new do |spec|
   spec.name = "panda-core"
   spec.version = Panda::Core::VERSION
-  spec.authors = ["Panda Software Limited", "James Inman"]
+  spec.authors = ["Tasty Bamboo", "James Inman"]
   spec.email = ["bamboo@pandacms.io"]
 
-  spec.summary = "Core libraries and development tools for Panda Software projects"
+  spec.summary = "Core libraries and development tools for Tasty Bamboo projects"
   spec.description = "Shared development tools, configurations, and utilities for Panda CMS and its related projects"
   spec.homepage = "https://github.com/tastybamboo/panda-core"
   spec.license = "BSD-3-Clause"
@@ -30,9 +30,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "awesome_nested_set", "~> 3.7"
   spec.add_dependency "aws-sdk-s3", "~> 1"
   spec.add_dependency "dry-configurable", "~> 1"
+  spec.add_dependency "faraday", "~> 2"
   spec.add_dependency "faraday-multipart", "~> 1"
   spec.add_dependency "faraday-retry", "~> 2"
-  spec.add_dependency "faraday", "~> 2"
   spec.add_dependency "image_processing", "~> 1.2"
   spec.add_dependency "importmap-rails", "~> 2"
   spec.add_dependency "omniauth", "~> 2.1"
@@ -87,8 +87,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "shoulda-matchers"
   spec.add_development_dependency "simplecov", "~> 0.22"
   spec.add_development_dependency "simplecov-json"
-  spec.add_development_dependency "simplecov-lcov"
   spec.add_development_dependency "simplecov_json_formatter"
+  spec.add_development_dependency "simplecov-lcov"
   spec.add_development_dependency "simplecov_lcov_formatter"
   spec.add_development_dependency "standard"
   spec.add_development_dependency "standard-rails"

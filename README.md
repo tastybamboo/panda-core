@@ -113,7 +113,20 @@ bundle exec rspec spec/system
 4. Push to the branch (`git push origin feature/my-new-feature`)
 5. Create new Pull Request
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/tastybamboo/panda_core.
+Bug reports and pull requests are welcome on GitHub at https://github.com/tastybamboo/panda-core.
+
+## Releasing
+
+```
+git tag -a v0.1.7 -m "v0.1.7"
+git push origin v0.1.7
+```
+
+Then, run the following command to create a new release:
+
+```
+bundle exec rake release
+```
 
 ## License
 
