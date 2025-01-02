@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "omniauth", "~> 2.1"
   spec.add_dependency "paper_trail", "~> 16"
   spec.add_dependency "propshaft", "~> 1.1"
-  spec.add_dependency "rails", ">= 7.1"
+  spec.add_dependency "rails", ">= 8.0"
   spec.add_dependency "redis"
   spec.add_dependency "silencer", "~> 2.0"
   spec.add_dependency "stimulus-rails", "~> 1.3"
