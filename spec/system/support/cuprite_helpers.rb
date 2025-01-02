@@ -57,4 +57,8 @@ end
 
 RSpec.configure do |config|
   config.include CupriteHelpers, type: :system
+
+  page.driver.browser.on(:console) do |message|
+    puts "Browser #{message.type}: #{message.text}"
+  end
 end
