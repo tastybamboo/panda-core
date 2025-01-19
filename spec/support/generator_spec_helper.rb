@@ -44,16 +44,18 @@ module GeneratorSpecHelper
 
   private
 
+  # rubocop:disable Security/Eval
   def capture(stream)
     stream = stream.to_s
     captured_stream = StringIO.new
-    original_stream = eval("$#{stream}")
-    eval("$#{stream} = captured_stream")
+    eval("$#{stream}", binding, __FILE__, __LINE__)
+    eval("$#{stream} = captured_stream", binding, __FILE__, __LINE__)
     yield
     captured_stream.string
   ensure
-    eval("$#{stream} = original_stream")
+    eval("$#{stream} = original_stream", binding, __FILE__, __LINE__)
   end
+  # rubocop:enable Security/Eval
 end
 
 RSpec.configure do |config|

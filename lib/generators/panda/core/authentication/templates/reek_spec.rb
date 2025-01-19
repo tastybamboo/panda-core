@@ -1,22 +1,22 @@
 require "spec_helper"
 
-RSpec.describe "Reek" do
-  RUBY_FILE_PATTERN = File.expand_path("../../**/*.rb", __dir__)
-  EXCLUDED_PATHS = [
-    "db/schema.rb",
-    "bin/",
-    "script/",
-    "log/",
-    "public/",
-    "tmp/",
-    "doc/",
-    "vendor/",
-    "storage/",
-    "node_modules/",
-    ".git/",
-    "spec/dummy/"
-  ].freeze
+RUBY_FILE_PATTERN = File.expand_path("../../**/*.rb", __dir__)
+EXCLUDED_PATHS = [
+  "db/schema.rb",
+  "bin/",
+  "script/",
+  "log/",
+  "public/",
+  "tmp/",
+  "doc/",
+  "vendor/",
+  "storage/",
+  "node_modules/",
+  ".git/",
+  "spec/dummy/"
+].freeze
 
+RSpec.describe "Reek" do
   it "contains no code smells" do
     failures = []
 
