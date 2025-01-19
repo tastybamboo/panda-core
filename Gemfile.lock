@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (0.1.9)
+    panda-core (0.1.10)
       activestorage-office-previewer
       awesome_nested_set (~> 3.7)
       aws-sdk-s3 (~> 1)
@@ -285,7 +285,7 @@ GEM
     hashie (5.0.0)
     htmlbeautifier (1.4.3)
     htmlentities (4.3.4)
-    i18n (1.14.6)
+    i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     image_processing (1.13.0)
       mini_magick (>= 4.9.5, < 5)

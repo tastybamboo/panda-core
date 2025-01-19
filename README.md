@@ -121,14 +121,14 @@ For e.g. v0.1.8, run the following commands:
 
 ```bash
 RELEASE_VERSION=0.1.8
+git checkout -b release/v$RELEASE_VERSION
 gem bump --no-commit --version $RELEASE_VERSION
 bundle update
 git commit -am "Release $RELEASE_VERSION"
 git tag -a $RELEASE_VERSION -m "Release $RELEASE_VERSION"
-git checkout -b release/v$RELEASE_VERSION
 git push origin release/v$RELEASE_VERSION
 gem tag
-gem release panda-core -v $RELEASE_VERSION -g
+gem release panda-core -v $RELEASE_VERSION
 git checkout main && git merge release/v$RELEASE_VERSION
 git push origin main
 git push origin :release/v$RELEASE_VERSION
