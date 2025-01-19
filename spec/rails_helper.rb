@@ -13,10 +13,6 @@ lib = File.expand_path("../../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative "../lib/panda/core"
 
-require "propshaft"
-require "stimulus-rails"
-require "turbo-rails"
-
 ENV["RAILS_ENV"] ||= "test"
 
 require File.expand_path("../dummy/config/environment", __FILE__)

@@ -6,7 +6,7 @@ require "capybara/cuprite"
   # See additional options for Dockerized environment in the respective section of this article
   browser_options: {},
   # Increase Chrome startup wait time (required for stable CI builds)
-  process_timeout: 10,
+  process_timeout: 60,
   # Enable debugging capabilities
   inspector: true,
   # Slow down, if we need to

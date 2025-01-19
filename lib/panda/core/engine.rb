@@ -1,3 +1,23 @@
+require "rubygems"
+
+require "active_storage"
+require "awesome_nested_set"
+require "aws-sdk-s3"
+require "dry-configurable"
+require "faraday"
+require "faraday/multipart"
+require "faraday/retry"
+require "image_processing"
+require "importmap-rails"
+require "lookbook"
+require "omniauth"
+require "propshaft"
+require "redis"
+require "silencer"
+require "stimulus-rails"
+require "turbo-rails"
+require "view_component"
+
 require "rails/engine"
 
 module Panda
