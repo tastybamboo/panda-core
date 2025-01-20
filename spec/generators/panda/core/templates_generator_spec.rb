@@ -1,13 +1,8 @@
 require "rails_helper"
 require_relative "../../../../lib/generators/panda/core/templates_generator"
-require "generator_spec"
+require "support/generator_spec_helper"
 
-RSpec.describe Panda::Core::Generators::TemplatesGenerator do
-  include FileUtils
-  include GeneratorSpec::TestCase
-
-  destination File.expand_path("../../../../tmp", __FILE__)
-
+RSpec.describe Panda::Core::Generators::TemplatesGenerator, type: :generator do
   let(:template_files) do
     template_root = described_class.source_root
     Dir.glob(File.join(template_root, "**/{.*,*}"), File::FNM_DOTMATCH)
@@ -25,14 +20,6 @@ RSpec.describe Panda::Core::Generators::TemplatesGenerator do
       ".erb_lint.yml",
       ".yamllint"
     ]
-  end
-
-  before(:all) do
-    prepare_destination
-  end
-
-  after(:all) do
-    FileUtils.rm_rf(destination_root)
   end
 
   it "copies all template files" do
@@ -58,17 +45,10 @@ RSpec.describe Panda::Core::Generators::TemplatesGenerator do
   it "copies all configuration files" do
     # Get absolute paths and verify template directory
     template_root = File.expand_path(described_class.source_root)
-    # puts "Template root: #{template_root}"
-    # puts "Destination root: #{destination_root}"
 
     # Check source files before running generator
     expected_config_files.each do |file|
       source_path = File.join(template_root, file)
-      # puts "Source file check:"
-      # puts "  Path: #{source_path}"
-      # puts "  Exists?: #{File.exist?(source_path)}"
-      # puts "  Absolute?: #{File.absolute_path?(source_path)}"
-
       expect(File).to exist(source_path),
         "Expected #{file} to exist in #{source_path}"
     end
@@ -78,18 +58,13 @@ RSpec.describe Panda::Core::Generators::TemplatesGenerator do
     # Check destination files after running generator
     expected_config_files.each do |file|
       dest_path = File.join(destination_root, file)
-      # puts "Destination file check:"
-      # puts "  Path: #{dest_path}"
-      # puts "  Exists?: #{File.exist?(dest_path)}"
-      # puts "  Absolute?: #{File.absolute_path?(dest_path)}"
-
       expect(File).to exist(dest_path),
         "Expected #{file} to exist in #{destination_root}"
     end
   end
 
   it "raises an error when trying to copy a missing file" do
-    generator = Panda::Core::Generators::TemplatesGenerator.new
+    generator = described_class.new([], destination_root: destination_root)
     template_root = described_class.source_root
     missing_file_path = File.join(template_root, missing_file)
 
