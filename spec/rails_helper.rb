@@ -29,11 +29,11 @@ require "faker"
 require "puma"
 require "factory_bot_rails"
 
-# The following line is provided for convenience purposes. It has the downside
-# of increasing the boot-up time by auto-requiring all files in the support
-# directory. Alternatively, in the individual `*_spec.rb` files, manually
-# require only the support files necessary.
-Rails.root.join("../support/").glob("**/*.rb").sort.each { |f| require f }
+# Load all support files
+Dir[File.expand_path("support/**/*.rb", __dir__)].sort.each { |f| require f }
+
+# Load all spec files
+Dir[File.expand_path("**/*_spec.rb", __dir__)].sort.each { |f| require f unless f.include?("dummy/") }
 
 # FactoryBot.definition_file_paths << File.join(File.dirname(__FILE__), "factories")
 # FactoryBot.find_definitions

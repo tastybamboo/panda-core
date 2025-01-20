@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "importmap-rails", "~> 2"
   spec.add_dependency "lookbook"
   spec.add_dependency "omniauth", "~> 2.1"
+  spec.add_dependency "paper_trail"
   spec.add_dependency "propshaft", "~> 1.1"
   spec.add_dependency "rails", ">= 7.0"
   spec.add_dependency "redis"
