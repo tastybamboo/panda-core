@@ -127,7 +127,6 @@ bundle update
 git commit -am "Release $RELEASE_VERSION"
 git tag -a $RELEASE_VERSION -m "Release $RELEASE_VERSION"
 git push origin release/v$RELEASE_VERSION
-gem tag
 gem release panda-core -v $RELEASE_VERSION
 git checkout main && git merge release/v$RELEASE_VERSION
 git push origin main
