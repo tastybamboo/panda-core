@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   ]
 
   # TODO: Some of these are optional dependencies or need moving to other gems?
-  spec.add_dependency "activestorage-office-previewer"
+  spec.add_dependency "activestorage-office-previewer", "~> 0.1"
   spec.add_dependency "awesome_nested_set", "~> 3.7"
   spec.add_dependency "aws-sdk-s3", "~> 1"
   spec.add_dependency "dry-configurable", "~> 1"
@@ -36,12 +36,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faraday-retry", "~> 2"
   spec.add_dependency "image_processing", "~> 1.2"
   spec.add_dependency "importmap-rails", "~> 2"
-  spec.add_dependency "lookbook"
+  spec.add_dependency "lookbook", "~> 2.3"
   spec.add_dependency "omniauth", "~> 2.1"
-  spec.add_dependency "paper_trail"
+  spec.add_dependency "paper_trail", "~> 16"
   spec.add_dependency "propshaft", "~> 1.1"
   spec.add_dependency "rails", ">= 7.0"
-  spec.add_dependency "redis"
+  spec.add_dependency "redis", "~> 5.3"
   spec.add_dependency "silencer", "~> 2.0"
   spec.add_dependency "stimulus-rails", "~> 1.3"
   spec.add_dependency "tailwindcss-rails", "~> 3"
@@ -56,7 +56,7 @@ Gem::Specification.new do |spec|
 
   # Database adapters - optional dependencies
   spec.add_dependency "pg", "~> 1.5"
-  spec.add_dependency "sqlite3"
+  spec.add_dependency "sqlite3", "~> 2.5"
 
   # Development and testing dependencies
   spec.add_development_dependency "annotaterb"
