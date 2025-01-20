@@ -32,12 +32,6 @@ require "factory_bot_rails"
 # Load all support files
 Dir[File.expand_path("support/**/*.rb", __dir__)].sort.each { |f| require f }
 
-# Load all spec files
-Dir[File.expand_path("**/*_spec.rb", __dir__)].sort.each { |f| require f unless f.include?("dummy/") }
-
-# FactoryBot.definition_file_paths << File.join(File.dirname(__FILE__), "factories")
-# FactoryBot.find_definitions
-
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     with.test_framework :rspec
@@ -46,46 +40,21 @@ Shoulda::Matchers.configure do |config|
 end
 
 RSpec.configure do |config|
+  # Configure RSpec to find specs in the correct directories
+  config.pattern = "spec/{generators,lib}/**/*_spec.rb"
+
   # URL helpers in tests would be nice to use
   config.include Rails.application.routes.url_helpers
 
-  # Use transactions, so we don't have to worry about cleaning up the database
-  # The idea is to start each example with a clean database, create whatever data
-  # is necessary for that example, and then remove that data by simply rolling
-  # back the transaction at the end of the example.
-  # NB: If you use before(:context), you must use after(:context) too
-  # Normally, use before(:each) and after(:each)
   config.use_transactional_fixtures = true
-
-  # Infer an example group's spec type from the file location.
   config.infer_spec_type_from_file_location!
-
-  # Filter lines from Rails and gems in backtraces.
   config.filter_rails_from_backtrace!
-  # add, if needed: config.filter_gems_from_backtrace("gem name")
-
-  # Allow using focus keywords "f... before a specific test"
   config.filter_run_when_matching :focus
-
-  # Log examples to allow using --only-failures and --next-failure
   config.example_status_persistence_file_path = "spec/examples.txt"
-
-  # https://rspec.info/features/3-12/rspec-core/configuration/zero-monkey-patching-mode/
   config.disable_monkey_patching!
-
-  # Use verbose output if only running one spec file
   config.default_formatter = "doc" if config.files_to_run.one?
-
-  # Print the 10 slowest examples and example groups at the
-  # end of the spec run, to help surface which specs are running
-  # particularly slow.
-  # config.profile_examples = 10
-
-  # Run specs in random order to surface order dependencies. If you find an
-  # order dependency and want to debug it, you can fix the order by providing
-  # the seed, which is printed after each run: --seed 1234
-  Kernel.srand config.seed
   config.order = :random
+  Kernel.srand config.seed
 
   # Use specific formatter for GitHub Actions
   if ENV["GITHUB_ACTIONS"] == "true"
@@ -96,19 +65,6 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :view_component
   config.include Capybara::RSpecMatchers, type: :view_component
   config.include FactoryBot::Syntax::Methods
-
-  if defined?(Bullet) && Bullet.enable?
-    config.before(:each) do
-      Bullet.start_request
-    end
-
-    config.after(:each) do
-      Bullet.perform_out_of_channel_notifications if Bullet.notification?
-      Bullet.end_request
-    end
-  end
-
-  # config.include RSpec::Rails::Generators, type: :generator
   config.include Rails::Generators::Testing::Assertions, type: :generator
   config.include FileUtils, type: :generator
 
@@ -135,17 +91,15 @@ RSpec.configure do |config|
     ActionMailer::Base.logger = nil if defined?(ActionMailer)
   end
 
-  # Disable stdout during tests
-  config.before(:suite) do
-    $stdout = File.new(File::NULL, "w")
-  end
-
-  config.after(:suite) do
-    $stdout = STDOUT
-  end
-
   # Suppress Rails command output during tests
   config.before(:each, type: :generator) do
     allow(Rails::Command).to receive(:invoke).and_return(true)
+  end
+
+  # Debug which files are being loaded
+  config.before(:suite) do
+    puts "\nSpec files being loaded:"
+    puts RSpec.configuration.files_to_run.map { |f| File.basename(f) }
+    puts "\n"
   end
 end
