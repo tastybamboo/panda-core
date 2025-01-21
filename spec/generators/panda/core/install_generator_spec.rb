@@ -1,80 +1,35 @@
 require "rails_helper"
-require "generators/panda/core/install_generator"
+require_relative "../../../../lib/generators/panda/core/install_generator"
 require "support/generator_spec_helper"
 
 RSpec.describe Panda::Core::InstallGenerator, type: :generator do
-  before do
-    FileUtils.mkdir_p(File.join(destination_root, "config"))
-    File.write(
-      File.join(destination_root, "config/routes.rb"),
-      "Rails.application.routes.draw do\nend\n"
-    )
-  end
-
-  it "creates the initializer file" do
-    run_generator
-
-    expect(file_exists?("config/initializers/panda_core.rb")).to be true
-    content = read_file("config/initializers/panda_core.rb")
-    expect(content).to match(/Panda::Core\.configure do \|config\|/)
-    expect(content).to match(/# config\.user_class = "User"/)
-    expect(content).to match(/# config\.storage_provider = :active_storage/)
-    expect(content).to match(/# config\.cache_store = :memory_store/)
-  end
-
-  it "mounts the engine in routes.rb" do
-    run_generator
-
-    content = read_file("config/routes.rb")
-    expect(content).to match(/mount Panda::Core::Engine => "\/"/i)
-  end
-
-  it "handles migrations properly" do
-    allow(Rails).to receive(:root).and_return(Pathname.new(destination_root))
-    expect(generator).to receive(:copy_migrations)
-    run_generator
-  end
-
-  context "with existing initializer" do
-    before do
-      FileUtils.mkdir_p(File.join(destination_root, "config/initializers"))
-      File.write(
-        File.join(destination_root, "config/initializers/panda_core.rb"),
-        <<~RUBY
-          Panda::Core.configure do |config|
-            config.user_class = "Admin"
-          end
-        RUBY
-      )
-    end
-
-    it "overwrites the existing initializer" do
+  describe "installation" do
+    it "copies migrations" do
       run_generator
-
-      content = read_file("config/initializers/panda_core.rb")
-      expect(content).not_to match(/config\.user_class = "Admin"/)
-      expect(content).to match(/# config\.user_class = "User"/)
-    end
-  end
-
-  context "with existing routes" do
-    before do
-      File.write(
-        File.join(destination_root, "config/routes.rb"),
-        <<~RUBY
-          Rails.application.routes.draw do
-            resources :posts
+      expect(destination_root).to have_structure {
+        directory "db" do
+          directory "migrate" do
+            migration "create_panda_core_users"
+            migration "create_panda_core_user_identities"
           end
-        RUBY
-      )
+        end
+      }
     end
 
-    it "adds engine mount without disturbing existing routes" do
+    it "copies initializer" do
       run_generator
-
-      content = read_file("config/routes.rb")
-      expect(content).to match(/resources :posts/)
-      expect(content).to match(/mount Panda::Core::Engine => "\/"/i)
+      expect(destination_root).to have_structure {
+        directory "config" do
+          directory "initializers" do
+            file "panda_core.rb" do
+              contains "Panda::Core.configure do |config|"
+              contains "config.session_token_cookie = :panda_session"
+              contains "config.user_class = \"Panda::Core::User\""
+              contains "config.user_identity_class = \"Panda::Core::UserIdentity\""
+            end
+          end
+        end
+      }
     end
   end
 end

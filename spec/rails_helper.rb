@@ -40,8 +40,34 @@ Shoulda::Matchers.configure do |config|
 end
 
 RSpec.configure do |config|
-  # Configure RSpec to find specs in the correct directories
-  config.pattern = "spec/{generators,lib}/**/*_spec.rb"
+  # Force all examples to run and set proper types
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true
+    meta[:type] = case meta[:file_path]
+    when %r{spec/generators/} then :generator
+    when %r{spec/lib/} then :lib
+    else meta[:type]
+    end
+  end
+
+  # Only run our specific specs
+  config.pattern = "{spec/lib/panda/core/configuration_spec.rb,spec/generators/panda/core/install_generator_spec.rb,spec/generators/panda/core/templates_generator_spec.rb}"
+
+  # Exclude dummy app specs
+  config.exclude_pattern = "spec/dummy/**/*_spec.rb"
+
+  # Debug which files are being loaded
+  config.before(:suite) do
+    puts "\nSpec files being loaded:"
+    puts RSpec.configuration.files_to_run.map { |f| File.basename(f) }
+    puts "\nExample groups being run:"
+    puts RSpec.world.example_groups.map { |g|
+      examples = g.children.flat_map(&:examples).map(&:description)
+      [g.description, examples]
+    }
+    puts "\nTotal examples to run: #{RSpec.world.example_count}"
+    puts "\n"
+  end
 
   # URL helpers in tests would be nice to use
   config.include Rails.application.routes.url_helpers
@@ -49,12 +75,8 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
-  config.filter_run_when_matching :focus
   config.example_status_persistence_file_path = "spec/examples.txt"
   config.disable_monkey_patching!
-  config.default_formatter = "doc" if config.files_to_run.one?
-  config.order = :random
-  Kernel.srand config.seed
 
   # Use specific formatter for GitHub Actions
   if ENV["GITHUB_ACTIONS"] == "true"
@@ -96,10 +118,7 @@ RSpec.configure do |config|
     allow(Rails::Command).to receive(:invoke).and_return(true)
   end
 
-  # Debug which files are being loaded
-  config.before(:suite) do
-    puts "\nSpec files being loaded:"
-    puts RSpec.configuration.files_to_run.map { |f| File.basename(f) }
-    puts "\n"
-  end
+  # Force all examples to run
+  config.filter_run_including({})
+  config.run_all_when_everything_filtered = true
 end

@@ -4,13 +4,13 @@ module GeneratorSpecHelper
   extend ActiveSupport::Concern
 
   included do
-    before do
+    before(:each) do
       prepare_destination
       @original_stdout = $stdout
       $stdout = File.new(File::NULL, "w")
     end
 
-    after do
+    after(:each) do
       FileUtils.rm_rf(destination_root)
       $stdout = @original_stdout
     end
@@ -44,20 +44,27 @@ module GeneratorSpecHelper
 
   private
 
-  # rubocop:disable Security/Eval
   def capture(stream)
     stream = stream.to_s
     captured_stream = StringIO.new
-    eval("$#{stream}", binding, __FILE__, __LINE__)
+    original_stream = eval("$#{stream}", binding, __FILE__, __LINE__)
     eval("$#{stream} = captured_stream", binding, __FILE__, __LINE__)
     yield
     captured_stream.string
   ensure
     eval("$#{stream} = original_stream", binding, __FILE__, __LINE__)
   end
-  # rubocop:enable Security/Eval
 end
 
 RSpec.configure do |config|
   config.include GeneratorSpecHelper, type: :generator
+
+  # Ensure generator tests have a clean environment
+  config.before(:each, type: :generator) do
+    prepare_destination
+  end
+
+  config.after(:each, type: :generator) do
+    FileUtils.rm_rf(destination_root) if defined?(destination_root)
+  end
 end
