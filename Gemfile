@@ -7,7 +7,7 @@ gemspec
 
 # Development and testing dependencies
 group :development, :test do
-  gem "annotate"
+  gem "annotaterb"
   gem "better_errors"
   gem "binding_of_caller"
   gem "brakeman"
@@ -48,4 +48,11 @@ group :development, :test do
   gem "tty-screen"
   gem "yamllint"
   gem "yard-activerecord"
+end
+
+group :test do
+  gem "rspec-github", require: false
+  gem "omniauth-google-oauth2"
+  gem "omniauth-microsoft_graph"
+  gem "omniauth-github"
 end
