@@ -41,7 +41,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "lookbook", "~> 2.3"
   spec.add_dependency "omniauth", "~> 2.1"
   spec.add_dependency "omniauth-rails_csrf_protection", "~> 1.0"
-  spec.add_dependency "pg", "~> 1.5"
   spec.add_dependency "propshaft", "~> 1.1"
   spec.add_dependency "rails", ">= 7.0"
   spec.add_dependency "redis", "~> 5.3"
@@ -50,4 +49,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tailwindcss-rails", "~> 3"
   spec.add_dependency "turbo-rails", "~> 2.0"
   spec.add_dependency "view_component", "~> 3"
+
+  spec.add_development_dependency "pg"
 end
