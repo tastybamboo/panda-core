@@ -51,7 +51,6 @@ group :development, :test do
 end
 
 group :test do
-  gem "rspec-github", require: false
   gem "omniauth-google-oauth2"
   gem "omniauth-microsoft_graph"
   gem "omniauth-github"
