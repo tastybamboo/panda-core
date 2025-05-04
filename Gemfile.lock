@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (0.1.11)
+    panda-core (0.1.12)
       activestorage-office-previewer (~> 0.1)
       awesome_nested_set (~> 3.7)
       aws-sdk-s3 (~> 1)
