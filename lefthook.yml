@@ -1,18 +1,14 @@
 ---
 assert_lefthook_installed: true
 colors: true
-files: git diff --name-only main
-pre-commit: ["seclint"]
-seclint:
-  commands:
-    broken-links:
-      # Exclude links to localhost for now
-      run: lychee . --exclude http://localhost:3000 --exclude file://
-    bundle-audit:
-      run: bundle exec bundle-audit --update
-    bundle-outdated:
-      run: bundle outdated --strict
-    standardrb:
-      run: bundle exec standardrb
-  name: Security & Linters
+pre-commit:
   parallel: true
+  jobs:
+    - name: broken-links
+      run: lychee . --exclude http://localhost:3000 --exclude file://
+    - name: bundle-audit
+      run: bundle exec bundle-audit --update
+    - name: bundle-outdated
+      run: bundle outdated --strict
+    - name: standardrb
+      run: bundle exec standardrb

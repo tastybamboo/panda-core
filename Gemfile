@@ -51,6 +51,7 @@ group :development, :test do
 end
 
 group :test do
+  gem "database_cleaner-active_record"
   gem "omniauth-google-oauth2"
   gem "omniauth-microsoft_graph"
   gem "omniauth-github"
