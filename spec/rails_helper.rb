@@ -28,6 +28,7 @@ require "view_component/test_helpers"
 require "faker"
 require "puma"
 require "factory_bot_rails"
+require "generator_spec"
 
 # Load all support files
 Dir[File.expand_path("support/**/*.rb", __dir__)].sort.each { |f| require f }
@@ -83,6 +84,8 @@ RSpec.configure do |config|
     require "rspec/github"
     config.add_formatter RSpec::Github::Formatter
   end
+
+
 
   config.include ViewComponent::TestHelpers, type: :view_component
   config.include Capybara::RSpecMatchers, type: :view_component

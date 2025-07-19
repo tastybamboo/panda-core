@@ -27,6 +27,9 @@ module Panda
       end
 
       def mount_engine
+        routes_file = File.join(destination_root, "config/routes.rb")
+        return unless File.exist?(routes_file)
+
         route 'mount Panda::Core::Engine => "/"'
       end
 

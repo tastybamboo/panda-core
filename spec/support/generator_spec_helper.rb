@@ -27,7 +27,9 @@ module GeneratorSpecHelper
 
   def run_generator(args = [])
     args = Array(args)
-    Rails::Generators.invoke(described_class, args, destination_root: destination_root)
+    # Use the generator namespace instead of class name
+    generator_name = described_class.namespace
+    Rails::Generators.invoke(generator_name, args, destination_root: destination_root)
   end
 
   def generator

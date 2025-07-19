@@ -16,4 +16,11 @@ FileUtils.chdir GEM_ROOT do
 
   puts "== Installing dependencies =="
   system("bundle check") || system!("bundle install")
+
+  puts "== Setting up database =="
+  system!("bin/rails db:create")
+  system!("bin/rails db:schema:load")
+
+  puts "== Setting up test database =="
+  system!("bin/rails db:test:prepare")
 end

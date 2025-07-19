@@ -5,19 +5,19 @@ require "support/generator_spec_helper"
 RSpec.describe Panda::Core::InstallGenerator, type: :generator do
   describe "installation" do
     it "copies migrations" do
-      run_generator
+      run_generator(["--orm=active_record"])
       expect(destination_root).to have_structure {
         directory "db" do
           directory "migrate" do
-            migration "create_panda_core_users"
-            migration "create_panda_core_user_identities"
+            migration "20250121012333_logidze_install"
+            migration "20250121012334_enable_hstore"
           end
         end
       }
     end
 
     it "copies initializer" do
-      run_generator
+      run_generator(["--orm=active_record"])
       expect(destination_root).to have_structure {
         directory "config" do
           directory "initializers" do
