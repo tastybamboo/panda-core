@@ -85,8 +85,6 @@ RSpec.configure do |config|
     config.add_formatter RSpec::Github::Formatter
   end
 
-
-
   config.include ViewComponent::TestHelpers, type: :view_component
   config.include Capybara::RSpecMatchers, type: :view_component
   config.include FactoryBot::Syntax::Methods
