@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (0.1.13)
+    panda-core (0.1.14)
       dry-configurable (~> 1)
       rails (>= 7.0)
 
