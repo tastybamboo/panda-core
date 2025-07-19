@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (0.1.15)
+    panda-core (0.1.16)
       dry-configurable (~> 1)
       importmap-rails
       propshaft
