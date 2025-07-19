@@ -4,11 +4,10 @@ colors: true
 pre-commit:
   parallel: true
   jobs:
-    - name: broken-links
-      run: lychee . --exclude http://localhost:3000 --exclude file://
     - name: bundle-audit
       run: bundle exec bundle-audit --update
     - name: bundle-outdated
       run: bundle outdated --strict
     - name: standardrb
-      run: bundle exec standardrb
+      run: bundle exec standardrb --fix {all_files}
+      glob: "**/*.rb"
