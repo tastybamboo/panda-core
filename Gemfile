@@ -15,19 +15,12 @@ group :development, :test do
   gem "bundler-audit"
   gem "capybara"
   gem "cuprite"
-  gem "danger"
-  gem "danger-reek"
-  gem "danger-rubocop"
-  gem "danger-simplecov_json"
-  gem "danger-todoist"
   gem "debug"
   gem "erb_lint"
-  gem "factory_bot_rails"
   gem "faker"
   gem "fasterer"
   gem "generator_spec"
   gem "listen"
-  gem "lookbook", "~> 2"
   gem "puma"
   gem "rake"
   gem "rspec"
@@ -52,7 +45,4 @@ end
 
 group :test do
   gem "database_cleaner-active_record"
-  gem "omniauth-google-oauth2"
-  gem "omniauth-microsoft_graph"
-  gem "omniauth-github"
 end

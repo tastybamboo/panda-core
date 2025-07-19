@@ -24,10 +24,7 @@ require "rails/generators/test_case"
 require "shoulda/matchers"
 require "capybara"
 require "capybara/rspec"
-require "view_component/test_helpers"
-require "faker"
 require "puma"
-require "factory_bot_rails"
 require "generator_spec"
 
 # Load all support files
@@ -85,9 +82,7 @@ RSpec.configure do |config|
     config.add_formatter RSpec::Github::Formatter
   end
 
-  config.include ViewComponent::TestHelpers, type: :view_component
   config.include Capybara::RSpecMatchers, type: :view_component
-  config.include FactoryBot::Syntax::Methods
   config.include Rails::Generators::Testing::Assertions, type: :generator
   config.include FileUtils, type: :generator
 
