@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# This migration comes from panda_core (originally 20241209000001)
 class CreatePandaCoreUsers < ActiveRecord::Migration[7.1]
   def change
     create_table :panda_core_users, id: :uuid do |t|
