@@ -1,0 +1,38 @@
+<div class="flex flex-col justify-center py-12 px-6 min-h-full text-center lg:px-8">
+  <div class="text-center sm:mx-auto sm:w-full sm:max-w-sm">
+    <% if Panda::Core.configuration.login_logo_path %>
+      <img src="<%= Panda::Core.configuration.login_logo_path %>" class="py-2 mx-auto w-auto h-32">
+    <% end %>
+    <h2 class="mt-10 mb-6 text-2xl font-bold text-center text-gray-900">
+      <%= Panda::Core.configuration.login_page_title || "Sign in to your account" %>
+    </h2>
+  </div>
+  <% if @providers&.any? || Panda::Core.config.authentication_providers.any? %>
+    <% providers = @providers || Panda::Core.config.authentication_providers.keys %>
+    <% providers.each do |provider| %>
+      <div class="mt-4 text-center sm:mx-auto sm:w-full sm:max-w-sm">
+        <%= form_tag admin_auth_callback_path(provider: provider), method: "post", data: {turbo: false} do %>
+          <button type="submit" id="button-sign-in-<%= provider %>" class="inline-flex gap-x-2 items-center py-2.5 px-3.5 mx-auto mb-4 bg-white rounded-md border min-w-56 border-neutral-400">
+            <% if defined?(FontAwesome) %>
+              <i class="fa-brands fa-<%= provider %> text-xl mr-1"></i>
+            <% end %>
+            Sign in with <%= provider.to_s.humanize %>
+          </button>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="rounded-md bg-yellow-50 p-4 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div class="flex">
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-yellow-800">
+            No authentication providers configured
+          </h3>
+          <div class="mt-2 text-sm text-yellow-700">
+            <p>Please configure at least one authentication provider in your Panda Core configuration.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,24 @@
+Description:
+    Sets up or updates Panda Core development tools in your gem or Rails application.
+    This includes linting configurations, testing helpers, and CI/CD workflows.
+
+Example:
+    # Initial setup
+    rails generate panda:core:dev_tools
+
+    # Force update (overwrites existing files)
+    rails generate panda:core:dev_tools --force
+
+    # Skip adding dependencies to Gemfile
+    rails generate panda:core:dev_tools --skip-dependencies
+
+    This will:
+        - Copy .standard.yml, .yamllint, and .rspec configurations
+        - Set up GitHub Actions workflows for CI and releases
+        - Add development dependencies to your Gemfile
+        - Create testing helper configuration
+        - Add rake tasks for linting and security checks
+        - Track version for future updates
+
+    To check for updates later:
+        bundle exec rake panda:check_updates

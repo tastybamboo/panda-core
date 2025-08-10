@@ -1,0 +1,27 @@
+<div class="" data-controller="dashboard">
+  <%= render Panda::Core::Admin::ContainerComponent.new do |container| %>
+    <% container.with_heading(text: "Dashboard", level: 1) %>
+    
+    <% # Hook for dashboard widgets %>
+    <% if Panda::Core.configuration.admin_dashboard_widgets %>
+      <% widgets = Panda::Core.configuration.admin_dashboard_widgets.call(current_user) %>
+      <% if widgets && widgets.any? %>
+        <div class="grid grid-cols-1 gap-5 mt-5 sm:grid-cols-3">
+          <% widgets.each do |widget| %>
+            <%= render widget %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="mt-5 p-6 bg-white shadow rounded-lg">
+          <h2 class="text-lg font-medium text-gray-900">Welcome to Panda Core Admin</h2>
+          <p class="mt-1 text-sm text-gray-500">Configure dashboard widgets to display custom content here.</p>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="mt-5 p-6 bg-white shadow rounded-lg">
+        <h2 class="text-lg font-medium text-gray-900">Welcome to Panda Core Admin</h2>
+        <p class="mt-1 text-sm text-gray-500">No dashboard widgets configured.</p>
+      </div>
+    <% end %>
+  <% end %>
+</div>

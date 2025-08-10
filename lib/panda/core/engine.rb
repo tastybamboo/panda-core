@@ -1,11 +1,22 @@
 require "rubygems"
 
 require "rails/engine"
+require "omniauth"
+require "omniauth/rails_csrf_protection"
+require "view_component"
 
 module Panda
   module Core
     class Engine < ::Rails::Engine
       isolate_namespace Panda::Core
+
+      config.eager_load_namespaces << Panda::Core
+      
+      # Add engine's app directories to autoload paths
+      config.autoload_paths += Dir[root.join('app', 'models')]
+      config.autoload_paths += Dir[root.join('app', 'controllers')]
+      config.autoload_paths += Dir[root.join('app', 'builders')]
+      config.autoload_paths += Dir[root.join('app', 'components')]
 
       config.generators do |g|
         g.test_framework :rspec
@@ -13,14 +24,32 @@ module Panda
         g.factory_bot dir: "spec/factories"
       end
 
+      initializer "panda_core.append_migrations" do |app|
+        unless app.root.to_s.match?(root.to_s)
+          config.paths["db/migrate"].expanded.each do |expanded_path|
+            app.config.paths["db/migrate"] << expanded_path
+          end
+        end
+      end
+
       initializer "panda_core.configuration" do |app|
-        config.after_initialize do
-          Panda::Core.configure do |config|
-            config.parent_controller ||= "ActionController::API"
-            config.parent_mailer ||= "ActionMailer::Base"
-            config.mailer_sender ||= "support@example.com"
-            config.mailer_default_url_options ||= {host: "localhost:3000"}
-            config.session_token_cookie ||= :session_token
+        # Configuration is already initialized with defaults in Configuration class
+      end
+
+
+      initializer "panda_core.omniauth" do |app|
+        app.middleware.use OmniAuth::Builder do
+          Panda::Core.configuration.authentication_providers.each do |provider_name, settings|
+            case provider_name.to_s
+            when "microsoft_graph"
+              provider :microsoft_graph, settings[:client_id], settings[:client_secret], settings[:options] || {}
+            when "google_oauth2"
+              provider :google_oauth2, settings[:client_id], settings[:client_secret], settings[:options] || {}
+            when "github"
+              provider :github, settings[:client_id], settings[:client_secret], settings[:options] || {}
+            when "developer"
+              provider :developer if Rails.env.development?
+            end
           end
         end
       end

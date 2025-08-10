@@ -2,31 +2,49 @@ require "rails_helper"
 
 RSpec.describe Panda::Core do
   describe "configuration" do
-    let(:config) { described_class.configuration }
+    before do
+      # Reset configuration to defaults before each test
+      described_class.reset_configuration!
+    end
 
-    before(:each) do
+    after do
+      # Reset configuration after each test
       described_class.reset_configuration!
     end
 
     it "has default values" do
-      expect(config.session_token_cookie).to eq(:panda_session)
+      config = described_class.configuration
+      expect(config.authentication_providers).to eq({})
+      expect(config.storage_provider).to eq(:active_storage)
+      expect(config.cache_store).to eq(:memory_store)
+      expect(config.admin_path).to eq("/admin")
       expect(config.user_class).to eq("Panda::Core::User")
-      expect(config.user_identity_class).to eq("Panda::Core::UserIdentity")
     end
 
     it "allows setting configuration values" do
       described_class.configure do |config|
-        config.session_token_cookie = :custom_session
         config.user_class = "CustomUser"
-        config.user_identity_class = "CustomUserIdentity"
+        config.authentication_providers = {github: {client_id: "123"}}
+        config.storage_provider = :s3
+        config.cache_store = :redis_store
+        config.admin_path = "/custom_admin"
       end
 
-      expect(config.session_token_cookie).to eq(:custom_session)
+      config = described_class.configuration
       expect(config.user_class).to eq("CustomUser")
-      expect(config.user_identity_class).to eq("CustomUserIdentity")
+      expect(config.authentication_providers).to eq({github: {client_id: "123"}})
+      expect(config.storage_provider).to eq(:s3)
+      expect(config.cache_store).to eq(:redis_store)
+      expect(config.admin_path).to eq("/custom_admin")
+    end
 
-      # Reset configuration
-      described_class.reset_configuration!
+    it "has hook system settings with defaults" do
+      config = described_class.configuration
+      expect(config.admin_navigation_items).to respond_to(:call)
+      expect(config.admin_dashboard_widgets).to respond_to(:call)
+      expect(config.user_attributes).to eq([])
+      expect(config.user_associations).to eq([])
+      expect(config.authorization_policy).to respond_to(:call)
     end
   end
 end
