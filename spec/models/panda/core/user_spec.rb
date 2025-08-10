@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Panda::Core::User, type: :model do
   describe "validations" do
-    subject { described_class.new(firstname: "Test", lastname: "User", email: "test@example.com") }
+    subject { described_class.new(name: "Test User", email: "test@example.com") }
 
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
@@ -44,12 +44,12 @@ RSpec.describe Panda::Core::User, type: :model do
 
   describe "#admin?" do
     it "returns true for admin users" do
-      user = described_class.new(email: "admin@example.com", admin: true, firstname: "Admin", lastname: "User")
+      user = described_class.new(email: "admin@example.com", is_admin: true, name: "Admin User")
       expect(user.admin?).to be true
     end
 
     it "returns false for non-admin users" do
-      user = described_class.new(email: "user@example.com", admin: false, firstname: "Regular", lastname: "User")
+      user = described_class.new(email: "user@example.com", is_admin: false, name: "Regular User")
       expect(user.admin?).to be false
     end
   end
