@@ -36,11 +36,9 @@ module Panda
         # Configuration is already initialized with defaults in Configuration class
       end
 
-      initializer "panda_core.omniauth", before: :build_middleware_stack do |app|
-        # Only add OmniAuth middleware if it's not already present
-        unless app.config.middleware.any? { |m| m.name == "OmniAuth::Builder" }
-          app.middleware.use OmniAuth::Builder do
-            Panda::Core.configuration.authentication_providers.each do |provider_name, settings|
+      initializer "panda_core.omniauth" do |app|
+        app.middleware.use OmniAuth::Builder do
+          Panda::Core.configuration.authentication_providers.each do |provider_name, settings|
             case provider_name.to_s
             when "microsoft_graph"
               provider :microsoft_graph, settings[:client_id], settings[:client_secret], settings[:options] || {}
@@ -53,7 +51,6 @@ module Panda
             end
           end
         end
-      end
       end
     end
   end
