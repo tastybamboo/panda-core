@@ -6,8 +6,7 @@ module Panda
       self.table_name = "panda_core_users"
 
       validates :email, presence: true, uniqueness: {case_sensitive: false}
-      validates :firstname, presence: true
-      validates :lastname, presence: true
+      validates :name, presence: true
 
       before_save :downcase_email
 
@@ -15,31 +14,18 @@ module Panda
         user = find_by(email: auth_hash.info.email.downcase)
         return user if user
 
-        # Split name on first space
-        name_parts = (auth_hash.info.name || "Unknown User").split(" ", 2)
-
         create!(
           email: auth_hash.info.email.downcase,
-          firstname: name_parts[0] || "Unknown",
-          lastname: name_parts[1] || "",
+          name: auth_hash.info.name || "Unknown User",
           image_url: auth_hash.info.image,
-          admin: User.count.zero? # First user is admin
+          is_admin: User.count.zero? # First user is admin
         )
       end
 
-      # Virtual attribute for full name
-      def name
-        "#{firstname} #{lastname}".strip
-      end
-
-      def name=(value)
-        parts = value.to_s.split(" ", 2)
-        self.firstname = parts[0] || ""
-        self.lastname = parts[1] || ""
-      end
+      # Name is now a real column, no need for virtual attribute
 
       def admin?
-        admin
+        is_admin
       end
 
       def active_for_authentication?
