@@ -5,7 +5,7 @@ Panda::Core::Engine.routes.draw do
     delete "/logout", to: "admin/sessions#destroy", as: :logout
 
     constraints Panda::Core::AdminConstraint.new do
-      get "/", to: "admin/dashboard#index", as: :root
+      get "/", to: "admin/dashboard#show", as: :root
     end
   end
 end
