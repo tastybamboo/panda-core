@@ -10,7 +10,7 @@ module Panda
     class Engine < ::Rails::Engine
       isolate_namespace Panda::Core
 
-      config.eager_load_namespaces << Panda::Core
+      config.eager_load_namespaces << Panda::Core::Engine
       
       # Add engine's app directories to autoload paths
       config.autoload_paths += Dir[root.join('app', 'models')]
