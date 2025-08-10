@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/panda/core/asset_loader"
-
 module Panda
   module Core
     module AssetHelper
