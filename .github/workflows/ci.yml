@@ -66,6 +66,17 @@ jobs:
           bundle exec rails db:create
           bundle exec rails db:schema:load
 
+      - name: "Compile assets"
+        working-directory: spec/dummy
+        env:
+          DATABASE_URL: "postgres://postgres:password@localhost:5432/test"
+          RAILS_ENV: test
+        run: |
+          bundle exec rake panda:core:assets:compile
+          echo "✅ Asset compilation complete"
+          echo "Assets in public directory:"
+          ls -la public/panda-core-assets/ || echo "No core assets directory"
+
       - name: "Run specs"
         env:
           DATABASE_URL: "postgres://postgres:password@localhost:5432/test"
