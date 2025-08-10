@@ -16,12 +16,12 @@ module Panda
         return user if user
 
         # Split name on first space
-        name_parts = (auth_hash.info.name || 'Unknown User').split(' ', 2)
-        
+        name_parts = (auth_hash.info.name || "Unknown User").split(" ", 2)
+
         create!(
           email: auth_hash.info.email.downcase,
-          firstname: name_parts[0] || 'Unknown',
-          lastname: name_parts[1] || '',
+          firstname: name_parts[0] || "Unknown",
+          lastname: name_parts[1] || "",
           image_url: auth_hash.info.image,
           admin: User.count.zero? # First user is admin
         )
@@ -31,13 +31,13 @@ module Panda
       def name
         "#{firstname} #{lastname}".strip
       end
-      
+
       def name=(value)
-        parts = value.to_s.split(' ', 2)
-        self.firstname = parts[0] || ''
-        self.lastname = parts[1] || ''
+        parts = value.to_s.split(" ", 2)
+        self.firstname = parts[0] || ""
+        self.lastname = parts[1] || ""
       end
-      
+
       def admin?
         admin
       end

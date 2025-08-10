@@ -50,7 +50,7 @@ module Panda
         @breadcrumbs ||= []
         @breadcrumbs << Breadcrumb.new(label, path)
       end
-      
+
       def breadcrumbs
         @breadcrumbs || []
       end

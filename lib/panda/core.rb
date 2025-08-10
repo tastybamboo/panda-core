@@ -13,4 +13,3 @@ end
 require_relative "core/configuration"
 require_relative "core/asset_loader"
 require_relative "core/engine" if defined?(Rails)
-

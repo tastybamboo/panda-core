@@ -11,12 +11,12 @@ module Panda
       isolate_namespace Panda::Core
 
       config.eager_load_namespaces << Panda::Core::Engine
-      
+
       # Add engine's app directories to autoload paths
-      config.autoload_paths += Dir[root.join('app', 'models')]
-      config.autoload_paths += Dir[root.join('app', 'controllers')]
-      config.autoload_paths += Dir[root.join('app', 'builders')]
-      config.autoload_paths += Dir[root.join('app', 'components')]
+      config.autoload_paths += Dir[root.join("app", "models")]
+      config.autoload_paths += Dir[root.join("app", "controllers")]
+      config.autoload_paths += Dir[root.join("app", "builders")]
+      config.autoload_paths += Dir[root.join("app", "components")]
 
       config.generators do |g|
         g.test_framework :rspec
@@ -35,7 +35,6 @@ module Panda
       initializer "panda_core.configuration" do |app|
         # Configuration is already initialized with defaults in Configuration class
       end
-
 
       initializer "panda_core.omniauth" do |app|
         app.middleware.use OmniAuth::Builder do

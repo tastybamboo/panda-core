@@ -9,7 +9,7 @@ module Panda
         @name = name
         @path = path
       end
-      
+
       # Alias for compatibility
       alias_method :label, :name
     end

@@ -35,14 +35,14 @@ module Panda
         @session_token_cookie = :panda_session
         @authentication_providers = {}
         @admin_path = "/admin"
-        
+
         # Hook system for extending admin UI
         @admin_navigation_items = ->(user) { [] }
         @admin_dashboard_widgets = ->(user) { [] }
         @user_attributes = []
         @user_associations = []
         @authorization_policy = ->(user, action, resource) { user.admin? }
-        
+
         # Profile and UI customization
         @additional_user_params = []
         @available_themes = [["Default", "default"], ["Sky", "sky"]]

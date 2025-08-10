@@ -84,28 +84,28 @@ def compile_javascript_bundle(version)
   bundle << "// Compiled: #{Time.now.utc.iso8601}"
   bundle << "// Core UI components and authentication"
   bundle << ""
-  
+
   # Add Stimulus setup for core
   bundle << create_stimulus_setup
-  
+
   # Add core controllers (theme form controller, etc.)
   bundle << compile_core_controllers
-  
+
   # Add initialization
   bundle << create_core_init(version)
-  
+
   puts "✅ Created JavaScript bundle (#{bundle.join("\n").length} chars)"
   bundle.join("\n")
 end
 
 def compile_css_bundle(version)
   puts "Creating Panda Core CSS bundle..."
-  
+
   bundle = []
   bundle << "/* Panda Core CSS Bundle v#{version} */"
   bundle << "/* Compiled: #{Time.now.utc.iso8601} */"
   bundle << ""
-  
+
   # Add core UI component styles
   bundle << "/* Core UI Components */"
   bundle << ".panda-core-admin {"
@@ -126,7 +126,7 @@ def compile_css_bundle(version)
   bundle << "  border-radius: 0.5rem;"
   bundle << "}"
   bundle << ""
-  
+
   puts "✅ Created CSS bundle (#{bundle.join("\n").length} chars)"
   bundle.join("\n")
 end
@@ -151,21 +151,21 @@ end
 
 def compile_core_controllers
   puts "Compiling Core controllers..."
-  
+
   bundle = []
   bundle << "// Core Controllers"
-  
+
   # Find controller files in the engine
   engine_root = File.expand_path("../../..", __FILE__)
   controller_dir = File.join(engine_root, "app", "javascript", "panda", "core", "controllers")
-  
+
   if File.directory?(controller_dir)
     Dir.glob(File.join(controller_dir, "*.js")).each do |file|
       next if File.basename(file) == "index.js"
-      
-      controller_name = File.basename(file, ".js").gsub("_", "-")
+
+      controller_name = File.basename(file, ".js").tr("_", "-")
       puts "  Adding controller: #{controller_name}"
-      
+
       content = File.read(file)
       bundle << "// Controller: #{controller_name}"
       bundle << content
@@ -174,7 +174,7 @@ def compile_core_controllers
   else
     puts "  No controller directory found at: #{controller_dir}"
   end
-  
+
   bundle.join("\n")
 end
 
@@ -196,7 +196,7 @@ end
 
 def create_asset_manifest(version)
   output_dir = Rails.root.join("tmp", "panda_core_assets")
-  
+
   files = Dir.glob(output_dir.join("*")).reject { |f| File.basename(f) == "manifest.json" }.map do |file|
     {
       filename: File.basename(file),
@@ -204,7 +204,7 @@ def create_asset_manifest(version)
       sha256: Digest::SHA256.file(file).hexdigest
     }
   end
-  
+
   {
     version: version,
     compiled_at: Time.now.utc.iso8601,
