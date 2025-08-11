@@ -23,6 +23,12 @@ module Panda
           user = User.find_or_create_from_auth_hash(auth)
 
           if user.persisted?
+            # Check if user is admin before allowing access
+            unless user.admin?
+              redirect_to admin_login_path, flash: {error: "You do not have permission to access the admin area"}
+              return
+            end
+            
             session[:user_id] = user.id
             Panda::Core::Current.user = user
 
