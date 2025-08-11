@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Panda::Core::User, type: :model do
 
   describe "validations" do
-    subject { described_class.new(name: "Test User", email: "test@example.com") }
+    subject { described_class.new(firstname: "Test", lastname: "User", email: "test@example.com") }
 
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
@@ -30,14 +30,15 @@ RSpec.describe Panda::Core::User, type: :model do
       end
 
       it "finds existing user by email" do
-        existing_user = described_class.create!(email: "test@example.com", name: "Existing User")
+        existing_user = described_class.create!(email: "test@example.com", firstname: "Existing", lastname: "User")
         user = described_class.find_or_create_from_auth_hash(auth_hash)
         expect(user).to eq(existing_user)
       end
 
       it "updates user attributes from auth hash" do
         user = described_class.find_or_create_from_auth_hash(auth_hash)
-        expect(user.name).to eq("Test User")
+        expect(user.firstname).to eq("Test")
+        expect(user.lastname).to eq("User")
         expect(user.image_url).to eq("https://example.com/image.jpg")
       end
     end
@@ -45,12 +46,12 @@ RSpec.describe Panda::Core::User, type: :model do
 
   describe "#admin?" do
     it "returns true for admin users" do
-      user = described_class.new(email: "admin@example.com", is_admin: true, name: "Admin User")
+      user = described_class.new(email: "admin@example.com", admin: true, firstname: "Admin", lastname: "User")
       expect(user.admin?).to be true
     end
 
     it "returns false for non-admin users" do
-      user = described_class.new(email: "user@example.com", is_admin: false, name: "Regular User")
+      user = described_class.new(email: "user@example.com", admin: false, firstname: "Regular", lastname: "User")
       expect(user.admin?).to be false
     end
   end
