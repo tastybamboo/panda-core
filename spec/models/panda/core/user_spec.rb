@@ -1,9 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Panda::Core::User, type: :model do
-  before(:all) do
-    described_class.reset_column_information
-  end
 
   describe "validations" do
     subject { described_class.new(name: "Test User", email: "test@example.com") }

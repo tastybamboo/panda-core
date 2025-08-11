@@ -4,7 +4,7 @@ module Panda
   module Core
     class User < ApplicationRecord
       self.table_name = "panda_core_users"
-
+      
       validates :email, presence: true, uniqueness: {case_sensitive: false}
 
       before_save :downcase_email
@@ -15,17 +15,23 @@ module Panda
 
         # Parse name into first and last
         full_name = auth_hash.info.name || "Unknown User"
+        name_parts = full_name.split(" ", 2)
         
         create!(
           email: auth_hash.info.email.downcase,
-          name: full_name,
+          firstname: name_parts[0] || "Unknown",
+          lastname: name_parts[1] || "",
           image_url: auth_hash.info.image,
-          is_admin: User.count.zero? # First user is admin
+          admin: User.count.zero? # First user is admin
         )
       end
 
       def admin?
-        is_admin == true
+        admin == true
+      end
+      
+      def name
+        "#{firstname} #{lastname}".strip
       end
 
       def active_for_authentication?

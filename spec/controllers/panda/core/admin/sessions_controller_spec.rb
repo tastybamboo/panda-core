@@ -2,10 +2,6 @@ require "rails_helper"
 
 RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
   routes { Panda::Core::Engine.routes }
-  
-  before(:all) do
-    Panda::Core::User.reset_column_information
-  end
 
   describe "GET #new" do
     it "renders the login page" do
