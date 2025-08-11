@@ -6,6 +6,9 @@ Panda::Core::Engine.routes.draw do
 
     constraints Panda::Core::AdminConstraint.new do
       get "/", to: "admin/dashboard#show", as: :root
+      
+      # Profile management
+      resource :my_profile, only: %i[edit update], controller: "admin/my_profile", path: "my_profile"
     end
   end
 end
