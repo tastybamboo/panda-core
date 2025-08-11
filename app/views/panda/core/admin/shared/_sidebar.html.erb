@@ -16,8 +16,8 @@
     <li class="mt-auto">
       <div class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-200">
         <% if current_user %>
-          <span class="flex-1"><%= current_user.name %></span>
-          <%= link_to admin_logout_path, method: :delete, class: "text-gray-200 hover:text-white" do %>
+          <span class="flex-1"><%= "#{current_user.firstname} #{current_user.lastname}" %></span>
+          <%= link_to panda_core.admin_logout_path, method: :delete, class: "text-gray-200 hover:text-white" do %>
             <i class="fa-regular fa-sign-out"></i>
           <% end %>
         <% end %>
