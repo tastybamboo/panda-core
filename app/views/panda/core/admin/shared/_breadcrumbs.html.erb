@@ -9,10 +9,10 @@
             </svg>
           <% end %>
           
-          <% if breadcrumb[:path] && index < @breadcrumbs.length - 1 %>
-            <%= link_to breadcrumb[:label], breadcrumb[:path], class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" %>
+          <% if breadcrumb.path && index < @breadcrumbs.length - 1 %>
+            <%= link_to breadcrumb.label, breadcrumb.path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" %>
           <% else %>
-            <span class="text-sm font-medium text-gray-500"><%= breadcrumb[:label] %></span>
+            <span class="text-sm font-medium text-gray-500"><%= breadcrumb.label %></span>
           <% end %>
         </li>
       <% end %>
