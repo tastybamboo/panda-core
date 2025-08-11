@@ -21,7 +21,8 @@ module Panda
         :available_themes,
         :login_logo_path,
         :login_page_title,
-        :initial_admin_breadcrumb
+        :initial_admin_breadcrumb,
+        :dashboard_redirect_path
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -49,6 +50,7 @@ module Panda
         @login_logo_path = nil
         @login_page_title = "Sign in to your account"
         @initial_admin_breadcrumb = nil  # Proc that returns [label, path]
+        @dashboard_redirect_path = nil  # Path to redirect to after login (defaults to admin_root_path)
       end
     end
 

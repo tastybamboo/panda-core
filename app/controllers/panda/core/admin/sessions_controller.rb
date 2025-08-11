@@ -30,7 +30,9 @@ module Panda
               user: user,
               provider: provider)
 
-            redirect_to admin_root_path, flash: {success: "Successfully logged in as #{user.name}"}
+            # Use configured dashboard path or default to admin_root_path
+            redirect_path = Panda::Core.configuration.dashboard_redirect_path || admin_root_path
+            redirect_to redirect_path, flash: {success: "Successfully logged in as #{user.name}"}
           else
             redirect_to admin_login_path, flash: {error: "Unable to create account: #{user.errors.full_messages.join(", ")}"}
           end
