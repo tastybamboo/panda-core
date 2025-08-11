@@ -7,7 +7,7 @@ module Panda
         return false unless request.session[:user_id].present?
 
         user = User.find_by(id: request.session[:user_id])
-        user&.is_admin?
+        user&.admin?
       end
     end
   end

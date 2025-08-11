@@ -69,16 +69,18 @@ module OmniAuthHelpers
   # TODO: Move to fixtures or Oaken?
   def admin_user
     Panda::Core::User.find_or_create_by!(email: "admin@example.com") do |user|
-      user.name = "Admin User"
-      user.is_admin = true
+      user.firstname = "Admin"
+      user.lastname = "User"
+      user.admin = true
       user.image_url = "/panda-cms-assets/panda-nav.png"
     end
   end
 
   def regular_user
     Panda::Core::User.find_or_create_by!(email: "regular@example.com") do |user|
-      user.name = "Regular User"
-      user.is_admin = false
+      user.firstname = "Regular"
+      user.lastname = "User"
+      user.admin = false
       user.image_url = "/panda-cms-assets/panda-nav.png"
     end
   end

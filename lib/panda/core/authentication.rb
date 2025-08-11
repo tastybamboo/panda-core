@@ -19,7 +19,7 @@ module Panda
       end
 
       def require_admin
-        redirect_to admin_login_path unless current_user&.is_admin?
+        redirect_to admin_login_path unless current_user&.admin?
       end
 
       def sign_in(user)
