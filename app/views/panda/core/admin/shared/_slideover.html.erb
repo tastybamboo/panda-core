@@ -1,0 +1,33 @@
+<div class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" id="mobile-slideover">
+  <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
+  <div class="fixed inset-0 flex">
+    <div class="relative flex w-full max-w-xs flex-1 flex-col bg-gray-800">
+      <div class="absolute top-0 right-0 -mr-12 pt-2">
+        <button type="button" class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+          <span class="sr-only">Close sidebar</span>
+          <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <%= yield %>
+    </div>
+  </div>
+</div>
+
+<div class="hidden lg:flex lg:flex-shrink-0">
+  <div class="flex w-96">
+    <div class="flex min-h-0 flex-1 flex-col bg-gray-50 border-l border-gray-200">
+      <% if content_for?(:sidebar_title) %>
+        <div class="flex h-16 flex-shrink-0 items-center border-b border-gray-200 px-6">
+          <h2 class="text-lg font-medium text-gray-900"><%= yield :sidebar_title %></h2>
+        </div>
+      <% end %>
+      <div class="flex flex-1 flex-col overflow-y-auto">
+        <div class="px-6 py-4">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
