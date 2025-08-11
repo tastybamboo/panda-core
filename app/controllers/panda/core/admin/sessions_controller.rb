@@ -5,7 +5,7 @@ module Panda
     module Admin
       class SessionsController < AdminController
         # Skip authentication for login/logout actions
-        skip_before_action :authenticate_admin_user!, only: [:new, :create, :destroy]
+        skip_before_action :authenticate_admin_user!, only: [:new, :create, :destroy, :failure]
 
         def new
           @providers = Core.configuration.authentication_providers.keys
@@ -45,6 +45,14 @@ module Panda
         rescue => e
           Rails.logger.error "Authentication error: #{e.message}"
           redirect_to admin_login_path, flash: {error: "Authentication failed: #{e.message}"}
+        end
+
+        def failure
+          message = params[:message] || "Authentication failed"
+          strategy = params[:strategy] || "unknown"
+          
+          Rails.logger.error "OmniAuth failure: strategy=#{strategy}, message=#{message}"
+          redirect_to admin_login_path, flash: {error: "Authentication failed: #{message}"}
         end
 
         def destroy

@@ -8,6 +8,9 @@ module Panda
       validates :email, presence: true, uniqueness: {case_sensitive: false}
 
       before_save :downcase_email
+      
+      # Scopes
+      scope :admin, -> { where(admin: true) }
 
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)

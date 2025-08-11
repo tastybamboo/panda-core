@@ -37,7 +37,15 @@ module Panda
       end
 
       initializer "panda_core.omniauth" do |app|
+        # Mount OmniAuth at configurable admin path
         app.middleware.use OmniAuth::Builder do
+          # Configure OmniAuth to use the configured admin path
+          configure do |config|
+            config.path_prefix = "#{Panda::Core.configuration.admin_path}/auth"
+            # Allow POST requests for request phase (required for CSRF protection)
+            config.allowed_request_methods = [:get, :post]
+          end
+          
           Panda::Core.configuration.authentication_providers.each do |provider_name, settings|
             case provider_name.to_s
             when "microsoft_graph"
