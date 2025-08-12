@@ -9,7 +9,20 @@
     <title><%= content_for(:title) || "Panda Admin" %></title>
     
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    
+    <% if Rails.env.test? || ENV["CI"].present? %>
+      <!-- Load compiled Panda Core assets for test environment -->
+      <link rel="stylesheet" href="/panda-core-assets/panda-core-<%= Panda::Core::VERSION %>.css">
+      <script src="/panda-core-assets/panda-core-<%= Panda::Core::VERSION %>.js" defer></script>
+      
+      <% if defined?(Panda::CMS) %>
+        <!-- Also load Panda CMS assets if CMS is present -->
+        <link rel="stylesheet" href="/panda-cms-assets/panda-cms-<%= Panda::CMS::VERSION %>.css">
+        <script src="/panda-cms-assets/panda-cms-<%= Panda::CMS::VERSION %>.js" defer></script>
+      <% end %>
+    <% else %>
+      <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <% end %>
     
     <%= yield :admin_head_extra %>
   </head>
