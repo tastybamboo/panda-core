@@ -16,7 +16,7 @@ jobs:
     env:
       BUNDLE_PATH: "vendor/bundle"
     steps:
-      - uses: "actions/checkout@v4"
+      - uses: "actions/checkout@v5"
       - uses: "ruby/setup-ruby@v1"
         with:
           bundler-cache: true
@@ -50,7 +50,21 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: "actions/checkout@v4"
+      - uses: "actions/checkout@v5"
+      - name: "Update VERSION"
+        env:
+          VERSION: ${{ github.event.pull_request.head.sha }}
+        run: |
+          echo "${VERSION}" >> VERSION
+      - name: "Set timezone"
+        run: |
+          sudo timedatectl set-timezone Europe/London
+      - name: "Install xvfb"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libvips
+          export DISPLAY=':99.0'
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
       - name: "Setup Ruby"
         uses: "ruby/setup-ruby@v1"
         with:
