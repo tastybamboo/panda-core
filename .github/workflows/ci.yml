@@ -1,10 +1,8 @@
 ---
-name: "App Tests"
+name: "CI"
 
 "on": # yamllint disable-line rule:truthy
   pull_request:
-    branches:
-      - "*"
   push:
     branches:
       - main
@@ -12,8 +10,8 @@ name: "App Tests"
     types: [checks_requested]
 
 jobs:
-  seclint:
-    name: "Security Checks & Linters"
+  lint:
+    name: "Linters"
     runs-on: "ubuntu-latest"
     env:
       BUNDLE_PATH: "vendor/bundle"
@@ -24,17 +22,19 @@ jobs:
           bundler-cache: true
       - name: "Bundler Audit"
         run: "bundle exec bundle-audit --update"
+      - name: "Brakeman"
+        run: "bundle exec brakeman --quiet"
       - name: "StandardRB Check"
         run: "bundle exec standardrb"
+      - name: "YAML Lint"
+        run: "yamllint -c .yamllint ."
 
-  specs:
-    name: "App Specs"
+  test:
+    name: "Tests"
     runs-on: "ubuntu-latest"
-    permissions:
-      contents: read
-      pull-requests: write
     env:
       BUNDLE_PATH: "vendor/bundle"
+      RAILS_ENV: test
     services:
       postgres:
         image: postgres:latest
@@ -69,27 +69,38 @@ jobs:
         uses: "ruby/setup-ruby@v1"
         with:
           bundler-cache: true
-      - name: "Run tests"
+
+      - name: "Setup test environment"
         env:
           DATABASE_URL: "postgres://postgres:password@localhost:5432/test"
-          REDIS_URL: "redis://localhost:6379/0"
           RAILS_ENV: "test"
           PG_USER: "postgres"
-          CAPYBARA_ARTIFACTS: "../tmp/capybara"
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          PT_SILENCE_AR_COMPAT_WARNING: true
-          # CUPRITE_DEBUG: "true"
         run: |
-          bundle exec rails db:migrate
-          xvfb-run -a bundle exec rspec -f j -o tmp/rspec_results.json -f p
-      - name: Keep screenshots from failed system tests
+          cd spec/dummy
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+
+      - name: "Compile assets"
+        working-directory: spec/dummy
+        env:
+          DATABASE_URL: "postgres://postgres:password@localhost:5432/test"
+          RAILS_ENV: test
+        run: |
+          bundle exec rake panda:core:assets:compile
+          echo "✅ Asset compilation complete"
+          echo "Assets in public directory:"
+          ls -la public/panda-core-assets/ || echo "No core assets directory"
+
+      - name: "Run specs"
+        env:
+          DATABASE_URL: "postgres://postgres:password@localhost:5432/test"
+          RAILS_ENV: "test"
+        run: |
+          bundle exec rspec
+
+      - name: "Upload coverage"
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
-          name: screenshots
-          path: ${{ github.workspace }}/spec/tmp/capybara
-          if-no-files-found: ignore
-      # - name: "Danger"
-      #   env:
-      #     DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
-      #   run: "RUNNING_IN_ACTIONS=true bundle exec danger"
+          name: coverage
+          path: coverage/

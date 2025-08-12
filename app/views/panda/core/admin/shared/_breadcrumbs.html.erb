@@ -1,0 +1,35 @@
+<% if defined?(@breadcrumbs) && @breadcrumbs.any? %>
+  <div class="flex">
+    <nav class="flex-1 px-4 py-3 text-gray-700 border-b border-gray-200 bg-gray-50" aria-label="Breadcrumb" id="panda-breadcrumbs">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <% @breadcrumbs.each_with_index do |breadcrumb, index| %>
+          <li class="inline-flex items-center">
+            <% if index > 0 %>
+              <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+              </svg>
+            <% end %>
+            
+            <% if breadcrumb.path && index < @breadcrumbs.length - 1 %>
+              <%= link_to breadcrumb.label, breadcrumb.path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" %>
+            <% else %>
+              <span class="text-sm font-medium text-gray-500"><%= breadcrumb.label %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ol>
+    </nav>
+    
+    <% if content_for?(:sidebar) %>
+      <div class="px-4 py-3 border-b border-gray-200 bg-gray-50 text-gray-700" tabindex="-1" data-controller="toggle">
+        <a href="#" id="slideover-toggle" data-action="click->toggle#toggle touch->toggle#toggle" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <%= yield(:sidebar_title) || "Settings" %>
+        </a>
+      </div>
+    <% end %>
+  </div>
+<% end %>

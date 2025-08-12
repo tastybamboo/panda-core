@@ -12,8 +12,7 @@ module OmniAuthHelpers
       uid: "123456",
       info: {
         email: user.email,
-        first_name: user.firstname,
-        last_name: user.lastname
+        name: user.name
       }
     })
 
@@ -30,7 +29,7 @@ module OmniAuthHelpers
       uid: "123456",
       info: {
         email: user.email,
-        name: "#{user.firstname} #{user.lastname}"
+        name: user.name
       }
     })
 
@@ -47,8 +46,7 @@ module OmniAuthHelpers
       uid: "123456",
       info: {
         email: user.email,
-        first_name: user.firstname,
-        last_name: user.lastname
+        name: user.name
       }
     })
 
@@ -59,34 +57,32 @@ module OmniAuthHelpers
     find("#button-sign-in-microsoft").click
   end
 
-  def login_as_admin(firstname: nil, lastname: nil, email: nil)
+  def login_as_admin(email: nil)
     login_with_google(admin_user)
   end
 
-  def login_as_user(firstname: nil, lastname: nil, email: nil)
+  def login_as_user(email: nil)
     login_with_google(regular_user)
   end
 
   # User defintions
   # TODO: Move to fixtures or Oaken?
   def admin_user
-    Panda::CMS::User.find_or_create_by!(
-      firstname: "Admin",
-      lastname: "User",
-      email: "admin@example.com",
-      admin: true,
-      image_url: "/panda-cms-assets/panda-nav.png"
-    )
+    Panda::Core::User.find_or_create_by!(email: "admin@example.com") do |user|
+      user.firstname = "Admin"
+      user.lastname = "User"
+      user.admin = true
+      user.image_url = "/panda-cms-assets/panda-nav.png"
+    end
   end
 
   def regular_user
-    Panda::CMS::User.find_or_create_by!(
-      firstname: "Regular",
-      lastname: "User",
-      email: "regular@example.com",
-      admin: false,
-      image_url: "/panda-cms-assets/panda-nav.png"
-    )
+    Panda::Core::User.find_or_create_by!(email: "regular@example.com") do |user|
+      user.firstname = "Regular"
+      user.lastname = "User"
+      user.admin = false
+      user.image_url = "/panda-cms-assets/panda-nav.png"
+    end
   end
 end
 

@@ -1,0 +1,27 @@
+<nav class="flex flex-col flex-1">
+  <ul role="list" class="flex flex-col flex-1 gap-y-7">
+    <li>
+      <ul role="list" class="-mx-2 space-y-1">
+        <% Panda::Core.configuration.admin_navigation_items&.call(current_user)&.each do |item| %>
+          <li>
+            <%= link_to item[:path], class: "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-200 hover:text-white hover:bg-gray-700" do %>
+              <i class="<%= item[:icon] %> text-gray-200 group-hover:text-white"></i>
+              <%= item[:label] %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+    
+    <li class="mt-auto">
+      <div class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-200">
+        <% if current_user %>
+          <span class="flex-1"><%= "#{current_user.firstname} #{current_user.lastname}" %></span>
+          <%= link_to panda_core.admin_logout_path, method: :delete, class: "text-gray-200 hover:text-white" do %>
+            <i class="fa-regular fa-sign-out"></i>
+          <% end %>
+        <% end %>
+      </div>
+    </li>
+  </ul>
+</nav>

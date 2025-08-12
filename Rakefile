@@ -5,3 +5,6 @@ load "rails/tasks/engine.rake"
 load "rails/tasks/statistics.rake"
 
 require "bundler/gem_tasks"
+
+# Load Panda Core rake tasks
+Dir[File.expand_path("lib/tasks/*.rake", __dir__)].each { |f| load f }

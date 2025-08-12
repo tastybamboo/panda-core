@@ -49,7 +49,7 @@ RSpec.configure do |config|
   end
 
   # Only run our specific specs
-  config.pattern = "{spec/lib/panda/core/configuration_spec.rb,spec/generators/panda/core/install_generator_spec.rb,spec/generators/panda/core/templates_generator_spec.rb}"
+  config.pattern = "{spec/lib/panda/core/configuration_spec.rb,spec/generators/panda/core/install_generator_spec.rb,spec/generators/panda/core/templates_generator_spec.rb,spec/models/**/*_spec.rb,spec/controllers/**/*_spec.rb}"
 
   # Exclude dummy app specs
   config.exclude_pattern = "spec/dummy/**/*_spec.rb"
@@ -99,6 +99,13 @@ RSpec.configure do |config|
   # Improve test performance
   config.before(:suite) do
     Rails.application.eager_load!
+    
+    # Reset column information for User model after migrations run
+    # This is necessary because Rails caches column info when the model loads
+    if defined?(Panda::Core::User)
+      Panda::Core::User.connection.schema_cache.clear!
+      Panda::Core::User.reset_column_information
+    end
   end
 
   # Disable logging during tests

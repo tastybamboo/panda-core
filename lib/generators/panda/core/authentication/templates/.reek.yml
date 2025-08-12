@@ -40,4 +40,4 @@ directories:
     TooManyStatements:
       enabled: false
     DuplicateMethodCall:
-      enabled: false 
+      enabled: false
