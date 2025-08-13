@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (0.2.0)
+    panda-core (0.2.1)
       importmap-rails
       omniauth
       omniauth-github

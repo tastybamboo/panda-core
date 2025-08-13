@@ -2,7 +2,8 @@
 
 Core functionality shared between Panda Software gems:
 
-- Panda CMS (https://github.com/tastybamboo/panda_cms)
+- [Panda CMS](https://github.com/tastybamboo/panda-cms)
+- [Panda Editor](https://github.com/tastybamboo/panda-editor)
 
 ## Installation
 
@@ -117,22 +118,14 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/tastyb
 
 ## Releasing
 
-For e.g. v0.1.8, run the following commands:
+Panda Core uses automated releases via GitHub Actions. When changes to `lib/panda/core/version.rb` are merged to the `main` branch:
 
-```bash
-RELEASE_VERSION=0.1.8
-git checkout -b release/v$RELEASE_VERSION
-gem bump --no-commit --version $RELEASE_VERSION
-bundle update
-git commit -am "Release $RELEASE_VERSION"
-git tag -a $RELEASE_VERSION -m "Release $RELEASE_VERSION"
-git push origin release/v$RELEASE_VERSION
-gem release panda-core -v $RELEASE_VERSION
-git checkout main && git merge release/v$RELEASE_VERSION
-git push origin main
-git push origin :release/v$RELEASE_VERSION
-```
+1. The CI workflow runs tests
+2. If tests pass, the auto-release workflow triggers
+3. A git tag is created automatically (e.g., `v0.2.1`)
+4. The gem is built and published to RubyGems
+5. A GitHub release is created with changelog
 
 ## License
 
-The gem is available as open source under the terms of the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause).
+Copyright 2024-2025 Otaina Limited. The gem is available as open source under the terms of the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause).
