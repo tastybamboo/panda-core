@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Panda::Core::User, type: :model do
-
   describe "validations" do
     subject { described_class.new(firstname: "Test", lastname: "User", email: "test@example.com") }
 
