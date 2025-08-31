@@ -209,3 +209,10 @@ Panda::Core.on(:admin_action) { |user, action, resource| audit_log(user, action,
 - Document new hook system and extension points
 
 This architecture transforms panda-core from a minimal utility library into a proper foundation for the Panda ecosystem, while keeping panda-cms focused on content management rather than authentication concerns.
+
+## Code Quality Commands
+
+```bash
+# Run YAML linter
+yamllint -c .yamllint .
+```
