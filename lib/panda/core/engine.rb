@@ -45,7 +45,7 @@ module Panda
             # Allow POST requests for request phase (required for CSRF protection)
             config.allowed_request_methods = [:get, :post]
           end
-          
+
           Panda::Core.configuration.authentication_providers.each do |provider_name, settings|
             case provider_name.to_s
             when "microsoft_graph"

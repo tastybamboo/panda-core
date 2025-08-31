@@ -99,7 +99,7 @@ RSpec.configure do |config|
   # Improve test performance
   config.before(:suite) do
     Rails.application.eager_load!
-    
+
     # Reset column information for User model after migrations run
     # This is necessary because Rails caches column info when the model loads
     if defined?(Panda::Core::User)

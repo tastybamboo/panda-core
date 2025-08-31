@@ -19,9 +19,9 @@ module Panda
           # Create or update the user in the test database
           Panda::Core::User.find_or_create_by(email: email) do |u|
             # Split name into firstname and lastname
-            parts = name.split(' ', 2)
+            parts = name.split(" ", 2)
             u.firstname = parts[0] || name
-            u.lastname = parts[1] || ''
+            u.lastname = parts[1] || ""
             u.admin = is_admin
           end
         end

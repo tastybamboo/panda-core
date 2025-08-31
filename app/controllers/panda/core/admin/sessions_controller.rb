@@ -28,7 +28,7 @@ module Panda
               redirect_to admin_login_path, flash: {error: "You do not have permission to access the admin area"}
               return
             end
-            
+
             session[:user_id] = user.id
             Panda::Core::Current.user = user
 
@@ -50,7 +50,7 @@ module Panda
         def failure
           message = params[:message] || "Authentication failed"
           strategy = params[:strategy] || "unknown"
-          
+
           Rails.logger.error "OmniAuth failure: strategy=#{strategy}, message=#{message}"
           redirect_to admin_login_path, flash: {error: "Authentication failed: #{message}"}
         end
