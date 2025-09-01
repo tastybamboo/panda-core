@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreatePandaCoreUsersTable < ActiveRecord::Migration[7.1]
+class CreatePandaCoreUsers < ActiveRecord::Migration[7.1]
   def change
     unless table_exists?(:panda_core_users)
       create_table :panda_core_users, id: :uuid do |t|

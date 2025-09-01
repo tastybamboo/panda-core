@@ -14,5 +14,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_21_012334) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
   enable_extension "pg_catalog.plpgsql"
-
 end
