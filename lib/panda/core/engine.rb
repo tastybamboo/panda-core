@@ -18,6 +18,17 @@ module Panda
       config.autoload_paths += Dir[root.join("app", "builders")]
       config.autoload_paths += Dir[root.join("app", "components")]
 
+      # Make files in public available to the main app (e.g. /panda-core-assets/panda-logo.png)
+      config.app_middleware.use(
+        Rack::Static,
+        urls: ["/panda-core-assets"],
+        root: Panda::Core::Engine.root.join("public"),
+        header_rules: [
+          # Disable caching in development for instant CSS updates
+          [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
+        ]
+      )
+
       config.generators do |g|
         g.test_framework :rspec
         g.fixture_replacement :factory_bot
