@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html data-theme="<%= Panda::Core::Current&.user&.current_theme || "default" %>" class="<%= local_assigns[:html_class] || "" %>">
   <head>
-    <title><%= content_for?(:title) ? yield(:title) : "Panda Admin" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : (Panda::Core.configuration.admin_title || "Panda Admin") %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <script src="https://kit.fontawesome.com/7835d81e75.js" defer="true" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/panda-core-assets/panda-core.css">
     <%= yield :head %>
   </head>
-  <body class="h-full" data-environment="<%= Rails.env %>">
+  <body class="h-full <%= local_assigns[:body_class] || "" %>" data-environment="<%= Rails.env %>">

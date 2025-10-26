@@ -21,6 +21,7 @@ module Panda
         :available_themes,
         :login_logo_path,
         :login_page_title,
+        :admin_title,
         :initial_admin_breadcrumb,
         :dashboard_redirect_path
 
