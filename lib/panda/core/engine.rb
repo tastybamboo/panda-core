@@ -36,6 +36,7 @@ module Panda
         # Configuration is already initialized with defaults in Configuration class
       end
 
+
       initializer "panda_core.omniauth" do |app|
         # Mount OmniAuth at configurable admin path
         app.middleware.use OmniAuth::Builder do

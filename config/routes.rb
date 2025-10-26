@@ -1,6 +1,7 @@
 Panda::Core::Engine.routes.draw do
-  # Use the configured admin path (defaults to "/admin")
-  admin_path = Panda::Core.configuration.admin_path.delete_prefix("/")
+  # Get admin_path from configuration
+  # Default to "/admin" if not yet configured
+  admin_path = (Panda::Core.configuration.admin_path || "/admin").delete_prefix("/")
 
   scope path: admin_path, as: "admin" do
     get "/login", to: "admin/sessions#new", as: :login

@@ -37,8 +37,33 @@ module Panda
         @authentication_providers = {}
         @admin_path = "/admin"
 
-        # Hook system for extending admin UI
-        @admin_navigation_items = ->(user) { [] }
+        # Hook system for extending admin UI with sensible defaults
+        @admin_navigation_items = ->(user) {
+          items = [
+            {
+              label: "Dashboard",
+              path: @admin_path,
+              icon: "fa-regular fa-house"
+            }
+          ]
+
+          # Add CMS navigation if available
+          if defined?(Panda::CMS)
+            items << {
+              label: "Content",
+              path: "#{@admin_path}/cms",
+              icon: "fa-regular fa-file-lines"
+            }
+          end
+
+          items << {
+            label: "My Profile",
+            path: "#{@admin_path}/my_profile/edit",
+            icon: "fa-regular fa-user"
+          }
+
+          items
+        }
         @admin_dashboard_widgets = ->(user) { [] }
         @user_attributes = []
         @user_associations = []
