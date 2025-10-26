@@ -49,6 +49,15 @@
     content: "";
     inset: 0;
   }
+
+  /* Admin gradient backgrounds */
+  html[data-theme="default"] .bg-gradient-admin {
+    background: linear-gradient(to bottom right, rgb(33, 29, 73), rgb(141, 94, 183));
+  }
+
+  html[data-theme="sky"] .bg-gradient-admin {
+    background: linear-gradient(to bottom right, rgb(20, 32, 74), rgb(42, 102, 159));
+  }
 }
 
 /* EditorJS content styles */
