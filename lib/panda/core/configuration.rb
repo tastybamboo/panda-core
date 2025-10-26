@@ -19,6 +19,7 @@ module Panda
         :authorization_policy,
         :additional_user_params,
         :available_themes,
+        :default_theme,
         :login_logo_path,
         :login_page_title,
         :admin_title,
@@ -37,6 +38,7 @@ module Panda
         @session_token_cookie = :panda_session
         @authentication_providers = {}
         @admin_path = "/admin"
+        @default_theme = "default"
 
         # Hook system for extending admin UI with sensible defaults
         @admin_navigation_items = ->(user) {

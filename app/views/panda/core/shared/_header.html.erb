@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="<%= Panda::Core::Current&.user&.current_theme || "default" %>" class="<%= local_assigns[:html_class] || "" %>">
+<html data-theme="<%= Panda::Core::Current&.user&.current_theme || Panda::Core.configuration.default_theme %>" class="<%= local_assigns[:html_class] || "" %>">
   <head>
     <title><%= content_for?(:title) ? yield(:title) : (Panda::Core.configuration.admin_title || "Panda Admin") %></title>
     <%= csrf_meta_tags %>
