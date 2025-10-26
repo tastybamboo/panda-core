@@ -14,7 +14,7 @@
       <% provider_name = provider_config&.dig(:name) || provider.to_s.humanize %>
       <div class="mt-4 text-center sm:mx-auto sm:w-full sm:max-w-sm">
         <%= form_tag "#{Panda::Core.configuration.admin_path}/auth/#{provider}", method: "post", data: {turbo: false} do %>
-          <button type="submit" id="button-sign-in-<%= provider %>" class="inline-flex gap-x-2 items-center py-2.5 px-3.5 mx-auto mb-4 bg-white rounded-md border min-w-56 border-neutral-400">
+          <button type="submit" id="button-sign-in-<%= provider %>" class="inline-flex gap-x-2 items-center py-2.5 px-3.5 mx-auto mb-4 bg-white text-gray-900 rounded-md border min-w-56 border-neutral-400 hover:bg-gray-50">
             <i class="fa-brands fa-<%= provider %> text-xl mr-1"></i>
             Sign in with <%= provider_name %>
           </button>
