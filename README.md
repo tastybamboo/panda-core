@@ -61,45 +61,73 @@ Make sure to follow the setup instructions for each of these gems.
 
 ## Configuration
 
-### Admin Path
-
-By default, the admin panel is available at `/admin`. You can customize this in your Panda Core initializer:
+Panda Core is configured in `config/initializers/panda.rb`. The install generator creates this file with a complete default configuration:
 
 ```ruby
-# config/initializers/panda_core.rb
+# config/initializers/panda.rb
 Panda::Core.configure do |config|
-  # Option 1: Set directly
-  config.admin_path = "/manage"
+  config.admin_path = "/admin"
 
-  # Option 2: Read from environment variable (recommended)
-  config.admin_path = ENV.fetch("PANDA_ADMIN_PATH", "/admin")
+  config.login_page_title = "Panda Admin"
+  config.admin_title = "Panda Admin"
+
+  config.authentication_providers = {
+    google_oauth2: {
+      enabled: true,
+      name: "Google",
+      client_id: Rails.application.credentials.dig(:google, :client_id),
+      client_secret: Rails.application.credentials.dig(:google, :client_secret),
+      options: {
+        scope: "email,profile",
+        prompt: "select_account",
+        hd: "yourdomain.com" # Restrict to specific domain
+      }
+    }
+  }
+
+  # Core settings
+  config.session_token_cookie = :panda_session
+  config.user_class = "Panda::Core::User"
+  config.user_identity_class = "Panda::Core::UserIdentity"
+  config.storage_provider = :active_storage
+  config.cache_store = :memory_store
+
+  # Optional editor configuration
+  # config.editor_js_tools = []
+  # config.editor_js_tool_config = {}
 end
 ```
 
-If using environment variables, add to your `.env` file:
+### Authentication Providers
 
-```bash
-# .env
-PANDA_ADMIN_PATH=/manage
+Panda Core supports multiple OAuth providers. Configure your credentials in Rails credentials:
+
+```yaml
+# config/credentials.yml.enc
+google:
+  client_id: "your-google-client-id"
+  client_secret: "your-google-client-secret"
+
+microsoft:
+  client_id: "your-microsoft-client-id"
+  client_secret: "your-microsoft-client-secret"
 ```
 
-**Important**: You'll need a gem like `dotenv-rails` to load environment variables from `.env` files:
+Then reference them in your initializer. You can enable multiple providers simultaneously.
+
+### Admin Path
+
+The `admin_path` setting controls where the admin interface is mounted (default: `/admin`). You can customize this to avoid route conflicts or match your preferences:
 
 ```ruby
-# Gemfile
-gem "dotenv-rails"
-
-# config/boot.rb (add before requiring bootsnap)
-require "dotenv/load"
+config.admin_path = "/manage"  # Custom admin path
 ```
 
 This is useful when:
 - You want to avoid conflicts with existing routes
-- You prefer a different URL structure for your admin panel
+- You prefer a different URL structure
 - You're running multiple admin interfaces
-- You need different admin paths per environment (staging, production, etc.)
-
-Remember to restart your server after changing the admin path.
+- You need different admin paths per environment
 
 ### Asset Pipeline
 

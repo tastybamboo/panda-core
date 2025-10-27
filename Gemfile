@@ -5,6 +5,9 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in panda-core.gemspec
 gemspec
 
+# Tailwind CSS for admin interface
+gem "tailwindcss-rails"
+
 # Development and testing dependencies
 group :development, :test do
   gem "annotaterb"

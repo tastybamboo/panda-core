@@ -1,0 +1,25 @@
+===============================================================================
+
+Panda Core has been installed!
+
+Next steps:
+
+1. Install and run migrations:
+
+   rails panda:core:install:migrations
+   rails db:migrate
+
+2. Configure authentication providers in config/initializers/panda.rb
+   (Uncomment and configure the providers you want to use)
+
+3. Add the required OAuth gems to your Gemfile:
+
+   gem 'omniauth-google-oauth2'  # For Google authentication
+   gem 'omniauth-microsoft_graph' # For Microsoft authentication
+   gem 'omniauth-github'         # For GitHub authentication
+
+4. Configure your OAuth credentials in Rails credentials:
+
+   rails credentials:edit
+
+===============================================================================

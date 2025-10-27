@@ -76,7 +76,8 @@ module Panda
         @additional_user_params = []
         @available_themes = [["Default", "default"], ["Sky", "sky"]]
         @login_logo_path = nil
-        @login_page_title = "Sign in to your account"
+        @login_page_title = "Panda Admin"
+        @admin_title = "Panda Admin"
         @initial_admin_breadcrumb = nil  # Proc that returns [label, path]
         @dashboard_redirect_path = nil  # Path to redirect to after login (defaults to admin_root_path)
       end
