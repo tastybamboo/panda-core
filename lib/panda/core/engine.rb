@@ -76,13 +76,21 @@ module Panda
           end
 
           Panda::Core.configuration.authentication_providers.each do |provider_name, settings|
+            # Build provider options, allowing custom path name override
+            provider_options = settings[:options] || {}
+
+            # If path_name is specified, use it to override the default strategy name in URLs
+            if settings[:path_name].present?
+              provider_options = provider_options.merge(name: settings[:path_name])
+            end
+
             case provider_name.to_s
             when "microsoft_graph"
-              provider :microsoft_graph, settings[:client_id], settings[:client_secret], settings[:options] || {}
+              provider :microsoft_graph, settings[:client_id], settings[:client_secret], provider_options
             when "google_oauth2"
-              provider :google_oauth2, settings[:client_id], settings[:client_secret], settings[:options] || {}
+              provider :google_oauth2, settings[:client_id], settings[:client_secret], provider_options
             when "github"
-              provider :github, settings[:client_id], settings[:client_secret], settings[:options] || {}
+              provider :github, settings[:client_id], settings[:client_secret], provider_options
             when "developer"
               provider :developer if Rails.env.development?
             end

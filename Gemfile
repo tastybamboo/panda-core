@@ -5,8 +5,10 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in panda-core.gemspec
 gemspec
 
-# Tailwind CSS for admin interface
-gem "tailwindcss-rails"
+# Development dependencies
+group :development do
+  gem "tailwindcss-rails" # Only needed for asset compilation in development
+end
 
 # Development and testing dependencies
 group :development, :test do
