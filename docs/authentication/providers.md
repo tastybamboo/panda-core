@@ -51,6 +51,8 @@ Panda::Core.configure do |config|
   config.authentication_providers = {
     # Google OAuth2
     google_oauth2: {
+      name: "Google",  # Optional: Custom display name (defaults to humanized provider name)
+      icon: "google",  # Optional: FontAwesome icon name (auto-detected for common providers)
       client_id: Rails.application.credentials.dig(:google, :client_id),
       client_secret: Rails.application.credentials.dig(:google, :client_secret),
       options: {
@@ -59,9 +61,11 @@ Panda::Core.configure do |config|
         prompt: "select_account"
       }
     },
-    
+
     # Microsoft Graph
     microsoft_graph: {
+      name: "Microsoft",  # Optional: Custom display name
+      icon: "microsoft",  # Optional: FontAwesome icon name (auto-detected)
       client_id: Rails.application.credentials.dig(:microsoft, :client_id),
       client_secret: Rails.application.credentials.dig(:microsoft, :client_secret),
       options: {
@@ -73,9 +77,11 @@ Panda::Core.configure do |config|
         }
       }
     },
-    
+
     # GitHub
     github: {
+      name: "GitHub",  # Optional: Custom display name
+      icon: "github",  # Optional: FontAwesome icon name (auto-detected)
       client_id: Rails.application.credentials.dig(:github, :client_id),
       client_secret: Rails.application.credentials.dig(:github, :client_secret),
       options: {
@@ -124,6 +130,50 @@ end
 4. Callback URLs:
    - Development: `http://localhost:3000/admin/auth/github/callback`
    - Production: `https://your-app.com/admin/auth/github/callback`
+
+## Customizing Provider Display
+
+### Display Names
+
+You can customize how provider names appear on the login button using the `name` field:
+
+```ruby
+google_oauth2: {
+  name: "Google Workspace",  # Will show "Sign in with Google Workspace"
+  # ... other config
+}
+```
+
+If not specified, the provider name will be humanized (e.g., `google_oauth2` becomes "Google OAuth2").
+
+### Icons
+
+Provider buttons use FontAwesome icons. For the three built-in providers (`google_oauth2`, `microsoft_graph`, `github`), icons are automatically mapped to the correct FontAwesome icon names:
+
+- `google_oauth2` → `fa-google`
+- `microsoft_graph` → `fa-microsoft`
+- `github` → `fa-github`
+
+You can override the icon for any provider:
+
+```ruby
+google_oauth2: {
+  icon: "google",  # Use a different FontAwesome brand icon
+  # ... other config
+}
+```
+
+For custom OAuth providers, specify the icon explicitly:
+
+```ruby
+custom_provider: {
+  name: "My Custom SSO",
+  icon: "building",  # Any FontAwesome brand icon name
+  # ... other config
+}
+```
+
+**Note:** Icons use the `fa-brands` FontAwesome family. Ensure the icon name you specify exists in FontAwesome's brand icon set.
 
 ## Auto-provisioning Users
 

@@ -11,9 +11,8 @@ module Panda
           if Panda::Core.configuration.dashboard_redirect_path
             redirect_to Panda::Core.configuration.dashboard_redirect_path
           else
-            # This can be overridden by applications using panda-core
-            # For now, just render a basic view
-            render plain: "Welcome to Panda Admin"
+            # Render the dashboard view
+            render :show
           end
         end
       end

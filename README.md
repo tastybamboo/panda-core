@@ -59,6 +59,191 @@ The gems listed in the `panda-core.gemspec` will be added to your Gemfile (or, i
 
 Make sure to follow the setup instructions for each of these gems.
 
+## Configuration
+
+Panda Core is configured in `config/initializers/panda.rb`. The install generator creates this file with a complete default configuration:
+
+```ruby
+# config/initializers/panda.rb
+Panda::Core.configure do |config|
+  config.admin_path = "/admin"
+
+  config.login_page_title = "Panda Admin"
+  config.admin_title = "Panda Admin"
+
+  config.authentication_providers = {
+    google_oauth2: {
+      enabled: true,
+      name: "Google",
+      client_id: Rails.application.credentials.dig(:google, :client_id),
+      client_secret: Rails.application.credentials.dig(:google, :client_secret),
+      options: {
+        scope: "email,profile",
+        prompt: "select_account",
+        hd: "yourdomain.com" # Restrict to specific domain
+      }
+    }
+  }
+
+  # Core settings
+  config.session_token_cookie = :panda_session
+  config.user_class = "Panda::Core::User"
+  config.user_identity_class = "Panda::Core::UserIdentity"
+  config.storage_provider = :active_storage
+  config.cache_store = :memory_store
+
+  # Optional editor configuration
+  # config.editor_js_tools = []
+  # config.editor_js_tool_config = {}
+end
+```
+
+### Authentication Providers
+
+Panda Core supports multiple OAuth providers. Configure your credentials in Rails credentials:
+
+```yaml
+# config/credentials.yml.enc
+google:
+  client_id: "your-google-client-id"
+  client_secret: "your-google-client-secret"
+
+microsoft:
+  client_id: "your-microsoft-client-id"
+  client_secret: "your-microsoft-client-secret"
+```
+
+Then reference them in your initializer. You can enable multiple providers simultaneously.
+
+### Admin Path
+
+The `admin_path` setting controls where the admin interface is mounted (default: `/admin`). You can customize this to avoid route conflicts or match your preferences:
+
+```ruby
+config.admin_path = "/manage"  # Custom admin path
+```
+
+This is useful when:
+- You want to avoid conflicts with existing routes
+- You prefer a different URL structure
+- You're running multiple admin interfaces
+- You need different admin paths per environment
+
+### Asset Pipeline
+
+Panda Core provides the **single source of truth** for all Panda admin interface styling. This includes:
+
+- Base Tailwind CSS utilities and theme system
+- EditorJS content styles (used by Panda CMS)
+- Admin component styles
+- Form styles and typography
+
+**Asset Compilation**
+
+Panda Core uses Tailwind CSS v4 to compile all admin interface styling.
+
+**Quick Start** - Compile full CSS (Core + CMS):
+
+```bash
+cd /path/to/panda-core
+
+bundle exec tailwindcss -i app/assets/tailwind/application.css \
+  -o public/panda-core-assets/panda-core.css \
+  --content '../cms/app/views/**/*.erb' \
+  --content '../cms/app/components/**/*.rb' \
+  --content '../cms/app/javascript/**/*.js' \
+  --content 'app/views/**/*.erb' \
+  --content 'app/components/**/*.rb' \
+  --minify
+```
+
+**Result**: `panda-core.css` (~37KB) with all utility classes
+
+**Important**: Always compile with full content before committing!
+
+For complete documentation on:
+- Development workflows (Core-only vs full stack)
+- Release processes
+- Troubleshooting
+- Best practices
+
+See **[docs/ASSET_COMPILATION.md](docs/ASSET_COMPILATION.md)**
+
+**How Asset Serving Works:**
+
+Core's Rack middleware serves `/panda-core-assets/` from the gem's `public/` directory:
+
+```ruby
+# In Core's engine.rb
+config.app_middleware.use(Rack::Static,
+  urls: ["/panda-core-assets"],
+  root: Panda::Core::Engine.root.join("public")
+)
+```
+
+This means:
+- ✅ CMS and other gems automatically load CSS from Core
+- ✅ No copying needed - served directly from gem
+- ✅ Version changes are instant (just restart server)
+- ✅ Single source of truth for all admin styling
+
+**What Gets Compiled:**
+
+The compilation process:
+- Scans all Core and CMS views/components for Tailwind classes (via `tailwind.config.js`)
+- Includes EditorJS content styles for rich text editing
+- Applies theme variables for default and sky themes
+- Outputs a single minified CSS file (~37KB)
+
+**Asset Serving**
+
+Panda Core automatically serves compiled assets from `/panda-core-assets/` using Rack::Static middleware configured in the engine.
+
+**How Panda CMS Uses Core Styling**
+
+Panda CMS depends on Panda Core and loads its CSS automatically:
+
+```erb
+<!-- In CMS views -->
+<link rel="stylesheet" href="/panda-core-assets/panda-core.css">
+```
+
+CMS no longer compiles its own CSS - all styling comes from Core.
+
+**Content Scanning**
+
+The `tailwind.config.js` file configures content scanning to include:
+- Core views: `../../app/views/**/*.html.erb`
+- Core components: `../../app/components/**/*.rb`
+- CMS views: `../../../cms/app/views/**/*.html.erb`
+- CMS components: `../../../cms/app/components/**/*.rb`
+- CMS JavaScript: `../../../cms/app/javascript/**/*.js`
+
+This ensures all Tailwind classes used across the Panda ecosystem are included in the compiled CSS.
+
+**Customizing Styles**
+
+To customize the admin interface styles:
+
+1. Edit `app/assets/tailwind/application.css` in panda-core
+2. Add custom CSS in the appropriate `@layer` (base, components, or utilities)
+3. Recompile: `bundle exec tailwindcss -i app/assets/tailwind/application.css -o public/panda-core-assets/panda-core.css --minify`
+4. Copy the updated CSS to test locations if needed
+5. Restart your Rails server to see changes
+
+**Theme System**
+
+Panda Core provides two built-in themes accessible via `data-theme` attribute:
+
+- `default`: Purple/pink color scheme
+- `sky`: Blue color scheme
+
+Themes use CSS custom properties that can be referenced in your styles:
+- `--color-white`, `--color-black`
+- `--color-light`, `--color-mid`, `--color-dark`
+- `--color-highlight`, `--color-active`, `--color-inactive`
+- `--color-warning`, `--color-error`
+
 ## Development
 
 After checking out the repo:

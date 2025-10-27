@@ -23,7 +23,7 @@ module Panda
       end
 
       def create_initializer
-        template "initializer.rb", "config/initializers/panda_core.rb"
+        template "initializer.rb", "config/initializers/panda.rb"
       end
 
       def mount_engine
@@ -33,14 +33,8 @@ module Panda
         route 'mount Panda::Core::Engine => "/"'
       end
 
-      def copy_migrations
-        return if options[:skip_migrations]
-        return unless options[:orm] == "active_record"
-
-        migrations_path = File.expand_path("../../../../db/migrate", __dir__)
-        Dir.glob("#{migrations_path}/*.rb").each do |migration|
-          migration_template migration, "db/migrate/#{File.basename(migration)}"
-        end
+      def show_readme
+        readme "README" if behavior == :invoke
       end
     end
   end

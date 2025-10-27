@@ -5,6 +5,11 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in panda-core.gemspec
 gemspec
 
+# Development dependencies
+group :development do
+  gem "tailwindcss-rails" # Only needed for asset compilation in development
+end
+
 # Development and testing dependencies
 group :development, :test do
   gem "annotaterb"

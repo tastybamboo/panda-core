@@ -3,6 +3,8 @@
 module Panda
   module Core
     class AdminController < ApplicationController
+      layout "panda/core/admin"
+
       # Automatically require admin authentication for all admin controllers
       before_action :authenticate_admin_user!
       before_action :set_initial_breadcrumb

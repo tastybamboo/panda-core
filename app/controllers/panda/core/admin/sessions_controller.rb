@@ -13,9 +13,12 @@ module Panda
 
         def create
           auth = request.env["omniauth.auth"]
-          provider = params[:provider]&.to_sym
+          provider_path = params[:provider]&.to_sym
 
-          unless Core.configuration.authentication_providers.key?(provider)
+          # Find the actual provider key (might be using path_name override)
+          provider = find_provider_by_path(provider_path)
+
+          unless provider && Core.configuration.authentication_providers.key?(provider)
             redirect_to admin_login_path, flash: {error: "Authentication provider not enabled"}
             return
           end
@@ -62,6 +65,21 @@ module Panda
           ActiveSupport::Notifications.instrument("panda.core.user_logout")
 
           redirect_to admin_login_path, flash: {success: "Successfully logged out"}
+        end
+
+        private
+
+        # Find the provider key by path name (handles path_name override)
+        def find_provider_by_path(provider_path)
+          # First check if it's a direct match
+          return provider_path if Core.configuration.authentication_providers.key?(provider_path)
+
+          # Then check if any provider has a matching path_name
+          Core.configuration.authentication_providers.each do |key, config|
+            return key if config[:path_name]&.to_sym == provider_path
+          end
+
+          nil
         end
       end
     end
