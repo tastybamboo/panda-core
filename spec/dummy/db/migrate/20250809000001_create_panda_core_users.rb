@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreatePandaCoreUsersDummy < ActiveRecord::Migration[7.1]
+class CreatePandaCoreUsers < ActiveRecord::Migration[7.1]
   def change
     create_table :panda_core_users, id: :uuid do |t|
       t.string :firstname, null: false
