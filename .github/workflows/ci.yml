@@ -106,7 +106,9 @@ jobs:
         env:
           DATABASE_URL: "postgres://postgres:password@postgres:5432/test"
           RAILS_ENV: "test"
-          PG_USER: "postgres"
+          PGUSER: postgres
+          PGPASSWORD: password
+          PGHOST: postgres
         run: |
           cd spec/dummy
           bundle exec rails db:create
@@ -117,6 +119,9 @@ jobs:
         env:
           DATABASE_URL: "postgres://postgres:password@postgres:5432/test"
           RAILS_ENV: test
+          PGUSER: postgres
+          PGPASSWORD: password
+          PGHOST: postgres
         run: |
           bundle exec rake panda:core:assets:compile
           echo "✅ Asset compilation complete"
@@ -127,6 +132,9 @@ jobs:
         env:
           DATABASE_URL: "postgres://postgres:password@postgres:5432/test"
           RAILS_ENV: "test"
+          PGUSER: postgres
+          PGPASSWORD: password
+          PGHOST: postgres
         run: |
           bundle exec rspec
 
