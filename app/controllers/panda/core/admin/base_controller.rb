@@ -16,8 +16,8 @@ module Panda
         # Include helper modules
         helper Panda::Core::SessionsHelper
 
-        before_action :authenticate_admin_user!
         before_action :set_current_request_details
+        before_action :authenticate_admin_user!
 
         helper_method :breadcrumbs
         helper_method :current_user
