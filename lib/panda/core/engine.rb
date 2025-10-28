@@ -71,8 +71,9 @@ module Panda
           # Configure OmniAuth to use the configured admin path
           configure do |config|
             config.path_prefix = "#{Panda::Core.config.admin_path}/auth"
-            # Allow POST requests for request phase (required for CSRF protection)
-            config.allowed_request_methods = [:get, :post]
+            # POST-only for CSRF protection (CVE-2015-9284)
+            # All login forms use POST via form_tag method: "post"
+            config.allowed_request_methods = [:post]
           end
 
           Panda::Core.config.authentication_providers.each do |provider_name, settings|

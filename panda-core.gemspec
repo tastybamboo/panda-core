@@ -5,8 +5,8 @@ require_relative "lib/panda/core/version"
 Gem::Specification.new do |spec|
   spec.name = "panda-core"
   spec.version = Panda::Core::VERSION
-  spec.authors = ["Tasty Bamboo", "James Inman"]
-  spec.email = ["bamboo@pandacms.io"]
+  spec.authors = ["Otaina Limited", "James Inman"]
+  spec.email = ["james@otaina.co.uk"]
 
   spec.summary = "Core libraries and development tools for Tasty Bamboo projects"
   spec.description = "Shared development tools, configurations, and utilities for Panda CMS and its related projects"
