@@ -8,7 +8,7 @@ module Panda
         skip_before_action :authenticate_admin_user!, only: [:new, :create, :destroy, :failure]
 
         def new
-          @providers = Core.configuration.authentication_providers.keys
+          @providers = Core.config.authentication_providers.keys
         end
 
         def create
@@ -18,7 +18,7 @@ module Panda
           # Find the actual provider key (might be using path_name override)
           provider = find_provider_by_path(provider_path)
 
-          unless provider && Core.configuration.authentication_providers.key?(provider)
+          unless provider && Core.config.authentication_providers.key?(provider)
             redirect_to admin_login_path, flash: {error: "Authentication provider not enabled"}
             return
           end
@@ -40,7 +40,7 @@ module Panda
               provider: provider)
 
             # Use configured dashboard path or default to admin_root_path
-            redirect_path = Panda::Core.configuration.dashboard_redirect_path || admin_root_path
+            redirect_path = Panda::Core.config.dashboard_redirect_path || admin_root_path
             redirect_to redirect_path, flash: {success: "Successfully logged in as #{user.name}"}
           else
             redirect_to admin_login_path, flash: {error: "Unable to create account: #{user.errors.full_messages.join(", ")}"}
@@ -72,10 +72,10 @@ module Panda
         # Find the provider key by path name (handles path_name override)
         def find_provider_by_path(provider_path)
           # First check if it's a direct match
-          return provider_path if Core.configuration.authentication_providers.key?(provider_path)
+          return provider_path if Core.config.authentication_providers.key?(provider_path)
 
           # Then check if any provider has a matching path_name
-          Core.configuration.authentication_providers.each do |key, config|
+          Core.config.authentication_providers.each do |key, config|
             return key if config[:path_name]&.to_sym == provider_path
           end
 

@@ -13,7 +13,7 @@ RSpec.describe Panda::Core do
     end
 
     it "has default values" do
-      config = described_class.configuration
+      config = described_class.config
       expect(config.authentication_providers).to eq({})
       expect(config.storage_provider).to eq(:active_storage)
       expect(config.cache_store).to eq(:memory_store)
@@ -30,7 +30,7 @@ RSpec.describe Panda::Core do
         config.admin_path = "/custom_admin"
       end
 
-      config = described_class.configuration
+      config = described_class.config
       expect(config.user_class).to eq("CustomUser")
       expect(config.authentication_providers).to eq({github: {client_id: "123"}})
       expect(config.storage_provider).to eq(:s3)
@@ -39,7 +39,7 @@ RSpec.describe Panda::Core do
     end
 
     it "has hook system settings with defaults" do
-      config = described_class.configuration
+      config = described_class.config
       expect(config.admin_navigation_items).to respond_to(:call)
       expect(config.admin_dashboard_widgets).to respond_to(:call)
       expect(config.user_attributes).to eq([])

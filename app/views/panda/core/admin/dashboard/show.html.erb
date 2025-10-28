@@ -3,8 +3,8 @@
     <% container.with_heading(text: "Dashboard", level: 1) %>
     
     <% # Hook for dashboard widgets %>
-    <% if Panda::Core.configuration.admin_dashboard_widgets %>
-      <% widgets = Panda::Core.configuration.admin_dashboard_widgets.call(current_user) %>
+    <% if Panda::Core.config.admin_dashboard_widgets %>
+      <% widgets = Panda::Core.config.admin_dashboard_widgets.call(current_user) %>
       <% if widgets && widgets.any? %>
         <div class="grid grid-cols-1 gap-5 mt-5 sm:grid-cols-3">
           <% widgets.each do |widget| %>

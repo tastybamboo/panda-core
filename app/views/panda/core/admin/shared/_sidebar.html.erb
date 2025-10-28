@@ -2,7 +2,7 @@
   <ul role="list" class="flex flex-col flex-1 gap-y-7">
     <li>
       <ul role="list" class="-mx-2 space-y-1">
-        <% Panda::Core.configuration.admin_navigation_items&.call(current_user)&.each do |item| %>
+        <% Panda::Core.config.admin_navigation_items&.call(current_user)&.each do |item| %>
           <li>
             <%= link_to item[:path], class: "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-200 hover:text-white hover:bg-gray-700" do %>
               <i class="<%= item[:icon] %> text-gray-200 group-hover:text-white"></i>

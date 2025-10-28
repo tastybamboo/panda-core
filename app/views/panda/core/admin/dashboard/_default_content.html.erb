@@ -46,8 +46,8 @@
     </div>
 
     <% # Hook for additional dashboard cards %>
-    <% if Panda::Core.configuration.respond_to?(:admin_dashboard_cards) %>
-      <% cards = Panda::Core.configuration.admin_dashboard_cards&.call(current_user) %>
+    <% if Panda::Core.config.respond_to?(:admin_dashboard_cards) %>
+      <% cards = Panda::Core.config.admin_dashboard_cards&.call(current_user) %>
       <% cards&.each do |card| %>
         <div class="bg-white overflow-hidden shadow rounded-lg">
           <div class="px-4 py-5 sm:p-6">

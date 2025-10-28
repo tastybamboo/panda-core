@@ -20,7 +20,7 @@ RSpec.describe Panda::Core::SessionsHelper, type: :helper do
 
     context "with custom icon in provider config" do
       before do
-        allow(Panda::Core.configuration).to receive(:authentication_providers).and_return(
+        allow(Panda::Core.config).to receive(:authentication_providers).and_return(
           custom_provider: {
             icon: "building",
             name: "Custom SSO"
@@ -35,7 +35,7 @@ RSpec.describe Panda::Core::SessionsHelper, type: :helper do
 
     context "with explicit icon override for built-in provider" do
       before do
-        allow(Panda::Core.configuration).to receive(:authentication_providers).and_return(
+        allow(Panda::Core.config).to receive(:authentication_providers).and_return(
           google_oauth2: {
             icon: "custom-google",
             name: "Google"
@@ -50,7 +50,7 @@ RSpec.describe Panda::Core::SessionsHelper, type: :helper do
 
     context "with unknown provider and no config" do
       before do
-        allow(Panda::Core.configuration).to receive(:authentication_providers).and_return({})
+        allow(Panda::Core.config).to receive(:authentication_providers).and_return({})
       end
 
       it "returns the provider name as a fallback" do

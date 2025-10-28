@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html data-theme="<%= Panda::Core::Current&.user&.current_theme || Panda::Core.configuration.default_theme %>" class="<%= local_assigns[:html_class] || "" %>">
+<html data-theme="<%= Panda::Core::Current&.user&.current_theme || Panda::Core.config.default_theme %>" class="<%= local_assigns[:html_class] || "" %>">
   <head>
-    <title><%= content_for?(:title) ? yield(:title) : (Panda::Core.configuration.admin_title || "Panda Admin") %></title>
+    <title><%= content_for?(:title) ? yield(:title) : (Panda::Core.config.admin_title || "Panda Admin") %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <script src="https://kit.fontawesome.com/7835d81e75.js" defer="true" crossorigin="anonymous"></script>

@@ -84,18 +84,18 @@ module Panda
     end
 
     class << self
-      attr_writer :configuration
+      attr_writer :config
 
-      def configuration
-        @configuration ||= Configuration.new
+      def config
+        @config ||= Configuration.new
       end
 
       def configure
-        yield(configuration)
+        yield(config)
       end
 
-      def reset_configuration!
-        @configuration = Configuration.new
+      def reset_config!
+        @config = Configuration.new
       end
     end
   end

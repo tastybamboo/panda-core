@@ -57,7 +57,7 @@ RSpec.configure do |config|
   # Debug which files are being loaded
   config.before(:suite) do
     puts "\nSpec files being loaded:"
-    puts RSpec.configuration.files_to_run.map { |f| File.basename(f) }
+    puts RSpec.config.files_to_run.map { |f| File.basename(f) }
     puts "\nExample groups being run:"
     puts RSpec.world.example_groups.map { |g|
       examples = g.children.flat_map(&:examples).map(&:description)

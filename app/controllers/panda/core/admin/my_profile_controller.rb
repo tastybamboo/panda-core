@@ -39,7 +39,7 @@ module Panda
           base_params = [:firstname, :lastname, :email, :current_theme]
 
           # Allow additional params from configuration
-          additional_params = Core.configuration.additional_user_params || []
+          additional_params = Core.config.additional_user_params || []
 
           params.require(:user).permit(*(base_params + additional_params))
         end

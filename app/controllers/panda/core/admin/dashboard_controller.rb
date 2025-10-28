@@ -8,8 +8,8 @@ module Panda
 
         def show
           # If a custom dashboard path is configured, redirect there
-          if Panda::Core.configuration.dashboard_redirect_path
-            redirect_to Panda::Core.configuration.dashboard_redirect_path
+          if Panda::Core.config.dashboard_redirect_path
+            redirect_to Panda::Core.config.dashboard_redirect_path
           else
             # Render the dashboard view
             render :show

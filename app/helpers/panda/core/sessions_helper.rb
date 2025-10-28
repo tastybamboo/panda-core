@@ -13,7 +13,7 @@ module Panda
       # Returns the FontAwesome icon name for a given provider
       # Checks provider config first, then falls back to the mapping, then uses the provider name as-is
       def oauth_provider_icon(provider)
-        provider_config = Panda::Core.configuration.authentication_providers[provider]
+        provider_config = Panda::Core.config.authentication_providers[provider]
         provider_config&.dig(:icon) || PROVIDER_ICON_MAP[provider.to_sym] || provider.to_s
       end
     end

@@ -13,8 +13,8 @@ module Panda
 
       def set_initial_breadcrumb
         # Use configured breadcrumb or default
-        if Core.configuration.initial_admin_breadcrumb
-          label, path = Core.configuration.initial_admin_breadcrumb.call(self)
+        if Core.config.initial_admin_breadcrumb
+          label, path = Core.config.initial_admin_breadcrumb.call(self)
           add_breadcrumb label, path
         else
           add_breadcrumb "Admin", admin_root_path

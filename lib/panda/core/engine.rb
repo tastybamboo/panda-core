@@ -43,7 +43,7 @@ module Panda
         end
       end
 
-      initializer "panda_core.configuration" do |app|
+      initializer "panda_core.config" do |app|
         # Configuration is already initialized with defaults in Configuration class
       end
 
@@ -70,12 +70,12 @@ module Panda
         app.middleware.use OmniAuth::Builder do
           # Configure OmniAuth to use the configured admin path
           configure do |config|
-            config.path_prefix = "#{Panda::Core.configuration.admin_path}/auth"
+            config.path_prefix = "#{Panda::Core.config.admin_path}/auth"
             # Allow POST requests for request phase (required for CSRF protection)
             config.allowed_request_methods = [:get, :post]
           end
 
-          Panda::Core.configuration.authentication_providers.each do |provider_name, settings|
+          Panda::Core.config.authentication_providers.each do |provider_name, settings|
             # Build provider options, allowing custom path name override
             provider_options = settings[:options] || {}
 
@@ -95,6 +95,14 @@ module Panda
               provider :developer if Rails.env.development?
             end
           end
+        end
+      end
+
+      # Create AdminController alias after controllers are loaded
+      # This allows other gems to inherit from Panda::Core::AdminController
+      initializer "panda_core.admin_controller_alias", after: :load_config_initializers do
+        ActiveSupport.on_load(:action_controller_base) do
+          Panda::Core.const_set(:AdminController, Panda::Core::Admin::BaseController) unless Panda::Core.const_defined?(:AdminController)
         end
       end
     end
