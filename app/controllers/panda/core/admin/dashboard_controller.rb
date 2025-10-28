@@ -3,7 +3,7 @@
 module Panda
   module Core
     module Admin
-      class DashboardController < AdminController
+      class DashboardController < BaseController
         # Authentication is automatically enforced by AdminController
 
         def show

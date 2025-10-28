@@ -3,7 +3,7 @@
 module Panda
   module Core
     module Admin
-      class SessionsController < AdminController
+      class SessionsController < BaseController
         # Skip authentication for login/logout actions
         skip_before_action :authenticate_admin_user!, only: [:new, :create, :destroy, :failure]
 

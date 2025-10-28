@@ -3,7 +3,7 @@
 module Panda
   module Core
     module Admin
-      class MyProfileController < ::Panda::Core::AdminController
+      class MyProfileController < BaseController
         before_action :set_initial_breadcrumb, only: %i[edit update]
 
         # Shows the edit form for the current user's profile
