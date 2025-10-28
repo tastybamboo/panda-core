@@ -11,6 +11,9 @@ module Panda
         # Add flash types for improved alert support with Tailwind
         add_flash_types :success, :warning, :error, :info
 
+        # Include helper modules
+        helper Panda::Core::SessionsHelper
+
         before_action :authenticate_admin_user!
         before_action :set_current_request_details
 
