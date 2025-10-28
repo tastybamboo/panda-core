@@ -6,6 +6,8 @@ module Panda
       # Base controller for all admin interfaces across Panda gems
       # Provides authentication, helpers, and hooks for extending functionality
       class BaseController < ::ActionController::Base
+        layout "panda/core/admin"
+
         protect_from_forgery with: :exception
 
         # Add flash types for improved alert support with Tailwind
