@@ -4,7 +4,7 @@
     <title><%= content_for?(:title) ? yield(:title) : (Panda::Core.config.admin_title || "Panda Admin") %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <script src="https://kit.fontawesome.com/7835d81e75.js" defer="true" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css">
     <link rel="stylesheet" href="/panda-core-assets/panda-core.css">
     <%= yield :head %>
   </head>
