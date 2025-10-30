@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2025-10-30
+
+### Added
+- Debug utility module for development debugging
+  - Environment-based activation via `PANDA_DEBUG` environment variable
+  - Debug logging with timestamps and custom prefixes
+  - Object inspection with awesome_print support (falls back to pp)
+  - HTTP request debugging for Net::HTTP calls via `enable_http_debug!`
+  - No impact when PANDA_DEBUG is not enabled
+
 ## [0.4.0] - 2025-10-30
 
 ### Added
