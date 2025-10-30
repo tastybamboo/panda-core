@@ -38,10 +38,17 @@ Gem::Specification.new do |spec|
   spec.add_dependency "turbo-rails"
   spec.add_dependency "view_component"
 
+  # Phlex support for modern component architecture
+  spec.add_dependency "phlex", "~> 2.3"
+  spec.add_dependency "phlex-rails", "~> 2.3"
+  spec.add_dependency "literal", "~> 1.8"
+  spec.add_dependency "tailwind_merge", "~> 1.3"
+
   spec.add_development_dependency "pg"
 
   # Testing
   spec.add_development_dependency "rspec-rails"
+  spec.add_development_dependency "rails-controller-testing"
   spec.add_development_dependency "capybara"
   spec.add_development_dependency "cuprite"
   spec.add_development_dependency "database_cleaner-active_record"

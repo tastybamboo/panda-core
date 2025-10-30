@@ -1,27 +1,43 @@
 <nav class="flex flex-col flex-1">
-  <ul role="list" class="flex flex-col flex-1 gap-y-7">
+  <ul role="list" class="flex flex-col flex-1">
+    <a class="block p-0 mt-4 mb-4 ml-2 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
+    <% Panda::Core.config.admin_navigation_items&.call(current_user)&.each do |item| %>
+      <li>
+        <%
+          # Exact match for dashboard, starts_with for others
+          # Check if current path matches this nav item
+          is_active = if request.path == item[:path]
+            true
+          elsif request.path.starts_with?(item[:path] + "/")
+            true
+          else
+            false
+          end
+        %>
+        <%= link_to item[:path], class: "#{is_active ? "bg-mid text-white relative flex items-center transition-all py-3 px-2 mb-2 rounded-md group gap-x-3 text-base leading-6 font-normal" : "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal"}" do %>
+          <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
+          <span><%= item[:label] %></span>
+        <% end %>
+      </li>
+    <% end %>
     <li>
-      <ul role="list" class="-mx-2 space-y-1">
-        <% Panda::Core.config.admin_navigation_items&.call(current_user)&.each do |item| %>
-          <li>
-            <%= link_to item[:path], class: "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-200 hover:text-white hover:bg-gray-700" do %>
-              <i class="<%= item[:icon] %> text-gray-200 group-hover:text-white"></i>
-              <%= item[:label] %>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
+      <%= button_to panda_core.admin_logout_path, method: :delete, id: "logout-link", data: { turbo: false }, class: "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full" do %>
+        <span class="text-center w-6"><i class="text-xl fa-solid fa-door-open fa-fw"></i></span>
+        <span>Logout</span>
+      <% end %>
     </li>
-    
     <li class="mt-auto">
-      <div class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-200">
-        <% if current_user %>
-          <span class="flex-1"><%= "#{current_user.firstname} #{current_user.lastname}" %></span>
-          <%= link_to panda_core.admin_logout_path, method: :delete, class: "text-gray-200 hover:text-white" do %>
-            <i class="fa-regular fa-sign-out"></i>
-          <% end %>
+      <%= link_to panda_core.edit_admin_my_profile_path, class: "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full", title: "Edit my Profile" do %>
+        <% if !current_user.image_url.to_s.empty? %>
+          <span class="text-center w-6"><img src="<%= current_user.image_url %>" class="w-auto h-7 rounded-full"></span>
+        <% else %>
+          <span class="text-center w-6"><i class="text-xl fa-regular fa-circle-user fa-fw"></i></span>
         <% end %>
-      </div>
+        <span><%= current_user.name %></span>
+      <% end %>
+    </li>
+    <li class="px-2 py-3">
+      <span class="text-xs text-white">Panda Core v<%= Panda::Core::VERSION %></span>
     </li>
   </ul>
 </nav>

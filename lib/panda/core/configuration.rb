@@ -46,7 +46,7 @@ module Panda
             {
               label: "Dashboard",
               path: @admin_path,
-              icon: "fa-regular fa-house"
+              icon: "fa-solid fa-house"
             }
           ]
 
@@ -55,14 +55,14 @@ module Panda
             items << {
               label: "Content",
               path: "#{@admin_path}/cms",
-              icon: "fa-regular fa-file-lines"
+              icon: "fa-solid fa-file-lines"
             }
           end
 
           items << {
             label: "My Profile",
             path: "#{@admin_path}/my_profile/edit",
-            icon: "fa-regular fa-user"
+            icon: "fa-solid fa-user"
           }
 
           items
@@ -97,6 +97,9 @@ module Panda
       def reset_config!
         @config = Configuration.new
       end
+
+      # Alias for backward compatibility with test expectations
+      alias_method :reset_configuration!, :reset_config!
     end
   end
 end

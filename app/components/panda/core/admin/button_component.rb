@@ -3,56 +3,74 @@
 module Panda
   module Core
     module Admin
-      class ButtonComponent < ViewComponent::Base
-        attr_accessor :text, :action, :link, :icon, :size, :data
+      class ButtonComponent < Panda::Core::Base
+        prop :text, String, default: "Button"
+        prop :action, _Nilable(Symbol), default: -> {}
+        prop :href, String, default: "#"
+        prop :icon, _Nilable(String), default: -> {}
+        prop :size, Symbol, default: :regular
+        prop :id, _Nilable(String), default: -> {}
 
-        def initialize(text: "Button", action: nil, data: {}, link: "#", icon: nil, size: :regular, id: nil)
-          @text = text
-          @action = action
-          @data = data
-          @link = link
-          @icon = icon
-          @size = size
-          @id = id
+        def view_template
+          a(**@attrs) do
+            if computed_icon
+              i(class: "mr-2 fa-regular fa-#{computed_icon}")
+              plain " "
+            end
+            plain @text.titleize
+          end
         end
 
-        def call
-          @icon = set_icon_from_action(@action) if @action && @icon.nil?
-          icon = content_tag(:i, "", class: "mr-2 fa-regular fa-#{@icon}") if @icon
-          @text = "#{icon} #{@text.titleize}".html_safe
+        def default_attrs
+          {
+            href: @href,
+            class: button_classes,
+            id: @id
+          }
+        end
 
-          classes = "inline-flex items-center rounded-md font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
+        private
 
+        def computed_icon
+          @computed_icon ||= @icon || icon_from_action(@action)
+        end
+
+        def button_classes
+          base = "inline-flex items-center rounded-md font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
+          base + size_classes + action_classes
+        end
+
+        def size_classes
           case @size
           when :small, :sm
-            classes += "gap-x-1.5 px-2.5 py-1.5 text-sm "
+            "gap-x-1.5 px-2.5 py-1.5 text-sm "
           when :medium, :regular, :md
-            classes += "gap-x-1.5 px-3 py-2 text-base "
+            "gap-x-1.5 px-3 py-2 text-base "
           when :large, :lg
-            classes += "gap-x-2 px-3.5 py-2.5 text-lg "
+            "gap-x-2 px-3.5 py-2.5 text-lg "
+          else
+            "gap-x-1.5 px-3 py-2 text-base "
           end
+        end
 
-          classes += case @action
+        def action_classes
+          case @action
           when :save, :create
             "text-white bg-green-600 hover:bg-green-700"
           when :save_inactive
             "text-white bg-gray-400"
           when :secondary
-            "text-gray-700 border-2 border-gray-700 bg-transparent hover:bg-gray-100 transition-all "
+            "text-gray-700 border-2 border-gray-700 bg-transparent hover:bg-gray-100 transition-all"
           when :delete, :destroy, :danger
-            "text-red-600 border border-red-600 bg-red-100 hover:bg-red-200 hover:text-red-700 focus-visible:outline-red-300 "
+            "text-red-600 border border-red-600 bg-red-100 hover:bg-red-200 hover:text-red-700 focus-visible:outline-red-300"
           else
-            "text-gray-700 border-2 border-gray-700 bg-transparent hover:bg-gray-100 transition-all "
-          end
-
-          content_tag :a, href: @link, class: classes, data: @data, id: @id do
-            @text
+            "text-gray-700 border-2 border-gray-700 bg-transparent hover:bg-gray-100 transition-all"
           end
         end
 
-        private
+        def icon_from_action(action)
+          return nil unless action
 
-        def set_icon_from_action(action)
           case action
           when :add, :new, :create
             "plus"

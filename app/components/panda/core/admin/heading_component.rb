@@ -3,42 +3,70 @@
 module Panda
   module Core
     module Admin
-      class HeadingComponent < ViewComponent::Base
-        renders_many :buttons, Panda::Core::Admin::ButtonComponent
+      class HeadingComponent < Panda::Core::Base
+        prop :text, String
+        prop :level, _Nilable(_Union(Integer, Symbol)), default: -> { 2 }
+        prop :icon, String, default: ""
+        prop :additional_styles, _Nilable(_Union(String, Array)), default: -> { "" }
 
-        attr_reader :text, :level, :icon, :additional_styles
+        def view_template(&block)
+          # Capture any buttons defined via block
+          instance_eval(&block) if block_given?
 
-        def initialize(text:, level: 2, icon: "", additional_styles: "")
-          @text = text
-          @level = level
-          @icon = icon
-          @additional_styles = additional_styles
-          @additional_styles = @additional_styles.split(" ") if @additional_styles.is_a?(String)
+          case @level
+          when 1
+            h1(class: heading_classes) { render_content }
+          when 2
+            h2(class: heading_classes) { render_content }
+          when 3
+            h3(class: heading_classes) { render_content }
+          when :panel
+            h3(class: panel_heading_classes) { render_content }
+          else
+            h2(class: heading_classes) { render_content }
+          end
         end
 
-        def call
-          output = ""
-          output += content_tag(:div, @text, class: "grow")
+        def button(**props)
+          @buttons ||= []
+          @buttons << Panda::Core::Admin::ButtonComponent.new(**props)
+        end
 
-          if buttons?
-            output += content_tag(:span, class: "actions flex gap-x-2 -mt-1") do
-              safe_join(buttons, "")
+        private
+
+        def render_content
+          div(class: "grow") { @text }
+
+          if @buttons&.any?
+            span(class: "actions flex gap-x-2 -mt-1") do
+              @buttons.each { |btn| render(btn) }
             end
           end
+        end
 
-          output = output.html_safe
-          base_heading_styles = "flex pt-1 text-black mb-5 -mt-1"
-
-          case level
+        def heading_classes
+          base = "flex pt-1 text-black mb-5 -mt-1"
+          styles = case @level
           when 1
-            content_tag(:h1, output, class: [base_heading_styles, "text-2xl font-medium", @additional_styles])
+            "text-2xl font-medium"
           when 2
-            content_tag(:h2, output, class: [base_heading_styles, "text-xl font-medium", @additional_styles])
+            "text-xl font-medium"
           when 3
-            content_tag(:h3, output, class: [base_heading_styles, "text-xl", "font-light", @additional_styles])
-          when :panel
-            content_tag(:h3, output, class: ["text-base font-medium p-4 text-white"])
+            "text-xl font-light"
+          else
+            "text-xl font-medium"
           end
+
+          [base, styles, *additional_styles_array].compact.join(" ")
+        end
+
+        def panel_heading_classes
+          "text-base font-medium p-4 text-white"
+        end
+
+        def additional_styles_array
+          return [] if @additional_styles.blank?
+          @additional_styles.is_a?(String) ? @additional_styles.split(" ") : @additional_styles
         end
       end
     end

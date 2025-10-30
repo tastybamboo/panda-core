@@ -105,9 +105,19 @@ module Panda
             end
 
           else
-            # Development mode - use importmap
+            # Development mode - use importmap for JS and static CSS
             tags = []
             tags << javascript_include_tag("panda/core/application", type: "module")
+
+            # Add CSS if available
+            css_path = development_css_url
+            if css_path
+              css_attrs = {
+                rel: "stylesheet",
+                href: css_path
+              }
+              tags << tag(:link, css_attrs)
+            end
           end
           tags.join("\n").html_safe
         end
@@ -144,11 +154,16 @@ module Panda
         end
 
         def development_css_url
-          return unless compiled_assets_available?
-
+          # Try versioned file first
           version = asset_version
-          css_file = "/panda-core-assets/panda-core-#{version}.css"
-          File.exist?(Rails.root.join("public#{css_file}")) ? css_file : nil
+          versioned_file = "/panda-core-assets/panda-core-#{version}.css"
+          return versioned_file if File.exist?(Rails.public_path.join("panda-core-assets", "panda-core-#{version}.css"))
+
+          # Fall back to unversioned file (always available from engine's public directory)
+          unversioned_file = "/panda-core-assets/panda-core.css"
+          return unversioned_file if File.exist?(Panda::Core::Engine.root.join("public", "panda-core-assets", "panda-core.css"))
+
+          nil
         end
 
         def asset_version
@@ -193,9 +208,9 @@ module Panda
           end.compact.join(" ")
 
           if content || block_given?
-            "<#{name}#{attrs.present? ? " #{attrs}" : ""}>#{content || (block_given? ? yield : "")}</#{name}>"
+            "<#{name}#{" #{attrs}" if attrs.present?}>#{content || (block_given? ? yield : "")}</#{name}>"
           else
-            "<#{name}#{attrs.present? ? " #{attrs}" : ""}><#{name}>"
+            "<#{name}#{" #{attrs}" if attrs.present?}><#{name}>"
           end
         end
 
@@ -208,7 +223,7 @@ module Panda
             end
           end.compact.join(" ")
 
-          "<#{name}#{attrs.present? ? " #{attrs}" : ""} />"
+          "<#{name}#{" #{attrs}" if attrs.present?} />"
         end
 
         def javascript_include_tag(source, options = {})

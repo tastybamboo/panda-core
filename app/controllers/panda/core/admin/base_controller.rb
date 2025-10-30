@@ -15,6 +15,7 @@ module Panda
 
         # Include helper modules
         helper Panda::Core::SessionsHelper
+        helper Panda::Core::AssetHelper if defined?(Panda::Core::AssetHelper)
 
         before_action :set_current_request_details
         before_action :authenticate_admin_user!

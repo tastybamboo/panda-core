@@ -37,7 +37,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
     end
 
     it "signs in existing user" do
-      user = Panda::Core::User.create!(email: "test@example.com", firstname: "Existing", lastname: "User", admin: true)
+      user = Panda::Core::User.create!(email: "test@example.com", name: "Existing User", is_admin: true)
 
       get :create, params: {provider: "google_oauth2"}
 
@@ -47,7 +47,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let(:user) { Panda::Core::User.create!(email: "test@example.com", firstname: "Test", lastname: "User", admin: true) }
+    let(:user) { Panda::Core::User.create!(email: "test@example.com", name: "Test User", is_admin: true) }
 
     before do
       session[:user_id] = user.id

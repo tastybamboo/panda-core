@@ -13,6 +13,8 @@ module Panda
       config.eager_load_namespaces << Panda::Core::Engine
 
       # Add engine's app directories to autoload paths
+      # Note: Only add the root directories, not nested subdirectories
+      # Zeitwerk will automatically discover nested modules from these roots
       config.autoload_paths += Dir[root.join("app", "models")]
       config.autoload_paths += Dir[root.join("app", "controllers")]
       config.autoload_paths += Dir[root.join("app", "builders")]
@@ -64,7 +66,6 @@ module Panda
         end
       end
 
-
       initializer "panda_core.omniauth" do |app|
         # Mount OmniAuth at configurable admin path
         app.middleware.use OmniAuth::Builder do
@@ -96,6 +97,33 @@ module Panda
               provider :developer if Rails.env.development?
             end
           end
+        end
+      end
+
+      # Load Phlex base component after Rails application is initialized
+      # This ensures Rails.application.routes is available
+      initializer "panda_core.phlex_base", after: :load_config_initializers do
+        require "phlex"
+        require "phlex-rails"
+        require "literal"
+        require "tailwind_merge"
+
+        # Load the base component
+        require root.join("app/components/panda/core/base")
+      end
+
+      # Set up ViewComponent and Lookbook previews
+      initializer "panda_core.view_component" do |app|
+        app.config.view_component.preview_paths ||= []
+        app.config.view_component.preview_paths << root.join("spec/components/previews")
+
+        # Add preview directories to autoload paths in development
+        if Rails.env.development?
+          # Handle frozen autoload_paths array
+          if app.config.autoload_paths.frozen?
+            app.config.autoload_paths = app.config.autoload_paths.dup
+          end
+          app.config.autoload_paths << root.join("spec/components/previews")
         end
       end
 

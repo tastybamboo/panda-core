@@ -1,6 +1,9 @@
 # Silence Thor deprecation warnings
 ENV["THOR_SILENCE_DEPRECATION"] = "1"
 
+# Set Rails environment FIRST before any requires
+ENV["RAILS_ENV"] = "test"
+
 require "simplecov"
 require "simplecov-json"
 SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
@@ -13,11 +16,10 @@ lib = File.expand_path("../../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative "../lib/panda/core"
 
-ENV["RAILS_ENV"] ||= "test"
-
 require File.expand_path("../dummy/config/environment", __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require "rspec/rails"
+require "rails-controller-testing"
 require "rails/generators/test_case"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -49,7 +51,7 @@ RSpec.configure do |config|
   end
 
   # Only run our specific specs
-  config.pattern = "{spec/lib/panda/core/configuration_spec.rb,spec/generators/panda/core/install_generator_spec.rb,spec/generators/panda/core/templates_generator_spec.rb,spec/models/**/*_spec.rb,spec/controllers/**/*_spec.rb}"
+  config.pattern = "{spec/lib/panda/core/configuration_spec.rb,spec/generators/panda/core/install_generator_spec.rb,spec/generators/panda/core/templates_generator_spec.rb,spec/models/**/*_spec.rb,spec/controllers/**/*_spec.rb,spec/components/**/*_spec.rb}"
 
   # Exclude dummy app specs
   config.exclude_pattern = "spec/dummy/**/*_spec.rb"
@@ -57,7 +59,7 @@ RSpec.configure do |config|
   # Debug which files are being loaded
   config.before(:suite) do
     puts "\nSpec files being loaded:"
-    puts RSpec.config.files_to_run.map { |f| File.basename(f) }
+    puts RSpec.configuration.files_to_run.map { |f| File.basename(f) }
     puts "\nExample groups being run:"
     puts RSpec.world.example_groups.map { |g|
       examples = g.children.flat_map(&:examples).map(&:description)
@@ -83,8 +85,13 @@ RSpec.configure do |config|
   end
 
   config.include Capybara::RSpecMatchers, type: :view_component
+  config.include ViewComponent::TestHelpers, type: :component
+  config.include Capybara::RSpecMatchers, type: :component
   config.include Rails::Generators::Testing::Assertions, type: :generator
   config.include FileUtils, type: :generator
+  config.include Rails::Controller::Testing::TestProcess, type: :controller
+  config.include Rails::Controller::Testing::TemplateAssertions, type: :controller
+  config.include Rails::Controller::Testing::Integration, type: :controller
 
   # Set up temporary directory for generator tests
   config.before(:each, type: :generator) do
@@ -105,6 +112,19 @@ RSpec.configure do |config|
     if defined?(Panda::Core::User)
       Panda::Core::User.connection.schema_cache.clear!
       Panda::Core::User.reset_column_information
+    end
+  end
+
+  # Disable prepared statements for tests to avoid PostgreSQL caching issues
+  config.before(:suite) do
+    if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
+      ActiveRecord::Base.connection.unprepared_statement do
+        # This block intentionally left empty
+      end
+      # Disable prepared statements globally for test environment
+      ActiveRecord::Base.establish_connection(
+        ActiveRecord::Base.connection_db_config.configuration_hash.merge(prepared_statements: false)
+      )
     end
   end
 

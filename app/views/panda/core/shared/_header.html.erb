@@ -5,7 +5,15 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css">
-    <link rel="stylesheet" href="/panda-core-assets/panda-core.css">
+    <%= panda_core_stylesheet %>
+    <%= panda_core_javascript %>
+
+    <% if defined?(Panda::CMS) && controller.class.name.start_with?("Panda::CMS") %>
+      <!-- CMS Assets -->
+      <%= panda_cms_javascript %>
+      <%= render "panda/cms/shared/favicons" %>
+    <% end %>
+
     <%= yield :head %>
   </head>
-  <body class="h-full <%= local_assigns[:body_class] || "" %>" data-environment="<%= Rails.env %>">
+  <body class="overflow-hidden h-full <%= local_assigns[:body_class] || "" %>" data-environment="<%= Rails.env %>">

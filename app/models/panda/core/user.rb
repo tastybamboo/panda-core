@@ -32,6 +32,19 @@ module Panda
         true
       end
 
+      def name
+        # Support both schema versions:
+        # - Main app: has 'name' column
+        # - Test app: has 'firstname' and 'lastname' columns
+        if respond_to?(:firstname) && respond_to?(:lastname)
+          "#{firstname} #{lastname}".strip
+        elsif self[:name].present?
+          self[:name]
+        else
+          email&.split("@")&.first || "Unknown User"
+        end
+      end
+
       private
 
       def downcase_email
