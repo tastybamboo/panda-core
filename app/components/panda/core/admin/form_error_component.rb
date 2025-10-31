@@ -32,7 +32,7 @@ module Panda
         end
 
         def error_messages
-          @error_messages ||= if @model && @model.respond_to?(:errors)
+          @error_messages ||= if @model&.respond_to?(:errors)
             @model.errors.full_messages
           elsif @errors.is_a?(ActiveModel::Errors)
             @errors.full_messages
