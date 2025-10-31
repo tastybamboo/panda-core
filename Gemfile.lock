@@ -180,6 +180,7 @@ GEM
       webrick (~> 1.7)
       websocket-driver (~> 0.7)
     ffi (1.17.2-arm64-darwin)
+    ffi (1.17.2-x86_64-linux-gnu)
     generator_spec (0.10.0)
       activesupport (>= 3.0.0)
       railties (>= 3.0.0)
@@ -238,6 +239,8 @@ GEM
     nio4r (2.7.4)
     nokogiri (1.18.10-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.18.10-x86_64-linux-gnu)
+      racc (~> 1.4)
     oauth2 (2.0.17)
       faraday (>= 0.17.3, < 4.0)
       jwt (>= 1.0, < 4.0)
@@ -276,6 +279,7 @@ GEM
     pastel (0.8.0)
       tty-color (~> 0.5)
     pg (1.6.2-arm64-darwin)
+    pg (1.6.2-x86_64-linux)
     phlex (2.3.1)
       zeitwerk (~> 2.7)
     phlex-rails (2.3.1)
@@ -468,6 +472,7 @@ GEM
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
     tailwindcss-ruby (4.1.16-arm64-darwin)
+    tailwindcss-ruby (4.1.16-x86_64-linux-gnu)
     thor (1.4.0)
     timeout (0.4.4)
     trollop (2.9.10)
@@ -510,6 +515,7 @@ GEM
 
 PLATFORMS
   arm64-darwin
+  x86_64-linux
 
 DEPENDENCIES
   annotaterb
