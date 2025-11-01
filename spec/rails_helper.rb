@@ -51,7 +51,7 @@ RSpec.configure do |config|
   end
 
   # Only run our specific specs
-  config.pattern = "{spec/lib/panda/core/configuration_spec.rb,spec/generators/panda/core/install_generator_spec.rb,spec/generators/panda/core/templates_generator_spec.rb,spec/models/**/*_spec.rb,spec/controllers/**/*_spec.rb,spec/components/**/*_spec.rb}"
+  config.pattern = "{spec/lib/panda/core/configuration_spec.rb,spec/generators/panda/core/install_generator_spec.rb,spec/generators/panda/core/templates_generator_spec.rb,spec/models/**/*_spec.rb,spec/controllers/**/*_spec.rb,spec/components/**/*_spec.rb,spec/requests/**/*_spec.rb,spec/system/**/*_spec.rb}"
 
   # Exclude dummy app specs
   config.exclude_pattern = "spec/dummy/**/*_spec.rb"

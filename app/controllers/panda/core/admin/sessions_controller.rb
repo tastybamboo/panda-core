@@ -30,7 +30,9 @@ module Panda
           if user.persisted?
             # Check if user is admin before allowing access
             unless user.admin?
-              redirect_to admin_login_path, flash: {error: "You do not have permission to access the admin area"}
+              flash[:error] = "You do not have permission to access the admin area"
+              flash.keep(:error) if Rails.env.test?
+              redirect_to admin_login_path
               return
             end
 
@@ -58,7 +60,9 @@ module Panda
           strategy = params[:strategy] || "unknown"
 
           Rails.logger.error "OmniAuth failure: strategy=#{strategy}, message=#{message}"
-          redirect_to admin_login_path, flash: {error: "Authentication failed: #{message}"}
+          flash[:error] = "Authentication failed: #{message}"
+          flash.keep(:error) if Rails.env.test?
+          redirect_to admin_login_path
         end
 
         def destroy

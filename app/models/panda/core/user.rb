@@ -12,6 +12,9 @@ module Panda
       # Scopes
       scope :admin, -> { where(is_admin: true) }
 
+      # Alias for convenience
+      alias_attribute :admin, :is_admin
+
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)
         return user if user
@@ -25,7 +28,7 @@ module Panda
       end
 
       def admin?
-        is_admin?
+        is_admin
       end
 
       def active_for_authentication?
