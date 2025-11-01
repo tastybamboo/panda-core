@@ -16,13 +16,28 @@ module Panda
             end
           end
 
+          # Set content_for :sidebar if slideover is present (enables breadcrumb toggle button)
+          if @slideover_content && @slideover_title && defined?(view_context) && view_context
+            view_context.content_for(:sidebar, true)
+            view_context.content_for(:sidebar_title, @slideover_title)
+          end
+
           main(class: "overflow-auto flex-1 h-full min-h-full max-h-full") do
             div(class: "overflow-auto px-2 pt-4 mx-auto sm:px-6 lg:px-6") do
               @heading_content&.call
               @tab_bar_content&.call
 
-              section(class: "flex-auto") do
-                div(class: "flex-1 mt-4 w-full") do
+              section_attrs = { class: "flex-auto h-[calc(100vh-10rem)]" }
+              # Add toggle controller if slideover is present
+              if @slideover_content
+                section_attrs[:data] = {
+                  controller: "toggle",
+                  action: "keydown.esc->toggle#hide"
+                }
+              end
+
+              section(**section_attrs) do
+                div(class: "flex-1 mt-4 w-full h-full") do
                   if @main_content
                     @main_content.call
                   elsif @body_html
@@ -53,8 +68,12 @@ module Panda
         end
 
         def slideover(**props, &block)
+          @slideover_title = props[:title] || "Settings"
           @slideover_content = -> { render(Panda::Core::Admin::SlideoverComponent.new(**props), &block) }
         end
+
+        # Alias for ViewComponent-style API compatibility
+        alias_method :with_slideover, :slideover
       end
     end
   end
