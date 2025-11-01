@@ -4,6 +4,8 @@ module Panda
   module Core
     module Admin
       class ContainerComponent < Panda::Core::Base
+        prop :full_height, _Nilable(_Boolean), default: -> { false }
+
         def view_template(&block)
           # Capture block content differently based on context (ERB vs Phlex)
           if block_given?
@@ -27,7 +29,7 @@ module Panda
               @heading_content&.call
               @tab_bar_content&.call
 
-              section_attrs = { class: "flex-auto h-[calc(100vh-10rem)]" }
+              section_attrs = { class: section_classes }
               # Add toggle controller if slideover is present
               if @slideover_content
                 section_attrs[:data] = {
@@ -74,6 +76,14 @@ module Panda
 
         # Alias for ViewComponent-style API compatibility
         alias_method :with_slideover, :slideover
+
+        private
+
+        def section_classes
+          base = "flex-auto"
+          height = @full_height ? "h-[calc(100vh-10rem)]" : nil
+          [base, height].compact.join(" ")
+        end
       end
     end
   end
