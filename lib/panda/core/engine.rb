@@ -31,6 +31,18 @@ module Panda
         ]
       )
 
+      # Make JavaScript files available for importmap
+      # Serve from app/javascript with proper MIME types
+      config.app_middleware.use(
+        Rack::Static,
+        urls: ["/panda", "/panda/core"],
+        root: Panda::Core::Engine.root.join("app/javascript"),
+        header_rules: [
+          [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000",
+                  "Content-Type" => "text/javascript; charset=utf-8"}]
+        ]
+      )
+
       config.generators do |g|
         g.test_framework :rspec
         g.fixture_replacement :factory_bot

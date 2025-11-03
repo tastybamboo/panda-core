@@ -11,13 +11,12 @@
     <% providers = @providers || Panda::Core.config.authentication_providers.keys %>
     <% providers.each do |provider| %>
       <% provider_config = Panda::Core.config.authentication_providers[provider] %>
-      <% provider_name = provider_config&.dig(:name) || provider.to_s.humanize %>
       <% provider_path = provider_config&.dig(:path_name) || provider %>
       <div class="mt-4 text-center sm:mx-auto sm:w-full sm:max-w-sm">
         <%= form_tag "#{Panda::Core.config.admin_path}/auth/#{provider_path}", method: "post", data: {turbo: false} do %>
           <button type="submit" id="button-sign-in-<%= provider_path %>" class="inline-flex gap-x-2 items-center py-2.5 px-3.5 mx-auto mb-4 bg-white text-gray-900 rounded-md border min-w-56 border-neutral-400 hover:bg-gray-50">
-            <i class="fa-brands fa-<%= oauth_provider_icon(provider) %> text-xl mr-1"></i>
-            Sign in with <%= provider_name %>
+            <i class="<%= oauth_provider_non_brand?(provider) ? 'fa-solid' : 'fa-brands' %> fa-<%= oauth_provider_icon(provider) %> text-xl mr-1"></i>
+            Sign in with <%= oauth_provider_name(provider, provider_config) %>
           </button>
         <% end %>
       </div>

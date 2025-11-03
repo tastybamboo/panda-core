@@ -5,13 +5,13 @@
     <ol role="list" class="px-4 w-full sm:px-6">
       <li class="inline-block">
         <a href="<%= Panda::Core.config.admin_path %>" class="<%= breadcrumb_styles %>">
-          <i class="fa fa-solid fa-house"></i>
+          <i class="fa fa-solid fa-house fa-fw inline-block w-4 text-center"></i>
           <span class="sr-only">Home</span>
         </a>
       </li>
       <% breadcrumbs.each do |crumb| %>
         <li class="inline-block">
-          <i class="fa fa-regular fa-chevron-right font-light <%= breadcrumb_styles %> py-5 px-2"></i>
+          <i class="fa-solid fa-chevron-right fa-fw inline-block w-4 text-center font-light <%= breadcrumb_styles %> py-5 px-2"></i>
           <a href="<%= crumb.path %>" class="text-sm font-normal <%= breadcrumb_styles %>"><%= crumb.name %></a>
         </li>
       <% end %>
@@ -19,7 +19,7 @@
   </nav>
 
   <% if content_for :sidebar %>
-    <div class="pt-4 pr-8 text-black/80" tabindex="-1" data-controller="toggle">
+    <div class="pt-4 pr-8 text-black/80" tabindex="-1">
       <button type="button" id="slideover-toggle" data-action="click->toggle#toggle touch->toggle#toggle" class="text-sm font-light">
         <i class="mr-1 fa-light fa-gear"></i> <%= yield :sidebar_title %>
       </button>

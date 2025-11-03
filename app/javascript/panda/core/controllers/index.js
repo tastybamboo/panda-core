@@ -1,12 +1,12 @@
 // Import and register Core Stimulus controllers
-import { application } from "../application"
+import { application } from "../application.js"
 
-import ThemeFormController from "./theme_form_controller"
+import ThemeFormController from "./theme_form_controller.js"
 application.register("theme-form", ThemeFormController)
 
 // Import and register TailwindCSS Stimulus Components
 // These are needed for UI components like slideover, modals, alerts, etc.
-import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components"
+import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components.js"
 application.register('alert', Alert)
 application.register('autosave', Autosave)
 application.register('color-preview', ColorPreview)

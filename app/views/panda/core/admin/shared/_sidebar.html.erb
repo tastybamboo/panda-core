@@ -31,7 +31,7 @@
         <% if !current_user.image_url.to_s.empty? %>
           <span class="text-center w-6"><img src="<%= current_user.image_url %>" class="w-auto h-7 rounded-full"></span>
         <% else %>
-          <span class="text-center w-6"><i class="text-xl fa-regular fa-circle-user fa-fw"></i></span>
+          <span class="text-center w-6"><i class="text-xl fa-solid fa-circle-user fa-fw"></i></span>
         <% end %>
         <span><%= current_user.name %></span>
       <% end %>

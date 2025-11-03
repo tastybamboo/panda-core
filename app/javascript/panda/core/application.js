@@ -8,3 +8,6 @@ application.debug = false
 window.Stimulus = application
 
 export { application }
+
+// Note: controllers/index.js must be loaded separately in the HTML to avoid circular dependency
+// It will import this application and register all controllers
