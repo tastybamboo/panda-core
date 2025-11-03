@@ -10,25 +10,35 @@ module Panda
       before_save :downcase_email
 
       # Scopes
-      scope :admin, -> { where(is_admin: true) }
-
-      # Alias for convenience
-      alias_attribute :admin, :is_admin
+      scope :admins, -> { where(admin: true) }
 
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)
         return user if user
 
-        create!(
+        # Support both schema versions: 'name' column or 'firstname'/'lastname' columns
+        attributes = {
           email: auth_hash.info.email.downcase,
-          name: auth_hash.info.name || "Unknown User",
           image_url: auth_hash.info.image,
-          is_admin: User.count.zero? # First user is admin
-        )
+          admin: User.count.zero? # First user is admin
+        }
+
+        # Add name attributes based on schema
+        if column_names.include?("name")
+          attributes[:name] = auth_hash.info.name || "Unknown User"
+        elsif column_names.include?("firstname") && column_names.include?("lastname")
+          # Split name into firstname/lastname if provided
+          full_name = auth_hash.info.name || "Unknown User"
+          name_parts = full_name.split(" ", 2)
+          attributes[:firstname] = name_parts[0] || "Unknown"
+          attributes[:lastname] = name_parts[1] || "User"
+        end
+
+        create!(attributes)
       end
 
       def admin?
-        is_admin
+        admin
       end
 
       def active_for_authentication?
