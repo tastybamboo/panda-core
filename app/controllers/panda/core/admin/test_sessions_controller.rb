@@ -23,7 +23,8 @@ module Panda
             flash[:alert] = "You do not have permission to access the admin area."
             # Keep flash for one more request to survive redirect in tests
             flash.keep(:alert) if Rails.env.test?
-            redirect_to admin_login_path, allow_other_host: false, status: :found
+            # Use string path since route helpers aren't available in ActionController::Base
+            redirect_to "#{Panda::Core.config.admin_path || '/admin'}/login", allow_other_host: false, status: :found
             return
           end
 
@@ -48,7 +49,8 @@ module Panda
             path = Panda::Core.config.dashboard_redirect_path
             path.respond_to?(:call) ? path.call : path
           else
-            admin_root_path
+            # Use string path since route helpers aren't available in ActionController::Base
+            Panda::Core.config.admin_path || "/admin"
           end
         end
       end
