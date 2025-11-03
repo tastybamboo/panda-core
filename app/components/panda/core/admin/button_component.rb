@@ -14,7 +14,7 @@ module Panda
         def view_template
           a(**@attrs) do
             if computed_icon
-              i(class: "mr-2 fa-regular fa-#{computed_icon}")
+              i(class: "mr-2 fa-solid fa-#{computed_icon}")
               plain " "
             end
             plain @text.titleize

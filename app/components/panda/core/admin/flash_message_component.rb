@@ -29,22 +29,22 @@ module Panda
             class: "fixed top-2 right-2 z-[9999] p-2 space-y-4 w-full max-w-sm sm:items-end",
             data: {
               controller: "alert",
+              alert_dismiss_after_value: (@temporary ? "5000" : nil),
               transition_enter: "ease-in-out duration-500",
               transition_enter_from: "translate-x-full opacity-0",
               transition_enter_to: "translate-x-0 opacity-100",
               transition_leave: "ease-in-out duration-500",
               transition_leave_from: "translate-x-0 opacity-100",
               transition_leave_to: "translate-x-full opacity-0"
-            }
+            }.compact
           }
 
-          attrs[:data][:alert_dismiss_after_value] = "3000" if @temporary
           attrs
         end
 
         def render_icon
           div(class: "flex-shrink-0") do
-            i(class: "fa-regular text-xl #{icon_css} #{text_colour_css}")
+            i(class: "fa-solid text-xl #{icon_css} #{text_colour_css}")
           end
         end
 

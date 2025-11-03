@@ -19,8 +19,12 @@ module Panda
           end
 
           # Set content_for :sidebar if slideover is present (enables breadcrumb toggle button)
-          if @slideover_content && @slideover_title && defined?(view_context) && view_context
-            view_context.content_for(:sidebar, true)
+          # This must happen before rendering so the layout can use it
+          if @slideover_block && @slideover_title && defined?(view_context) && view_context
+            view_context.content_for(:sidebar) do
+              # The block contains ERB content, capture it for the sidebar
+              view_context.capture(&@slideover_block)
+            end
             view_context.content_for(:sidebar_title, @slideover_title)
           end
 
@@ -29,16 +33,7 @@ module Panda
               @heading_content&.call
               @tab_bar_content&.call
 
-              section_attrs = { class: section_classes }
-              # Add toggle controller if slideover is present
-              if @slideover_content
-                section_attrs[:data] = {
-                  controller: "toggle",
-                  action: "keydown.esc->toggle#hide"
-                }
-              end
-
-              section(**section_attrs) do
+              section(class: section_classes) do
                 div(class: "flex-1 mt-4 w-full h-full") do
                   if @main_content
                     @main_content.call
@@ -46,7 +41,6 @@ module Panda
                     raw(@body_html)
                   end
                 end
-                @slideover_content&.call
               end
             end
           end
@@ -71,7 +65,7 @@ module Panda
 
         def slideover(**props, &block)
           @slideover_title = props[:title] || "Settings"
-          @slideover_content = -> { render(Panda::Core::Admin::SlideoverComponent.new(**props), &block) }
+          @slideover_block = block   # Save the block for content_for
         end
 
         # Alias for ViewComponent-style API compatibility
