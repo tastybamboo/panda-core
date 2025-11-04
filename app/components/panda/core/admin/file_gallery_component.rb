@@ -36,7 +36,8 @@ module Panda
 
           li(class: "relative") do
             div(
-              class: file_container_classes(is_selected)
+              class: file_container_classes(is_selected),
+              style: "cursor: pointer;"
             ) do
               if file.image?
                 img(

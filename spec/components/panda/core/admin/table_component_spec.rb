@@ -94,16 +94,16 @@ RSpec.describe Panda::Core::Admin::TableComponent do
       expect(output).to have_css("h3", text: "No pages")
     end
 
-    it "still renders header when empty" do
+    it "renders empty state instead of header when no rows" do
       component = described_class.new(term: "post", rows: []) do |table|
         table.column("Title") { |post| post.title }
         table.column("Author") { |post| post.author }
       end
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("div.table-header-group")
-      expect(output).to have_text("Title")
-      expect(output).to have_text("Author")
+      expect(output).to have_css("div.text-center")
+      expect(output).to have_text("No posts")
+      expect(output).to have_text("Get started by creating a new post.")
     end
   end
 

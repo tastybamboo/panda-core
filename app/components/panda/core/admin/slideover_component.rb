@@ -38,7 +38,7 @@ module Panda
                 end
                 button(
                   type: "button",
-                  data: { action: "click->toggle#toggle touch->toggle#toggle" },
+                  data: {action: "click->toggle#toggle touch->toggle#toggle"},
                   class: "text-white hover:text-gray-300 transition"
                 ) do
                   i(class: "font-bold fa-regular fa-xmark right")

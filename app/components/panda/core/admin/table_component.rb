@@ -6,6 +6,7 @@ module Panda
       class TableComponent < Panda::Core::Base
         prop :term, String
         prop :rows, _Nilable(Object), default: -> { [] }
+        prop :icon, String, default: ""
 
         attr_reader :columns
 
@@ -25,25 +26,22 @@ module Panda
           end
         end
 
-        def column(label, &cell_block)
-          @columns << Column.new(label, &cell_block)
+        def column(label, width: nil, &cell_block)
+          @columns << Column.new(label, width, &cell_block)
         end
 
         private
 
         def render_table_with_rows
-          div(class: "table overflow-x-auto mb-12 w-full rounded-lg border border-dark") do
+          div(class: "table overflow-x-auto mb-12 w-full rounded-lg border border-dark", style: "table-layout: fixed;") do
             render_header
             render_rows
           end
         end
 
         def render_empty_table
-          div(class: "table overflow-x-auto mb-12 w-full rounded-lg border border-dark") do
-            render_header
-          end
-
-          div(class: "text-center mx-12 block border border-dashed py-12 rounded-lg") do
+          div(class: "text-center block border border-dashed py-12 rounded-lg") do
+            i(class: "#{@icon} text-4xl text-gray-400 mb-3") if @icon.present?
             h3(class: "py-1 text-xl font-semibold text-gray-900") { "No #{@term.pluralize}" }
             p(class: "py-1 text-base text-gray-500") { "Get started by creating a new #{@term}." }
           end
@@ -57,7 +55,8 @@ module Panda
                 header_classes += " rounded-tl-md" if i.zero?
                 header_classes += " rounded-tr-md" if i == @columns.size - 1
 
-                div(class: header_classes) { column.label }
+                header_style = column.width ? "width: #{column.width};" : nil
+                div(class: header_classes, style: header_style) { column.label }
               end
             end
           end
@@ -106,10 +105,11 @@ module Panda
       end
 
       class Column
-        attr_reader :label, :cell
+        attr_reader :label, :cell, :width
 
-        def initialize(label, &block)
+        def initialize(label, width = nil, &block)
           @label = label
+          @width = width
           @cell = block
         end
       end

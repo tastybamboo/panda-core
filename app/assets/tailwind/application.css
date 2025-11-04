@@ -9,6 +9,7 @@
 @source "../../../cms/app/components/**/*.rb";
 
 @theme {
+  /* Legacy colors */
   --color-white: var(--color-white);
   --color-black: var(--color-black);
   --color-light: var(--color-light);
@@ -19,6 +20,45 @@
   --color-inactive: var(--color-inactive);
   --color-warning: var(--color-warning);
   --color-error: var(--color-error);
+
+  /* Tailwind UI compatible primary scale */
+  --color-primary-50: var(--color-primary-50);
+  --color-primary-100: var(--color-primary-100);
+  --color-primary-200: var(--color-primary-200);
+  --color-primary-300: var(--color-primary-300);
+  --color-primary-400: var(--color-primary-400);
+  --color-primary-500: var(--color-primary-500);
+  --color-primary-600: var(--color-primary-600);
+  --color-primary-700: var(--color-primary-700);
+  --color-primary-800: var(--color-primary-800);
+  --color-primary-900: var(--color-primary-900);
+  --color-primary-950: var(--color-primary-950);
+
+  /* Map indigo to primary for Tailwind UI compatibility */
+  --color-indigo-50: var(--color-primary-50);
+  --color-indigo-100: var(--color-primary-100);
+  --color-indigo-200: var(--color-primary-200);
+  --color-indigo-300: var(--color-primary-300);
+  --color-indigo-400: var(--color-primary-400);
+  --color-indigo-500: var(--color-primary-500);
+  --color-indigo-600: var(--color-primary-600);
+  --color-indigo-700: var(--color-primary-700);
+  --color-indigo-800: var(--color-primary-800);
+  --color-indigo-900: var(--color-primary-900);
+  --color-indigo-950: var(--color-primary-950);
+
+  /* Gray scale */
+  --color-gray-50: var(--color-gray-50);
+  --color-gray-100: var(--color-gray-100);
+  --color-gray-200: var(--color-gray-200);
+  --color-gray-300: var(--color-gray-300);
+  --color-gray-400: var(--color-gray-400);
+  --color-gray-500: var(--color-gray-500);
+  --color-gray-600: var(--color-gray-600);
+  --color-gray-700: var(--color-gray-700);
+  --color-gray-800: var(--color-gray-800);
+  --color-gray-900: var(--color-gray-900);
+  --color-gray-950: var(--color-gray-950);
 }
 
 @layer base {
@@ -26,6 +66,7 @@
     --color-white: rgb(249, 249, 249); /* #F9F9F9 */
     --color-black: rgb(26, 22, 29); /* #1A161D */
 
+    /* Legacy color variables (kept for backwards compatibility) */
     --color-light: rgb(238, 206, 230); /* #EECEE6 */
     --color-mid: rgb(141, 94, 183); /* #8D5EB7 */
     --color-dark: rgb(33, 29, 73); /* #211D49 */
@@ -36,11 +77,39 @@
     --color-warning: rgb(250, 207, 142); /* #FACF8E */
     --color-inactive: rgb(216, 247, 245); /* #d6e4f7 */
     --color-error: rgb(245, 129, 129); /* #F58181 */
+
+    /* Full Tailwind UI compatible color scale - Primary (Purple palette) */
+    --color-primary-50: rgb(250, 245, 255); /* Very light purple */
+    --color-primary-100: rgb(243, 232, 255); /* Lighter purple */
+    --color-primary-200: rgb(233, 213, 255); /* Light purple */
+    --color-primary-300: rgb(216, 180, 254); /* Medium light purple */
+    --color-primary-400: rgb(192, 132, 252); /* Medium purple */
+    --color-primary-500: rgb(141, 94, 183); /* Main brand color (mid) */
+    --color-primary-600: rgb(120, 80, 160); /* Darker purple */
+    --color-primary-700: rgb(100, 65, 140); /* Dark purple */
+    --color-primary-800: rgb(60, 45, 100); /* Very dark purple */
+    --color-primary-900: rgb(33, 29, 73); /* Darkest (dark) */
+    --color-primary-950: rgb(24, 20, 50); /* Ultra dark */
+
+    /* Gray scale for UI elements */
+    --color-gray-50: rgb(249, 250, 251);
+    --color-gray-100: rgb(243, 244, 246);
+    --color-gray-200: rgb(229, 231, 235);
+    --color-gray-300: rgb(209, 213, 219);
+    --color-gray-400: rgb(156, 163, 175);
+    --color-gray-500: rgb(107, 114, 128);
+    --color-gray-600: rgb(75, 85, 99);
+    --color-gray-700: rgb(55, 65, 81);
+    --color-gray-800: rgb(31, 41, 55);
+    --color-gray-900: rgb(17, 24, 39);
+    --color-gray-950: rgb(3, 7, 18);
   }
 
   html[data-theme='sky'] {
     --color-white: rgb(249, 249, 249); /* #F9F9F9 */
     --color-black: rgb(26, 22, 29); /* #1A161D */
+
+    /* Legacy color variables (kept for backwards compatibility) */
     --color-light: rgb(204, 238, 242); /* #CCEEF2 */
     --color-mid: rgb(42, 102, 159); /* #2A669F */
     --color-dark: rgb(20, 32, 74); /* #14204A */
@@ -50,6 +119,32 @@
     --color-warning: rgb(244, 190, 102); /* #F4BE66 */
     --color-inactive: rgb(216, 247, 245); /* #d6e4f7 */
     --color-error: rgb(208, 64, 20); /* #D04014 */
+
+    /* Full Tailwind UI compatible color scale - Primary (Blue palette) */
+    --color-primary-50: rgb(240, 249, 255); /* Very light blue */
+    --color-primary-100: rgb(224, 242, 254); /* Lighter blue */
+    --color-primary-200: rgb(186, 230, 253); /* Light blue */
+    --color-primary-300: rgb(125, 211, 252); /* Medium light blue */
+    --color-primary-400: rgb(56, 189, 248); /* Medium blue */
+    --color-primary-500: rgb(42, 102, 159); /* Main brand color (mid) */
+    --color-primary-600: rgb(35, 85, 132); /* Darker blue */
+    --color-primary-700: rgb(28, 68, 106); /* Dark blue */
+    --color-primary-800: rgb(22, 52, 82); /* Very dark blue */
+    --color-primary-900: rgb(20, 32, 74); /* Darkest (dark) */
+    --color-primary-950: rgb(15, 24, 55); /* Ultra dark */
+
+    /* Gray scale for UI elements (same across themes) */
+    --color-gray-50: rgb(249, 250, 251);
+    --color-gray-100: rgb(243, 244, 246);
+    --color-gray-200: rgb(229, 231, 235);
+    --color-gray-300: rgb(209, 213, 219);
+    --color-gray-400: rgb(156, 163, 175);
+    --color-gray-500: rgb(107, 114, 128);
+    --color-gray-600: rgb(75, 85, 99);
+    --color-gray-700: rgb(55, 65, 81);
+    --color-gray-800: rgb(31, 41, 55);
+    --color-gray-900: rgb(17, 24, 39);
+    --color-gray-950: rgb(3, 7, 18);
   }
 
   a.block-link:after {

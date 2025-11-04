@@ -16,7 +16,7 @@ module Panda
             end
           end
 
-          div(class: "col-span-3 mt-5 rounded-lg shadow-md bg-gray-500 shadow-inherit/20") do
+          div(class: "col-span-3 mt-5 rounded-lg shadow-md bg-dark shadow-inherit/20") do
             @heading_content&.call
 
             div(class: "p-4 text-black bg-white rounded-b-lg") do

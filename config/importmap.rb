@@ -6,6 +6,7 @@ pin "panda/core/application", to: "/panda/core/application.js"
 pin "panda/core/controllers/index", to: "/panda/core/controllers/index.js"
 pin "panda/core/controllers/toggle_controller", to: "/panda/core/controllers/toggle_controller.js"
 pin "panda/core/controllers/theme_form_controller", to: "/panda/core/controllers/theme_form_controller.js"
+pin "panda/core/tailwindplus-elements", to: "/panda/core/tailwindplus-elements.js"
 
 # Base JavaScript dependencies for Panda Core (vendored for reliability)
 pin "@hotwired/stimulus", to: "/panda/core/vendor/@hotwired--stimulus.js", preload: true # @3.2.2
@@ -15,3 +16,8 @@ pin "tailwindcss-stimulus-components", to: "/panda/core/tailwindcss-stimulus-com
 
 # Font Awesome icons (from CDN)
 pin "@fortawesome/fontawesome-free", to: "https://ga.jspm.io/npm:@fortawesome/fontawesome-free@7.1.0/js/all.js"
+
+# Tailwind Plus Elements - Vanilla JS interactive components (from CDN)
+# Provides: Autocomplete, Command palette, Dialog, Disclosure, Dropdown menu, Popover, Select, Tabs
+# Note: Using esm.sh instead of jsdelivr for better ES module support
+pin "@tailwindplus/elements", to: "https://esm.sh/@tailwindplus/elements@1", preload: false

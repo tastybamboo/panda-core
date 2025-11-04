@@ -5,6 +5,9 @@ module Panda
     class User < ApplicationRecord
       self.table_name = "panda_core_users"
 
+      # Active Storage attachment for avatar
+      has_one_attached :avatar
+
       validates :email, presence: true, uniqueness: {case_sensitive: false}
 
       before_save :downcase_email
@@ -14,7 +17,16 @@ module Panda
 
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)
-        return user if user
+
+        # Handle avatar for both new and existing users
+        avatar_url = auth_hash.info.image
+        if user
+          # Update avatar if URL has changed or no avatar is attached
+          if avatar_url.present? && (avatar_url != user.oauth_avatar_url || !user.avatar.attached?)
+            AttachAvatarService.call(user: user, avatar_url: avatar_url)
+          end
+          return user
+        end
 
         # Support both schema versions: 'name' column or 'firstname'/'lastname' columns
         attributes = {
@@ -34,7 +46,14 @@ module Panda
           attributes[:lastname] = name_parts[1] || "User"
         end
 
-        create!(attributes)
+        user = create!(attributes)
+
+        # Attach avatar for new user
+        if avatar_url.present?
+          AttachAvatarService.call(user: user, avatar_url: avatar_url)
+        end
+
+        user
       end
 
       def admin?
@@ -55,6 +74,17 @@ module Panda
           self[:name]
         else
           email&.split("@")&.first || "Unknown User"
+        end
+      end
+
+      # Returns the URL for the user's avatar
+      # Prefers Active Storage attachment over OAuth provider URL
+      def avatar_url
+        if avatar.attached?
+          Rails.application.routes.url_helpers.rails_blob_path(avatar, only_path: true)
+        elsif self[:image_url].present?
+          # Fallback to OAuth provider URL if no avatar is attached yet
+          self[:image_url]
         end
       end
 

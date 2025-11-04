@@ -21,7 +21,7 @@ module Panda
           when 3
             h3(class: heading_classes) { render_content }
           when :panel
-            h3(class: panel_heading_classes) { render_content }
+            h3(class: panel_heading_classes) { @text }
           else
             h2(class: heading_classes) { render_content }
           end
@@ -35,12 +35,13 @@ module Panda
         private
 
         def render_content
-          div(class: "grow") { @text }
+          div(class: "grow flex items-center gap-x-2") do
+            i(class: @icon) if @icon.present?
+            span { @text }
+          end
 
-          if @buttons&.any?
-            span(class: "actions flex gap-x-2 -mt-1") do
-              @buttons.each { |btn| render(btn) }
-            end
+          span(class: "actions flex gap-x-2 -mt-1 min-h-[2.5rem]") do
+            @buttons&.each { |btn| render(btn) }
           end
         end
 
@@ -61,7 +62,7 @@ module Panda
         end
 
         def panel_heading_classes
-          "text-base font-medium p-4 text-white"
+          "text-base font-medium px-4 py-3 text-white"
         end
 
         def additional_styles_array

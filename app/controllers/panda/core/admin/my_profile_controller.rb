@@ -21,7 +21,7 @@ module Panda
             flash[:success] = "Your profile has been updated successfully."
             redirect_to edit_admin_my_profile_path
           else
-            render :edit, locals: {user: current_user}, status: :unprocessable_entity
+            render :edit, locals: {user: current_user}, status: :unprocessable_content
           end
         end
 

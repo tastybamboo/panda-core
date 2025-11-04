@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Panda::Core::User, type: :model do
+  describe "associations" do
+    it { should have_one_attached(:avatar) }
+  end
+
   describe "validations" do
     subject { described_class.new(name: "Test User", email: "test@example.com") }
 
@@ -38,6 +42,74 @@ RSpec.describe Panda::Core::User, type: :model do
         user = described_class.find_or_create_from_auth_hash(auth_hash)
         expect(user.name).to eq("Test User")
         expect(user.image_url).to eq("https://example.com/image.jpg")
+      end
+
+      it "calls AttachAvatarService for new users with avatar" do
+        expect(Panda::Core::AttachAvatarService).to receive(:call).with(
+          user: an_instance_of(described_class),
+          avatar_url: "https://example.com/image.jpg"
+        )
+        described_class.find_or_create_from_auth_hash(auth_hash)
+      end
+
+      it "calls AttachAvatarService for existing users when avatar URL changes" do
+        user = described_class.create!(email: "test@example.com", name: "Existing User", oauth_avatar_url: "https://old.com/image.jpg")
+
+        expect(Panda::Core::AttachAvatarService).to receive(:call).with(
+          user: user,
+          avatar_url: "https://example.com/image.jpg"
+        )
+
+        described_class.find_or_create_from_auth_hash(auth_hash)
+      end
+
+      it "does not call AttachAvatarService for existing users with same avatar URL and attached avatar" do
+        user = described_class.create!(email: "test@example.com", name: "Existing User", oauth_avatar_url: "https://example.com/image.jpg")
+        user.avatar.attach(io: File.open(Panda::Core::Engine.root.join("spec", "fixtures", "files", "test_image.jpg")), filename: "test.jpg", content_type: "image/jpeg")
+        user.save!
+        user.reload
+
+        # Verify the avatar is actually attached
+        expect(user.avatar.attached?).to be true
+
+        # The user that find_by loads should also see the attachment
+        found_user = described_class.find_by(email: "test@example.com")
+        expect(found_user.avatar.attached?).to be true
+        expect(found_user.oauth_avatar_url).to eq("https://example.com/image.jpg")
+
+        expect(Panda::Core::AttachAvatarService).not_to receive(:call)
+
+        described_class.find_or_create_from_auth_hash(auth_hash)
+      end
+    end
+  end
+
+  describe "#avatar_url" do
+    let(:user) { described_class.create!(email: "test@example.com", name: "Test User") }
+
+    context "when avatar is attached" do
+      before do
+        user.avatar.attach(io: File.open(Panda::Core::Engine.root.join("spec", "fixtures", "files", "test_image.jpg")), filename: "test.jpg", content_type: "image/jpeg")
+      end
+
+      it "returns the Active Storage blob path" do
+        expect(user.avatar_url).to include("/rails/active_storage/blobs/")
+      end
+    end
+
+    context "when avatar is not attached but image_url is present" do
+      before do
+        user.update_column(:image_url, "https://example.com/image.jpg")
+      end
+
+      it "returns the OAuth provider image URL" do
+        expect(user.avatar_url).to eq("https://example.com/image.jpg")
+      end
+    end
+
+    context "when neither avatar nor image_url is present" do
+      it "returns nil" do
+        expect(user.avatar_url).to be_nil
       end
     end
   end

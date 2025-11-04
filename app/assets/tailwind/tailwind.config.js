@@ -18,4 +18,12 @@ module.exports = {
       "../../../cms/vendor/javascript/**/*.js",
     ],
   },
+  safelist: [
+    // Tree indentation classes used in pages/index
+    'ml-4',
+    'ml-8',
+    'ml-12',
+    'ml-16',
+    'ml-24',
+  ],
 };

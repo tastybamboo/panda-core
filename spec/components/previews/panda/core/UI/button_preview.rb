@@ -179,6 +179,48 @@ module Panda
 
         # @!endgroup
 
+        # @!group As Links
+
+        # Button rendered as a link with href
+        #
+        # When an href is provided, the button renders as an <a> tag
+        # instead of a <button> tag, perfect for navigation.
+        # @label Link Button
+        def as_link
+          render Panda::Core::UI::Button.new(
+            text: "Go to Dashboard",
+            variant: :primary,
+            href: "/admin/dashboard"
+          )
+        end
+
+        # Secondary button as link
+        # @label Secondary Link
+        def secondary_link
+          render Panda::Core::UI::Button.new(
+            text: "View Details",
+            variant: :secondary,
+            href: "/admin/details"
+          )
+        end
+
+        # Compare button and link side by side
+        # @label Button vs Link
+        def button_vs_link
+          render_inline Panda::Core::UI::Button.new(
+            text: "Submit Form",
+            variant: :primary,
+            type: "submit"
+          )
+          render_inline Panda::Core::UI::Button.new(
+            text: "Go to Page",
+            variant: :primary,
+            href: "/admin/page"
+          )
+        end
+
+        # @!endgroup
+
         # @!group Advanced
 
         # Button with custom CSS classes

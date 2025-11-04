@@ -45,7 +45,7 @@ namespace :panda do
         if user.admin?
           puts "User '#{user.email}' is already an admin"
         else
-          user.update!(admin: true)
+          user.update!(is_admin: true)
           puts "✓ Granted admin privileges to '#{user.email}'"
         end
       end
@@ -67,9 +67,7 @@ namespace :panda do
           exit 1
         end
 
-        unless user.admin?
-          puts "User '#{user.email}' is not an admin"
-        else
+        if user.admin?
           # Safety check: prevent revoking the last admin
           if Panda::Core::User.admins.count == 1
             puts "Error: Cannot revoke admin privileges from the last admin user"
@@ -77,8 +75,10 @@ namespace :panda do
             exit 1
           end
 
-          user.update!(admin: false)
+          user.update!(is_admin: false)
           puts "✓ Revoked admin privileges from '#{user.email}'"
+        else
+          puts "User '#{user.email}' is not an admin"
         end
       end
 
@@ -109,7 +109,7 @@ namespace :panda do
         # Build attributes hash based on schema
         attributes = {
           email: email.downcase,
-          admin: true
+          is_admin: true
         }
 
         # Add name attributes based on schema

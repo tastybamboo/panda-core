@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Panda::Core::Admin::UserDisplayComponent do
   let(:user_struct) do
-    Struct.new(:firstname, :lastname, :email, :image_url) do
+    Struct.new(:firstname, :lastname, :email, :avatar_url) do
       def name
         "#{firstname} #{lastname}"
       end

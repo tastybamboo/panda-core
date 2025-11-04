@@ -5,17 +5,24 @@ module Panda
     module UI
       # Modern Phlex-based button component with type-safe props.
       #
-      # This component demonstrates the recommended pattern for building
-      # Phlex components in the Panda ecosystem using the shared base class.
+      # Supports both <button> and <a> elements based on whether an href is provided.
+      # Follows Tailwind UI Plus styling patterns with dark mode support.
       #
-      # @example Basic usage
+      # @example Basic button
       #   render Panda::Core::UI::Button.new(text: "Click me")
       #
-      # @example With variant
+      # @example Button as link
       #   render Panda::Core::UI::Button.new(
-      #     text: "Delete",
-      #     variant: :danger,
-      #     size: :large
+      #     text: "Edit",
+      #     variant: :secondary,
+      #     href: "/admin/posts/1/edit"
+      #   )
+      #
+      # @example Primary action button
+      #   render Panda::Core::UI::Button.new(
+      #     text: "Publish",
+      #     variant: :primary,
+      #     href: "/admin/posts/1/publish"
       #   )
       #
       # @example With custom attributes
@@ -33,54 +40,68 @@ module Panda
         prop :size, Symbol, default: :medium
         prop :disabled, _Boolean, default: false
         prop :type, String, default: "button"
+        prop :href, _Nilable(String), default: -> {}
 
         def view_template
-          button(**@attrs) { text }
+          if @href
+            a(**@attrs) { @text }
+          else
+            button(**@attrs) { @text }
+          end
         end
 
         def default_attrs
-          {
-            type: type,
-            disabled: disabled,
+          base = {
             class: button_classes
           }
+
+          if @href
+            base[:href] = @href
+          else
+            base[:type] = @type
+            base[:disabled] = @disabled if @disabled
+          end
+
+          base
         end
 
         private
 
         def button_classes
-          base = "inline-flex items-center rounded-md font-medium shadow-sm transition-colors"
+          base = "inline-flex items-center rounded-md font-semibold"
           base += " #{size_classes}"
           base += " #{variant_classes}"
-          base += " disabled:opacity-50 disabled:cursor-not-allowed" if disabled
+          base += " disabled:opacity-50 disabled:cursor-not-allowed" if @disabled
           base
         end
 
         def size_classes
-          case size
+          case @size
           when :small, :sm
-            "gap-x-1.5 px-2.5 py-1.5 text-sm"
+            "px-2.5 py-1.5 text-sm"
           when :large, :lg
-            "gap-x-2 px-3.5 py-2.5 text-lg"
+            "px-3.5 py-2.5 text-lg"
           else # :medium, :md
-            "gap-x-1.5 px-3 py-2 text-base"
+            "px-3 py-2 text-sm"
           end
         end
 
         def variant_classes
-          case variant
+          case @variant
           when :primary
-            "bg-blue-600 text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            # Blue primary button with dark mode support
+            "bg-blue-600 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500"
           when :secondary
-            "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            # White/gray secondary button with ring and dark mode support
+            "bg-white text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20"
           when :success
-            "bg-green-600 text-white hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            "bg-green-600 text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 dark:bg-green-500 dark:shadow-none dark:hover:bg-green-400 dark:focus-visible:outline-green-500"
           when :danger
-            "bg-red-600 text-white hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            "bg-red-600 text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400 dark:focus-visible:outline-red-500"
           when :ghost
-            "bg-transparent text-gray-700 hover:bg-gray-100"
+            "bg-transparent text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
           else # :default
-            "bg-gray-700 text-white hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700"
+            "bg-gray-700 text-white shadow-xs hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700 dark:bg-gray-600 dark:shadow-none dark:hover:bg-gray-500 dark:focus-visible:outline-gray-600"
           end
         end
       end

@@ -2,29 +2,20 @@
   <ul role="list" class="flex flex-col flex-1">
     <a class="block p-0 mt-4 mb-4 ml-2 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
     <%
-      # Sort navigation items by path length (longest first) to check most specific paths first
-      # This prevents parent paths like /manage/cms from matching when on /manage/cms/pages
-      sorted_items = Panda::Core.config.admin_navigation_items&.call(current_user)&.sort_by { |item| -item[:path].length }
-      active_path = nil
+      # Get navigation items in original order for display
+      nav_items = Panda::Core.config.admin_navigation_items&.call(current_user) || []
+
+      # Find the most specific matching path by checking longest paths first
+      active_path = nav_items
+        .sort_by { |item| -item[:path].length }
+        .find { |item| request.path == item[:path] || request.path.starts_with?(item[:path] + "/") }
+        &.dig(:path)
     %>
-    <% sorted_items&.each do |item| %>
+    <% nav_items.each do |item| %>
       <li>
         <%
-          # Check if current path matches this nav item
-          # Only set active if we haven't found a match yet (ensures most specific match wins)
-          is_active = if active_path.nil?
-            if request.path == item[:path]
-              active_path = item[:path]
-              true
-            elsif request.path.starts_with?(item[:path] + "/")
-              active_path = item[:path]
-              true
-            else
-              false
-            end
-          else
-            false
-          end
+          # Check if this item is the active one
+          is_active = item[:path] == active_path
         %>
         <%= link_to item[:path], class: "#{is_active ? "bg-mid text-white relative flex items-center transition-all py-3 px-2 mb-2 rounded-md group gap-x-3 text-base leading-6 font-normal" : "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal"}" do %>
           <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
@@ -40,7 +31,9 @@
     </li>
     <li class="mt-auto">
       <%= link_to panda_core.edit_admin_my_profile_path, class: "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full", title: "Edit my Profile" do %>
-        <% if !current_user.image_url.to_s.empty? %>
+        <% if current_user.avatar.attached? %>
+          <span class="text-center w-6"><%= image_tag main_app.url_for(current_user.avatar), alt: current_user.name, class: "w-auto h-7 rounded-full object-cover" %></span>
+        <% elsif !current_user.image_url.to_s.empty? %>
           <span class="text-center w-6"><img src="<%= current_user.image_url %>" class="w-auto h-7 rounded-full"></span>
         <% else %>
           <span class="text-center w-6"><i class="text-xl fa-solid fa-circle-user fa-fw"></i></span>

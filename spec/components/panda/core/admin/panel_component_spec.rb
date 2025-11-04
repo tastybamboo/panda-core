@@ -42,7 +42,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent do
       end
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("h3.text-base.font-medium.p-4.text-white")
+      expect(output).to have_css("h3.text-base.font-medium.px-4.py-3.text-white")
     end
   end
 end

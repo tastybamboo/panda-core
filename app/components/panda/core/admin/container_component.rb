@@ -75,7 +75,7 @@ module Panda
 
         def section_classes
           base = "flex-auto"
-          height = @full_height ? "h-[calc(100vh-10rem)]" : nil
+          height = @full_height ? "h-[calc(100vh-9rem)]" : nil
           [base, height].compact.join(" ")
         end
       end

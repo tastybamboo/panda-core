@@ -183,7 +183,7 @@ RSpec.describe Admin::PostsController, type: :request do
       post "/admin/posts", params: {post: {title: ""}}
 
       expect(flash[:error]).to be_present
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end

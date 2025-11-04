@@ -25,7 +25,7 @@ module Panda
             # Keep flash for one more request to survive redirect in tests
             flash.keep(:alert) if Rails.env.test?
             # Use string path since route helpers aren't available in ActionController::Base
-            redirect_to "#{Panda::Core.config.admin_path || '/admin'}/login", allow_other_host: false, status: :found
+            redirect_to "#{Panda::Core.config.admin_path || "/admin"}/login", allow_other_host: false, status: :found
             return
           end
 
@@ -39,7 +39,7 @@ module Panda
         rescue ActiveRecord::RecordNotFound
           render html: "User not found: #{params[:user_id]}", status: :not_found
         rescue => e
-          render html: "Error: #{e.class} - #{e.message}<br>#{e.backtrace.first(5).join('<br>')}", status: :internal_server_error
+          render html: "Error: #{e.class} - #{e.message}<br>#{e.backtrace.first(5).join("<br>")}", status: :internal_server_error
         end
 
         private
