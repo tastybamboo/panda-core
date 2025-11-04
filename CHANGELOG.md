@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2025-11-04
+
+### Added
+- Active Storage configuration for avatar uploads in test environment
+- AttachAvatarService for handling OAuth provider avatar downloads
+- BreadcrumbComponent for navigation breadcrumbs
+- PageHeaderComponent for consistent page headers with breadcrumbs and action buttons
+- Avatar URL field (`oauth_avatar_url`) to User model
+- TailwindPlus Elements JavaScript integration
+- Alert controller for flash message auto-dismiss
+- FileGalleryComponent for file management UI
+- Comprehensive test coverage for new components and services
+- Test fixtures for avatar handling
+
+### Fixed
+- Test suite configuration for Active Storage
+- File path references in specs to use Engine.root instead of Rails.root
+- Avatar attachment persistence in tests with proper save and reload
+- Component specs to match actual implementation behavior
+- Deprecated `:unprocessable_entity` status replaced with `:unprocessable_content`
+- Panel heading padding consistency (px-4 py-3 instead of p-4)
+- Table component empty state rendering
+- UserDisplayComponent to properly use `avatar_url` attribute
+- Standard Ruby linting violations (16 auto-fixes)
+- Unless-else blocks converted to positive case first
+- Nil lambda properties across components
+
+### Changed
+- Improved test reliability with proper Active Storage setup
+- Enhanced component rendering tests
+- Updated documentation for authentication testing
+- Improved BaseService with better result handling
+
+### Deprecated
+- None
+
+### Removed
+- None
+
+### Security
+- None
+
 ## [0.4.1] - 2025-10-30
 
 ### Added

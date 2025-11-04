@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (0.5.0)
+    panda-core (0.6.0)
       importmap-rails
       literal (~> 1.8)
       omniauth
@@ -117,7 +117,7 @@ GEM
     bigdecimal (3.3.1)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
-    brakeman (7.1.0)
+    brakeman (7.1.1)
       racc
     builder (3.3.0)
     bullet (8.1.0)
