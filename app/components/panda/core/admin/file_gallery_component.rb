@@ -22,7 +22,7 @@ module Panda
             h2(id: "gallery-heading", class: "sr-only") { "Files" }
             ul(
               role: "list",
-              class: "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
+              class: "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
             ) do
               @files.each do |file|
                 render_file_item(file)
@@ -36,13 +36,13 @@ module Panda
 
           li(class: "relative") do
             div(
-              class: file_item_classes(is_selected)
+              class: file_container_classes(is_selected)
             ) do
               if file.image?
                 img(
                   src: url_for(file),
                   alt: file.filename.to_s,
-                  class: "object-cover pointer-events-none #{is_selected ? '' : 'group-hover:opacity-75'}"
+                  class: file_image_classes(is_selected)
                 )
               else
                 render_file_icon(file)
@@ -50,7 +50,7 @@ module Panda
 
               button(
                 type: "button",
-                class: "absolute inset-0 focus:outline-none",
+                class: "absolute inset-0 focus:outline-hidden",
                 data: {
                   action: "click->file-gallery#selectFile",
                   file_id: file.id,
@@ -65,22 +65,29 @@ module Panda
               end
             end
 
-            p(class: "block mt-2 text-sm font-medium text-gray-900 pointer-events-none truncate") do
+            p(class: "pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900 dark:text-white") do
               plain file.filename.to_s
             end
-            p(class: "block text-sm font-medium text-gray-500 pointer-events-none") do
+            p(class: "pointer-events-none block text-sm font-medium text-gray-500 dark:text-gray-400") do
               plain number_to_human_size(file.byte_size)
             end
           end
         end
 
-        def file_item_classes(selected)
-          base = "block overflow-hidden w-full bg-gray-100 rounded-lg aspect-w-10 aspect-h-7 group"
-          if selected
-            "#{base} ring-2 ring-offset-2 ring-panda-dark"
+        def file_container_classes(selected)
+          base = "group overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800"
+          focus = if selected
+            "outline-2 outline-offset-2 outline-panda-dark dark:outline-panda-light outline"
           else
-            "#{base} focus-within:ring-2 focus-within:ring-panda-dark focus-within:ring-offset-2 focus-within:ring-offset-gray-100"
+            "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 dark:focus-within:outline-indigo-500"
           end
+          "#{base} #{focus}"
+        end
+
+        def file_image_classes(selected)
+          base = "pointer-events-none aspect-10/7 rounded-lg object-cover outline -outline-offset-1 outline-black/5 dark:outline-white/10"
+          hover = selected ? "" : "group-hover:opacity-75"
+          "#{base} #{hover}"
         end
 
         def render_file_icon(file)
