@@ -11,7 +11,8 @@ module Panda
       #   post "/admin/test_sessions", params: { user_id: user.id }
       #   post "/admin/test_sessions", params: { user_id: user.id, return_to: "/some/path" }
       class TestSessionsController < ActionController::Base
-        # Skip CSRF protection for test-only endpoint
+        # Enable CSRF protection for consistency, then skip for test-only endpoint
+        protect_from_forgery with: :exception
         skip_before_action :verify_authenticity_token, raise: false
 
         def create
