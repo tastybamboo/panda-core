@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Form Select
-      # @tags stable
       class FormSelectComponentPreview < ViewComponent::Preview
         # Basic select dropdown
         # @label Basic Select

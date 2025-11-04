@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Heading
-      # @tags stable
       class HeadingComponentPreview < ViewComponent::Preview
         # Default heading
         # @label Default

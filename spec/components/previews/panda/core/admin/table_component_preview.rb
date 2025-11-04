@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Table
-      # @tags stable
       class TableComponentPreview < ViewComponent::Preview
         # Basic table with sample data
         # @label Default

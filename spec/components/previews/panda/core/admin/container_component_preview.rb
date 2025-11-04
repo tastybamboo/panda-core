@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Container
-      # @tags stable
       class ContainerComponentPreview < ViewComponent::Preview
         # Default container
         # @label Default

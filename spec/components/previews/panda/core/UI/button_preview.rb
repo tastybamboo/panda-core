@@ -26,7 +26,6 @@ module Panda
       # ```
       #
       # @label Button (Phlex)
-      # @tags stable
       # @display bg_color "#f9fafb"
       # @display viewport_width "400px"
       class ButtonPreview < Lookbook::Preview

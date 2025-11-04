@@ -21,7 +21,6 @@ module Panda
       # - Renders efficiently with Phlex
       #
       # @label Card (Phlex)
-      # @tags stable
       # @display bg_color "#f3f4f6"
       class CardPreview < Lookbook::Preview
         # @!group Basic Cards

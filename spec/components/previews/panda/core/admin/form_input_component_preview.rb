@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Form Input
-      # @tags stable
       class FormInputComponentPreview < ViewComponent::Preview
         # Default text input
         # @label Text Input

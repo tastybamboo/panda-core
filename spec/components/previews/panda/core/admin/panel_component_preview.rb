@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Panel
-      # @tags stable
       class PanelComponentPreview < ViewComponent::Preview
         # Basic panel with default styling
         # @label Default

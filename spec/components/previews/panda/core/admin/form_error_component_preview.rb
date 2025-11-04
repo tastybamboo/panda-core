@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Form Error
-      # @tags stable
       class FormErrorComponentPreview < ViewComponent::Preview
         # Single error message
         # @label Single Error

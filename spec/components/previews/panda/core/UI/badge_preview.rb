@@ -21,7 +21,6 @@ module Panda
       # - Sufficient color contrast for all variants
       #
       # @label Badge (Phlex)
-      # @tags stable
       class BadgePreview < Lookbook::Preview
         # @!group Variants
 

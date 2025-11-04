@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Flash Message
-      # @tags stable
       class FlashMessageComponentPreview < ViewComponent::Preview
         # Notice message (informational)
         # @label Notice

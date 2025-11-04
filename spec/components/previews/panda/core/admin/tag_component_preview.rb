@@ -4,7 +4,6 @@ module Panda
   module Core
     module Admin
       # @label Tag
-      # @tags stable
       class TagComponentPreview < ViewComponent::Preview
         # Default tag
         # @label Default
