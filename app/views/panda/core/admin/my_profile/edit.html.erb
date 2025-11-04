@@ -10,31 +10,28 @@
 
     <div class="space-y-6">
       <!-- Avatar Section -->
-      <div class="field">
-        <%= f.label :avatar, "Profile Picture" %>
-        <div class="flex items-center gap-x-6 mt-2">
+      <div class="col-span-full">
+        <%= f.label :avatar, "Profile Picture", class: "block text-sm/6 font-medium text-gray-900 dark:text-white" %>
+        <div class="mt-2 flex items-center gap-x-3">
           <% if user.avatar.attached? %>
-            <%= image_tag main_app.url_for(user.avatar), alt: user.name, class: "h-24 w-24 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700" %>
+            <%= image_tag main_app.url_for(user.avatar), alt: user.name, class: "size-12 rounded-full object-cover" %>
           <% else %>
-            <div class="h-24 w-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center ring-2 ring-gray-200 dark:ring-gray-700">
-              <svg class="h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-12 text-gray-300 dark:text-gray-500">
+              <path d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" fill-rule="evenodd" />
+            </svg>
           <% end %>
-
-          <div class="flex-1">
-            <%= f.file_field :avatar,
-                accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp",
-                class: "block w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-panda-dark file:text-white hover:file:bg-panda-darker cursor-pointer" %>
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF or WebP. Max 5MB.</p>
-            <% if user.avatar.attached? %>
-              <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                Current: <%= user.avatar.filename %> (<%= number_to_human_size(user.avatar.byte_size) %>)
-              </p>
-            <% end %>
-          </div>
+          <label for="<%= f.field_id(:avatar) %>" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 cursor-pointer dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+            Change
+          </label>
+          <%= f.file_field :avatar,
+              accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp",
+              class: "sr-only" %>
         </div>
+        <% if user.avatar.attached? %>
+          <p class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+            Current: <%= user.avatar.filename %> (<%= number_to_human_size(user.avatar.byte_size) %>)
+          </p>
+        <% end %>
       </div>
 
       <div class="field">
