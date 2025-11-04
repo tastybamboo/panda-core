@@ -42,7 +42,7 @@ RSpec.describe Panda::Core::Admin::FlashMessageComponent do
       component = described_class.new(message: "Test", kind: :notice)
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("[data-alert-dismiss-after-value='3000']")
+      expect(output).to have_css("[data-alert-dismiss-after-value='5000']")
     end
 
     it "does not set auto-dismiss when temporary is false" do
