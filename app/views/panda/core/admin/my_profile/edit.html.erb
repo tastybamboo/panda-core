@@ -8,7 +8,35 @@
               data: { controller: "theme-form" } do |f| %>
     <%= render Panda::Core::Admin::FormErrorComponent.new(model: user) %>
 
-    <div class="space-y-4">
+    <div class="space-y-6">
+      <!-- Avatar Section -->
+      <div class="field">
+        <%= f.label :avatar, "Profile Picture" %>
+        <div class="flex items-center gap-x-6 mt-2">
+          <% if user.avatar.attached? %>
+            <%= image_tag user.avatar, alt: user.name, class: "h-24 w-24 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700" %>
+          <% else %>
+            <div class="h-24 w-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center ring-2 ring-gray-200 dark:ring-gray-700">
+              <svg class="h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          <% end %>
+
+          <div class="flex-1">
+            <%= f.file_field :avatar,
+                accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp",
+                class: "block w-full text-sm text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-panda-dark file:text-white hover:file:bg-panda-darker cursor-pointer" %>
+            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF or WebP. Max 5MB.</p>
+            <% if user.avatar.attached? %>
+              <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                Current: <%= user.avatar.filename %> (<%= number_to_human_size(user.avatar.byte_size) %>)
+              </p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
       <div class="field">
         <%= f.label :name %>
         <%= f.text_field :name %>

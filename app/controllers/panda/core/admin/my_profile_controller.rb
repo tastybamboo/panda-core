@@ -36,7 +36,7 @@ module Panda
         # @return ActionController::StrongParameters
         def user_params
           # Base parameters that Core always allows
-          base_params = [:name, :email, :current_theme]
+          base_params = [:name, :email, :current_theme, :avatar]
 
           # Allow additional params from configuration
           additional_params = Core.config.additional_user_params || []
