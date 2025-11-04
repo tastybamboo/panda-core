@@ -17,7 +17,7 @@ Panda::Core::Engine.routes.draw do
     get "/", to: "admin/dashboard#show", as: :root
 
     # Profile management
-    resource :my_profile, only: %i[edit update], controller: "admin/my_profile", path: "my_profile"
+    resource :my_profile, only: %i[show edit update], controller: "admin/my_profile", path: "my_profile"
 
     # Test-only authentication endpoint (available in development and test environments)
     # This bypasses OAuth for faster, more reliable test execution

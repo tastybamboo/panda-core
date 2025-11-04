@@ -4,7 +4,14 @@ module Panda
   module Core
     module Admin
       class MyProfileController < BaseController
-        before_action :set_initial_breadcrumb, only: %i[edit update]
+        before_action :set_initial_breadcrumb, only: %i[show edit update]
+
+        # Redirects to the edit form
+        # @type GET
+        # @return void
+        def show
+          redirect_to edit_admin_my_profile_path
+        end
 
         # Shows the edit form for the current user's profile
         # @type GET

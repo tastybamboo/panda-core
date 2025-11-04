@@ -30,7 +30,11 @@
       <% end %>
     </li>
     <li class="mt-auto">
-      <%= link_to panda_core.edit_admin_my_profile_path, class: "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full", title: "Edit my Profile" do %>
+      <%
+        # Check if we're in the my_profile section
+        is_my_profile_active = request.path.starts_with?("#{Panda::Core.config.admin_path}/my_profile")
+      %>
+      <%= link_to panda_core.admin_my_profile_path, class: "#{is_my_profile_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60'} transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full", title: "My Profile" do %>
         <% if current_user.avatar.attached? %>
           <span class="text-center w-6"><%= image_tag main_app.url_for(current_user.avatar), alt: current_user.name, class: "w-auto h-7 rounded-full object-cover" %></span>
         <% elsif !current_user.image_url.to_s.empty? %>
