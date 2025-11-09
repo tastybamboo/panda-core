@@ -84,45 +84,58 @@ module Panda
       end
 
       def file_field(method, options = {})
-        accept_types = options.delete(:accept) || "image/*"
-        max_size = options.delete(:max_size) || "10MB"
-        file_types_display = options.delete(:file_types_display) || "PNG, JPG, GIF"
+        # Check if simple mode is requested (no fancy upload UI)
+        simple_mode = options.delete(:simple)
 
-        field_id = "#{object_name}_#{method}"
+        if simple_mode
+          # Simple file input with basic styling
+          content_tag :div, class: container_styles do
+            label(method) +
+              meta_text(options) +
+              super(method, options.reverse_merge(class: "file:rounded file:border-0 file:text-sm file:bg-white file:text-gray-500 hover:file:bg-gray-50 bg-white px-2.5 hover:bg-gray-50".concat(input_styles)))
+          end
+        else
+          # Fancy drag-and-drop UI
+          accept_types = options.delete(:accept) || "image/*"
+          max_size = options.delete(:max_size) || "10MB"
+          file_types_display = options.delete(:file_types_display) || "PNG, JPG, GIF"
 
-        content_tag :div, class: "#{container_styles} col-span-full", data: { controller: "file-upload" } do
-          label(method) +
-            meta_text(options) +
-            content_tag(:div, class: "mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 dark:border-white/25 transition-colors", data: { file_upload_target: "dropzone" }) do
-              content_tag(:div, class: "text-center") do
-                # Icon
-                @template.content_tag(:svg, viewBox: "0 0 24 24", fill: "currentColor", "data-slot": "icon", "aria-hidden": true, class: "mx-auto size-12 text-gray-300 dark:text-gray-600") do
-                  @template.content_tag(:path, nil, d: "M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z", "clip-rule": "evenodd", "fill-rule": "evenodd")
-                end +
-                # Upload area
-                content_tag(:div, class: "mt-4 flex items-baseline justify-center text-sm leading-6 text-gray-600 dark:text-gray-400") do
-                  content_tag(:label, for: field_id, class: "relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:focus-within:outline-indigo-500 dark:hover:text-indigo-300") do
-                    content_tag(:span, "Upload a file") +
-                      super(method, options.reverse_merge(
-                        id: field_id,
-                        accept: accept_types,
-                        class: "sr-only",
-                        data: {
-                          file_upload_target: "input",
-                          action: "change->file-upload#handleFileSelect"
-                        }
-                      ))
+          field_id = "#{object_name}_#{method}"
+
+          content_tag :div, class: "#{container_styles} col-span-full", data: {controller: "file-upload"} do
+            label(method) +
+              meta_text(options) +
+              content_tag(:div, class: "mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 dark:border-white/25 transition-colors", data: {file_upload_target: "dropzone"}) do
+                content_tag(:div, class: "text-center") do
+                  # Icon
+                  @template.content_tag(:svg, viewBox: "0 0 24 24", fill: "currentColor", "data-slot": "icon", "aria-hidden": true, class: "mx-auto size-12 text-gray-300 dark:text-gray-600") do
+                    @template.content_tag(:path, nil, d: "M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z", "clip-rule": "evenodd", "fill-rule": "evenodd")
                   end +
-                    content_tag(:span, "or drag and drop", class: "pl-1")
-                end +
-                # File type info
-                content_tag(:p, "#{file_types_display} up to #{max_size}", class: "text-xs/5 text-gray-600 dark:text-gray-400")
-              end
-            end +
-            # File info display (hidden by default)
-            content_tag(:div, "", class: "hidden mt-3", data: { file_upload_target: "fileInfo" }) +
-            # Preview display (hidden by default)
-            content_tag(:div, "", class: "hidden mt-3", data: { file_upload_target: "preview" })
+                    # Upload area
+                    content_tag(:div, class: "mt-4 flex items-baseline justify-center text-sm leading-6 text-gray-600 dark:text-gray-400") do
+                    content_tag(:label, for: field_id, class: "relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:focus-within:outline-indigo-500 dark:hover:text-indigo-300") do
+                      content_tag(:span, "Upload a file") +
+                        super(method, options.reverse_merge(
+                          id: field_id,
+                          accept: accept_types,
+                          class: "sr-only",
+                          data: {
+                            file_upload_target: "input",
+                            action: "change->file-upload#handleFileSelect"
+                          }
+                        ))
+                    end +
+                      content_tag(:span, "or drag and drop", class: "pl-1")
+                  end +
+                    # File type info
+                    content_tag(:p, "#{file_types_display} up to #{max_size}", class: "text-xs/5 text-gray-600 dark:text-gray-400")
+                end
+              end +
+              # File info display (hidden by default)
+              content_tag(:div, "", class: "hidden mt-3", data: {file_upload_target: "fileInfo"}) +
+              # Preview display (hidden by default)
+              content_tag(:div, "", class: "hidden mt-3", data: {file_upload_target: "preview"})
+          end
         end
       end
 
