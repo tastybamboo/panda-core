@@ -23,6 +23,6 @@ pin "@fortawesome/fontawesome-free", to: "https://ga.jspm.io/npm:@fortawesome/fo
 # Note: Using esm.sh instead of jsdelivr for better ES module support
 pin "@tailwindplus/elements", to: "https://esm.sh/@tailwindplus/elements@1", preload: false
 
-# Cropper.js - Image cropping library
-pin "cropperjs", to: "https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"
+# Cropper.js - Image cropping library (ESM version for importmap)
+pin "cropperjs", to: "https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.esm.js"
 # Note: Cropper.css is loaded separately via stylesheet_link_tag in views that use cropper
