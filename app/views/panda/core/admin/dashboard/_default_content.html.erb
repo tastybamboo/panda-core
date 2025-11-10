@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <% # Hook for additional dashboard cards %>
+    <%# Hook for additional dashboard cards %>
     <% if Panda::Core.config.respond_to?(:admin_dashboard_cards) %>
       <% cards = Panda::Core.config.admin_dashboard_cards&.call(current_user) %>
       <% cards&.each do |card| %>
