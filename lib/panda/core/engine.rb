@@ -7,8 +7,15 @@ require "omniauth"
 # This gem uses the deprecated module but hasn't been updated yet
 # Issue: https://github.com/cookpad/omniauth-rails_csrf_protection/issues/23
 # This can be removed once the gem is updated or Rails 8.2 is released
-ActiveSupport::Deprecation.silence do
+#
+# We suppress the warning by temporarily redirecting stderr since
+# ActiveSupport::Deprecation.silence was removed in Rails 8.1
+original_stderr = $stderr
+$stderr = StringIO.new
+begin
   require "omniauth/rails_csrf_protection"
+ensure
+  $stderr = original_stderr
 end
 
 require "view_component"
