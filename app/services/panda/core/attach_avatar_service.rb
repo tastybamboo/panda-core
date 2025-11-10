@@ -49,6 +49,7 @@ module Panda
             content_type: content_type
           )
         end
+        # standard:enable Security/Open
       end
 
       def determine_extension(content_type)
