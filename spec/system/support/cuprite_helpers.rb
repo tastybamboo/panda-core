@@ -11,7 +11,7 @@ cuprite_options = {
   timeout: 30,
   js_errors: false,
   ignore_default_browser_options: false,
-  process_timeout: 10,
+  process_timeout: 30,  # Increased for CI environments where Chrome startup can be slower
   wait_for_network_idle: false,  # Don't wait for all network requests
   pending_connection_errors: false,  # Don't fail on pending external connections
   browser_options: {
