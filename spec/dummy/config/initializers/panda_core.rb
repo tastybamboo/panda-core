@@ -13,4 +13,56 @@ Panda::Core.configure do |config|
 
   # Configure the cache store (default: :memory_store)
   # config.cache_store = :memory_store
+
+  # Configure admin navigation with nested items (example)
+  config.admin_navigation_items = ->(user) {
+    [
+      {
+        label: "Dashboard",
+        path: "/admin",
+        icon: "fa-solid fa-house"
+      },
+      {
+        label: "Team",
+        icon: "fa-solid fa-users",
+        children: [
+          { label: "Overview", path: "/admin/team/overview" },
+          { label: "Members", path: "/admin/team/members" },
+          { label: "Calendar", path: "/admin/team/calendar" },
+          { label: "Settings", path: "/admin/team/settings" }
+        ]
+      },
+      {
+        label: "Projects",
+        icon: "fa-solid fa-folder",
+        children: [
+          { label: "All Projects", path: "/admin/projects" },
+          { label: "Active", path: "/admin/projects/active" },
+          { label: "Archived", path: "/admin/projects/archived" }
+        ]
+      },
+      {
+        label: "Documents",
+        icon: "fa-solid fa-file",
+        children: [
+          { label: "All Documents", path: "/admin/documents" },
+          { label: "Drafts", path: "/admin/documents/drafts" },
+          { label: "Published", path: "/admin/documents/published" }
+        ]
+      },
+      {
+        label: "Tools",
+        icon: "fa-solid fa-wrench",
+        children: [
+          { label: "Import/Export", path: "/admin/tools/import-export" },
+          { label: "System Info", path: "/admin/tools/system-info" }
+        ]
+      },
+      {
+        label: "Settings",
+        path: "/admin/settings",
+        icon: "fa-solid fa-gear"
+      }
+    ]
+  }
 end
