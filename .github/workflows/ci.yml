@@ -132,9 +132,6 @@ jobs:
         env:
           DATABASE_URL: "postgres://postgres:password@postgres:5432/test"
           RAILS_ENV: "test"
-          PGUSER: postgres
-          PGPASSWORD: password
-          PGHOST: postgres
         run: |
           bundle exec rspec
 
