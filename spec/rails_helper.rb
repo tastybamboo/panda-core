@@ -221,20 +221,22 @@ RSpec.configure do |config|
     if ENV["GITHUB_ACTIONS"] == "true"
       puts "\n🔍 CI Environment Detected - Checking JavaScript Infrastructure..."
 
-      # Verify compiled assets exist
-      js_asset = Rails.root.join("public/panda-cms-assets/panda-cms-0.7.4.js")
-      css_asset = Rails.root.join("public/panda-cms-assets/panda-cms-0.7.4.css")
+      # Verify compiled assets exist (find any panda-core assets)
+      asset_dir = Rails.root.join("public/panda-core-assets")
+      js_assets = Dir.glob(asset_dir.join("panda-core-*.js"))
+      css_assets = Dir.glob(asset_dir.join("panda-core-*.css"))
 
-      unless File.exist?(js_asset) && File.exist?(css_asset)
+      unless js_assets.any? && css_assets.any?
         puts "❌ CRITICAL: Compiled assets missing!"
-        puts "   JavaScript: #{File.exist?(js_asset)} (#{js_asset})"
-        puts "   CSS: #{File.exist?(css_asset)} (#{css_asset})"
+        puts "   JavaScript files found: #{js_assets.count}"
+        puts "   CSS files found: #{css_assets.count}"
+        puts "   Looking in: #{asset_dir}"
         fail "Compiled assets not found - check asset compilation step"
       end
 
       puts "✅ Compiled assets found:"
-      puts "   JavaScript: #{File.size(js_asset)} bytes"
-      puts "   CSS: #{File.size(css_asset)} bytes"
+      puts "   JavaScript: #{File.basename(js_assets.first)} (#{File.size(js_assets.first)} bytes)"
+      puts "   CSS: #{File.basename(css_assets.first)} (#{File.size(css_assets.first)} bytes)"
 
       # Test basic Rails application responsiveness
       puts "\n🔍 Testing Rails application responsiveness..."
