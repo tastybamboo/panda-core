@@ -26,6 +26,12 @@ module Panda
     class Engine < ::Rails::Engine
       isolate_namespace Panda::Core
 
+      # For testing: Don't expose engine migrations since we use "copy to host app" strategy
+      # In test environment, migrations should be copied to the host app
+      if Rails.env.test?
+        config.paths["db/migrate"] = []
+      end
+
       config.eager_load_namespaces << Panda::Core::Engine
 
       # Add engine's app directories to autoload paths
