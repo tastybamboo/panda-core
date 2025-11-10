@@ -84,10 +84,73 @@ module Panda
       end
 
       def file_field(method, options = {})
+        # Check if cropper is requested
+        with_cropper = options.delete(:with_cropper)
+
         # Check if simple mode is requested (no fancy upload UI)
         simple_mode = options.delete(:simple)
 
-        if simple_mode
+        if with_cropper
+          # Image upload with cropper
+          aspect_ratio = options.delete(:aspect_ratio) # e.g., 1.91 for OG images (1200x630)
+          min_width = options.delete(:min_width) || 0
+          min_height = options.delete(:min_height) || 0
+          accept_types = options.delete(:accept) || "image/*"
+          field_id = "#{object_name}_#{method}"
+
+          content_tag :div, class: container_styles do
+            label(method) +
+              meta_text(options) +
+              # Cropper stylesheet
+              @template.content_tag(:link, nil, rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css") +
+              # File input
+              content_tag(:div, class: "mt-2") do
+                super(method, options.reverse_merge(
+                  id: field_id,
+                  accept: accept_types,
+                  class: "file:rounded file:border-0 file:text-sm file:bg-white file:text-gray-500 hover:file:bg-gray-50 bg-white px-2.5 hover:bg-gray-50 #{input_styles}",
+                  data: {
+                    controller: "image-cropper",
+                    image_cropper_target: "input",
+                    action: "change->image-cropper#handleFileSelect",
+                    image_cropper_aspect_ratio_value: aspect_ratio,
+                    image_cropper_min_width_value: min_width,
+                    image_cropper_min_height_value: min_height
+                  }
+                ))
+              end +
+              # Cropper container (hidden by default)
+              content_tag(:div, class: "hidden mt-4 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg", data: {image_cropper_target: "cropperContainer"}) do
+                # Preview image
+                @template.image_tag("", alt: "Crop preview", data: {image_cropper_target: "preview"}, class: "max-w-full") +
+                  # Cropper controls
+                  content_tag(:div, class: "mt-4 flex gap-2 flex-wrap") do
+                  @template.button_tag("Crop & Save", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500", data: {action: "click->image-cropper#crop"}) +
+                    @template.button_tag("Cancel", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#cancel"}) +
+                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#reset"}) do
+                    @template.content_tag(:i, "", class: "fa-solid fa-rotate-left") +
+                      @template.content_tag(:span, "Reset")
+                  end +
+                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#rotate", degrees: "90"}) do
+                    @template.content_tag(:i, "", class: "fa-solid fa-rotate-right") +
+                      @template.content_tag(:span, "Rotate")
+                  end +
+                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#flip", direction: "horizontal"}) do
+                    @template.content_tag(:i, "", class: "fa-solid fa-arrows-left-right") +
+                      @template.content_tag(:span, "Flip H")
+                  end +
+                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#zoom", ratio: "0.1"}) do
+                    @template.content_tag(:i, "", class: "fa-solid fa-magnifying-glass-plus") +
+                      @template.content_tag(:span, "Zoom In")
+                  end +
+                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#zoom", ratio: "-0.1"}) do
+                    @template.content_tag(:i, "", class: "fa-solid fa-magnifying-glass-minus") +
+                      @template.content_tag(:span, "Zoom Out")
+                  end
+                end
+              end
+          end
+        elsif simple_mode
           # Simple file input with basic styling
           content_tag :div, class: container_styles do
             label(method) +
