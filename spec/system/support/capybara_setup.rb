@@ -1,7 +1,5 @@
-# Usually, especially when using Selenium, developers tend to increase the max wait time.
-# With Cuprite, there is no need for that locally, but CI environments need more time.
-# Use longer timeout in CI to account for slower container performance
-Capybara.default_max_wait_time = ENV["CI"].present? ? 10 : 2
+# Increase wait time for CI environments where asset loading is slower
+Capybara.default_max_wait_time = ENV["CI"].present? ? 10 : 5
 
 # Normalize whitespaces when using `has_text?` and similar matchers,
 # i.e., ignore newlines, trailing spaces, etc.
@@ -10,7 +8,7 @@ Capybara.default_normalize_ws = true
 
 # Where to store system tests artifacts (e.g. screenshots, downloaded files, etc.).
 # It could be useful to be able to configure this path from the outside (e.g., on CI).
-Capybara.save_path = ENV.fetch("CAPYBARA_ARTIFACTS") { "./tmp/capybara" }
+Capybara.save_path = ENV.fetch("CAPYBARA_ARTIFACTS", "./tmp/capybara")
 
 # Disable animation so we're not waiting for it
 Capybara.disable_animation = true
@@ -27,8 +25,16 @@ Capybara.singleton_class.prepend(Module.new do
   end
 end)
 
-Capybara.server_host = "0.0.0.0"
-Capybara.server_port = 3001
-Capybara.app_host = "http://#{Capybara.server_host}:#{Capybara.server_port}"
+Capybara.server_host = "127.0.0.1"
+Capybara.server_port = ENV["CAPYBARA_PORT"]&.to_i # Let Capybara choose if not specified
 
-Rails.application.routes.default_url_options[:host] = Capybara.app_host
+# Configure Puma server with explicit options
+# Use single-threaded mode to share database connection with tests
+Capybara.register_server :puma do |app, port, host|
+  require "rack/handler/puma"
+  Rack::Handler::Puma.run(app, Port: port, Host: host, Silent: true, Threads: "1:1")
+end
+Capybara.server = :puma
+
+# Do not set app_host here - let Capybara determine it from the server
+# This avoids conflicts between what's configured and what's actually running
