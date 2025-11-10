@@ -92,9 +92,9 @@ RSpec.describe "Nested navigation", type: :system do
     it "rotates chevron icon when expanding", js: true do
       visit "/admin"
 
-      # Find the chevron icon in the Team button
+      # Find the chevron icon using data attribute
       team_button = find("button", text: "Team")
-      chevron = team_button.find("i")
+      chevron = team_button.find("[data-navigation-toggle-target='icon']", visible: :all)
 
       # Initially should not be rotated
       expect(chevron[:class]).not_to include("rotate-90")
