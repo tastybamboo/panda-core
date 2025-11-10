@@ -28,6 +28,7 @@ module Panda
 
       def download_and_attach_avatar
         # Open the URL with a timeout and size limit
+        # standard:disable Security/Open -- We trust OAuth provider avatar URLs
         URI.open(@avatar_url, read_timeout: 10, open_timeout: 10, redirect: true) do |downloaded_file|
           # Validate file size (max 5MB)
           if downloaded_file.size > 5.megabytes
@@ -46,6 +47,7 @@ module Panda
             content_type: content_type
           )
         end
+        # standard:enable Security/Open
       end
 
       def determine_extension(content_type)
