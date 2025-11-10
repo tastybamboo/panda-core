@@ -25,7 +25,7 @@ module Dummy
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Don't use API-only mode to support ViewComponent/Phlex components
+    # Don't use API-only mode to support Phlex components
     config.api_only = false
   end
 end

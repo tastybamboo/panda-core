@@ -66,9 +66,17 @@ module CupriteHelpers
 
   # Wait for JavaScript to load (Panda Core specific)
   def wait_for_javascript(timeout: 5)
-    # Panda Core may not have window.pandaCoreLoaded set yet
-    # Just wait for document.readyState to be complete
-    wait_for_ready_state
+    Timeout.timeout(timeout) do
+      loop do
+        loaded = begin
+          page.evaluate_script("window.pandaCoreLoaded === true")
+        rescue
+          false
+        end
+        break if loaded
+        sleep 0.1
+      end
+    end
     true
   rescue Timeout::Error
     puts "[CI] Timeout waiting for JavaScript to load" if ENV["GITHUB_ACTIONS"]
@@ -251,12 +259,12 @@ module CupriteHelpers
         if (!parentSelect || !parentSelect.value) {
           return { hasParent: false };
         }
-        
+
         var selectedOption = parentSelect.querySelector('option[value="' + parentSelect.value + '"]');
         if (!selectedOption) {
           return { hasParent: false };
         }
-        
+
         var text = selectedOption.textContent;
         var pathMatch = text.match(/\\((.*)\\)$/);
         return {

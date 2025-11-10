@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       # @label Button
-      class ButtonComponentPreview < ViewComponent::Preview
+      class ButtonComponentPreview < Lookbook::Preview
         # Default button with no specific action
         # @label Default
         def default

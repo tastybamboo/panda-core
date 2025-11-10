@@ -38,16 +38,25 @@ RSpec.describe "Admin authentication", type: :system do
 
   describe "authentication errors" do
     it "handles invalid credentials" do
-      # Mock invalid credentials (don't clear config - providers are pre-configured)
-      OmniAuth.config.mock_auth[:google_oauth2] = :invalid_credentials
+      # Silence OmniAuth logger for this test since we're intentionally causing an error
+      original_logger = OmniAuth.config.logger
+      OmniAuth.config.logger = Logger.new(nil)
 
-      # Visit the callback URL directly (simulating failed OAuth)
-      visit "/admin/auth/google_oauth2/callback"
+      begin
+        # Mock invalid credentials (don't clear config - providers are pre-configured)
+        OmniAuth.config.mock_auth[:google_oauth2] = :invalid_credentials
 
-      # Should redirect back to login with error message
-      expect(page).to have_current_path("/admin/login")
-      # The flash message will appear at the top
-      expect(page).to have_content("Authentication failed")
+        # Visit the callback URL directly (simulating failed OAuth)
+        visit "/admin/auth/google_oauth2/callback"
+
+        # Should redirect back to login with error message
+        expect(page).to have_current_path("/admin/login")
+        # The flash message will appear at the top
+        expect(page).to have_content("Authentication failed")
+      ensure
+        # Restore original logger
+        OmniAuth.config.logger = original_logger
+      end
     end
   end
 end

@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       # @label Form Error
-      class FormErrorComponentPreview < ViewComponent::Preview
+      class FormErrorComponentPreview < Lookbook::Preview
         # Single error message
         # @label Single Error
         def single_error

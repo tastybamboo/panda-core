@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       # @label Heading
-      class HeadingComponentPreview < ViewComponent::Preview
+      class HeadingComponentPreview < Lookbook::Preview
         # Default heading
         # @label Default
         def default

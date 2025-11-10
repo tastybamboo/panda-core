@@ -1,4 +1,0 @@
-*.css diff=css
-*.html diff=html
-*.md diff=markdown
-*.rb diff=ruby 
