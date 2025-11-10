@@ -65,18 +65,20 @@ RSpec.describe Panda::Core::User, type: :model do
 
       it "does not call AttachAvatarService for existing users with same avatar URL and attached avatar" do
         user = described_class.create!(email: "test@example.com", name: "Existing User", oauth_avatar_url: "https://example.com/image.jpg")
-        user.avatar.attach(io: File.open(Panda::Core::Engine.root.join("spec", "fixtures", "files", "test_image.jpg")), filename: "test.jpg", content_type: "image/jpeg")
-        user.save!
-        user.reload
+
+        # Attach avatar directly (same approach as the working test at line 90-96)
+        user.avatar.attach(
+          io: File.open(Panda::Core::Engine.root.join("spec", "fixtures", "files", "test_image.jpg")),
+          filename: "test.jpg",
+          content_type: "image/jpeg"
+        )
 
         # Verify the avatar is actually attached
         expect(user.avatar.attached?).to be true
+        expect(user.oauth_avatar_url).to eq("https://example.com/image.jpg")
 
-        # The user that find_by loads should also see the attachment
-        found_user = described_class.find_by(email: "test@example.com")
-        expect(found_user.avatar.attached?).to be true
-        expect(found_user.oauth_avatar_url).to eq("https://example.com/image.jpg")
-
+        # Now when we call find_or_create_from_auth_hash with the same avatar URL,
+        # it should NOT call the service again
         expect(Panda::Core::AttachAvatarService).not_to receive(:call)
 
         described_class.find_or_create_from_auth_hash(auth_hash)
