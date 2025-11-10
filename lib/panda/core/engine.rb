@@ -2,7 +2,15 @@ require "rubygems"
 
 require "rails/engine"
 require "omniauth"
-require "omniauth/rails_csrf_protection"
+
+# Silence ActiveSupport::Configurable deprecation from omniauth-rails_csrf_protection
+# This gem uses the deprecated module but hasn't been updated yet
+# Issue: https://github.com/cookpad/omniauth-rails_csrf_protection/issues/23
+# This can be removed once the gem is updated or Rails 8.2 is released
+ActiveSupport::Deprecation.silence do
+  require "omniauth/rails_csrf_protection"
+end
+
 require "view_component"
 
 module Panda
