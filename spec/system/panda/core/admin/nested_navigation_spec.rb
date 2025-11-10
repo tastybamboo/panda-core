@@ -53,7 +53,6 @@ RSpec.describe "Nested navigation", type: :system do
     end
 
     it "collapses nested items by default" do
-      skip "CSS not loading in test environment - needs asset loader fix"
       visit "/admin"
 
       # Sub-menu items should be hidden initially (checking visibility, not just DOM presence)
@@ -76,7 +75,6 @@ RSpec.describe "Nested navigation", type: :system do
     end
 
     it "collapses nested items when clicked again", js: true do
-      skip "CSS not loading in test environment - needs asset loader fix"
       visit "/admin"
 
       # Expand the menu
@@ -92,12 +90,11 @@ RSpec.describe "Nested navigation", type: :system do
     end
 
     it "rotates chevron icon when expanding", js: true do
-      skip "CSS not loading in test environment - needs asset loader fix"
       visit "/admin"
 
       # Find the chevron icon in the Team button
       team_button = find("button", text: "Team")
-      chevron = team_button.find("i.fa-chevron-right")
+      chevron = team_button.find("i")
 
       # Initially should not be rotated
       expect(chevron[:class]).not_to include("rotate-90")
@@ -124,7 +121,6 @@ RSpec.describe "Nested navigation", type: :system do
     end
 
     it "updates aria-expanded attribute", js: true do
-      skip "CSS not loading in test environment - needs asset loader fix"
       visit "/admin"
 
       team_button = find("button", text: "Team")

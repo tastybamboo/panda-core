@@ -33,6 +33,8 @@ module Panda
                   "@rails/actioncable/src": "/panda/core/vendor/@rails--actioncable--src.js",
                   "tailwindcss-stimulus-components": "/panda/core/tailwindcss-stimulus-components.js",
                   "@fortawesome/fontawesome-free": "https://ga.jspm.io/npm:@fortawesome/fontawesome-free@7.1.0/js/all.js",
+                  "@tailwindplus/elements": "https://esm.sh/@tailwindplus/elements@1",
+                  "cropperjs": "https://esm.sh/cropperjs@1.6.2",
                   "panda/core/application": "/panda/core/application.js",
                   "panda/core/controllers/toggle_controller": "/panda/core/controllers/toggle_controller.js",
                   "panda/core/controllers/theme_form_controller": "/panda/core/controllers/theme_form_controller.js"
