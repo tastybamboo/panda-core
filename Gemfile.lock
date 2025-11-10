@@ -5,9 +5,6 @@ PATH
       importmap-rails
       literal (~> 1.8)
       omniauth
-      omniauth-github
-      omniauth-google-oauth2
-      omniauth-microsoft_graph
       omniauth-rails_csrf_protection
       phlex (~> 2.3)
       phlex-rails (~> 2.3)
@@ -364,7 +361,7 @@ GEM
       psych (>= 4.0.0)
       tsort
     regexp_parser (2.11.3)
-    reline (0.6.2)
+    reline (0.6.3)
       io-console (~> 0.5)
     rouge (4.6.1)
     rspec (3.13.2)
@@ -534,6 +531,9 @@ DEPENDENCIES
   fasterer
   generator_spec
   listen
+  omniauth-github
+  omniauth-google-oauth2
+  omniauth-microsoft_graph
   panda-core!
   pg
   pry-rails

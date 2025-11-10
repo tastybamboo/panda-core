@@ -14,6 +14,23 @@ Panda::Core.configure do |config|
   # Configure the cache store (default: :memory_store)
   # config.cache_store = :memory_store
 
+  # Configure OAuth providers for testing (prevents CI hangs)
+  # These are dummy credentials that will be mocked in tests
+  config.authentication_providers = {
+    google_oauth2: {
+      client_id: "test_google_client_id",
+      client_secret: "test_google_client_secret"
+    },
+    github: {
+      client_id: "test_github_client_id",
+      client_secret: "test_github_client_secret"
+    },
+    microsoft_graph: {
+      client_id: "test_microsoft_client_id",
+      client_secret: "test_microsoft_client_secret"
+    }
+  }
+
   # Configure admin navigation with nested items (example)
   config.admin_navigation_items = ->(user) {
     [

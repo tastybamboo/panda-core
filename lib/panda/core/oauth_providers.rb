@@ -5,21 +5,21 @@ module Panda
         providers = []
 
         begin
-          require "omniauth-github"
+          require "omniauth/strategies/github"
           providers << :github
         rescue LoadError
           # GitHub OAuth functionality not available
         end
 
         begin
-          require "omniauth-google-oauth2"
+          require "omniauth/strategies/google_oauth2"
           providers << :google_oauth2
         rescue LoadError
           # Google OAuth functionality not available
         end
 
         begin
-          require "omniauth-microsoft_graph"
+          require "omniauth/strategies/microsoft_graph"
           providers << :microsoft_graph
         rescue LoadError
           # Microsoft OAuth functionality not available

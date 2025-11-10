@@ -76,6 +76,10 @@ module Panda
       end
 
       initializer "panda_core.omniauth" do |app|
+        # Load OAuth provider gems
+        require_relative "oauth_providers"
+        Panda::Core::OAuthProviders.setup
+
         # Mount OmniAuth at configurable admin path
         app.middleware.use OmniAuth::Builder do
           # Configure OmniAuth to use the configured admin path
