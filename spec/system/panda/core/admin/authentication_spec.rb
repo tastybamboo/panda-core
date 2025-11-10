@@ -22,14 +22,6 @@ RSpec.describe "Admin authentication", type: :system do
     end
 
     context "with GitHub" do
-      before do
-        # Enable GitHub in config
-        Panda::Core.config.authentication_providers[:github] = {
-          client_id: "test_client_id",
-          client_secret: "test_client_secret"
-        }
-      end
-
       it "logs in admin successfully using test endpoint" do
         login_with_github(admin_user)
         expect(["/admin", "/admin/cms"]).to include(page.current_path)
@@ -37,14 +29,6 @@ RSpec.describe "Admin authentication", type: :system do
     end
 
     context "with Microsoft" do
-      before do
-        # Enable Microsoft in config
-        Panda::Core.config.authentication_providers[:microsoft_graph] = {
-          client_id: "test_client_id",
-          client_secret: "test_client_secret"
-        }
-      end
-
       it "logs in admin successfully using test endpoint" do
         login_with_microsoft(admin_user)
         expect(["/admin", "/admin/cms"]).to include(page.current_path)
@@ -54,7 +38,7 @@ RSpec.describe "Admin authentication", type: :system do
 
   describe "authentication errors" do
     it "handles invalid credentials" do
-      clear_omniauth_config
+      # Mock invalid credentials (don't clear config - providers are pre-configured)
       OmniAuth.config.mock_auth[:google_oauth2] = :invalid_credentials
 
       # Visit the callback URL directly (simulating failed OAuth)
@@ -62,9 +46,8 @@ RSpec.describe "Admin authentication", type: :system do
 
       # Should redirect back to login with error message
       expect(page).to have_current_path("/admin/login")
-      # Note: Flash messages are not reliably testable in system specs due to cross-process timing
-      # See docs/testing/authentication-helpers.md for flash testing guidance
-      expect(page).to have_content("Sign in")
+      # The flash message will appear at the top
+      expect(page).to have_content("Authentication failed")
     end
   end
 end

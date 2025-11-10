@@ -26,10 +26,17 @@ module Panda
               view_context.capture(&@slideover_block)
             end
             view_context.content_for(:sidebar_title, @slideover_title)
+
+            # Set footer content if present
+            if @footer_block
+              view_context.content_for(:sidebar_footer) do
+                view_context.capture(&@footer_block)
+              end
+            end
           end
 
           main(class: "overflow-auto flex-1 h-full min-h-full max-h-full") do
-            div(class: "overflow-auto px-2 pt-4 mx-auto sm:px-6 lg:px-6") do
+            div(class: "overflow-auto px-2 pt-2 mx-auto sm:px-6 lg:px-6") do
               @heading_content&.call
               @tab_bar_content&.call
 
@@ -68,8 +75,13 @@ module Panda
           @slideover_block = block   # Save the block for content_for
         end
 
+        def footer(&block)
+          @footer_block = block
+        end
+
         # Alias for ViewComponent-style API compatibility
         alias_method :with_slideover, :slideover
+        alias_method :with_footer, :footer
 
         private
 

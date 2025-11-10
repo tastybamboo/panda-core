@@ -47,6 +47,12 @@ group :development, :test do
   gem "tty-screen"
   gem "yamllint"
   gem "yard-activerecord"
+
+  # OAuth provider gems (optional - host apps install what they need)
+  # Included here for testing purposes
+  gem "omniauth-google-oauth2"
+  gem "omniauth-github"
+  gem "omniauth-microsoft_graph"
 end
 
 group :test do

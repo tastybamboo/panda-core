@@ -17,7 +17,8 @@ RSpec.describe Panda::Core::Admin::ButtonComponent do
       component = described_class.new(text: "Save", action: :save, href: "/save")
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("a.bg-green-600")
+      expect(output).to have_css("a.bg-mid")
+      expect(output).to have_css("a.text-white")
     end
 
     it "applies action-based styling for delete action" do

@@ -26,6 +26,12 @@ module Panda
     class Engine < ::Rails::Engine
       isolate_namespace Panda::Core
 
+      # For testing: Don't expose engine migrations since we use "copy to host app" strategy
+      # In test environment, migrations should be copied to the host app
+      if Rails.env.test?
+        config.paths["db/migrate"] = []
+      end
+
       config.eager_load_namespaces << Panda::Core::Engine
 
       # Add engine's app directories to autoload paths
@@ -62,14 +68,6 @@ module Panda
         g.factory_bot dir: "spec/factories"
       end
 
-      initializer "panda_core.append_migrations" do |app|
-        unless app.root.to_s.match?(root.to_s)
-          config.paths["db/migrate"].expanded.each do |expanded_path|
-            app.config.paths["db/migrate"] << expanded_path
-          end
-        end
-      end
-
       initializer "panda_core.config" do |app|
         # Configuration is already initialized with defaults in Configuration class
       end
@@ -92,6 +90,10 @@ module Panda
       end
 
       initializer "panda_core.omniauth" do |app|
+        # Load OAuth provider gems
+        require_relative "oauth_providers"
+        Panda::Core::OAuthProviders.setup
+
         # Mount OmniAuth at configurable admin path
         app.middleware.use OmniAuth::Builder do
           # Configure OmniAuth to use the configured admin path

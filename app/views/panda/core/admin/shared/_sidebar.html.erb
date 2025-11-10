@@ -5,21 +5,67 @@
       # Get navigation items in original order for display
       nav_items = Panda::Core.config.admin_navigation_items&.call(current_user) || []
 
+      # Helper to recursively collect all paths from nav items
+      def collect_paths(items)
+        items.flat_map do |item|
+          paths = item[:path] ? [item[:path]] : []
+          paths += collect_paths(item[:children] || [])
+          paths
+        end
+      end
+
       # Find the most specific matching path by checking longest paths first
-      active_path = nav_items
-        .sort_by { |item| -item[:path].length }
-        .find { |item| request.path == item[:path] || request.path.starts_with?(item[:path] + "/") }
-        &.dig(:path)
+      all_paths = collect_paths(nav_items)
+      active_path = all_paths
+        .sort_by { |path| -path.length }
+        .find { |path| request.path == path || request.path.starts_with?(path + "/") }
     %>
-    <% nav_items.each do |item| %>
+    <% nav_items.each_with_index do |item, index| %>
       <li>
         <%
-          # Check if this item is the active one
-          is_active = item[:path] == active_path
+          has_children = item[:children].present?
+
+          # For items with children, check if any child is active
+          if has_children
+            is_active = item[:children].any? do |child|
+              child[:path] && (request.path == child[:path] || request.path.starts_with?(child[:path] + "/"))
+            end
+          else
+            is_active = item[:path] == active_path
+          end
         %>
-        <%= link_to item[:path], class: "#{is_active ? "bg-mid text-white relative flex items-center transition-all py-3 px-2 mb-2 rounded-md group gap-x-3 text-base leading-6 font-normal" : "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal"}" do %>
-          <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
-          <span><%= item[:label] %></span>
+
+        <% if has_children %>
+          <div class="space-y-1" data-controller="navigation-toggle">
+            <button type="button"
+                    data-navigation-toggle-target="button"
+                    data-action="click->navigation-toggle#toggle"
+                    aria-controls="sub-menu-<%= index %>"
+                    aria-expanded="false"
+                    class="<%= is_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60' %> transition-all group flex items-center w-full gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal">
+              <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
+              <span class="flex-1 text-left"><%= item[:label] %></span>
+              <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
+                 data-navigation-toggle-target="icon"></i>
+            </button>
+            <div id="sub-menu-<%= index %>"
+                 class="space-y-1 hidden"
+                 data-navigation-toggle-target="menu">
+              <% item[:children].each do |child| %>
+                <%
+                  child_is_active = child[:path] && (request.path == child[:path] || request.path.starts_with?(child[:path] + "/"))
+                %>
+                <%= link_to child[:path], class: "#{child_is_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60'} group flex items-center w-full py-2 pr-2 pl-11 rounded-md text-sm font-normal transition-all" do %>
+                  <%= child[:label] %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <%= link_to item[:path], class: "#{is_active ? "bg-mid text-white relative flex items-center transition-all py-3 px-2 mb-2 rounded-md group gap-x-3 text-base leading-6 font-normal" : "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal"}" do %>
+            <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
+            <span><%= item[:label] %></span>
+          <% end %>
         <% end %>
       </li>
     <% end %>

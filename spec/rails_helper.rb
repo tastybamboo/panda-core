@@ -6,7 +6,10 @@ ENV["RAILS_ENV"] = "test"
 
 require "simplecov"
 require "simplecov-json"
-SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::JSONFormatter,
+  SimpleCov::Formatter::HTMLFormatter
+])
 SimpleCov.start
 
 require "bundler/setup"

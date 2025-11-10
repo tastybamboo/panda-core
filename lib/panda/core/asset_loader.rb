@@ -39,11 +39,14 @@ module Panda
 
         # Check if GitHub-hosted assets should be used
         def use_github_assets?
+          # In test, never use GitHub assets (use local engine assets instead)
+          # This allows system tests to load CSS/JS from the engine's public directory
+          return false if Rails.env.test? || in_test_environment?
+
           # Use GitHub assets in production or when explicitly enabled
           Rails.env.production? ||
             ENV["PANDA_CORE_USE_GITHUB_ASSETS"] == "true" ||
-            !development_assets_available? ||
-            ((Rails.env.test? || in_test_environment?) && compiled_assets_available?)
+            !development_assets_available?
         end
 
         private
