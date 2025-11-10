@@ -128,7 +128,7 @@ jobs:
           RAILS_ENV: "test"
           FERRUM_PROCESS_TIMEOUT: "30"
         run: |
-          bundle exec rspec
+          bundle exec rspec --format progress
 
       - name: "Upload coverage"
         uses: actions/upload-artifact@v5

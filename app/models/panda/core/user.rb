@@ -13,7 +13,7 @@ module Panda
       before_save :downcase_email
 
       # Scopes
-      scope :admins, -> { where(admin: true) }
+      scope :admins, -> { where(is_admin: true) }
 
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)
@@ -32,7 +32,7 @@ module Panda
         attributes = {
           email: auth_hash.info.email.downcase,
           image_url: auth_hash.info.image,
-          admin: User.count.zero? # First user is admin
+          is_admin: User.count.zero? # First user is admin
         }
 
         # Add name attributes based on schema
