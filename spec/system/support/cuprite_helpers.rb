@@ -1,36 +1,59 @@
 # First, load Cuprite Capybara integration
+require "ferrum"
 require "capybara/cuprite"
 
-@cuprite_options = {
+# Configure Cuprite options (matching panda-cms working configuration)
+cuprite_options = {
   window_size: [1440, 800],
-  # See additional options for Dockerized environment in the respective section of this article
-  browser_options: {},
-  # Increase Chrome startup wait time (required for stable CI builds)
-  process_timeout: 60,
-  # Enable debugging capabilities
-  inspector: true,
-  # Slow down, if we need to
-  slowmo: ENV["SLOWMO"]&.to_f,
-  # Re-raise JS errors in Ruby
-  js_errors: !ENV["JS_ERRORS"].in?(%w[n 0 no false]),
-  # Allow running Chrome in a headful mode by setting HEADLESS env
-  # var to a falsey value
-  headless: !ENV["HEADLESS"].in?(%w[n 0 no false])
+  inspector: ENV["INSPECTOR"].in?(%w[y 1 yes true]),
+  headless: !ENV["HEADLESS"].in?(%w[n 0 no false]),
+  slowmo: ENV["SLOWMO"]&.to_f || 0,
+  timeout: 30,
+  js_errors: false,
+  ignore_default_browser_options: false,
+  process_timeout: 10,
+  wait_for_network_idle: false,  # Don't wait for all network requests
+  pending_connection_errors: false,  # Don't fail on pending external connections
+  browser_options: {
+    "no-sandbox": nil,
+    "disable-gpu": nil,
+    "disable-dev-shm-usage": nil,
+    "disable-background-networking": nil,
+    "disable-default-apps": nil,
+    "disable-extensions": nil,
+    "disable-sync": nil,
+    "disable-translate": nil,
+    "no-first-run": nil,
+    "ignore-certificate-errors": nil,
+    "allow-insecure-localhost": nil,
+    "enable-features": "NetworkService,NetworkServiceInProcess",
+    "disable-blink-features": "AutomationControlled"
+  }
 }
 
-# Then, we need to register our driver to be able to use it later
-# with #driven_by method.#
-# NOTE: The name :cuprite is already registered by Rails.
-# See https://github.com/rubycdp/cuprite/issues/180
-Capybara.register_driver(:better_cuprite) do |app|
-  Capybara::Cuprite::Driver.new(
-    app,
-    **@cuprite_options
-  )
+# Add more permissive options in CI
+if ENV["GITHUB_ACTIONS"] == "true"
+  cuprite_options[:browser_options].merge!({
+    "disable-web-security": nil,
+    "allow-file-access-from-files": nil,
+    "allow-file-access": nil
+  })
+
+  puts "\n🔍 Cuprite Configuration:"
+  puts "   Debug mode: #{ENV["DEBUG"]}"
+  puts "   Headless: #{cuprite_options[:headless]}"
+  puts "   Browser options: #{cuprite_options[:browser_options].keys.join(" --")}"
+  puts ""
 end
 
-# Configure Capybara to use :better_cuprite driver by default
-Capybara.default_driver = Capybara.javascript_driver = :better_cuprite
+# Register Cuprite driver
+Capybara.register_driver :cuprite do |app|
+  Capybara::Cuprite::Driver.new(app, **cuprite_options)
+end
+
+# Configure Capybara to use cuprite driver by default
+Capybara.default_driver = :cuprite
+Capybara.javascript_driver = :cuprite
 
 module CupriteHelpers
   # Drop #pause anywhere in a test to stop the execution.

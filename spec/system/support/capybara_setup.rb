@@ -29,5 +29,6 @@ end)
 
 Capybara.server_host = "0.0.0.0"
 Capybara.server_port = 3001
+Capybara.app_host = "http://#{Capybara.server_host}:#{Capybara.server_port}"
 
 Rails.application.routes.default_url_options[:host] = Capybara.app_host
