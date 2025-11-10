@@ -28,7 +28,10 @@ module Panda
 
       def download_and_attach_avatar
         # Open the URL with a timeout and size limit
+        # standard:disable Security/Open
+        # Safe in this context as URL comes from trusted OAuth providers (Microsoft, Google, GitHub)
         URI.open(@avatar_url, read_timeout: 10, open_timeout: 10, redirect: true) do |downloaded_file|
+          # standard:enable Security/Open
           # Validate file size (max 5MB)
           if downloaded_file.size > 5.megabytes
             raise "Avatar file too large (#{downloaded_file.size} bytes)"

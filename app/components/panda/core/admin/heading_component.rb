@@ -7,7 +7,7 @@ module Panda
         prop :text, String
         prop :level, _Nilable(_Union(Integer, Symbol)), default: -> { 2 }
         prop :icon, String, default: ""
-        prop :meta, _Nilable(String), default: -> { nil }
+        prop :meta, _Nilable(String), default: -> {}
         prop :additional_styles, _Nilable(_Union(String, Array)), default: -> { "" }
 
         def view_template(&block)

@@ -24,19 +24,19 @@ RSpec.describe "Nested navigation", type: :system do
               label: "Team",
               icon: "fa-solid fa-users",
               children: [
-                { label: "Overview", path: "/admin/team/overview" },
-                { label: "Members", path: "/admin/team/members" },
-                { label: "Calendar", path: "/admin/team/calendar" },
-                { label: "Settings", path: "/admin/team/settings" }
+                {label: "Overview", path: "/admin/team/overview"},
+                {label: "Members", path: "/admin/team/members"},
+                {label: "Calendar", path: "/admin/team/calendar"},
+                {label: "Settings", path: "/admin/team/settings"}
               ]
             },
             {
               label: "Projects",
               icon: "fa-solid fa-folder",
               children: [
-                { label: "All Projects", path: "/admin/projects" },
-                { label: "Active", path: "/admin/projects/active" },
-                { label: "Archived", path: "/admin/projects/archived" }
+                {label: "All Projects", path: "/admin/projects"},
+                {label: "Active", path: "/admin/projects/active"},
+                {label: "Archived", path: "/admin/projects/archived"}
               ]
             }
           ]
@@ -151,8 +151,8 @@ RSpec.describe "Nested navigation", type: :system do
               label: "Team",
               icon: "fa-solid fa-users",
               children: [
-                { label: "Overview", path: "/admin/team/overview" },
-                { label: "Members", path: "/admin/team/members" }
+                {label: "Overview", path: "/admin/team/overview"},
+                {label: "Members", path: "/admin/team/members"}
               ]
             }
           ]

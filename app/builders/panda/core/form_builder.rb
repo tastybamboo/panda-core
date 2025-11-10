@@ -125,29 +125,29 @@ module Panda
                 @template.image_tag("", alt: "Crop preview", data: {image_cropper_target: "preview"}, class: "max-w-full") +
                   # Cropper controls
                   content_tag(:div, class: "mt-4 flex gap-2 flex-wrap") do
-                  @template.button_tag("Crop & Save", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500", data: {action: "click->image-cropper#crop"}) +
-                    @template.button_tag("Cancel", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#cancel"}) +
-                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#reset"}) do
-                    @template.content_tag(:i, "", class: "fa-solid fa-rotate-left") +
-                      @template.content_tag(:span, "Reset")
-                  end +
-                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#rotate", degrees: "90"}) do
-                    @template.content_tag(:i, "", class: "fa-solid fa-rotate-right") +
-                      @template.content_tag(:span, "Rotate")
-                  end +
-                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#flip", direction: "horizontal"}) do
-                    @template.content_tag(:i, "", class: "fa-solid fa-arrows-left-right") +
-                      @template.content_tag(:span, "Flip H")
-                  end +
-                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#zoom", ratio: "0.1"}) do
-                    @template.content_tag(:i, "", class: "fa-solid fa-magnifying-glass-plus") +
-                      @template.content_tag(:span, "Zoom In")
-                  end +
-                    @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#zoom", ratio: "-0.1"}) do
-                    @template.content_tag(:i, "", class: "fa-solid fa-magnifying-glass-minus") +
-                      @template.content_tag(:span, "Zoom Out")
+                    @template.button_tag("Crop & Save", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500", data: {action: "click->image-cropper#crop"}) +
+                      @template.button_tag("Cancel", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#cancel"}) +
+                      @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#reset"}) do
+                        @template.content_tag(:i, "", class: "fa-solid fa-rotate-left") +
+                          @template.content_tag(:span, "Reset")
+                      end +
+                      @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#rotate", degrees: "90"}) do
+                        @template.content_tag(:i, "", class: "fa-solid fa-rotate-right") +
+                          @template.content_tag(:span, "Rotate")
+                      end +
+                      @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#flip", direction: "horizontal"}) do
+                        @template.content_tag(:i, "", class: "fa-solid fa-arrows-left-right") +
+                          @template.content_tag(:span, "Flip H")
+                      end +
+                      @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#zoom", ratio: "0.1"}) do
+                        @template.content_tag(:i, "", class: "fa-solid fa-magnifying-glass-plus") +
+                          @template.content_tag(:span, "Zoom In")
+                      end +
+                      @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#zoom", ratio: "-0.1"}) do
+                        @template.content_tag(:i, "", class: "fa-solid fa-magnifying-glass-minus") +
+                          @template.content_tag(:span, "Zoom Out")
+                      end
                   end
-                end
               end
           end
         elsif simple_mode
@@ -176,20 +176,20 @@ module Panda
                   end +
                     # Upload area
                     content_tag(:div, class: "mt-4 flex items-baseline justify-center text-sm leading-6 text-gray-600 dark:text-gray-400") do
-                    content_tag(:label, for: field_id, class: "relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:focus-within:outline-indigo-500 dark:hover:text-indigo-300") do
-                      content_tag(:span, "Upload a file") +
-                        super(method, options.reverse_merge(
-                          id: field_id,
-                          accept: accept_types,
-                          class: "sr-only",
-                          data: {
-                            file_upload_target: "input",
-                            action: "change->file-upload#handleFileSelect"
-                          }
-                        ))
+                      content_tag(:label, for: field_id, class: "relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:focus-within:outline-indigo-500 dark:hover:text-indigo-300") do
+                        content_tag(:span, "Upload a file") +
+                          super(method, options.reverse_merge(
+                            id: field_id,
+                            accept: accept_types,
+                            class: "sr-only",
+                            data: {
+                              file_upload_target: "input",
+                              action: "change->file-upload#handleFileSelect"
+                            }
+                          ))
+                      end +
+                        content_tag(:span, "or drag and drop", class: "pl-1")
                     end +
-                      content_tag(:span, "or drag and drop", class: "pl-1")
-                  end +
                     # File type info
                     content_tag(:p, "#{file_types_display} up to #{max_size}", class: "text-xs/5 text-gray-600 dark:text-gray-400")
                 end
