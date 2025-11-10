@@ -1,4 +1,5 @@
 require "rubygems"
+require "stringio"
 
 require "rails/engine"
 require "omniauth"
