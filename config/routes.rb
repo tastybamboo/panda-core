@@ -26,6 +26,20 @@ Panda::Core::Engine.routes.draw do
     unless Rails.env.production?
       get "/test_login/:user_id", to: "admin/test_sessions#create", as: :test_login
       post "/test_sessions", to: "admin/test_sessions#create", as: :test_sessions
+
+      # Test routes for nested navigation feature testing
+      scope :team, as: :team do
+        get "overview", to: "admin/team/test_pages#overview"
+        get "members", to: "admin/team/test_pages#members"
+        get "calendar", to: "admin/team/test_pages#calendar"
+        get "settings", to: "admin/team/test_pages#settings"
+      end
+
+      scope :projects, as: :projects do
+        get "/", to: "admin/projects/test_pages#index"
+        get "active", to: "admin/projects/test_pages#active"
+        get "archived", to: "admin/projects/test_pages#archived"
+      end
     end
   end
 end

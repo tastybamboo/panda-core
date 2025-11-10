@@ -160,22 +160,21 @@ RSpec.describe "Nested navigation", type: :system do
       end
     end
 
-    # Note: These tests would require actual routes to be set up
-    # They serve as documentation for the expected behavior
-    it "expands parent menu automatically when child is active", :skip do
-      # Create a test route for team members
+    it "expands parent menu automatically when child is active" do
       visit "/admin/team/members"
 
       # The Team menu should be automatically expanded
-      expect(page).to have_content("Overview")
-      expect(page).to have_content("Members")
+      within("nav.flex-col") do
+        expect(page).to have_content("Overview")
+        expect(page).to have_content("Members")
 
-      # The Members link should be highlighted
-      members_link = find("a", text: "Members")
-      expect(members_link[:class]).to include("bg-mid")
+        # The Members link should be highlighted
+        members_link = find("a", text: "Members")
+        expect(members_link[:class]).to include("bg-mid")
+      end
     end
 
-    it "highlights parent menu when child is active", :skip do
+    it "highlights parent menu when child is active" do
       visit "/admin/team/overview"
 
       # The Team button should have active styling
