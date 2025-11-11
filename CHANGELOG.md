@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.4] - 2025-11-11
+
+### Added
+
+- Avatar variants with multiple sizes (thumb 50×50, small 100×100, medium 200×200, large 400×400)
+- Image optimization with configurable processor (vips or mini_magick)
+- Automatic WebP conversion for all avatars with 85% quality default
+- Lazy loading support for avatar images in components
+- Configuration options for avatar optimization:
+  - `avatar_image_processor` - Choose between :vips or :mini_magick
+  - `avatar_max_file_size` - Maximum file size before optimization (default 5MB)
+  - `avatar_max_dimension` - Maximum dimension for optimization (default 800px)
+  - `avatar_optimization_quality` - Quality setting 0-100 (default 85)
+  - `avatar_variants` - Customize variant sizes
+- Comprehensive documentation in AVATAR_HANDLING.md covering:
+  - Image processor installation requirements
+  - Configuration examples
+  - Performance considerations with file size comparisons
+  - User-uploaded avatars via My Profile page
+  - Security considerations
+
+### Changed
+
+- `User#avatar_url` now accepts optional `size:` parameter for variants
+- AttachAvatarService optimizes images during OAuth avatar download
+- UserDisplayComponent uses small variant (100×100) with lazy loading
+- Improved avatar handling with graceful fallback when processor unavailable
+- Enhanced test coverage for avatar variants and optimization
+
+### Fixed
+
+- Component specs updated for new `avatar_url(size:)` signature
+- Mock users in tests now properly implement avatar_url method
+
+### Performance
+
+- Avatar file sizes reduced by ~70% through WebP optimization
+- Variants prevent serving oversized images in components
+- Preprocessed variants for faster page loads
+
 ## [0.6.0] - 2025-11-04
 
 ### Added
