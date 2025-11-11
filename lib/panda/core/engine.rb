@@ -20,6 +20,7 @@ ensure
 end
 
 # Load engine configuration modules
+require_relative "engine/inflections_config"
 require_relative "engine/test_config"
 require_relative "engine/autoload_config"
 require_relative "engine/middleware_config"
@@ -35,6 +36,7 @@ module Panda
       isolate_namespace Panda::Core
 
       # Include configuration modules
+      include InflectionsConfig
       include TestConfig
       include AutoloadConfig
       include MiddlewareConfig
