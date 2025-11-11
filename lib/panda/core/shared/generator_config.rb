@@ -2,8 +2,9 @@
 
 module Panda
   module Core
-    class Engine < ::Rails::Engine
-      # Generator configuration
+    module Shared
+      # Shared generator configuration for all panda gems
+      # This ensures consistent generator behavior across the ecosystem
       module GeneratorConfig
         extend ActiveSupport::Concern
 

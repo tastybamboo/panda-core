@@ -15,4 +15,6 @@ require_relative "core/configuration"
 require_relative "core/asset_loader"
 require_relative "core/debug"
 require_relative "core/services/base_service"
+require_relative "core/shared/inflections_config"
+require_relative "core/shared/generator_config"
 require_relative "core/engine" if defined?(Rails)

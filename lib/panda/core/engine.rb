@@ -20,11 +20,9 @@ ensure
 end
 
 # Load engine configuration modules
-require_relative "engine/inflections_config"
 require_relative "engine/test_config"
 require_relative "engine/autoload_config"
 require_relative "engine/middleware_config"
-require_relative "engine/generator_config"
 require_relative "engine/importmap_config"
 require_relative "engine/omniauth_config"
 require_relative "engine/phlex_config"
@@ -35,12 +33,14 @@ module Panda
     class Engine < ::Rails::Engine
       isolate_namespace Panda::Core
 
-      # Include configuration modules
-      include InflectionsConfig
+      # Include shared configuration modules
+      include Shared::InflectionsConfig
+      include Shared::GeneratorConfig
+
+      # Include engine-specific configuration modules
       include TestConfig
       include AutoloadConfig
       include MiddlewareConfig
-      include GeneratorConfig
       include ImportmapConfig
       include OmniauthConfig
       include PhlexConfig
