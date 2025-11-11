@@ -11,6 +11,41 @@ Panda Core is the **single source of truth** for all Panda admin interface styli
 
 All Panda gems (CMS, Editor, etc.) load CSS from Core via Rack middleware - **no copying or duplication needed**.
 
+## Automatic Compilation in Test Environments
+
+**New in v0.8+**: Panda Core automatically compiles CSS when tests run, using **timestamp-based filenames** for automatic cache busting:
+
+```bash
+# First test run - auto-compiles CSS
+RAILS_ENV=test bundle exec rspec
+
+# Output:
+# 🐼 [Panda Core] Auto-compiling CSS for test environment...
+# 🐼 [Panda Core] CSS compilation successful (72521 bytes)
+```
+
+**What gets created:**
+- `public/panda-core-assets/panda-core-1762886534.css` (timestamp-based)
+- `public/panda-core-assets/panda-core.css` → symlink to timestamp file
+
+**How it works:**
+1. Engine initializer checks for existing compiled CSS on Rails boot
+2. If none found, runs `bundle exec rake panda:core:assets:release`
+3. Creates timestamp-based file + unversioned symlink
+4. Asset loader finds the latest timestamp file automatically
+
+**Benefits:**
+- ✅ Zero manual compilation needed for testing
+- ✅ Automatic cache busting without version bumps
+- ✅ Works in both local and CI environments
+- ✅ Consistent with panda-cms JavaScript compilation
+
+**Environment variable override:**
+```bash
+# Force recompilation
+PANDA_CORE_AUTO_COMPILE=true bundle exec rails server
+```
+
 ## Architecture
 
 ### How CSS is Served
