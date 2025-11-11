@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
 
   spec.files = Dir[
-    "{app,config,db,lib}/**/*",
+    "{app,config,db,lib,public}/**/*",
     "LICENSE",
     "Rakefile",
     "README.md",

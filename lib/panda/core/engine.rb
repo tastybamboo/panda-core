@@ -55,20 +55,22 @@ module Panda
         # Only auto-compile in test or when explicitly requested
         next unless Rails.env.test? || ENV["PANDA_CORE_AUTO_COMPILE"] == "true"
 
-        css_file = Panda::Core::Engine.root.join("public", "panda-core-assets", "panda-core.css")
+        version = Panda::Core::VERSION
+        versioned_css = Panda::Core::Engine.root.join("public", "panda-core-assets", "panda-core-#{version}.css")
 
-        unless css_file.exist?
+        unless versioned_css.exist?
           warn "🐼 [Panda Core] Auto-compiling CSS for test environment..."
 
           # Run compilation synchronously to ensure it's ready before tests
+          # Use :release task to create versioned file + unversioned symlink
           require "open3"
           _, stderr, status = Open3.capture3(
-            "bundle exec rake panda:core:assets:compile",
+            "bundle exec rake panda:core:assets:release",
             chdir: Panda::Core::Engine.root.to_s
           )
 
           if status.success?
-            warn "🐼 [Panda Core] CSS compilation successful (#{css_file.size} bytes)"
+            warn "🐼 [Panda Core] CSS compilation successful (#{versioned_css.size} bytes)"
           else
             warn "🐼 [Panda Core] CSS compilation failed: #{stderr}"
           end
