@@ -19,10 +19,14 @@ export default class extends Controller {
   static targets = ["button", "menu", "icon"]
 
   connect() {
+    // Ensure menu starts in correct state
     // Check if this menu should be expanded by default (if a child is active)
     const hasActiveChild = this.menuTarget.querySelector(".bg-mid")
     if (hasActiveChild) {
       this.expand()
+    } else {
+      // Explicitly ensure the menu is collapsed if no active child
+      this.collapse()
     }
   }
 
