@@ -32,6 +32,9 @@ require_relative "engine/omniauth_config"
 require_relative "engine/phlex_config"
 require_relative "engine/admin_controller_config"
 
+# Load module registry
+require_relative "module_registry"
+
 module Panda
   module Core
     class Engine < ::Rails::Engine
@@ -76,11 +79,15 @@ module Panda
 
           FileUtils.mkdir_p(assets_dir)
 
-          # Compile directly to timestamped file
+          # Get content paths from ModuleRegistry
+          content_paths = Panda::Core::ModuleRegistry.tailwind_content_paths
+          content_flags = content_paths.map { |path| "--content '#{path}'" }.join(" ")
+
+          # Compile directly to timestamped file with all registered module content
           input_file = Panda::Core::Engine.root.join("app/assets/tailwind/application.css")
-          _, stderr, status = Open3.capture3(
-            "bundle exec tailwindcss -i #{input_file} -o #{timestamped_css} --minify"
-          )
+          cmd = "bundle exec tailwindcss -i #{input_file} -o #{timestamped_css} #{content_flags} --minify"
+
+          _, stderr, status = Open3.capture3(cmd)
 
           if status.success?
             # Create unversioned symlink for fallback

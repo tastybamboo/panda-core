@@ -50,11 +50,16 @@ namespace :panda do
         input_file = engine_root.join("app/assets/tailwind/application.css")
         output_file = output_dir.join("panda-core.css")
 
-        # Compile directly to unversioned file
-        cmd = "bundle exec tailwindcss -i #{input_file} -o #{output_file} --minify"
+        # Get content paths from ModuleRegistry
+        content_paths = Panda::Core::ModuleRegistry.tailwind_content_paths
+        content_flags = content_paths.map { |path| "--content '#{path}'" }.join(" ")
+
+        # Compile with all registered module content
+        cmd = "bundle exec tailwindcss -i #{input_file} -o #{output_file} #{content_flags} --minify"
 
         if system(cmd)
           puts "✅ CSS compiled: #{output_file} (#{File.size(output_file)} bytes)"
+          puts "📦 Included content from: #{Panda::Core::ModuleRegistry.registered_modules.join(', ')}" if Panda::Core::ModuleRegistry.registered_modules.any?
         else
           puts "❌ CSS compilation failed"
           exit 1
@@ -68,11 +73,16 @@ namespace :panda do
         input_file = engine_root.join("app/assets/tailwind/application.css")
         versioned_file = output_dir.join("panda-core-#{version}.css")
 
-        # Compile to versioned file
-        cmd = "bundle exec tailwindcss -i #{input_file} -o #{versioned_file} --minify"
+        # Get content paths from ModuleRegistry
+        content_paths = Panda::Core::ModuleRegistry.tailwind_content_paths
+        content_flags = content_paths.map { |path| "--content '#{path}'" }.join(" ")
+
+        # Compile to versioned file with all registered module content
+        cmd = "bundle exec tailwindcss -i #{input_file} -o #{versioned_file} #{content_flags} --minify"
 
         if system(cmd)
           puts "✅ CSS compiled: #{versioned_file} (#{File.size(versioned_file)} bytes)"
+          puts "📦 Included content from: #{Panda::Core::ModuleRegistry.registered_modules.join(', ')}" if Panda::Core::ModuleRegistry.registered_modules.any?
 
           # Create/update unversioned symlink
           symlink = output_dir.join("panda-core.css")
