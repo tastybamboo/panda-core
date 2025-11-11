@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2025-11-11
+
+### Added
+
+- Shared system test infrastructure for all Panda gems
+  - `lib/panda/core/testing/support/system/cuprite_setup.rb` - Cuprite driver configuration
+  - `lib/panda/core/testing/support/system/capybara_setup.rb` - Capybara configuration
+  - `lib/panda/core/testing/support/system/system_test_helpers.rb` - Generic test helpers
+  - `lib/panda/core/testing/support/system/database_connection_helpers.rb` - Database connection sharing
+
+### Changed
+
+- **BREAKING (for gems with custom Cuprite config)**: `js_errors` now defaults to `true` in Cuprite setup
+  - This ensures JavaScript errors are reported as test failures instead of being silently ignored
+  - Gems relying on `js_errors: false` will need to handle JavaScript errors properly
+- Updated `rails_helper.rb` to load system test infrastructure automatically
+- Cuprite now registers both `:cuprite` (desktop) and `:cuprite_mobile` (375x667) drivers
+
+### Benefits
+
+- Single source of truth for test configuration across all Panda gems
+- JavaScript errors now reported by default (prevents silent failures)
+- Consistency in test behavior across gems
+- Easy to maintain - updates benefit all gems automatically
+- Reduced code duplication (~300 lines removed from panda-cms)
+
 ## [0.7.5] - 2025-11-11
 
 ### Added
