@@ -9,9 +9,10 @@ module Panda
 
         included do
           config.generators do |g|
-            g.test_framework :rspec
-            g.fixture_replacement :factory_bot
-            g.factory_bot dir: "spec/factories"
+            g.orm :active_record, primary_key_type: :uuid
+            g.test_framework :rspec, fixture: true
+            g.fixture_replacement nil
+            g.view_specs false
           end
         end
       end

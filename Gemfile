@@ -31,7 +31,6 @@ group :development, :test do
   gem "standard-rails"
   gem "stringio"
   gem "tailwindcss-rails"
-  gem "yamllint"
   gem "yard-activerecord"
 
   # OAuth provider gems (optional - host apps install what they need)
