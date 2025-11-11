@@ -9,21 +9,25 @@ RSpec.describe Panda::Core::Admin::UserActivityComponent do
         "Panda::Core::User"
       end
 
-      attr_accessor :firstname, :lastname, :email, :avatar_url
+      attr_accessor :firstname, :lastname, :email, :_avatar_url
 
       def initialize(firstname:, lastname:, email:, avatar_url: nil)
         @firstname = firstname
         @lastname = lastname
         @email = email
-        @avatar_url = avatar_url
+        @_avatar_url = avatar_url
       end
 
       def name
         "#{firstname} #{lastname}".strip
       end
 
+      def avatar_url(size: nil)
+        @_avatar_url
+      end
+
       def image_url
-        avatar_url
+        @_avatar_url
       end
     end
   end
