@@ -1,0 +1,195 @@
+# frozen_string_literal: true
+
+# Shared RSpec configuration for all Panda gems
+# This file provides common test infrastructure that can be extended by individual gems
+
+require "simplecov"
+require "simplecov-json"
+
+# SimpleCov setup - gems can customize formatters if needed
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::JSONFormatter,
+  SimpleCov::Formatter::HTMLFormatter
+])
+SimpleCov.start
+
+ENV["RAILS_ENV"] ||= "test"
+
+require "rubygems"
+require "bundler/setup"
+
+# Require Rails and common gems
+require "rails/all"
+require "rspec/rails"
+require "database_cleaner/active_record"
+require "shoulda/matchers"
+require "capybara"
+require "capybara/rspec"
+require "puma"
+
+# Configure fixtures
+ActiveRecord::FixtureSet.context_class.send :include, ActiveSupport::Testing::TimeHelpers
+
+# Shoulda Matchers configuration
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
+
+# Load all support files from panda-core
+panda_core_support_path = Gem.loaded_specs["panda-core"]&.full_gem_path
+if panda_core_support_path
+  Dir[File.join(panda_core_support_path, "spec/support/**/*.rb")].sort.each { |f| require f }
+end
+
+RSpec.configure do |config|
+  # Include panda-core route helpers by default
+  config.include Panda::Core::Engine.routes.url_helpers if defined?(Panda::Core::Engine)
+  config.include Rails.application.routes.url_helpers
+
+  # Standard RSpec configuration
+  config.use_transactional_fixtures = true
+  config.infer_spec_type_from_file_location!
+  config.filter_rails_from_backtrace!
+  config.example_status_persistence_file_path = "spec/examples.txt"
+  config.disable_monkey_patching!
+
+  # Print total example count before running
+  config.before(:suite) do
+    puts "Total examples to run: #{RSpec.world.example_count}\n"
+  end
+
+  # Use specific formatter for GitHub Actions
+  if ENV["GITHUB_ACTIONS"] == "true"
+    require "rspec/github"
+    config.add_formatter RSpec::Github::Formatter
+  end
+
+  # Controller testing support (if rails-controller-testing is available)
+  if defined?(Rails::Controller::Testing)
+    config.include Rails::Controller::Testing::TestProcess, type: :controller
+    config.include Rails::Controller::Testing::TemplateAssertions, type: :controller
+    config.include Rails::Controller::Testing::Integration, type: :controller
+  end
+
+  # Reset column information before suite
+  config.before(:suite) do
+    if defined?(Panda::Core::User)
+      Panda::Core::User.connection.schema_cache.clear!
+      Panda::Core::User.reset_column_information
+    end
+  end
+
+  # Disable prepared statements for PostgreSQL tests to avoid caching issues
+  config.before(:suite) do
+    if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
+      ActiveRecord::Base.connection.unprepared_statement do
+        # This block intentionally left empty
+      end
+      # Disable prepared statements globally for test environment
+      ActiveRecord::Base.establish_connection(
+        ActiveRecord::Base.connection_db_config.configuration_hash.merge(prepared_statements: false)
+      )
+    end
+  end
+
+  # Disable logging during tests
+  config.before(:suite) do
+    Rails.logger.level = Logger::ERROR
+    ActiveRecord::Base.logger = nil if defined?(ActiveRecord)
+    ActionController::Base.logger = nil if defined?(ActionController)
+    ActionMailer::Base.logger = nil if defined?(ActionMailer)
+  end
+
+  # Suppress Rails command output during generator tests
+  config.before(:each, type: :generator) do
+    allow(Rails::Command).to receive(:invoke).and_return(true)
+  end
+
+  # Force all examples to run
+  config.filter_run_including({})
+  config.run_all_when_everything_filtered = true
+
+  # Allow using focus keywords "f... before a specific test"
+  config.filter_run_when_matching :focus
+
+  # Retry flaky tests automatically
+  # This is especially useful for system tests that may have timing issues
+  config.around(:each, :flaky) do |example|
+    retry_count = example.metadata[:retry] || 3
+    retry_count.times do |i|
+      example.run
+      break unless example.exception
+
+      if i < retry_count - 1
+        puts "\n[RETRY] Test failed, retrying... (attempt #{i + 2}/#{retry_count})"
+        puts "[RETRY] Exception: #{example.exception.class.name}: #{example.exception.message[0..100]}"
+        example.instance_variable_set(:@exception, nil)
+        sleep 1 # Brief pause between retries
+      end
+    end
+  end
+
+  # Exclude EditorJS tests by default unless specifically requested
+  config.filter_run_excluding :editorjs unless ENV["INCLUDE_EDITORJS"] == "true"
+
+  # Use verbose output if only running one spec file
+  config.default_formatter = "doc" if config.files_to_run.one?
+
+  # Print the 10 slowest examples and example groups at the
+  # end of the spec run, to help surface which specs are running
+  # particularly slow.
+  config.profile_examples = 10
+
+  # Run specs in random order to surface order dependencies. If you find an
+  # order dependency and want to debug it, you can fix the order by providing
+  # the seed, which is printed after each run: --seed 1234
+  Kernel.srand config.seed
+  config.order = :random
+
+  # Configure fixtures path and enable fixtures
+  config.fixture_paths = [File.expand_path("../../spec/fixtures", __dir__)]
+  config.use_transactional_fixtures = true
+
+  # Load fixtures globally for all tests EXCEPT those that require users
+  # panda_core_users are created programmatically
+  # Note: Individual gems can customize this list in their own rails_helper
+  fixture_files = Dir[File.expand_path("../../spec/fixtures/*.yml", __dir__)].map do |f|
+    File.basename(f, ".yml").to_sym
+  end
+  fixture_files.delete(:panda_core_users)
+  config.global_fixtures = fixture_files unless ENV["SKIP_GLOBAL_FIXTURES"]
+
+  # Bullet configuration (if available)
+  if defined?(Bullet) && Bullet.enable?
+    config.before(:each) do
+      Bullet.start_request
+    end
+
+    config.after(:each) do
+      Bullet.perform_out_of_channel_notifications if Bullet.notification?
+      Bullet.end_request
+    end
+  end
+
+  # OmniAuth test mode
+  OmniAuth.config.test_mode = true if defined?(OmniAuth)
+
+  # DatabaseCleaner configuration
+  config.before(:suite) do
+    # Allow DATABASE_URL in CI environment
+    if ENV["DATABASE_URL"]
+      DatabaseCleaner.allow_remote_database_url = true
+    end
+
+    DatabaseCleaner.clean_with :truncation
+
+    # Hook for gems to add custom suite setup
+    # Gems can define Panda::Testing.before_suite_hook and it will be called here
+    if defined?(Panda::Testing) && Panda::Testing.respond_to?(:before_suite_hook)
+      Panda::Testing.before_suite_hook
+    end
+  end
+end

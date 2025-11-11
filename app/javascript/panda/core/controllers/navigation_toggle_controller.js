@@ -19,10 +19,14 @@ export default class extends Controller {
   static targets = ["button", "menu", "icon"]
 
   connect() {
+    // Ensure menu starts in correct state
     // Check if this menu should be expanded by default (if a child is active)
     const hasActiveChild = this.menuTarget.querySelector(".bg-mid")
     if (hasActiveChild) {
       this.expand()
+    } else {
+      // Explicitly ensure the menu is collapsed if no active child
+      this.collapse()
     }
   }
 
@@ -42,6 +46,7 @@ export default class extends Controller {
 
   expand() {
     this.menuTarget.classList.remove("hidden")
+    this.menuTarget.style.display = ""
     this.buttonTarget.setAttribute("aria-expanded", "true")
 
     if (this.hasIconTarget) {
@@ -51,6 +56,7 @@ export default class extends Controller {
 
   collapse() {
     this.menuTarget.classList.add("hidden")
+    this.menuTarget.style.display = "none"
     this.buttonTarget.setAttribute("aria-expanded", "false")
 
     if (this.hasIconTarget) {
