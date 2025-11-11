@@ -31,7 +31,14 @@ end
 # Load all support files from panda-core
 # Files are now in lib/panda/core/testing/support/ to be included in the published gem
 support_path = File.expand_path("../support", __FILE__)
-Dir[File.join(support_path, "**/*.rb")].sort.each { |f| require f }
+
+# Load system test infrastructure first (Capybara, Cuprite, helpers)
+system_test_files = Dir[File.join(support_path, "system/**/*.rb")].sort
+system_test_files.each { |f| require f }
+
+# Load other support files
+other_support_files = Dir[File.join(support_path, "**/*.rb")].sort.reject { |f| f.include?("/system/") }
+other_support_files.each { |f| require f }
 
 RSpec.configure do |config|
   # Include panda-core route helpers by default

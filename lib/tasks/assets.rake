@@ -59,7 +59,7 @@ namespace :panda do
 
         if system(cmd)
           puts "✅ CSS compiled: #{output_file} (#{File.size(output_file)} bytes)"
-          puts "📦 Included content from: #{Panda::Core::ModuleRegistry.registered_modules.join(', ')}" if Panda::Core::ModuleRegistry.registered_modules.any?
+          puts "📦 Included content from: #{Panda::Core::ModuleRegistry.registered_modules.join(", ")}" if Panda::Core::ModuleRegistry.registered_modules.any?
         else
           puts "❌ CSS compilation failed"
           exit 1
@@ -82,7 +82,7 @@ namespace :panda do
 
         if system(cmd)
           puts "✅ CSS compiled: #{versioned_file} (#{File.size(versioned_file)} bytes)"
-          puts "📦 Included content from: #{Panda::Core::ModuleRegistry.registered_modules.join(', ')}" if Panda::Core::ModuleRegistry.registered_modules.any?
+          puts "📦 Included content from: #{Panda::Core::ModuleRegistry.registered_modules.join(", ")}" if Panda::Core::ModuleRegistry.registered_modules.any?
 
           # Create/update unversioned symlink
           symlink = output_dir.join("panda-core.css")
