@@ -35,12 +35,20 @@ RSpec.describe Panda::Core::AttachAvatarService, type: :service do
           "downloaded_file",
           size: 1.megabyte,
           content_type: "image/jpeg",
-          read: "fake_image_data"
+          read: "fake_image_data",
+          path: "/tmp/test.jpg"
         )
+      end
+
+      let(:optimized_file) do
+        double("optimized_file", path: "/tmp/optimized.webp")
       end
 
       before do
         allow(URI).to receive(:open).and_yield(downloaded_file)
+        allow(ImageProcessing::Vips).to receive_message_chain(:source, :resize_to_limit, :convert, :saver, :call).and_return(optimized_file)
+        allow(File).to receive(:open).and_call_original
+        allow(File).to receive(:open).with(optimized_file.path).and_return(optimized_file)
         allow(user.avatar).to receive(:attach)
       end
 
@@ -55,6 +63,19 @@ RSpec.describe Panda::Core::AttachAvatarService, type: :service do
         result = service.call
         expect(result.success?).to be true
         expect(result.payload[:avatar_attached]).to be true
+      end
+
+      it "optimizes the image using vips" do
+        expect(ImageProcessing::Vips).to receive(:source).with(downloaded_file).and_call_original
+        service.call
+      end
+
+      it "converts image to WebP format" do
+        expect(user.avatar).to receive(:attach) do |options|
+          expect(options[:content_type]).to eq("image/webp")
+          expect(options[:filename]).to end_with(".webp")
+        end
+        service.call
       end
 
       it "updates oauth_avatar_url on user" do
@@ -92,32 +113,61 @@ RSpec.describe Panda::Core::AttachAvatarService, type: :service do
       end
     end
 
-    describe "content type detection" do
-      let(:test_cases) do
-        {
-          "image/jpeg" => ".jpg",
-          "image/jpg" => ".jpg",
-          "image/png" => ".png",
-          "image/gif" => ".gif",
-          "image/webp" => ".webp",
-          "image/unknown" => ".jpg"
-        }
+    describe "image optimization" do
+      context "when optimization succeeds" do
+        let(:downloaded_file) do
+          double("downloaded_file", size: 1.megabyte, content_type: "image/jpeg", path: "/tmp/test.jpg")
+        end
+
+        let(:optimized_file) do
+          double("optimized_file", path: "/tmp/optimized.webp")
+        end
+
+        before do
+          allow(URI).to receive(:open).and_yield(downloaded_file)
+          allow(ImageProcessing::Vips).to receive_message_chain(:source, :resize_to_limit, :convert, :saver, :call).and_return(optimized_file)
+          allow(File).to receive(:open).and_call_original
+          allow(File).to receive(:open).with(optimized_file.path).and_return(optimized_file)
+          allow(user.avatar).to receive(:attach)
+        end
+
+        it "resizes image to max dimension" do
+          vips_chain = double
+          expect(ImageProcessing::Vips).to receive(:source).and_return(vips_chain)
+          expect(vips_chain).to receive(:resize_to_limit).with(800, 800).and_return(vips_chain)
+          expect(vips_chain).to receive(:convert).with("webp").and_return(vips_chain)
+          expect(vips_chain).to receive(:saver).with(quality: 85, strip: true).and_return(vips_chain)
+          expect(vips_chain).to receive(:call).and_return(optimized_file)
+
+          service.call
+        end
+
+        it "strips metadata and sets quality to 85%" do
+          vips_chain = double
+          allow(ImageProcessing::Vips).to receive(:source).and_return(vips_chain)
+          allow(vips_chain).to receive(:resize_to_limit).and_return(vips_chain)
+          allow(vips_chain).to receive(:convert).and_return(vips_chain)
+          expect(vips_chain).to receive(:saver).with(quality: 85, strip: true).and_return(vips_chain)
+          allow(vips_chain).to receive(:call).and_return(optimized_file)
+
+          service.call
+        end
       end
 
-      it "determines correct file extension for various content types" do
-        test_cases.each do |content_type, expected_extension|
-          downloaded_file = double(
-            "downloaded_file",
-            size: 1.megabyte,
-            content_type: content_type,
-            read: "fake_image_data"
-          )
+      context "when optimization fails" do
+        let(:downloaded_file) do
+          double("downloaded_file", size: 1.megabyte, content_type: "image/jpeg", path: "/tmp/test.jpg")
+        end
 
+        before do
           allow(URI).to receive(:open).and_yield(downloaded_file)
-          allow(user.avatar).to receive(:attach) do |options|
-            expect(options[:filename]).to end_with(expected_extension)
-          end
+          allow(ImageProcessing::Vips).to receive(:source).and_raise(StandardError.new("Processing error"))
+          allow(user.avatar).to receive(:attach)
+        end
 
+        it "falls back to original file and logs warning" do
+          expect(Rails.logger).to receive(:warn).with(/Image optimization failed/)
+          expect(user.avatar).to receive(:attach).with(hash_including(io: downloaded_file))
           service.call
         end
       end

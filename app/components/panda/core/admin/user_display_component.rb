@@ -31,14 +31,15 @@ module Panda
 
         def render_avatar
           has_image = resolved_user.respond_to?(:avatar_url) &&
-            resolved_user.avatar_url.present?
+            resolved_user.avatar_url(size: :small).present?
 
           if has_image
             div do
               img(
                 class: "inline-block w-10 h-10 rounded-full object-cover",
-                src: resolved_user.avatar_url,
-                alt: ""
+                src: resolved_user.avatar_url(size: :small),
+                alt: "",
+                loading: "lazy"
               )
             end
           else

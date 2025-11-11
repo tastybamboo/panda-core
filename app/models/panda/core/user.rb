@@ -5,8 +5,13 @@ module Panda
     class User < ApplicationRecord
       self.table_name = "panda_core_users"
 
-      # Active Storage attachment for avatar
-      has_one_attached :avatar
+      # Active Storage attachment for avatar with variants
+      has_one_attached :avatar do |attachable|
+        attachable.variant :thumb, resize_to_limit: [50, 50], preprocessed: true
+        attachable.variant :small, resize_to_limit: [100, 100], preprocessed: true
+        attachable.variant :medium, resize_to_limit: [200, 200], preprocessed: true
+        attachable.variant :large, resize_to_limit: [400, 400], preprocessed: true
+      end
 
       validates :email, presence: true, uniqueness: {case_sensitive: false}
 
@@ -90,9 +95,15 @@ module Panda
 
       # Returns the URL for the user's avatar
       # Prefers Active Storage attachment over OAuth provider URL
-      def avatar_url
+      # @param size [Symbol] The variant size (:thumb, :small, :medium, :large, or nil for original)
+      # @return [String, nil] The avatar URL or nil if no avatar available
+      def avatar_url(size: nil)
         if avatar.attached?
-          Rails.application.routes.url_helpers.rails_blob_path(avatar, only_path: true)
+          if size && [:thumb, :small, :medium, :large].include?(size)
+            Rails.application.routes.url_helpers.rails_blob_path(avatar.variant(size), only_path: true)
+          else
+            Rails.application.routes.url_helpers.rails_blob_path(avatar, only_path: true)
+          end
         elsif self[:image_url].present?
           # Fallback to OAuth provider URL if no avatar is attached yet
           self[:image_url]

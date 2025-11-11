@@ -24,7 +24,12 @@ module Panda
         :login_page_title,
         :admin_title,
         :initial_admin_breadcrumb,
-        :dashboard_redirect_path
+        :dashboard_redirect_path,
+        :avatar_variants,
+        :avatar_max_file_size,
+        :avatar_max_dimension,
+        :avatar_optimization_quality,
+        :avatar_image_processor
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -80,6 +85,18 @@ module Panda
         @admin_title = "Panda Admin"
         @initial_admin_breadcrumb = nil  # Proc that returns [label, path]
         @dashboard_redirect_path = nil  # Path to redirect to after login (defaults to admin_root_path)
+
+        # Avatar configuration
+        @avatar_variants = {
+          thumb: {resize_to_limit: [50, 50]},
+          small: {resize_to_limit: [100, 100]},
+          medium: {resize_to_limit: [200, 200]},
+          large: {resize_to_limit: [400, 400]}
+        }
+        @avatar_max_file_size = 5.megabytes
+        @avatar_max_dimension = 800
+        @avatar_optimization_quality = 85
+        @avatar_image_processor = :vips # or :mini_magick
       end
     end
 

@@ -93,6 +93,39 @@ RSpec.describe Panda::Core::User, type: :model do
       it "returns the Active Storage blob path" do
         expect(user.avatar_url).to include("/rails/active_storage/blobs/")
       end
+
+      context "with size parameter" do
+        it "returns variant URL for :thumb size" do
+          url = user.avatar_url(size: :thumb)
+          expect(url).to include("/rails/active_storage/representations/")
+        end
+
+        it "returns variant URL for :small size" do
+          url = user.avatar_url(size: :small)
+          expect(url).to include("/rails/active_storage/representations/")
+        end
+
+        it "returns variant URL for :medium size" do
+          url = user.avatar_url(size: :medium)
+          expect(url).to include("/rails/active_storage/representations/")
+        end
+
+        it "returns variant URL for :large size" do
+          url = user.avatar_url(size: :large)
+          expect(url).to include("/rails/active_storage/representations/")
+        end
+
+        it "returns original URL for invalid size" do
+          url = user.avatar_url(size: :invalid)
+          expect(url).to include("/rails/active_storage/blobs/")
+          expect(url).not_to include("representations")
+        end
+
+        it "returns original URL when size is nil" do
+          url = user.avatar_url(size: nil)
+          expect(url).to include("/rails/active_storage/blobs/")
+        end
+      end
     end
 
     context "when avatar is not attached but image_url is present" do
@@ -103,12 +136,44 @@ RSpec.describe Panda::Core::User, type: :model do
       it "returns the OAuth provider image URL" do
         expect(user.avatar_url).to eq("https://example.com/image.jpg")
       end
+
+      it "returns OAuth provider URL regardless of size parameter" do
+        expect(user.avatar_url(size: :small)).to eq("https://example.com/image.jpg")
+      end
     end
 
     context "when neither avatar nor image_url is present" do
       it "returns nil" do
         expect(user.avatar_url).to be_nil
       end
+
+      it "returns nil regardless of size parameter" do
+        expect(user.avatar_url(size: :small)).to be_nil
+      end
+    end
+  end
+
+  describe "avatar variants" do
+    let(:user) { described_class.create!(email: "test@example.com", name: "Test User") }
+
+    before do
+      user.avatar.attach(io: File.open(Panda::Core::Engine.root.join("spec", "fixtures", "files", "test_image.jpg")), filename: "test.jpg", content_type: "image/jpeg")
+    end
+
+    it "has thumb variant defined" do
+      expect(user.avatar.variant(:thumb)).to be_present
+    end
+
+    it "has small variant defined" do
+      expect(user.avatar.variant(:small)).to be_present
+    end
+
+    it "has medium variant defined" do
+      expect(user.avatar.variant(:medium)).to be_present
+    end
+
+    it "has large variant defined" do
+      expect(user.avatar.variant(:large)).to be_present
     end
   end
 
