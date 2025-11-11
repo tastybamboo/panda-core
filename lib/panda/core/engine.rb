@@ -49,6 +49,31 @@ module Panda
       initializer "panda_core.config" do |app|
         # Configuration is already initialized with defaults in Configuration class
       end
+
+      # Auto-compile CSS for test/development environments
+      initializer "panda_core.auto_compile_assets", after: :load_config_initializers do |app|
+        # Only auto-compile in test or when explicitly requested
+        next unless Rails.env.test? || ENV["PANDA_CORE_AUTO_COMPILE"] == "true"
+
+        css_file = Panda::Core::Engine.root.join("public", "panda-core-assets", "panda-core.css")
+
+        unless css_file.exist?
+          warn "🐼 [Panda Core] Auto-compiling CSS for test environment..."
+
+          # Run compilation synchronously to ensure it's ready before tests
+          require "open3"
+          _, stderr, status = Open3.capture3(
+            "bundle exec rake panda:core:assets:compile",
+            chdir: Panda::Core::Engine.root.to_s
+          )
+
+          if status.success?
+            warn "🐼 [Panda Core] CSS compilation successful (#{css_file.size} bytes)"
+          else
+            warn "🐼 [Panda Core] CSS compilation failed: #{stderr}"
+          end
+        end
+      end
     end
   end
 end
