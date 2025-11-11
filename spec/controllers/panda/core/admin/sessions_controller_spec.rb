@@ -33,7 +33,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
       }.to change(Panda::Core::User, :count).by(1)
 
       expect(session[:user_id]).to be_present
-      expect(response).to redirect_to(admin_root_path)
+      expect(response).to redirect_to("/admin")
     end
 
     it "signs in existing user" do
@@ -42,7 +42,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
       get :create, params: {provider: "google_oauth2"}
 
       expect(session[:user_id]).to eq(user.id)
-      expect(response).to redirect_to(admin_root_path)
+      expect(response).to redirect_to("/admin")
     end
   end
 
@@ -57,7 +57,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
       delete :destroy
 
       expect(session[:user_id]).to be_nil
-      expect(response).to redirect_to(admin_login_path)
+      expect(response).to redirect_to("/admin/login")
     end
   end
 end

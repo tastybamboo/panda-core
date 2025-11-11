@@ -32,7 +32,7 @@ Capybara.server_port = ENV["CAPYBARA_PORT"]&.to_i # Let Capybara choose if not s
 # Use single-threaded mode to share database connection with tests
 Capybara.register_server :puma do |app, port, host|
   require "rack/handler/puma"
-  Rack::Handler::Puma.run(app, Port: port, Host: host, Silent: true, Threads: "1:1")
+  Rack::Handler::Puma.run(app, Port: port, Host: host, Silent: true, Threads: "0:4")
 end
 Capybara.server = :puma
 

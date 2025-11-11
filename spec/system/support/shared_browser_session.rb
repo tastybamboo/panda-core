@@ -1,6 +1,3 @@
-# frozen_string_literal: true
-
-# File: panda-cms/spec/system/support/shared_browser_session.rb
 module SharedBrowserSession
   def self.included(base)
     base.before(:all) do

@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       # @label Table
-      class TableComponentPreview < ViewComponent::Preview
+      class TableComponentPreview < Lookbook::Preview
         # Basic table with sample data
         # @label Default
         def default

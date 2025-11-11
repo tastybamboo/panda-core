@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       # @label Tag
-      class TagComponentPreview < ViewComponent::Preview
+      class TagComponentPreview < Lookbook::Preview
         # Default tag
         # @label Default
         def default

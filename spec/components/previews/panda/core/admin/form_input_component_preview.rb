@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       # @label Form Input
-      class FormInputComponentPreview < ViewComponent::Preview
+      class FormInputComponentPreview < Lookbook::Preview
         # Default text input
         # @label Text Input
         def text_input

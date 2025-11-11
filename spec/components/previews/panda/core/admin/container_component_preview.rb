@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       # @label Container
-      class ContainerComponentPreview < ViewComponent::Preview
+      class ContainerComponentPreview < Lookbook::Preview
         # Default container
         # @label Default
         def default

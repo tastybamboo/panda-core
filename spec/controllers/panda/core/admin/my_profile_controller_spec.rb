@@ -58,7 +58,7 @@ RSpec.describe Panda::Core::Admin::MyProfileController, type: :controller do
 
       it "redirects to the edit page" do
         patch :update, params: valid_params
-        expect(response).to redirect_to(edit_admin_my_profile_path)
+        expect(response).to redirect_to("/admin/my_profile/edit")
       end
     end
 

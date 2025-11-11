@@ -19,8 +19,6 @@ ensure
   $stderr = original_stderr
 end
 
-require "view_component"
-
 module Panda
   module Core
     class Engine < ::Rails::Engine
@@ -137,21 +135,6 @@ module Panda
 
         # Load the base component
         require root.join("app/components/panda/core/base")
-      end
-
-      # Set up ViewComponent and Lookbook previews
-      initializer "panda_core.view_component" do |app|
-        app.config.view_component.preview_paths ||= []
-        app.config.view_component.preview_paths << root.join("spec/components/previews")
-
-        # Add preview directories to autoload paths in development
-        if Rails.env.development?
-          # Handle frozen autoload_paths array
-          if app.config.autoload_paths.frozen?
-            app.config.autoload_paths = app.config.autoload_paths.dup
-          end
-          app.config.autoload_paths << root.join("spec/components/previews")
-        end
       end
 
       # Create AdminController alias after controllers are loaded

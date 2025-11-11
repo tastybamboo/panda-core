@@ -70,6 +70,7 @@ RSpec.configure do |config|
 
   config.after(:each, type: :system) do |example|
     if example.exception
+      puts "\nTEST FAILURE\n------------\n"
       begin
         # Wait for any pending JavaScript to complete
         begin
@@ -78,9 +79,6 @@ RSpec.configure do |config|
           nil
         end
 
-        # Wait for DOM to be ready
-        sleep 0.5
-
         # Get comprehensive page info
         page_html = begin
           page.html
@@ -88,10 +86,34 @@ RSpec.configure do |config|
           "<html><body>Error loading page</body></html>"
         end
 
+        if page_html.length < 100
+          puts "Warning: Page content appears minimal (#{page_html.length} chars) when taking screenshot"
+        end
+
         page_title = begin
           page.title
         rescue
           "N/A"
+        end
+
+        # Display cookie information
+        cookies = begin
+          page.driver.cookies
+        rescue => e
+          puts "[Debug] Could not retrieve cookies: #{e.message}"
+          []
+        end
+
+        session_cookie = begin
+          cookies.find { |cookie| cookie[:name].to_s.include?("session") }
+        rescue
+          nil
+        end
+
+        puts "[Debug] Total cookies: #{cookies.length}"
+        puts "[Debug] Session cookie present: #{!!session_cookie}"
+        if session_cookie
+          puts "[Debug] Session cookie: #{session_cookie[:name]}"
         end
 
         # Use Capybara's save_screenshot method
@@ -113,6 +135,8 @@ RSpec.configure do |config|
         puts "Exception class: #{example.exception.class}"
         puts "Exception message: #{example.exception.message}"
       end
+
+      puts ""
     end
   end
 end

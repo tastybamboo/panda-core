@@ -9,7 +9,7 @@ module Panda
       # Features dark mode support, FontAwesome icons, and optional subtitles.
       #
       # @label Flash Message
-      class FlashMessageComponentPreview < ViewComponent::Preview
+      class FlashMessageComponentPreview < Lookbook::Preview
         # Notice message (informational)
         # @label Notice
         def notice

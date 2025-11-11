@@ -33,7 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", ">= 7.0"
   spec.add_dependency "stimulus-rails"
   spec.add_dependency "turbo-rails"
-  spec.add_dependency "view_component"
 
   # Phlex support for modern component architecture
   spec.add_dependency "phlex", "~> 2.3"
