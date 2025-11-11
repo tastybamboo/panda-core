@@ -1,9 +1,24 @@
 # frozen_string_literal: true
 
-# Load shared test infrastructure
+# SimpleCov must be loaded before anything else
+require "simplecov"
+require "simplecov-json"
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::JSONFormatter,
+  SimpleCov::Formatter::HTMLFormatter
+])
+SimpleCov.start
+
+ENV["RAILS_ENV"] ||= "test"
+
+require "rubygems"
+require "bundler/setup"
+
+# Load core and engine
 require "panda/core"
 require "panda/core/engine"
-require "panda/core/testing/rails_helper"
+
+require "rails/all"
 
 # Core-specific requires
 require "propshaft"
@@ -11,9 +26,26 @@ require "stimulus-rails"
 require "turbo-rails"
 require "rails-controller-testing"
 
-# Load dummy app environment
+# Load dummy app environment BEFORE shared test infrastructure
 require File.expand_path("../dummy/config/environment", __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
+
+# Load RSpec/Rails BEFORE shared infrastructure to ensure correct paths
+require "rspec/rails"
+
+# Configure RSpec to use engine's spec directory, not dummy app's
+# This must be done immediately after requiring rspec/rails
+RSpec.configure do |config|
+  # Override both default_path and pattern to use engine's spec directory
+  engine_root = File.expand_path("..", __dir__)
+  engine_spec_dir = File.join(engine_root, "spec")
+
+  config.default_path = engine_spec_dir
+  config.pattern = File.join(engine_spec_dir, "**/*_spec.rb")
+end
+
+# Now load shared test infrastructure (requires Rails app and RSpec to be loaded)
+require "panda/core/testing/rails_helper"
 
 Rails.application.eager_load!
 

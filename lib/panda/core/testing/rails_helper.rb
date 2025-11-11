@@ -2,25 +2,15 @@
 
 # Shared RSpec configuration for all Panda gems
 # This file provides common test infrastructure that can be extended by individual gems
+#
+# IMPORTANT: This file should be required AFTER the dummy app is loaded
+# Individual gem rails_helper files should:
+# 1. Set up SimpleCov
+# 2. Require panda/core and the dummy app
+# 3. Require this file
+# 4. Load gem-specific support files
 
-require "simplecov"
-require "simplecov-json"
-
-# SimpleCov setup - gems can customize formatters if needed
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::JSONFormatter,
-  SimpleCov::Formatter::HTMLFormatter
-])
-SimpleCov.start
-
-ENV["RAILS_ENV"] ||= "test"
-
-require "rubygems"
-require "bundler/setup"
-
-# Require Rails and common gems
-require "rails/all"
-require "rspec/rails"
+# Require common test gems (assumes Rails and RSpec/Rails are already loaded by gem's rails_helper)
 require "database_cleaner/active_record"
 require "shoulda/matchers"
 require "capybara"
