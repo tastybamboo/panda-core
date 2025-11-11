@@ -163,9 +163,13 @@ module Panda
       end
 
       # High-level helper: Login as admin (creates user if needed)
+      # This method is idempotent - calling it multiple times is safe
       def login_as_admin(attributes = {})
         user = create_admin_user(attributes)
         if respond_to?(:visit)
+          # System spec - check if already logged in to avoid navigation pollution
+          return user if already_logged_in_as_admin?
+
           # System spec - use test endpoint
           login_with_test_endpoint(user, expect_success: true)
         else
@@ -176,9 +180,13 @@ module Panda
       end
 
       # High-level helper: Login as regular user (creates user if needed)
+      # This method is idempotent - calling it multiple times is safe
       def login_as_user(attributes = {})
         user = create_regular_user(attributes)
         if respond_to?(:visit)
+          # System spec - check if already logged in to avoid navigation pollution
+          return user if already_logged_in_as_admin?
+
           # System spec - regular users get redirected to login
           login_with_test_endpoint(user, expect_success: false)
         else
@@ -205,6 +213,34 @@ module Panda
       # ============================================================================
 
       private
+
+      # Check if already logged in as admin to avoid unnecessary navigation
+      # This prevents test pollution from multiple login attempts
+      def already_logged_in_as_admin?
+        return false unless respond_to?(:page)
+
+        begin
+          # Check if we're already on an admin page (indicates active session)
+          current_path = begin
+            page.current_path
+          rescue
+            nil
+          end
+          return false if current_path.nil? || current_path == "" || current_path == "/"
+
+          # If we're on an admin path and can access it, we're logged in
+          if current_path.start_with?("/admin")
+            # Try to detect if page has admin content (not a login page)
+            return false if current_path.include?("/login")
+            return true if page.has_css?("body", wait: 0.5)
+          end
+
+          false
+        rescue
+          # If we can't check the page state, assume not logged in
+          false
+        end
+      end
 
       def ensure_columns_loaded
         return if @columns_loaded
