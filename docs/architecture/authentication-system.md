@@ -295,15 +295,7 @@ end
 
 ## Future Enhancements
 
-Potential improvements for future versions:
-
-- [ ] Support for additional OAuth providers (Twitter, Facebook, etc.)
-- [ ] Two-factor authentication
-- [ ] API token authentication
-- [ ] Role-based permissions beyond admin/user
-- [ ] Session timeout configuration
-- [ ] Remember me functionality
-- [ ] Email/password authentication option
+See GitHub issue [#29](https://github.com/tastybamboo/panda-core/issues/29) for planned improvements including additional OAuth providers, two-factor authentication, API token support, advanced role-based permissions, session timeout configuration, remember me functionality, and optional email/password authentication.
 
 ## See Also
 

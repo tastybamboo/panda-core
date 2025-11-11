@@ -51,6 +51,12 @@ Capybara.register_driver :cuprite do |app|
   Capybara::Cuprite::Driver.new(app, **cuprite_options)
 end
 
+# Register mobile driver with smaller viewport
+Capybara.register_driver :cuprite_mobile do |app|
+  mobile_options = cuprite_options.merge(window_size: [375, 667])  # iPhone SE size
+  Capybara::Cuprite::Driver.new(app, **mobile_options)
+end
+
 # Configure Capybara to use cuprite driver by default
 Capybara.default_driver = :cuprite
 Capybara.javascript_driver = :cuprite
