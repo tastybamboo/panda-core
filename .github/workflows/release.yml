@@ -10,6 +10,8 @@ jobs:
   release:
     name: "Release to RubyGems"
     runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
     steps:
       - uses: "actions/checkout@v5"
       - name: "Setup Ruby"
