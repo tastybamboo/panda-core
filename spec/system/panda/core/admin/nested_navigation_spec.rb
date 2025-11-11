@@ -55,6 +55,9 @@ RSpec.describe "Nested navigation", type: :system do
     it "collapses nested items by default" do
       visit "/admin"
 
+      # Wait for Stimulus controllers to initialize
+      expect(page).to have_css("[data-controller='navigation-toggle']", wait: 2)
+
       # Sub-menu items should be hidden initially (checking visibility, not just DOM presence)
       expect(page).not_to have_css("a", text: "Overview", visible: true)
       expect(page).not_to have_css("a", text: "Members", visible: true)
@@ -77,6 +80,9 @@ RSpec.describe "Nested navigation", type: :system do
     it "collapses nested items when clicked again", js: true do
       visit "/admin"
 
+      # Wait for Stimulus controllers to initialize
+      expect(page).to have_css("[data-controller='navigation-toggle']", wait: 2)
+
       # Expand the menu
       team_button = find("button", text: "Team")
       team_button.click
@@ -84,6 +90,9 @@ RSpec.describe "Nested navigation", type: :system do
 
       # Collapse the menu
       team_button.click
+
+      # Wait for collapse animation/transition
+      sleep 0.3
 
       # Sub-menu items should be hidden again
       expect(page).not_to have_css("a", text: "Overview", visible: true)
