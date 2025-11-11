@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.5] - 2025-11-11
+
+### Added
+
+- Cuprite mobile driver (`:cuprite_mobile`) for testing mobile viewports in system specs
+- Mobile viewport configuration with 375×667 size (iPhone SE)
+
+### Changed
+
+- Authentication system documentation updated to reference GitHub issue #29 for future enhancements
+
+### Testing
+
+- System specs can now specify `driver: :cuprite_mobile` for mobile-specific tests
+
 ## [0.7.4] - 2025-11-11
 
 ### Added
