@@ -29,10 +29,9 @@ Shoulda::Matchers.configure do |config|
 end
 
 # Load all support files from panda-core
-panda_core_support_path = Gem.loaded_specs["panda-core"]&.full_gem_path
-if panda_core_support_path
-  Dir[File.join(panda_core_support_path, "spec/support/**/*.rb")].sort.each { |f| require f }
-end
+# Files are now in lib/panda/core/testing/support/ to be included in the published gem
+support_path = File.expand_path("../support", __FILE__)
+Dir[File.join(support_path, "**/*.rb")].sort.each { |f| require f }
 
 RSpec.configure do |config|
   # Include panda-core route helpers by default
