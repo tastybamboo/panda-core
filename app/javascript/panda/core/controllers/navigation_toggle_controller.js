@@ -46,6 +46,7 @@ export default class extends Controller {
 
   expand() {
     this.menuTarget.classList.remove("hidden")
+    this.menuTarget.style.display = ""
     this.buttonTarget.setAttribute("aria-expanded", "true")
 
     if (this.hasIconTarget) {
@@ -55,6 +56,7 @@ export default class extends Controller {
 
   collapse() {
     this.menuTarget.classList.add("hidden")
+    this.menuTarget.style.display = "none"
     this.buttonTarget.setAttribute("aria-expanded", "false")
 
     if (this.hasIconTarget) {
