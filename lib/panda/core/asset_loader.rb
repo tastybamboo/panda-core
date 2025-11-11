@@ -157,14 +157,28 @@ module Panda
         end
 
         def development_css_url
-          # Try versioned file first
-          version = asset_version
-          versioned_file = "/panda-core-assets/panda-core-#{version}.css"
-          return versioned_file if File.exist?(Rails.public_path.join("panda-core-assets", "panda-core-#{version}.css"))
+          assets_dir = Panda::Core::Engine.root.join("public", "panda-core-assets")
+
+          # In dev/test, look for timestamp-based files (latest one)
+          if Rails.env.test? || Rails.env.development?
+            # Find all timestamp-based CSS files (exclude symlinks)
+            css_files = Dir[assets_dir.join("panda-core-*.css")].reject { |f| File.symlink?(f) }
+
+            if css_files.any?
+              # Return the most recently created file
+              latest = css_files.max_by { |f| File.basename(f)[/\d+/].to_i }
+              return "/panda-core-assets/#{File.basename(latest)}"
+            end
+          else
+            # In production, try versioned file first
+            version = asset_version
+            versioned_file = "/panda-core-assets/panda-core-#{version}.css"
+            return versioned_file if File.exist?(Rails.public_path.join("panda-core-assets", "panda-core-#{version}.css"))
+          end
 
           # Fall back to unversioned file (always available from engine's public directory)
           unversioned_file = "/panda-core-assets/panda-core.css"
-          return unversioned_file if File.exist?(Panda::Core::Engine.root.join("public", "panda-core-assets", "panda-core.css"))
+          return unversioned_file if File.exist?(assets_dir.join("panda-core.css"))
 
           nil
         end

@@ -19,6 +19,10 @@ ensure
   $stderr = original_stderr
 end
 
+# Load shared configuration modules
+require_relative "shared/inflections_config"
+require_relative "shared/generator_config"
+
 # Load engine configuration modules
 require_relative "engine/test_config"
 require_relative "engine/autoload_config"
@@ -55,22 +59,36 @@ module Panda
         # Only auto-compile in test or when explicitly requested
         next unless Rails.env.test? || ENV["PANDA_CORE_AUTO_COMPILE"] == "true"
 
-        version = Panda::Core::VERSION
-        versioned_css = Panda::Core::Engine.root.join("public", "panda-core-assets", "panda-core-#{version}.css")
+        # Use timestamp for cache busting in dev/test
+        timestamp = Time.now.to_i
+        assets_dir = Panda::Core::Engine.root.join("public", "panda-core-assets")
+        timestamped_css = assets_dir.join("panda-core-#{timestamp}.css")
 
-        unless versioned_css.exist?
+        # Check if any compiled CSS exists (timestamp-based)
+        existing_css = Dir[assets_dir.join("panda-core-*.css")].reject { |f| File.symlink?(f) }
+
+        if existing_css.empty?
           warn "🐼 [Panda Core] Auto-compiling CSS for test environment..."
 
-          # Run compilation synchronously to ensure it's ready before tests
-          # Use :release task to create versioned file + unversioned symlink
+          # Compile CSS with timestamp
           require "open3"
+          require "fileutils"
+
+          FileUtils.mkdir_p(assets_dir)
+
+          # Compile directly to timestamped file
+          input_file = Panda::Core::Engine.root.join("app/assets/tailwind/application.css")
           _, stderr, status = Open3.capture3(
-            "bundle exec rake panda:core:assets:release",
-            chdir: Panda::Core::Engine.root.to_s
+            "bundle exec tailwindcss -i #{input_file} -o #{timestamped_css} --minify"
           )
 
           if status.success?
-            warn "🐼 [Panda Core] CSS compilation successful (#{versioned_css.size} bytes)"
+            # Create unversioned symlink for fallback
+            symlink = assets_dir.join("panda-core.css")
+            FileUtils.rm_f(symlink) if File.exist?(symlink)
+            FileUtils.ln_sf(File.basename(timestamped_css), symlink)
+
+            warn "🐼 [Panda Core] CSS compilation successful (#{timestamped_css.size} bytes)"
           else
             warn "🐼 [Panda Core] CSS compilation failed: #{stderr}"
           end
