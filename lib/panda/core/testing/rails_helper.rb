@@ -149,18 +149,8 @@ RSpec.configure do |config|
   Kernel.srand config.seed
   config.order = :random
 
-  # Configure fixtures path and enable fixtures
-  config.fixture_paths = [File.expand_path("../../spec/fixtures", __dir__)]
-  config.use_transactional_fixtures = true
-
-  # Load fixtures globally for all tests EXCEPT those that require users
-  # panda_core_users are created programmatically
-  # Note: Individual gems can customize this list in their own rails_helper
-  fixture_files = Dir[File.expand_path("../../spec/fixtures/*.yml", __dir__)].map do |f|
-    File.basename(f, ".yml").to_sym
-  end
-  fixture_files.delete(:panda_core_users)
-  config.global_fixtures = fixture_files unless ENV["SKIP_GLOBAL_FIXTURES"]
+  # Note: Fixture configuration is gem-specific and should be done in each gem's rails_helper.rb
+  # This includes config.fixture_paths and config.global_fixtures
 
   # Bullet configuration (if available)
   if defined?(Bullet) && Bullet.enable?
