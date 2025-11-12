@@ -30,10 +30,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Aligns with existing `process_timeout: 2` setting for consistency
 - SystemTestHelpers now includes CupriteHelpers and BetterSystemTests modules
 - Screenshot rescue blocks now return empty strings instead of placeholder HTML
+- Specs job now requires seclint job to pass before running
+- Both CI jobs now use unified gem cache key without job-specific prefixes
+- Both CI jobs now exclude development gems for consistency
 
 ### Fixed
 
 - Corrected workflow name in auto-release trigger for GitHub Actions
+
+### Development
+
+- Added `--shm-size=2gb` option to specs container for improved Chrome stability
+- Unified gem caching strategy across lint and test jobs
+- Improved CI efficiency by preventing specs from running if linters fail
 
 ## [0.8.3] - 2025-11-12
 
