@@ -40,14 +40,20 @@ module Panda
       end
 
       def email_field(method, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(method) + meta_text(options) + super(method, options.reverse_merge(class: input_styles)) + error_message(method)
+          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: input_styles)) + error_message(method)
         end
       end
 
       def datetime_field(method, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(method) + meta_text(options) + super(method, options.reverse_merge(class: input_styles)) + error_message(method)
+          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: input_styles)) + error_message(method)
         end
       end
 
@@ -61,8 +67,11 @@ module Panda
       end
 
       def password_field(attribute, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(attribute) + meta_text(options) + super(attribute, options.reverse_merge(class: input_styles)) + error_message(attribute)
+          label(attribute, custom_label) + meta_text(options) + super(attribute, options.reverse_merge(class: input_styles)) + error_message(attribute)
         end
       end
 
@@ -76,8 +85,11 @@ module Panda
       end
 
       def collection_select(method, collection, value_method, text_method, options = {}, html_options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(method) + meta_text(options) + super(method, collection, value_method, text_method, options, html_options.reverse_merge(class: input_styles)) + error_message(method)
+          label(method, custom_label) + meta_text(options) + super(method, collection, value_method, text_method, options, html_options.reverse_merge(class: input_styles)) + error_message(method)
         end
       end
 
@@ -271,22 +283,31 @@ module Panda
       end
 
       def check_box(method, options = {}, checked_value = "1", unchecked_value = "0")
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(method) + meta_text(options) + super(method, options.reverse_merge(class: "border-gray-300 ml-2"), checked_value, unchecked_value)
+          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: "border-gray-300 ml-2"), checked_value, unchecked_value)
         end
       end
 
       def date_field(method, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(method) + meta_text(options) + super(method, options.reverse_merge(class: input_styles))
+          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: input_styles))
         end
       end
 
       def radio_button_group(method, choices, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         current_value = object.send(method)
 
         content_tag :div, class: container_styles do
-          label(method) +
+          label(method, custom_label) +
             meta_text(options) +
             content_tag(:div, class: "mt-2 space-y-2") do
               choices.map do |choice|
