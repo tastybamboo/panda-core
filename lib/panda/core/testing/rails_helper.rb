@@ -61,6 +61,8 @@ RSpec.configure do |config|
   if ENV["GITHUB_ACTIONS"] == "true"
     require "rspec/github"
     config.add_formatter RSpec::Github::Formatter
+    # Also add documentation formatter for colored real-time output in CI logs
+    config.add_formatter RSpec::Core::Formatters::DocumentationFormatter, $stdout
   end
 
   # Controller testing support (if rails-controller-testing is available)
