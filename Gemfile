@@ -22,6 +22,7 @@ group :development, :test do
   gem "fasterer"
   gem "importmap-rails"
   gem "listen"
+  gem "pg"
   gem "propshaft"
   gem "puma"
   gem "rake"
@@ -40,8 +41,13 @@ group :development, :test do
   gem "omniauth-microsoft_graph"
 end
 
+group :development do
+  gem "pry-rails"
+end
+
 group :test do
   gem "database_cleaner-active_record"
+  gem "rails-controller-testing"
   gem "rspec"
   gem "rspec-core"
   gem "rspec-github"
