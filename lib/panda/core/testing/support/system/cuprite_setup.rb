@@ -64,13 +64,6 @@ module Panda
           # Add CI-specific options
           if ENV["GITHUB_ACTIONS"] == "true"
             options[:browser_options].merge!(ci_browser_options)
-
-            puts "\n🔍 Cuprite Configuration (Desktop):"
-            puts "   Debug mode: #{ENV["DEBUG"]}"
-            puts "   Headless: #{options[:headless]}"
-            puts "   JS Errors: #{options[:js_errors]}"
-            puts "   Browser options: #{options[:browser_options].keys.join(", ")}"
-            puts ""
           end
 
           Capybara.register_driver :cuprite do |app|
@@ -85,11 +78,6 @@ module Panda
 
           if ENV["GITHUB_ACTIONS"] == "true"
             options[:browser_options].merge!(ci_browser_options)
-
-            puts "\n🔍 Cuprite Configuration (Mobile):"
-            puts "   Window size: #{options[:window_size]}"
-            puts "   JS Errors: #{options[:js_errors]}"
-            puts ""
           end
 
           Capybara.register_driver :cuprite_mobile do |app|
