@@ -7,7 +7,6 @@
 namespace :panda do
   namespace :core do
     namespace :assets do
-
       # =========================================================
       # 1) ENGINE CSS COMPILATION (unchanged, just cleaned)
       # =========================================================
@@ -36,7 +35,6 @@ namespace :panda do
 
         puts "🎉 Release assets compiled"
       end
-
 
       # =========================================================
       # CSS INTERNAL HELPERS
@@ -76,14 +74,13 @@ namespace :panda do
         puts "   ✓ Versioned file + symlink created"
       end
 
-
       # =========================================================
       # 2) DUMMY APP PREP (FOR SYSTEM TESTS + CI)
       # =========================================================
 
       desc "Compile Panda Core + dummy app assets into spec/dummy/public/assets"
       task compile_dummy: :environment do
-        dummy_root  = find_dummy_root
+        dummy_root = find_dummy_root
         assets_root = dummy_root.join("public/assets")
 
         puts "🚧 Compiling dummy assets..."
@@ -104,11 +101,10 @@ namespace :panda do
         puts "✅ Dummy assets compiled"
       end
 
-
       desc "Generate importmap.json for the dummy app"
       task generate_dummy_importmap: :environment do
         dummy_root = find_dummy_root
-        output     = dummy_root.join("public/assets/importmap.json")
+        output = dummy_root.join("public/assets/importmap.json")
 
         puts "🗺️  Generating importmap.json..."
         FileUtils.mkdir_p(output.dirname)
@@ -123,16 +119,15 @@ namespace :panda do
         puts "   ✓ importmap.json written"
       end
 
-
       desc "Verify dummy assets for CI (fail-fast)"
       task verify_dummy: :environment do
         dummy_root = find_dummy_root
-        assets     = dummy_root.join("public/assets")
-        manifest   = assets.join(".manifest.json")
-        importmap  = assets.join("importmap.json")
+        assets = dummy_root.join("public/assets")
+        manifest = assets.join(".manifest.json")
+        importmap = assets.join("importmap.json")
 
-        abort("❌ Missing #{assets}")    unless assets.exist?
-        abort("❌ Missing #{manifest}")  unless manifest.exist?
+        abort("❌ Missing #{assets}") unless assets.exist?
+        abort("❌ Missing #{manifest}") unless manifest.exist?
         abort("❌ Missing #{importmap}") unless importmap.exist?
 
         begin
@@ -144,7 +139,6 @@ namespace :panda do
 
         puts "✅ Dummy assets verified"
       end
-
 
       # =========================================================
       # INTERNAL UTILITIES
@@ -160,7 +154,6 @@ namespace :panda do
 
         abort("❌ Cannot find dummy root — expected #{candidate}")
       end
-
     end
   end
 end

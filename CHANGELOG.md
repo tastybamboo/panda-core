@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2025-11-12
+
+### Changed
+
+- Refactored and cleaned up asset building tasks in `lib/tasks/assets.rake`
+  - Improved code organization and readability
+  - Consolidated duplicate code
+  - Better helper method structure
+  - Reduced file size by ~83 lines through cleanup and optimization
+
+## [0.9.0] - 2025-11-12
+
+### Added
+
+- Asset preparation pipeline for system tests
+  - Automated CSS and JavaScript asset building for test dummy applications
+  - Manifest and importmap generation for test environments
+  - Asset validation tasks to ensure test infrastructure is properly configured
+
 ## [0.8.4] - 2025-11-12
 
 ### Added
