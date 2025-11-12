@@ -7,6 +7,9 @@ module Panda
     def self.root
       File.expand_path("../..", __FILE__)
     end
+
+    # Store the engine's importmap separately from the app's
+    mattr_accessor :importmap
   end
 end
 

@@ -8,20 +8,11 @@ module Panda
         extend ActiveSupport::Concern
 
         included do
-          # Add importmap paths from the engine
+          # Load the engine's importmap
+          # This keeps the engine's JavaScript separate from the app's importmap
           initializer "panda_core.importmap", before: "importmap" do |app|
-            if app.config.respond_to?(:importmap)
-              # Create a new array if frozen
-              app.config.importmap.paths = app.config.importmap.paths.dup if app.config.importmap.paths.frozen?
-
-              # Add our paths
-              app.config.importmap.paths << root.join("config/importmap.rb")
-
-              # Handle cache sweepers similarly
-              if app.config.importmap.cache_sweepers.frozen?
-                app.config.importmap.cache_sweepers = app.config.importmap.cache_sweepers.dup
-              end
-              app.config.importmap.cache_sweepers << root.join("app/javascript")
+            Panda::Core.importmap = Importmap::Map.new.tap do |map|
+              map.draw(Panda::Core::Engine.root.join("config/importmap.rb"))
             end
           end
         end

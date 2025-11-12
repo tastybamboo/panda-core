@@ -22,29 +22,21 @@ module Panda
             javascript_include_tag(js_url, type: "module")
           end
         else
-          # Development mode - Load JavaScript with import map
-          # Files are served by Rack::Static middleware from engine's app/javascript
-          importmap_html = <<~HTML
-            <script type="importmap">
-              {
-                "imports": {
-                  "@hotwired/stimulus": "/panda/core/vendor/@hotwired--stimulus.js",
-                  "@hotwired/turbo": "/panda/core/vendor/@hotwired--turbo.js",
-                  "@rails/actioncable/src": "/panda/core/vendor/@rails--actioncable--src.js",
-                  "tailwindcss-stimulus-components": "/panda/core/tailwindcss-stimulus-components.js",
-                  "@fortawesome/fontawesome-free": "https://ga.jspm.io/npm:@fortawesome/fontawesome-free@7.1.0/js/all.js",
-                  "@tailwindplus/elements": "https://esm.sh/@tailwindplus/elements@1",
-                  "cropperjs": "https://esm.sh/cropperjs@1.6.2",
-                  "panda/core/application": "/panda/core/application.js",
-                  "panda/core/controllers/toggle_controller": "/panda/core/controllers/toggle_controller.js",
-                  "panda/core/controllers/theme_form_controller": "/panda/core/controllers/theme_form_controller.js"
-                }
-              }
-            </script>
-            <script type="module" src="/panda/core/application.js"></script>
-            <script type="module" src="/panda/core/controllers/index.js"></script>
+          # Development mode - Use the engine's importmap (loaded in initializer)
+          # This keeps the engine's JavaScript separate from the app's importmap
+          # Build the importmap JSON manually since paths are already absolute
+          imports = {}
+          Panda::Core.importmap.instance_variable_get(:@packages).each do |name, package|
+            imports[name] = package[:path]
+          end
+
+          importmap_json = JSON.generate({"imports" => imports})
+
+          <<~HTML.html_safe
+            <script type="importmap">#{importmap_json}</script>
+            <script type="module">import "panda/core/application"</script>
+            <script type="module">import "panda/core/controllers/index"</script>
           HTML
-          importmap_html.html_safe
         end
       end
 
