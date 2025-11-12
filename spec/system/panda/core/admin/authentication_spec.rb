@@ -8,7 +8,7 @@ RSpec.describe "Admin authentication", type: :system do
 
   describe "OAuth provider authentication" do
     context "with Google" do
-      it "logs in admin successfully using test endpoint" do
+      it "logs in admin successfully" do
         login_with_google(admin_user)
         # Verify we're logged in (either at /admin or wherever the app redirects)
         expect(["/admin", "/admin/cms"]).to include(page.current_path)
