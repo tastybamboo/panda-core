@@ -24,7 +24,7 @@ module Panda
             inspector: ENV["INSPECTOR"].in?(%w[y 1 yes true]),
             headless: !ENV["HEADLESS"].in?(%w[n 0 no false]),
             slowmo: ENV["SLOWMO"]&.to_f || 0,
-            timeout: 10,
+            timeout: ENV["CUPRITE_TIMEOUT"]&.to_i || 2,
             js_errors: true,  # IMPORTANT: Report JavaScript errors as test failures
             ignore_default_browser_options: false,
             process_timeout: 2,
