@@ -3,154 +3,141 @@
 #
 # Panda Core Asset Tasks
 #
-# This file contains BOTH:
-#   1. Engine-level CSS compilation (existing functionality)
-#   2. Dummy-app asset preparation for system tests (new)
-#
-# These tasks are used by:
-#  - engine developers running local dev
-#  - panda-cms CI preparing dummy app
-#  - system specs that depend on Propshaft + Importmap + Cuprite
-#
 
 namespace :panda do
   namespace :core do
     namespace :assets do
-      # --------------------------------------------------------------------------
-      # 🐼 1. EXISTING TASKS — ENGINE CSS COMPILATION
-      # --------------------------------------------------------------------------
 
-      desc "Compile Panda Core assets for development (overwrites panda-core.css)"
+      # =========================================================
+      # 1) ENGINE CSS COMPILATION (unchanged, just cleaned)
+      # =========================================================
+
+      desc "Compile Panda Core CSS assets (development mode)"
       task :compile do
-        puts "🐼 Compiling Panda Core CSS assets (development mode)..."
+        puts "🐼 Compiling Panda Core CSS assets..."
 
         output_dir = panda_engine_root.join("public", "panda-core-assets")
         FileUtils.mkdir_p(output_dir)
 
         compile_css_development(output_dir)
 
-        puts "🎉 Asset compilation complete!"
-        puts "📁 Output directory: #{output_dir}"
-        puts ""
+        puts "🎉 CSS compiled → #{output_dir}"
       end
 
       desc "Compile and version Panda Core CSS assets for release"
       task :release do
-        puts "🐼 Compiling Panda Core CSS assets for release..."
-
         require_relative "../../panda/core/version"
-        version = Panda::Core::VERSION
 
+        version = Panda::Core::VERSION
         output_dir = panda_engine_root.join("public", "panda-core-assets")
         FileUtils.mkdir_p(output_dir)
 
         compile_css_release(output_dir, version)
 
-        puts "🎉 Release asset compilation complete!"
-        puts "📁 Output directory: #{output_dir}"
-        puts "📦 Versioned: panda-core-#{version}.css"
+        puts "🎉 Release assets compiled"
       end
 
-      # --------------------------------------------------------------------------
-      # 🧩 INTERNAL HELPERS (CSS)
-      # --------------------------------------------------------------------------
+
+      # =========================================================
+      # CSS INTERNAL HELPERS
+      # =========================================================
 
       def panda_engine_root
         Panda::Core::Engine.root
       end
 
       def compile_css_development(output_dir)
-        engine_root = panda_engine_root
-        input_file = engine_root.join("app/assets/tailwind/application.css")
-        output_file = output_dir.join("panda-core.css")
+        input = panda_engine_root.join("app/assets/tailwind/application.css")
+        output = output_dir.join("panda-core.css")
 
-        content_paths = Panda::Core::ModuleRegistry.tailwind_content_paths
-        content_flags = content_paths.map { |p| "--content '#{p}'" }.join(" ")
+        content = Panda::Core::ModuleRegistry.tailwind_content_paths
+        flags = content.map { |p| "--content '#{p}'" }.join(" ")
 
-        cmd = "bundle exec tailwindcss -i #{input_file} -o #{output_file} #{content_flags} --minify"
+        cmd = "bundle exec tailwindcss -i #{input} -o #{output} #{flags} --minify"
+        abort("❌ CSS compile failed") unless system(cmd)
 
-        unless system(cmd)
-          abort("❌ CSS compilation failed")
-        end
-
-        puts "✅ CSS compiled: #{output_file} (#{File.size(output_file)} bytes)"
+        puts "   ✓ #{output.basename} (#{File.size(output)} bytes)"
       end
 
       def compile_css_release(output_dir, version)
-        engine_root = panda_engine_root
-        input_file = engine_root.join("app/assets/tailwind/application.css")
-        versioned_file = output_dir.join("panda-core-#{version}.css")
+        input = panda_engine_root.join("app/assets/tailwind/application.css")
+        file = output_dir.join("panda-core-#{version}.css")
 
-        content_paths = Panda::Core::ModuleRegistry.tailwind_content_paths
-        content_flags = content_paths.map { |p| "--content '#{p}'" }.join(" ")
+        content = Panda::Core::ModuleRegistry.tailwind_content_paths
+        flags = content.map { |p| "--content '#{p}'" }.join(" ")
 
-        cmd = "bundle exec tailwindcss -i #{input_file} -o #{versioned_file} #{content_flags} --minify"
-
-        unless system(cmd)
-          abort("❌ CSS compilation failed")
-        end
+        cmd = "bundle exec tailwindcss -i #{input} -o #{file} #{flags} --minify"
+        abort("❌ CSS release compile failed") unless system(cmd)
 
         symlink = output_dir.join("panda-core.css")
         FileUtils.rm_f(symlink)
-        FileUtils.ln_sf(File.basename(versioned_file), symlink)
+        FileUtils.ln_sf(file.basename, symlink)
 
-        puts "✅ Release CSS compiled + symlink generated"
+        puts "   ✓ Versioned file + symlink created"
       end
 
-      # --------------------------------------------------------------------------
-      # 🚂 2. NEW TASKS — DUMMY APP ASSET PREPARATION (FOR CI + SYSTEM TESTS)
-      # --------------------------------------------------------------------------
 
-      desc "Compile Panda Core + host app assets into spec/dummy/public/assets (CI)"
+      # =========================================================
+      # 2) DUMMY APP PREP (FOR SYSTEM TESTS + CI)
+      # =========================================================
+
+      desc "Compile Panda Core + dummy app assets into spec/dummy/public/assets"
       task compile_dummy: :environment do
-        dummy_root = find_dummy_root
+        dummy_root  = find_dummy_root
         assets_root = dummy_root.join("public/assets")
 
-        puts "🚧 Compiling assets into dummy app:"
-        puts "👉 #{assets_root}"
-
+        puts "🚧 Compiling dummy assets..."
+        puts "   → #{assets_root}"
         FileUtils.mkdir_p(assets_root)
 
         Dir.chdir(dummy_root) do
-          # Runs the engine's asset compile pipeline in the dummy app context
-          unless system("bundle exec rake app:panda:core:assets:compile")
-            abort("❌ Failed to compile Panda Core assets in dummy app")
+          # IMPORTANT: this is now the correct task name
+          unless system("bundle exec rake panda:core:assets:compile")
+            abort("❌ panda:core:assets:compile failed in dummy app")
           end
+
+          # Propshaft (Rails 8)
+          abort("❌ assets:precompile failed") \
+            unless system("bundle exec rake assets:precompile RAILS_ENV=#{Rails.env}")
         end
 
         puts "✅ Dummy assets compiled"
       end
 
-      desc "Generate importmap.json for Rails 8 dummy app"
+
+      desc "Generate importmap.json for the dummy app"
       task generate_dummy_importmap: :environment do
         dummy_root = find_dummy_root
-        importmap_out = dummy_root.join("public/assets/importmap.json")
+        output     = dummy_root.join("public/assets/importmap.json")
 
-        puts "🗺️ Generating importmap.json..."
-        FileUtils.mkdir_p(importmap_out.dirname)
+        puts "🗺️  Generating importmap.json..."
+        FileUtils.mkdir_p(output.dirname)
 
         Dir.chdir(dummy_root) do
-          map = Rails.application.importmap
-          File.write(importmap_out, JSON.pretty_generate(map.to_json))
+          json = Rails.application.importmap.to_json(
+            resolver: ActionController::Base.helpers
+          )
+          File.write(output, JSON.pretty_generate(json))
         end
 
-        puts "✅ importmap.json written to #{importmap_out}"
+        puts "   ✓ importmap.json written"
       end
 
-      desc "Verify dummy app asset readiness (fail-fast for CI)"
+
+      desc "Verify dummy assets for CI (fail-fast)"
       task verify_dummy: :environment do
         dummy_root = find_dummy_root
-        assets_root = dummy_root.join("public/assets")
-        manifest = assets_root.join(".manifest.json")
-        importmap = assets_root.join("importmap.json")
+        assets     = dummy_root.join("public/assets")
+        manifest   = assets.join(".manifest.json")
+        importmap  = assets.join("importmap.json")
 
-        abort("❌ Missing directory: #{assets_root}") unless Dir.exist?(assets_root)
-        abort("❌ Missing #{manifest}") unless File.exist?(manifest)
-        abort("❌ Missing #{importmap}") unless File.exist?(importmap)
+        abort("❌ Missing #{assets}")    unless assets.exist?
+        abort("❌ Missing #{manifest}")  unless manifest.exist?
+        abort("❌ Missing #{importmap}") unless importmap.exist?
 
         begin
           parsed = JSON.parse(File.read(manifest))
-          abort("❌ Empty manifest!") if parsed.empty?
+          abort("❌ Empty .manifest.json") if parsed.empty?
         rescue
           abort("❌ Invalid .manifest.json")
         end
@@ -158,21 +145,22 @@ namespace :panda do
         puts "✅ Dummy assets verified"
       end
 
-      # --------------------------------------------------------------------------
-      # 🧩 INTERNAL HELPERS (DUMMY APP)
-      # --------------------------------------------------------------------------
+
+      # =========================================================
+      # INTERNAL UTILITIES
+      # =========================================================
 
       def find_dummy_root
         root = Rails.root
+
         return root if root.basename.to_s == "dummy"
 
-        # For engines, Rails.root will be e.g. panda-cms/
-        # In CI we want panda-cms/spec/dummy/
-        possible = root.join("spec/dummy")
-        return possible if possible.exist?
+        candidate = root.join("spec/dummy")
+        return candidate if candidate.exist?
 
-        abort("❌ Cannot find dummy root at #{possible}")
+        abort("❌ Cannot find dummy root — expected #{candidate}")
       end
+
     end
   end
 end
