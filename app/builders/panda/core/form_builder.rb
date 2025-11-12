@@ -11,6 +11,9 @@ module Panda
       end
 
       def text_field(attribute, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         # Add disabled/readonly styling
         field_classes = if options[:readonly] || options[:disabled]
           readonly_input_styles
@@ -20,7 +23,7 @@ module Panda
 
         if options.dig(:data, :prefix)
           content_tag :div, class: container_styles do
-            label(attribute) + meta_text(options) +
+            label(attribute, custom_label) + meta_text(options) +
               content_tag(:div, class: "flex flex-grow") do
                 content_tag(:span,
                   class: "inline-flex items-center px-3 text-base border border-r-none rounded-s-md whitespace-nowrap break-keep") do
@@ -31,7 +34,7 @@ module Panda
           end
         else
           content_tag :div, class: container_styles do
-            label(attribute) + meta_text(options) + super(attribute, options.reverse_merge(class: field_classes)) + error_message(attribute)
+            label(attribute, custom_label) + meta_text(options) + super(attribute, options.reverse_merge(class: field_classes)) + error_message(attribute)
           end
         end
       end
@@ -49,8 +52,11 @@ module Panda
       end
 
       def text_area(method, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(method) + meta_text(options) + super(method, options.reverse_merge(class: input_styles)) + error_message(method)
+          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: input_styles)) + error_message(method)
         end
       end
 
@@ -61,8 +67,11 @@ module Panda
       end
 
       def select(method, choices = nil, options = {}, html_options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         content_tag :div, class: container_styles do
-          label(method) + meta_text(options) + super(method, choices, options, html_options.reverse_merge(class: select_styles)) + select_svg + error_message(method)
+          label(method, custom_label) + meta_text(options) + super(method, choices, options, html_options.reverse_merge(class: select_styles)) + select_svg + error_message(method)
         end
       end
 
@@ -84,6 +93,9 @@ module Panda
       end
 
       def file_field(method, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
         # Check if cropper is requested
         with_cropper = options.delete(:with_cropper)
 
@@ -99,7 +111,7 @@ module Panda
           field_id = "#{object_name}_#{method}"
 
           content_tag :div, class: container_styles do
-            label(method) +
+            label(method, custom_label) +
               meta_text(options) +
               # Cropper stylesheet
               @template.content_tag(:link, nil, rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css") +
@@ -153,9 +165,9 @@ module Panda
         elsif simple_mode
           # Simple file input with basic styling
           content_tag :div, class: container_styles do
-            label(method) +
+            label(method, custom_label) +
               meta_text(options) +
-              super(method, options.reverse_merge(class: "file:rounded file:border-0 file:text-sm file:bg-white file:text-gray-500 hover:file:bg-gray-50 bg-white px-2.5 hover:bg-gray-50".concat(input_styles)))
+              super(method, options.reverse_merge(class: "file:rounded file:border-0 file:text-sm file:bg-white file:text-gray-500 hover:file:bg-gray-50 bg-white px-2.5 hover:bg-gray-50 #{input_styles}"))
           end
         else
           # Fancy drag-and-drop UI
@@ -166,7 +178,7 @@ module Panda
           field_id = "#{object_name}_#{method}"
 
           content_tag :div, class: "#{container_styles} col-span-full", data: {controller: "file-upload"} do
-            label(method) +
+            label(method, custom_label) +
               meta_text(options) +
               content_tag(:div, class: "mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 dark:border-white/25 transition-colors", data: {file_upload_target: "dropzone"}) do
                 content_tag(:div, class: "text-center") do
