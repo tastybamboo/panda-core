@@ -27,7 +27,7 @@ module Panda
             timeout: ENV["CUPRITE_TIMEOUT"]&.to_i || 2,
             js_errors: true,  # IMPORTANT: Report JavaScript errors as test failures
             ignore_default_browser_options: false,
-            process_timeout: 2,
+            process_timeout: ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i || 2,
             wait_for_network_idle: false,  # Don't wait for all network requests
             pending_connection_errors: false,  # Don't fail on pending external connections
             browser_options: {

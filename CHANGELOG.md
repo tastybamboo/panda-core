@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.4] - 2025-11-12
+
+### Added
+
+- Configurable Cuprite timeout via `CUPRITE_TIMEOUT` environment variable
+- Configurable Cuprite process timeout via `CUPRITE_PROCESS_TIMEOUT` environment variable
+- CupriteHelpers module with retry logic for form interactions
+  - `safe_fill_in` - Fill in form fields with automatic retry on Ferrum::NodeNotFoundError
+  - `safe_select` - Select dropdown options with automatic retry
+  - `safe_click_button` - Click buttons with automatic retry
+  - All safe methods retry up to 2 times with 0.5s delay in CI environments
+- BetterSystemTests module for enhanced failure debugging
+  - Multi-session screenshot support
+  - CI-specific error handling and logging
+  - Automatic HTML page dump on test failures in CI
+  - Network idle waiting before screenshots
+  - Enhanced page information logging (title, URL, content length)
+
+### Changed
+
+- **BREAKING**: Reduced default Cuprite timeout from 10 seconds to 2 seconds for faster failure detection
+  - Override with `CUPRITE_TIMEOUT` environment variable if needed (e.g., `CUPRITE_TIMEOUT=10` in CI)
+  - Aligns with existing `process_timeout: 2` setting for consistency
+- SystemTestHelpers now includes CupriteHelpers and BetterSystemTests modules
+- Screenshot rescue blocks now return empty strings instead of placeholder HTML
+
+### Fixed
+
+- Corrected workflow name in auto-release trigger for GitHub Actions
+
+## [0.8.3] - 2025-11-12
+
+### Added
+
+- Custom label support for FormBuilder fields via `label` option
+
+### Fixed
+
+- Added missing `pg` and `rails-controller-testing` gems to Gemfile for test suite
+
+### Development
+
+- Improved CI timeout configuration for Capybara and Cuprite
+- Enhanced gem caching in CI workflows
+- Reduced verbose Cuprite debug output in CI
+- Renamed OAuth login test for clarity
+
+## [0.8.2] - 2025-11-11
+
+### Added
+
+- Custom label support to FormBuilder for more flexible form field rendering
+
+### Changed
+
+- Refactored importmap loading to use dynamic loading instead of hardcoded HTML
+
+### Development
+
+- Updated Gemfile.lock after version bump
+
 ## [0.8.1] - 2025-11-11
 
 ### Added
