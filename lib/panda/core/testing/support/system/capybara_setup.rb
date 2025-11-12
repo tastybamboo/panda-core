@@ -3,8 +3,8 @@
 # Shared Capybara configuration for all Panda gems
 # This provides standard Capybara setup with sensible defaults
 
-# Increase wait time for CI environments where asset loading is slower
-Capybara.default_max_wait_time = ENV["CI"].present? ? 10 : 5
+# We don't want to hang around for too long for processes at the moment
+Capybara.default_max_wait_time = ENV["CAPYBARA_MAX_WAIT_TIME"].present? ? ENV["CAPYBARA_MAX_WAIT_TIME"].to_i : 2
 
 # Normalize whitespaces when using `has_text?` and similar matchers,
 # i.e., ignore newlines, trailing spaces, etc.

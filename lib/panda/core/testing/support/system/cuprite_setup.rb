@@ -24,10 +24,10 @@ module Panda
             inspector: ENV["INSPECTOR"].in?(%w[y 1 yes true]),
             headless: !ENV["HEADLESS"].in?(%w[n 0 no false]),
             slowmo: ENV["SLOWMO"]&.to_f || 0,
-            timeout: 30,
+            timeout: 10,
             js_errors: true,  # IMPORTANT: Report JavaScript errors as test failures
             ignore_default_browser_options: false,
-            process_timeout: 10,
+            process_timeout: 2,
             wait_for_network_idle: false,  # Don't wait for all network requests
             pending_connection_errors: false,  # Don't fail on pending external connections
             browser_options: {
