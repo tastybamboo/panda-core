@@ -35,32 +35,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **CI Capybara Configuration** - Shared testing infrastructure for all Panda gems
-  - New `lib/panda/core/testing/support/system/ci_capybara_config.rb`
+- CI-specific Capybara configuration in `lib/panda/core/testing/support/system/ci_capybara_config.rb`
   - Automatic Puma 6 and 7+ compatibility detection
-  - Activates automatically in GitHub Actions or when `CI_SYSTEM_SPECS=true`
+  - Activates in GitHub Actions or when `CI_SYSTEM_SPECS=true`
   - Configurable wait times and thread counts via environment variables
   - Verbose logging for debugging CI test issues
-- **ModuleRegistry System** - Unified importmap management for JavaScript modules
+- ModuleRegistry-based unified importmap system
+  - Centralized JavaScript module management
   - Automatic ES Module Shims inclusion
-  - Proper JavaScript module loading with `.js` extension handling
-  - Foundation for plugin/module registration
-- **Settings Controller** - New `/admin/settings` route for site-wide configuration
-- **Comprehensive System Tests** - Admin logout functionality specs
-- **Navigation Tests** - Unskipped nested navigation specs
-
-### Fixed
-
-- Copy compiled assets to dummy app for CI tests
-- ES Module Shims and importmap JavaScript loading
-- Invalid metadata in suite hook for CI Capybara config
-- Stale cached assets cleanup before compilation in CI
-- Correct accessor for importmap package paths
+  - Proper `.js` extension handling for imports
+- Settings controller at `/admin/settings` for future site configuration
+- Comprehensive logout system specs (5 specs covering all logout scenarios)
+  - Logout and redirect testing
+  - Session clearing verification
+  - Re-login capability testing
+  - Logout notification event testing
 
 ### Changed
 
-- Improved CI output and bundler audit
-- Added test for importmap paths with `.js` extension
+- CI workflow improvements
+  - Colored RSpec output with script command for better readability
+  - Added `RSPEC_COLOR` and `TERM` environment variables
+  - Bundler audit now runs both `--update` and `check`
+- Unskipped nested navigation specs (now use real Settings/My Profile routes)
+- Updated navigation tests to use real routes instead of fake test routes
+
+### Fixed
+
+- Asset compilation now copies files to dummy app directory for tests
+- Fixed importmap accessor for package paths
+- Removed invalid `:type` metadata from `:suite` hook in CI config
+- Cleaned up stale asset handling in CI workflows
+- Fixed JavaScript module loading with proper import map setup
 
 ## [0.9.1] - 2025-11-12
 
