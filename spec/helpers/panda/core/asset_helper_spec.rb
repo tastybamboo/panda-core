@@ -33,6 +33,14 @@ RSpec.describe Panda::Core::AssetHelper, type: :helper do
         expect(result).to include("https://esm.sh/@tailwindplus/elements@1")
       end
 
+      it "includes correct file paths with .js extension for local modules" do
+        result = helper.panda_core_javascript
+        expect(result).to include('"/panda/core/application.js"')
+        expect(result).to include('"/panda/core/controllers/index.js"')
+        expect(result).to include('"/panda/core/controllers/toggle_controller.js"')
+        expect(result).not_to include('"/panda/core/application"') # Should not be missing .js
+      end
+
       # Test to ensure inline importmap stays in sync with config/importmap.rb
       it "includes all CDN packages from config/importmap.rb" do
         # Read the importmap config file
