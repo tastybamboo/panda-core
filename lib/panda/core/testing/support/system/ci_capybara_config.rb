@@ -15,11 +15,17 @@ RSpec.configure do |config|
   config.before(:suite) do
     Capybara.server = :puma_ci
     Capybara.default_max_wait_time = Integer(ENV.fetch("CAPYBARA_MAX_WAIT_TIME", 5))
+
+    port = Integer(ENV.fetch("CAPYBARA_PORT", 3001))
     Capybara.server_host = "127.0.0.1"
+    Capybara.server_port = port
+    Capybara.app_host = "http://127.0.0.1:#{port}"
     Capybara.always_include_port = true
 
     puts "[CI Config] Capybara.server      = #{Capybara.server.inspect}"
+    puts "[CI Config] Capybara.app_host    = #{Capybara.app_host.inspect}"
     puts "[CI Config] Capybara.server_host = #{Capybara.server_host.inspect}"
+    puts "[CI Config] Capybara.server_port = #{Capybara.server_port.inspect}"
     puts "[CI Config] Capybara.max_wait    = #{Capybara.default_max_wait_time}s"
   end
 end

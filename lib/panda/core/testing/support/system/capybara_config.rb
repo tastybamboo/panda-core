@@ -32,6 +32,8 @@ Capybara.singleton_class.prepend(Module.new do
 end)
 
 # Configure server host and port
+# This is loaded for all environments
+# → you do not want fixed ports there
 Capybara.server_host = "127.0.0.1"
 Capybara.server_port = ENV["CAPYBARA_PORT"]&.to_i # Let Capybara choose if not specified
 
