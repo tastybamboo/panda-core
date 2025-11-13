@@ -19,10 +19,8 @@ module Panda
       module CupriteSetup
         # Base Cuprite options shared across all drivers
         def self.base_options
-          # CI environments need longer timeouts for Chrome startup
-          # Local: 2s is fine, CI: needs 15-30s due to resource constraints
-          default_timeout = ENV["CI"] ? 15 : 2
-          default_process_timeout = ENV["CI"] ? 30 : 2
+          default_timeout = 2
+          default_process_timeout = 2
 
           {
             window_size: [1440, 1000],
