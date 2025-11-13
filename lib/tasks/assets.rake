@@ -99,6 +99,13 @@ namespace :panda do
         end
 
         puts "✅ Dummy assets compiled"
+
+        puts "📦 Copying Panda Core JavaScript modules..."
+        engine_js = Panda::Core::Engine.root.join("app/javascript/panda/core")
+        dummy_js = dummy_root.join("app/javascript/panda/core")
+
+        FileUtils.mkdir_p(dummy_js)
+        FileUtils.cp_r(engine_js.children, dummy_js)
       end
 
       desc "Generate importmap.json for the dummy app"
