@@ -131,13 +131,13 @@ jobs:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
         run: |
-          # Clean up any stale cached assets before compilation
-          rm -rf public/panda-core-assets
-          mkdir -p public/panda-core-assets
           bundle exec rake panda:core:assets:compile
+          # Copy compiled assets to dummy app for tests
+          mkdir -p public/panda-core-assets
+          cp ../../public/panda-core-assets/* public/panda-core-assets/
           echo "✅ Asset compilation complete"
-          echo "Assets in public directory:"
-          ls -la public/panda-core-assets/ || echo "No core assets directory"
+          echo "Dummy app assets:"
+          ls -la public/panda-core-assets/
 
       - name: 'Run specs'
         env:
