@@ -12,7 +12,7 @@ return unless ci_mode
 require "rack/handler/puma"
 
 RSpec.configure do |config|
-  config.before(:suite, type: :system) do
+  config.before(:suite) do
     Capybara.server = :puma_ci
     Capybara.default_max_wait_time = Integer(ENV.fetch("CAPYBARA_MAX_WAIT_TIME", 5))
     Capybara.server_host = "127.0.0.1"
