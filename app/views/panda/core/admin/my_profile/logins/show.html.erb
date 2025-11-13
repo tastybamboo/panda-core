@@ -10,9 +10,9 @@
         <% if enabled_providers.empty? %>
           <p class="text-sm text-gray-500">No authentication providers are currently enabled.</p>
         <% else %>
-          <% enabled_providers.each do |provider| %>
+          <% enabled_providers.each do |provider_name, _config| %>
             <%= render Panda::Core::Admin::MyProfile::ConnectedAccountComponent.new(
-              provider: provider,
+              provider: provider_name,
               user: user
             ) %>
           <% end %>

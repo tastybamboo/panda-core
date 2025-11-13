@@ -9,7 +9,9 @@ module Panda
             @provider = provider
             @user = user
             @provider_info = Panda::Core::OAuthProviders.info(provider)
-            @is_connected = @user.oauth_provider == provider.to_s
+            # TODO: Track which provider user logged in with
+            # For now, we don't track the provider, so we can't show connection status
+            @is_connected = false
           end
 
           def view_template
@@ -40,6 +42,7 @@ module Panda
                   render Panda::Core::Admin::ButtonComponent.new(
                     text: "Connected",
                     action: :secondary,
+                    as_button: true,
                     disabled: true
                   )
                 else

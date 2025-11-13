@@ -58,9 +58,10 @@ module Panda
       end
 
       # Static asset middleware for serving public files and JavaScript modules
-      initializer "panda.core.static_assets", before: :build_middleware_stack do |app|
-        # Make files in public available to the main app (e.g. /panda-core-assets/panda-logo.png)
-        app.config.middleware.use Rack::Static,
+      # Must run before Propshaft to intercept /panda/* requests
+      initializer "panda.core.static_assets" do |app|
+        # Serve public assets (CSS, images, etc.)
+        app.config.middleware.insert_before Propshaft::Server, Rack::Static,
           urls: ["/panda-core-assets"],
           root: Panda::Core::Engine.root.join("public"),
           header_rules: [
@@ -68,16 +69,9 @@ module Panda
             [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
           ]
 
-        # Make JavaScript files available for importmap
-        # Serve from app/javascript with proper MIME types
-        # Important: Strip only /panda, so /panda/core/foo.js looks for app/javascript/core/foo.js
-        # But our files are at app/javascript/panda/core/foo.js, so we serve from parent dir
-        app.config.middleware.use Rack::Static,
-          urls: ["/panda"],
-          root: Panda::Core::Engine.root.join("app/javascript"),
-          header_rules: [
-            [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
-          ]
+        # Use ModuleRegistry's custom middleware to serve JavaScript from all registered modules
+        # This middleware checks all modules and serves from the first matching location
+        app.config.middleware.insert_before Propshaft::Server, Panda::Core::ModuleRegistry::JavaScriptMiddleware
       end
 
       # Auto-compile CSS for test/development environments
@@ -127,3 +121,14 @@ module Panda
     end
   end
 end
+
+# Register Core module with ModuleRegistry for JavaScript serving
+Panda::Core::ModuleRegistry.register(
+  gem_name: "panda-core",
+  engine: "Panda::Core::Engine",
+  paths: {
+    views: "app/views/panda/core/**/*.erb",
+    components: "app/components/panda/core/**/*.rb"
+    # JavaScript paths are auto-discovered from config/importmap.rb
+  }
+)
