@@ -126,25 +126,109 @@ namespace :panda do
         puts "   ✓ importmap.json written"
       end
 
-      desc "Verify dummy assets for CI (fail-fast)"
+      desc "Verify dummy app asset readiness (fail-fast for CI with live HTTP checks)"
       task verify_dummy: :environment do
+        require "net/http"
+        require "json"
+        require "webrick"
+
         dummy_root = find_dummy_root
-        assets = dummy_root.join("public/assets")
-        manifest = assets.join(".manifest.json")
-        importmap = assets.join("importmap.json")
+        assets_root = dummy_root.join("public/assets")
+        manifest_path = assets_root.join(".manifest.json")
+        importmap_path = assets_root.join("importmap.json")
 
-        abort("❌ Missing #{assets}") unless assets.exist?
-        abort("❌ Missing #{manifest}") unless manifest.exist?
-        abort("❌ Missing #{importmap}") unless importmap.exist?
+        puts "🔍 [Panda Core] Verifying dummy asset readiness..."
 
-        begin
-          parsed = JSON.parse(File.read(manifest))
-          abort("❌ Empty .manifest.json") if parsed.empty?
+        abort("❌ Missing directory: #{assets_root}") unless Dir.exist?(assets_root)
+        abort("❌ Missing .manifest.json at #{manifest_path}") unless File.exist?(manifest_path)
+        abort("❌ Missing importmap.json at #{importmap_path}") unless File.exist?(importmap_path)
+
+        manifest = begin
+          JSON.parse(File.read(manifest_path))
         rescue
-          abort("❌ Invalid .manifest.json")
+          abort("❌ Invalid JSON in .manifest.json")
+        end
+        importmap = begin
+          JSON.parse(File.read(importmap_path))
+        rescue
+          abort("❌ Invalid JSON in importmap.json")
         end
 
-        puts "✅ Dummy assets verified"
+        puts "  ✓ Manifest loaded (#{manifest.size} entries)"
+        puts "  ✓ Importmap loaded (#{importmap["imports"].size} imports)"
+
+        # ---------------------------------------------------------------
+        # Start a tiny WEBrick server serving dummy/public
+        # ---------------------------------------------------------------
+        server_port = 4567
+        server_thread = Thread.new do
+          root = dummy_root.join("public").to_s
+          WEBrick::HTTPServer.new(
+            Port: server_port,
+            DocumentRoot: root,
+            AccessLog: [],
+            Logger: WEBrick::Log.new(File::NULL)
+          ).start
+        end
+
+        # Wait a moment for server to boot
+        sleep 0.4
+
+        def http_ok?(path, server_port)
+          uri = URI("http://127.0.0.1:#{server_port}#{path}")
+          res = Net::HTTP.get_response(uri)
+          return [:ok, res.body] if res.is_a?(Net::HTTPSuccess)
+          [:error, res.code]
+        rescue => e
+          [:exception, e.message]
+        end
+
+        # ---------------------------------------------------------------
+        # Validate importmap resolves to existing HTTP assets
+        # ---------------------------------------------------------------
+        puts "🔍 Checking importmap imports via HTTP..."
+
+        importmap["imports"].each do |logical_name, path|
+          res, data = http_ok?("/assets/#{path}", server_port)
+
+          case res
+          when :ok
+            if data.to_s.strip.empty?
+              abort("❌ Empty asset received for #{logical_name} → /assets/#{path}")
+            end
+            puts "   ✓ #{logical_name} → /assets/#{path}"
+          when :error
+            abort("❌ Importmap asset missing: #{logical_name} → /assets/#{path} (HTTP #{data})")
+          when :exception
+            abort("❌ Error fetching #{logical_name}: #{data}")
+          end
+        end
+
+        # ---------------------------------------------------------------
+        # Validate panda-core.css + any fingerprinted versions
+        # ---------------------------------------------------------------
+        puts "🔍 Checking panda-core CSS assets..."
+
+        # non-fingerprinted
+        res, data = http_ok?("/panda-core-assets/panda-core.css", server_port)
+        abort("❌ Missing panda-core.css (#{res}: #{data})") unless res == :ok
+        abort("❌ panda-core.css is empty") if data.strip.empty?
+        puts "   ✓ panda-core.css"
+
+        # fingerprinted ones from manifest
+        manifest.keys.select { |k| k.start_with?("panda-core-") && k.end_with?(".css") }.each do |fname|
+          res, data = http_ok?("/panda-core-assets/#{fname}", server_port)
+          abort("❌ Missing fingerprinted CSS #{fname}") unless res == :ok
+          abort("❌ Fingerprinted CSS #{fname} is empty") if data.strip.empty?
+          puts "   ✓ #{fname}"
+        end
+
+        # ---------------------------------------------------------------
+        # Cleanup server
+        # ---------------------------------------------------------------
+        Thread.kill(server_thread)
+
+        puts "✅ [Panda Core] Dummy asset verification PASSED (HTTP-level checks)"
       end
 
       # =========================================================
