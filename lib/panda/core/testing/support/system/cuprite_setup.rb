@@ -19,15 +19,20 @@ module Panda
       module CupriteSetup
         # Base Cuprite options shared across all drivers
         def self.base_options
+          # CI environments need longer timeouts for Chrome startup
+          # Local: 2s is fine, CI: needs 15-30s due to resource constraints
+          default_timeout = ENV["CI"] ? 15 : 2
+          default_process_timeout = ENV["CI"] ? 30 : 2
+
           {
             window_size: [1440, 1000],
             inspector: ENV["INSPECTOR"].in?(%w[y 1 yes true]),
             headless: !ENV["HEADLESS"].in?(%w[n 0 no false]),
             slowmo: ENV["SLOWMO"]&.to_f || 0,
-            timeout: ENV["CUPRITE_TIMEOUT"]&.to_i || 2,
+            timeout: ENV["CUPRITE_TIMEOUT"]&.to_i || default_timeout,
             js_errors: true,  # IMPORTANT: Report JavaScript errors as test failures
             ignore_default_browser_options: false,
-            process_timeout: ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i || 2,
+            process_timeout: ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i || default_process_timeout,
             wait_for_network_idle: false,  # Don't wait for all network requests
             pending_connection_errors: false,  # Don't fail on pending external connections
             browser_options: {
