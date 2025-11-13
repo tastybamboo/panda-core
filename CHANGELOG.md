@@ -5,6 +5,63 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.3] - 2025-11-13
+
+### Added
+
+- **ModuleRegistry::JavaScriptMiddleware** - Unified JavaScript module serving across all Panda modules
+  - Custom Rack middleware that serves JavaScript from all registered modules
+  - Automatic file discovery in `app/javascript/panda/` directories
+  - Proper Content-Type headers (`application/javascript; charset=utf-8`)
+  - Environment-aware cache control (no-cache in dev/test, max-age in production)
+  - Positioned before Propshaft::Server to intercept module requests
+- Module self-registration for panda-core with ModuleRegistry
+
+### Changed
+
+- Replaced individual Rack::Static middleware instances with unified JavaScriptMiddleware
+  - Eliminates issue where multiple Rack::Static instances blocked each other
+  - First middleware returning 404 would prevent subsequent ones from serving files
+  - New approach checks all registered modules and serves from first match
+
+### Technical Details
+
+- JavaScriptMiddleware handles `/panda/core/*` and `/panda/cms/*` requests
+- Strips `/panda/` prefix and looks for files across all registered modules
+- Scales automatically to future modules (e.g., CMS Pro)
+- No hardcoded module paths required
+
+## [0.9.2] - 2025-11-13
+
+### Added
+
+- **CI Capybara Configuration** - Shared testing infrastructure for all Panda gems
+  - New `lib/panda/core/testing/support/system/ci_capybara_config.rb`
+  - Automatic Puma 6 and 7+ compatibility detection
+  - Activates automatically in GitHub Actions or when `CI_SYSTEM_SPECS=true`
+  - Configurable wait times and thread counts via environment variables
+  - Verbose logging for debugging CI test issues
+- **ModuleRegistry System** - Unified importmap management for JavaScript modules
+  - Automatic ES Module Shims inclusion
+  - Proper JavaScript module loading with `.js` extension handling
+  - Foundation for plugin/module registration
+- **Settings Controller** - New `/admin/settings` route for site-wide configuration
+- **Comprehensive System Tests** - Admin logout functionality specs
+- **Navigation Tests** - Unskipped nested navigation specs
+
+### Fixed
+
+- Copy compiled assets to dummy app for CI tests
+- ES Module Shims and importmap JavaScript loading
+- Invalid metadata in suite hook for CI Capybara config
+- Stale cached assets cleanup before compilation in CI
+- Correct accessor for importmap package paths
+
+### Changed
+
+- Improved CI output and bundler audit
+- Added test for importmap paths with `.js` extension
+
 ## [0.9.1] - 2025-11-12
 
 ### Changed
