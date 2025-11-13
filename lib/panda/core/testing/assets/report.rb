@@ -1,140 +1,138 @@
 # frozen_string_literal: true
 
+require "fileutils"
 require "erb"
 
 module Panda
   module Core
     module Testing
       module Assets
-        module Report
-          module_function
+        class Report
+          attr_reader :config, :timings, :checks, :html_sections
 
-          def write(dummy_root:, engine_name:, result:)
-            tmp_dir = File.join(dummy_root, "tmp")
-            FileUtils.mkdir_p(tmp_dir)
-            path = File.join(tmp_dir, "panda_assets_report.html")
-
-            html = render_html(engine_name, result)
-            File.write(path, html)
-
-            path
-          rescue => e
-            warn "⚠️ Could not write HTML report: #{e.message}"
-            nil
+          def initialize(config)
+            @config = config
+            @timings = {}
+            @checks = {}
+            @html_sections = []
           end
 
-          def render_html(engine_name, result)
-            template = <<~HTML
-              <!DOCTYPE html>
+          # Simple timing helper
+          def time(key)
+            start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            result = yield
+            finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            @timings[key] = (finish - start).round(2)
+            result
+          end
+
+          # Record a check outcome (for the summary table)
+          def check(key, ok)
+            @checks[key] = ok
+          end
+
+          # ASCII banner box
+          def banner(title)
+            width = title.length + 2
+            puts "┌#{"─" * width}┐"
+            puts "│#{title}│"
+            puts "└#{"─" * width}┘"
+            @html_sections << "<h2>#{ERB::Util.html_escape(title.strip)}</h2>"
+          end
+
+          # Section header
+          def section(title)
+            width = title.length + 2
+            puts "┌#{"─" * width}┐"
+            puts "│ #{title} │"
+            puts "└#{"─" * width}┘"
+            @html_sections << "<h3>#{ERB::Util.html_escape(title)}</h3>"
+          end
+
+          # Log a bullet point (and mirror into HTML)
+          def log(line)
+            puts line
+            @html_sections << "<pre>#{ERB::Util.html_escape(line)}</pre>"
+          end
+
+          # Final summary + HTML report
+          def finish!(prepare_ok:, verify_ok:)
+            puts "------------------------------------------------------------"
+            puts "• Summary for #{config.engine_label}"
+            puts "   #{status_mark(prepare_ok)} Prepare phase #{prepare_ok ? "OK" : "FAILED"}"
+            puts "   #{status_mark(verify_ok)} Verify phase #{verify_ok ? "OK" : "FAILED"}"
+            puts "• Timings:"
+            @timings.each do |key, value|
+              puts "   ✓ #{key}: #{value}s"
+            end
+
+            write_html_report(prepare_ok: prepare_ok, verify_ok: verify_ok)
+          end
+
+          private
+
+          def status_mark(ok)
+            ok ? "✓" : "✗"
+          end
+
+          def write_html_report(prepare_ok:, verify_ok:)
+            tmp_dir = config.dummy_root.join("tmp")
+            FileUtils.mkdir_p(tmp_dir)
+            path = tmp_dir.join("panda_assets_report.html")
+
+            html = <<~HTML
+              <!doctype html>
               <html>
               <head>
-                <meta charset="UTF-8">
-                <title><%= engine_name %> Asset Verification Report</title>
+                <meta charset="utf-8">
+                <title>#{ERB::Util.html_escape(config.engine_label)} asset report</title>
                 <style>
-                  body { font-family: system-ui, -apple-system, sans-serif; margin: 2rem; background: #f7fafc; color: #1a202c; }
-                  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-                  h2 { font-size: 1.4rem; margin-top: 2rem; }
-                  .status-ok { color: #16a34a; }
-                  .status-fail { color: #dc2626; }
-                  .card { background: white; border-radius: 0.5rem; padding: 1rem 1.5rem; margin-top: 1rem; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1); }
-                  table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
-                  th, td { padding: 0.4rem 0.6rem; border-bottom: 1px solid #e5e7eb; font-size: 0.9rem; text-align: left; }
-                  th { background: #f3f4f6; font-weight: 600; }
-                  .tag { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.75rem; }
-                  .tag-ok { background: #dcfce7; color: #166534; }
-                  .tag-fail { background: #fee2e2; color: #991b1b; }
-                  .muted { color: #6b7280; font-size: 0.85rem; }
-                  pre { background: #0f172a; color: #e5e7eb; padding: 0.75rem; border-radius: 0.5rem; overflow: auto; font-size: 0.8rem; }
+                  body { font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; padding: 2rem; background: #fafafa; color: #111; }
+                  h1, h2, h3 { margin-top: 1.5rem; }
+                  pre { background: #111; color: #0f0; padding: 0.5rem 0.75rem; border-radius: 4px; font-size: 13px; overflow-x: auto; }
+                  .summary { margin-top: 1rem; padding: 1rem; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px #eee; }
+                  .summary-ok { border-left: 4px solid #16a34a; }
+                  .summary-fail { border-left: 4px solid #dc2626; }
+                  table { border-collapse: collapse; margin-top: 1rem; }
+                  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; font-size: 13px; }
+                  th { background: #f3f4f6; text-align: left; }
+                  .pill-ok { color: #166534; background: #bbf7d0; padding: 2px 6px; border-radius: 999px; font-size: 11px; }
+                  .pill-fail { color: #b91c1c; background: #fecaca; padding: 2px 6px; border-radius: 999px; font-size: 11px; }
                 </style>
               </head>
               <body>
-                <h1><%= engine_name %> Asset Verification</h1>
-                <p class="<%= result[:ok] ? 'status-ok' : 'status-fail' %>">
-                  <strong>Status:</strong> <%= result[:ok] ? '✅ Success' : '❌ Failed' %>
-                </p>
-
-                <div class="card">
-                  <h2>Timing</h2>
+                <h1>#{ERB::Util.html_escape(config.engine_label)} – dummy asset report</h1>
+                <div class="summary #{(prepare_ok && verify_ok) ? "summary-ok" : "summary-fail"}">
+                  <p><strong>Prepare:</strong> #{prepare_ok ? "OK" : "FAILED"}</p>
+                  <p><strong>Verify:</strong> #{verify_ok ? "OK" : "FAILED"}</p>
                   <table>
                     <thead>
-                      <tr><th>Phase</th><th>Duration</th></tr>
+                      <tr>
+                        <th>Check</th>
+                        <th>Status</th>
+                      </tr>
                     </thead>
                     <tbody>
-                      <% result[:timings].each do |k, v| %>
-                        <tr>
-                          <td><%= k.to_s.tr('_', ' ').capitalize %></td>
-                          <td><%= format('%.2fs', v) %></td>
-                        </tr>
-                      <% end %>
+                      #{checks.map { |k, ok|
+                        "<tr><td>#{ERB::Util.html_escape(k.to_s)}</td><td><span class=\"#{ok ? "pill-ok" : "pill-fail"}\">#{ok ? "OK" : "FAILED"}</span></td></tr>"
+                      }.join}
+                    </tbody>
+                  </table>
+                  <h3>Timings</h3>
+                  <table>
+                    <thead><tr><th>Stage</th><th>Seconds</th></tr></thead>
+                    <tbody>
+                      #{timings.map { |k, v| "<tr><td>#{ERB::Util.html_escape(k.to_s)}</td><td>#{v}</td></tr>" }.join}
                     </tbody>
                   </table>
                 </div>
-
-                <div class="card">
-                  <h2>Checks</h2>
-                  <table>
-                    <thead>
-                      <tr><th>Check</th><th>Status</th></tr>
-                    </thead>
-                    <tbody>
-                      <% result[:checks].each do |check| %>
-                        <tr>
-                          <td><%= check[:name] %></td>
-                          <td>
-                            <% if check[:ok] %>
-                              <span class="tag tag-ok">OK</span>
-                            <% else %>
-                              <span class="tag tag-fail">FAIL</span>
-                            <% end %>
-                          </td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                  </table>
-                </div>
-
-                <% if result[:errors].any? %>
-                  <div class="card">
-                    <h2>Errors</h2>
-                    <% result[:errors].each do |err| %>
-                      <p><strong><%= err[:where] %>:</strong> <%= err[:message] %></p>
-                    <% end %>
-                  </div>
-                <% end %>
-
-                <% if result[:http_failures].any? %>
-                  <div class="card">
-                    <h2>HTTP Failures</h2>
-                    <table>
-                      <thead>
-                        <tr><th>Type</th><th>Path</th><th>Detail</th></tr>
-                      </thead>
-                      <tbody>
-                        <% result[:http_failures].each do |hit| %>
-                          <tr>
-                            <td><%= hit[:category] %></td>
-                            <td><code><%= hit[:path] %></code></td>
-                            <td><%= hit[:detail] %></td>
-                          </tr>
-                        <% end %>
-                      </tbody>
-                    </table>
-                  </div>
-                <% end %>
-
-                <div class="card">
-                  <h2>Environment</h2>
-                  <p class="muted">
-                    Ruby: <%= RUBY_DESCRIPTION %><br>
-                    Rails: <%= defined?(Rails) ? Rails.version : 'n/a' %><br>
-                    RAILS_ENV: <%= ENV['RAILS_ENV'] || 'n/a' %>
-                  </p>
-                </div>
+                #{@html_sections.join("\n")}
               </body>
               </html>
             HTML
 
-            ERB.new(template).result(binding)
+            File.write(path, html)
+            puts "• HTML report written to #{path}"
           end
         end
       end

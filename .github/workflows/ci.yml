@@ -131,7 +131,7 @@ jobs:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
         run: |
           echo "🚧 Preparing dummy assets (Core)..."
-          bundle exec rake panda:core:assets:dummy
+          bundle exec rake panda:core:assets:prepare_and_verify_dummy
 
       - name: 'Run specs'
         env:
@@ -149,10 +149,18 @@ jobs:
           name: coverage
           path: coverage/
 
-      - name: 'Upload screenshots on failure'
+      - name: 'Upload always on failure'
         uses: actions/upload-artifact@v5
-        if: failure()
+        if: always()
         with:
-          name: screenshots
-          path: ${{ github.workspace }}/spec/tmp/capybara
+          name: capybara-screenshots
+          path: spec/dummy/tmp/capybara/**/*
           if-no-files-found: ignore
+
+      - name: Upload asset verification report
+        if: always() # upload even if tests fail
+        uses: actions/upload-artifact@v5
+        with:
+          name: panda-assets-report
+          path: spec/dummy/tmp/panda_assets_report.html
+          retention-days: 7

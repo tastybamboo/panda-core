@@ -1,304 +1,260 @@
 # frozen_string_literal: true
 
-require "fileutils"
 require "json"
-require "net/http"
 require "webrick"
+require "net/http"
 
 module Panda
   module Core
     module Testing
       module Assets
         class Verifier
-          Result = Struct.new(:ok, :errors, :timings, :checks, :http_failures, keyword_init: true)
+          attr_reader :config, :report
 
-          ENGINE_CONFIG = {
-            core: {
-              name: "Panda Core",
-              js_public_prefix: "/assets/panda/core",
-              js_local_dir: File.join("app/javascript/panda/core")
-            },
-            cms: {
-              name: "Panda CMS",
-              js_public_prefix: "/assets/panda/cms",
-              js_local_dir: File.join("app/javascript/panda/cms")
-            }
-          }.freeze
-
-          def self.run(engine)
-            new(engine).run
+          def initialize(config, report)
+            @config = config
+            @report = report
           end
 
-          def initialize(engine)
-            @engine = engine.to_sym
-            @errors = []
-            @timings = {}
-            @checks = []
-            @http_failures = []
-          end
+          def verify!
+            ok = true
 
-          attr_reader :errors, :timings, :checks, :http_failures
+            basic_ok = report.time(:basic_files) { basic_checks }
+            report.check(:verify_basic_files, basic_ok)
+            ok &&= basic_ok
 
-          def run
-            t0 = now
+            manifest, importmap = nil, nil
+            if basic_ok
+              manifest, importmap = report.time(:parse_json) { parse_json }
+              json_ok = !manifest.nil? && !importmap.nil?
+              report.check(:verify_parse_json, json_ok)
+              ok &&= json_ok
+            end
 
-            assets_dir, manifest, importmap = basic_file_checks
-            validate_json(manifest, importmap)
-            serve_and_http_check(assets_dir, importmap, manifest)
+            server = nil
+            port = 4579
 
-            total = now - t0
-            timings[:total_verify] = total
+            if ok
+              server = start_http_server(port)
+              sleep 0.4
 
-            Result.new(
-              ok: errors.empty? && http_failures.empty?,
-              errors: errors,
-              timings: timings,
-              checks: checks,
-              http_failures: http_failures
-            )
+              import_ok = report.time(:http_importmap) { verify_importmap(importmap, port) }
+              report.check(:verify_http_importmap, import_ok)
+              ok &&= import_ok
+
+              js_ok = report.time(:http_js) { verify_js_controllers(port) }
+              report.check(:verify_http_js, js_ok)
+              ok &&= js_ok
+
+              manifest_ok = report.time(:http_manifest) { verify_manifest_assets(manifest, port) }
+              report.check(:verify_http_manifest, manifest_ok)
+              ok &&= manifest_ok
+
+              report.time(:http_checks) { ok }
+            end
+
+            ok
+          ensure
+            server&.shutdown
           end
 
           private
 
-          def config
-            ENGINE_CONFIG.fetch(@engine)
-          rescue KeyError
-            raise "Unknown engine for asset verification: #{@engine.inspect}"
+          def assets_dir
+            config.dummy_root.join("public/assets")
           end
 
-          def dummy_root
-            @dummy_root ||= begin
-              root = Rails.root
-              if root.basename.to_s == "dummy"
-                root
-              else
-                candidate = root.join("spec/dummy")
-                raise "Cannot find dummy root at #{candidate}" unless candidate.exist?
-                candidate
-              end
+          def basic_checks
+            report.section("#{config.engine_label}: Basic asset checks")
+
+            if Dir.exist?(assets_dir)
+              report.log("   ✓ public/assets exists: #{assets_dir}")
+            else
+              report.log("   ✗ public/assets missing: #{assets_dir}")
+              return false
             end
-          end
 
-          def now
-            Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          end
-
-          def record_check(name, ok)
-            checks << {name: name, ok: ok}
-          end
-
-          def basic_file_checks
-            t = now
-            UI.banner("#{config[:name]}: Basic asset checks", status: :ok)
-
-            assets_dir = dummy_root.join("public/assets")
             manifest_path = assets_dir.join(".manifest.json")
             importmap_path = assets_dir.join("importmap.json")
 
-            unless Dir.exist?(assets_dir)
-              msg = "public/assets missing (#{assets_dir})"
-              errors << {where: "basic", message: msg}
-              UI.error(msg)
-              record_check("assets_dir", false)
-              return [assets_dir, nil, nil]
+            if File.exist?(manifest_path)
+              report.log("   ✓ .manifest.json present")
+            else
+              report.log("   ✗ .manifest.json missing (Propshaft did not compile)")
+              return false
             end
-            UI.ok("public/assets exists: #{assets_dir}")
-            record_check("assets_dir", true)
 
-            unless File.exist?(manifest_path)
-              msg = ".manifest.json missing (Propshaft did not compile)"
-              errors << {where: "basic", message: msg}
-              UI.error(msg)
-              record_check("manifest_present", false)
-              return [assets_dir, nil, nil]
+            if File.exist?(importmap_path)
+              report.log("   ✓ importmap.json present")
+            else
+              report.log("   ✗ importmap.json missing")
+              return false
             end
-            UI.ok(".manifest.json present")
-            record_check("manifest_present", true)
 
-            unless File.exist?(importmap_path)
-              msg = "importmap.json missing"
-              errors << {where: "basic", message: msg}
-              UI.error(msg)
-              record_check("importmap_present", false)
-              return [assets_dir, nil, nil]
-            end
-            UI.ok("importmap.json present")
-            record_check("importmap_present", true)
-
-            timings[:basic_files] = now - t
-            [assets_dir, manifest_path, importmap_path]
+            true
           end
 
-          def validate_json(manifest_path, importmap_path)
-            t = now
-            UI.banner("#{config[:name]}: JSON validation", status: :ok)
+          def parse_json
+            report.section("#{config.engine_label}: JSON validation")
 
-            manifest = nil
-            importmap = nil
+            manifest_path = assets_dir.join(".manifest.json")
+            importmap_path = assets_dir.join("importmap.json")
 
-            if manifest_path && File.exist?(manifest_path)
-              manifest = JSON.parse(File.read(manifest_path))
-              UI.ok("Parsed manifest.json (#{manifest.size} entries)")
-              record_check("manifest_parse", true)
+            manifest = JSON.parse(File.read(manifest_path))
+            importmap_raw = File.read(importmap_path)
+
+            # importmap.to_json may already be a JSON string of the full importmap;
+            # try to parse; if it fails, treat as object (already JSON)
+            importmap = begin
+              JSON.parse(importmap_raw)
+            rescue JSON::ParserError
+              importmap_raw # fallback – later code defensively handles non-Hash
             end
 
-            if importmap_path && File.exist?(importmap_path)
-              raw = File.read(importmap_path)
-              importmap = JSON.parse(raw)
-              import_count =
-                if importmap.is_a?(Hash) && importmap["imports"].is_a?(Hash)
-                  importmap["imports"].size
-                else
-                  0
-                end
-              UI.ok("Parsed importmap.json (#{import_count} imports)")
-              record_check("importmap_parse", true)
-            end
+            manifest_size = manifest.is_a?(Hash) ? manifest.size : 0
+            import_count =
+              if importmap.is_a?(Hash) && importmap["imports"].is_a?(Hash)
+                importmap["imports"].size
+              else
+                0
+              end
 
-            timings[:parse_json] = now - t
+            report.log("   ✓ Parsed manifest.json (#{manifest_size} entries)")
+            report.log("   ✓ Parsed importmap.json (#{import_count} imports)")
+
             [manifest, importmap]
-          rescue JSON::ParserError => e
-            errors << {where: "json", message: e.message}
-            UI.error("JSON parse error: #{e.message}")
-            record_check("json_parse", false)
-            timings[:parse_json] = now - t
+          rescue => e
+            report.log("   ✗ Failed to parse manifest/importmap JSON: #{e.class}: #{e.message}")
             [nil, nil]
           end
 
-          def serve_and_http_check(assets_dir, importmap, manifest)
-            t = now
-            UI.banner("#{config[:name]}: HTTP checks", status: :ok)
+          def start_http_server(port)
+            report.section("#{config.engine_label}: HTTP checks")
 
-            return unless assets_dir && importmap && manifest
+            root = config.dummy_root.join("public").to_s
+            report.log("• Starting mini WEBrick server on http://127.0.0.1:#{port} (root: #{root})")
 
-            port = 4579
             server = WEBrick::HTTPServer.new(
               Port: port,
-              DocumentRoot: dummy_root.join("public").to_s,
+              DocumentRoot: root,
               AccessLog: [],
               Logger: WEBrick::Log.new(File::NULL)
             )
 
-            server_thread = Thread.new { server.start }
-            sleep 0.4
-
-            verify_importmap_assets(importmap, port)
-            verify_js_controllers(port)
-            verify_manifest_assets(manifest, port)
-
-            record_check("http_checks", http_failures.empty?)
-
-            server.shutdown
-            server_thread.join
-
-            timings[:http_checks] = now - t
-          rescue => e
-            errors << {where: "http_server", message: e.message}
-            UI.error("HTTP verification error: #{e.message}")
+            Thread.new { server.start }
+            server
           end
 
           def http_fetch(path, port)
             uri = URI("http://127.0.0.1:#{port}#{path}")
             res = Net::HTTP.get_response(uri)
-            [res.code.to_i, res.body]
+            return [:ok, res.body] if res.is_a?(Net::HTTPSuccess)
+
+            [:error, res.code]
           rescue => e
-            [nil, e.message]
+            [:exception, e.message]
           end
 
-          def verify_importmap_assets(importmap, port)
-            t = now
-            UI.step("Validating importmap assets via HTTP")
+          def verify_importmap(importmap, port)
+            report.log("• Validating importmap assets via HTTP")
 
-            imports = if importmap.is_a?(Hash) && importmap["imports"].is_a?(Hash)
-              importmap["imports"]
-            else
-              UI.warn("Importmap has no 'imports' hash; skipping HTTP checks for imports")
-              {}
+            unless importmap.is_a?(Hash) && importmap["imports"].is_a?(Hash)
+              report.log("   ! Importmap has no 'imports' hash; skipping HTTP checks for imports")
+              return true
             end
 
-            imports.each do |logical, path|
-              next unless path.is_a?(String)
+            ok = true
 
-              full_path = "/assets/#{path}"
-              code, body = http_fetch(full_path, port)
+            importmap["imports"].each do |logical, path|
+              res, data = http_fetch("/assets/#{path}", port)
 
-              if code == 200 && !body.to_s.strip.empty?
-                UI.ok("#{logical} → #{full_path}")
-              else
-                detail = code.nil? ? body : "HTTP #{code}"
-                http_failures << {
-                  category: "importmap",
-                  path: full_path,
-                  detail: "#{logical}: #{detail}"
-                }
-                UI.error("Importmap asset missing/broken: #{logical} (#{full_path}) – #{detail}")
+              case res
+              when :ok
+                if data.strip.empty?
+                  report.log("   ✗ Empty asset for #{logical}")
+                  ok = false
+                else
+                  report.log("   ✓ #{logical} → /assets/#{path}")
+                end
+              when :error
+                report.log("   ✗ Missing importmap asset #{logical} (HTTP #{data})")
+                ok = false
+              when :exception
+                report.log("   ✗ Fetch error for #{logical}: #{data}")
+                ok = false
               end
             end
 
-            timings[:http_importmap] = now - t
+            ok
           end
 
           def verify_js_controllers(port)
-            t = now
-            UI.step("Validating JS controllers (engine-level)")
+            report.log("• Validating JS controllers (engine-level)")
 
-            local_dir = dummy_root.join(config[:js_local_dir])
-            unless Dir.exist?(local_dir)
-              UI.warn("JS local dir missing (#{local_dir}), skipping controller checks")
-              timings[:http_js] = now - t
-              return
+            root = config.dummy_root.join("app/javascript", config.engine_js_subpath)
+            unless root.directory?
+              report.log("   ! JS root not found: #{root} – skipping JS checks")
+              return true
             end
 
-            Dir.glob(File.join(local_dir.to_s, "*.js")).each do |path|
-              filename = File.basename(path)
-              full_path = "#{config[:js_public_prefix]}/#{filename}"
-              code, body = http_fetch(full_path, port)
+            ok = true
 
-              if code == 200 && !body.to_s.strip.empty?
-                UI.ok("#{filename} via #{full_path}")
+            # check top-level .js plus controllers/*.js
+            js_files = Dir.glob(root.join("*.js")) +
+              Dir.glob(root.join("controllers", "*.js"))
+
+            js_files.each do |file|
+              basename = File.basename(file)
+              # files are served under /assets/<subpath>/<file>
+              path = "/assets/#{config.engine_js_subpath}/#{basename}"
+
+              res, data = http_fetch(path, port)
+
+              case res
+              when :ok
+                if data.strip.empty?
+                  report.log("   ✗ JS asset empty: #{path}")
+                  ok = false
+                else
+                  report.log("   ✓ #{basename} (#{path})")
+                end
               else
-                detail = code.nil? ? body : "HTTP #{code}"
-                http_failures << {
-                  category: "js_controller",
-                  path: full_path,
-                  detail: detail
-                }
-                UI.error("JS controller asset missing/broken: #{filename} – #{detail}")
+                report.log("   ✗ JS controller asset missing/broken: #{basename} – #{res} #{data}")
+                ok = false
               end
             end
 
-            timings[:http_js] = now - t
+            ok
           end
 
           def verify_manifest_assets(manifest, port)
-            t = now
-            UI.step("Validating fingerprinted manifest assets via HTTP")
+            report.log("• Validating fingerprinted manifest assets via HTTP")
 
-            digest_paths =
-              if manifest.is_a?(Hash)
-                manifest.values.grep(String)
+            return true unless manifest.is_a?(Hash)
+
+            ok = true
+
+            manifest.keys.each do |digest_file|
+              # only check fingerprinted assets (with a dash)
+              next unless digest_file.include?("-")
+
+              res, data = http_fetch("/assets/#{digest_file}", port)
+
+              case res
+              when :ok
+                if data.strip.empty?
+                  report.log("   ✗ Fingerprinted asset empty: #{digest_file}")
+                  ok = false
+                else
+                  report.log("   ✓ #{digest_file}")
+                end
               else
-                []
-              end
-
-            digest_paths.each do |digest|
-              full_path = "/assets/#{digest}"
-              code, body = http_fetch(full_path, port)
-
-              if code == 200 && !body.to_s.strip.empty?
-                UI.ok(full_path)
-              else
-                detail = code.nil? ? body : "HTTP #{code}"
-                http_failures << {
-                  category: "manifest",
-                  path: full_path,
-                  detail: detail
-                }
-                UI.error("Manifest asset missing/broken: #{full_path} – #{detail}")
+                report.log("   ✗ Missing fingerprinted asset #{digest_file} – #{res} #{data}")
+                ok = false
               end
             end
 
-            timings[:http_manifest] = now - t
+            ok
           end
         end
       end

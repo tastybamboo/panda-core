@@ -7,156 +7,99 @@ module Panda
     module Testing
       module Assets
         class Preparer
-          Result = Struct.new(:ok, :errors, :timings, keyword_init: true)
+          attr_reader :config, :report
 
-          ENGINE_CONFIG = {
-            core: {
-              name: "Panda Core",
-              js_source: lambda {
-                if defined?(Panda::Core)
-                  Panda::Core::Engine.root.join("app/javascript/panda/core")
-                end
-              },
-              js_target_subdir: File.join("app/javascript/panda/core")
-            },
-            cms: {
-              name: "Panda CMS",
-              js_source: lambda {
-                if defined?(Panda::CMS)
-                  Panda::CMS::Engine.root.join("app/javascript/panda/cms")
-                end
-              },
-              js_target_subdir: File.join("app/javascript/panda/cms")
-            }
-          }.freeze
-
-          def self.run(engine)
-            new(engine).run
+          def initialize(config, report)
+            @config = config
+            @report = report
           end
 
-          def initialize(engine)
-            @engine = engine.to_sym
-            @errors = []
-            @timings = {}
-          end
+          def prepare!
+            ok = true
 
-          attr_reader :errors, :timings
+            report.section("#{config.engine_label}: Propshaft compile")
 
-          def run
-            t0 = now
+            propshaft_ok = report.time(:propshaft) { compile_propshaft }
+            report.check(:prepare_propshaft, propshaft_ok)
+            ok &&= propshaft_ok
 
-            prepare_propshaft
-            copy_engine_js
-            generate_importmap
+            if propshaft_ok
+              copy_ok = report.time(:copy_js) { copy_engine_js }
+              report.check(:prepare_copy_js, copy_ok)
+              ok &&= copy_ok
 
-            total = now - t0
-            timings[:total_prepare] = total
+              importmap_ok = report.time(:importmap_generate) { generate_importmap }
+              report.check(:prepare_importmap, importmap_ok)
+              ok &&= importmap_ok
+            end
 
-            Result.new(ok: errors.empty?, errors: errors, timings: timings)
+            report.time(:total_prepare) { ok } # just record accumulated time
+
+            ok
           end
 
           private
 
-          def config
-            ENGINE_CONFIG.fetch(@engine)
-          rescue KeyError
-            raise "Unknown engine for asset preparation: #{@engine.inspect}"
+          def env_hash
+            {"RAILS_ENV" => config.rails_env}
           end
 
-          def dummy_root
-            @dummy_root ||= begin
-              root = Rails.root
-              if root.basename.to_s == "dummy"
-                root
-              else
-                candidate = root.join("spec/dummy")
-                raise "Cannot find dummy root at #{candidate}" unless candidate.exist?
-                candidate
+          def compile_propshaft
+            report.log("• Compiling Propshaft assets in dummy app (RAILS_ENV=#{config.rails_env})")
+
+            Dir.chdir(config.dummy_root) do
+              system(env_hash, "bundle exec rails assets:clobber") # ignore failure
+              success = system(env_hash, "bundle exec rails assets:precompile")
+
+              unless success
+                report.log("✗ Propshaft assets failed to compile")
+                return false
               end
+
+              report.log("   ✓ Propshaft assets compiled")
+              true
             end
-          end
-
-          def now
-            Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          end
-
-          def prepare_propshaft
-            t = now
-            UI.banner("#{config[:name]}: Propshaft compile", status: :ok)
-            UI.step("Compiling Propshaft assets in dummy app (RAILS_ENV=test)")
-
-            Dir.chdir(dummy_root) do
-              system("bundle exec rails assets:clobber RAILS_ENV=test")
-              success = system("bundle exec rails assets:precompile RAILS_ENV=test")
-              if success
-                UI.ok("Propshaft assets compiled")
-              else
-                errors << {where: "propshaft", message: "assets:precompile failed"}
-              end
-            end
-          rescue => e
-            errors << {where: "propshaft", message: e.message}
-            UI.error("Propshaft compile error: #{e.message}")
-          ensure
-            timings[:propshaft] = now - t
           end
 
           def copy_engine_js
-            t = now
-            UI.step("Copying engine JS modules into dummy app")
+            report.log("• Copying engine JS modules into dummy app")
 
-            src = config[:js_source]&.call
-            unless src && Dir.exist?(src)
-              UI.warn("No JS source directory found for #{@engine} (#{src})")
-              return
+            engine_js = config.engine_root.join("app/javascript", config.engine_js_subpath)
+            dummy_js = config.dummy_root.join("app/javascript", config.engine_js_subpath)
+
+            unless engine_js.directory?
+              report.log("   ! Engine JS directory missing: #{engine_js}")
+              return true # not fatal – some engines may be CSS-only
             end
 
-            dest = dummy_root.join(config[:js_target_subdir])
-            FileUtils.mkdir_p(dest)
-
-            # Remove old content
-            Dir.glob(File.join(dest.to_s, "*")).each do |path|
-              FileUtils.rm_rf(path)
-            end
-
-            FileUtils.cp_r(Dir.glob(File.join(src.to_s, "*")), dest)
-
-            UI.ok("Copied JS from #{src} to #{dest}")
-          rescue => e
-            errors << {where: "copy_js", message: e.message}
-            UI.error("Copy JS error: #{e.message}")
-          ensure
-            timings[:copy_js] = now - t
+            FileUtils.mkdir_p(dummy_js)
+            FileUtils.cp_r(Dir["#{engine_js}/*"], dummy_js)
+            report.log("   ✓ Copied JS from #{engine_js} to #{dummy_js}")
+            true
           end
 
           def generate_importmap
-            t = now
-            UI.step("Generating importmap.json from dummy Rails app")
+            report.log("• Generating importmap.json from dummy Rails app")
 
-            Dir.chdir(dummy_root) do
-              # Load full Rails env for importmap
-              require dummy_root.join("config/environment")
-              map = Rails.application.importmap
+            Dir.chdir(config.dummy_root) do
+              require config.dummy_root.join("config/environment")
 
-              # Explicitly refresh engine importmap installs
-              Panda::Core::Engine.initializers
-                .find { |i| i.name == "panda_core.importmap" }
-                &.run(Rails.application)
+              json = Rails.application.importmap.to_json(
+                resolver: ActionController::Base.helpers
+              )
 
-              json = map.to_json(resolver: ActionController::Base.helpers)
-
-              output_dir = dummy_root.join("public/assets")
+              output_dir = config.dummy_root.join("public/assets")
               FileUtils.mkdir_p(output_dir)
 
               path = output_dir.join("importmap.json")
               File.write(path, json)
-              UI.ok("Wrote #{path}")
+
+              report.log("   ✓ Wrote #{path}")
+              true
             end
           rescue => e
-            errors << {where: "importmap_generate", message: e.message}
-            UI.error("Importmap generation error: #{e.message}")
-          ensure
-            timings[:importmap_generate] = now - t
+            report.log("   ✗ Failed to generate importmap.json: #{e.class}: #{e.message}")
+            false
           end
         end
       end
