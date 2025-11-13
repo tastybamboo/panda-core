@@ -144,7 +144,61 @@ module Panda
           @modules.key?(gem_name)
         end
 
+        # Returns a combined importmap for all registered modules
+        #
+        # This merges importmaps from Core and all registered modules (CMS, CMS Pro, etc.)
+        # into a single hash suitable for <script type="importmap"> generation.
+        #
+        # Order matters: Core imports are added first, then modules in registration order.
+        # If there are conflicts, later modules override earlier ones.
+        #
+        # @return [Hash] Combined imports hash {"module/name" => "/path/to/file.js"}
+        def combined_importmap
+          imports = {}
+
+          # Add Panda Core imports first (if Core has an importmap)
+          if defined?(Panda::Core.importmap)
+            Panda::Core.importmap.instance_variable_get(:@packages).each do |name, package|
+              imports[name] = package.path
+            end
+          end
+
+          # Add registered modules' importmaps in registration order
+          @modules.each do |gem_name, info|
+            next unless engine_available?(info[:engine])
+
+            # Get the module's importmap constant (e.g., Panda::CMS.importmap)
+            module_importmap = module_importmap_for(info[:engine])
+            next unless module_importmap
+
+            module_importmap.instance_variable_get(:@packages).each do |name, package|
+              imports[name] = package.path
+            end
+          end
+
+          imports
+        end
+
         private
+
+        # Get the importmap for a module
+        #
+        # @param engine_name [String] Engine constant name (e.g., "Panda::CMS::Engine")
+        # @return [Importmap::Map, nil] Module's importmap or nil if not available
+        def module_importmap_for(engine_name)
+          # Extract module namespace from engine name (e.g., "Panda::CMS::Engine" -> "Panda::CMS")
+          module_name = engine_name.sub(/::Engine$/, "")
+          return nil unless Object.const_defined?(module_name)
+
+          mod = Object.const_get(module_name)
+          return nil unless mod.respond_to?(:importmap)
+
+          mod.importmap
+        rescue NoMethodError
+          nil
+        rescue NameError
+          nil
+        end
 
         # Check if an engine constant is defined and available
         #

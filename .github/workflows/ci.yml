@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: 'actions/checkout@v5'
 
-      - name: 'Cache gems'
+      - name: Load gems from cache
         uses: actions/cache@v4
         with:
           path: vendor/bundle
@@ -35,7 +35,7 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       - name: 'Bundler Audit'
-        run: 'bundle exec bundle-audit --update'
+        run: 'bundle exec bundle-audit --update && bundle exec bundle-audit check'
       - name: 'Brakeman'
         run: 'bundle exec brakeman --quiet'
       - name: 'StandardRB Check'
@@ -84,11 +84,11 @@ jobs:
         run: |
           echo "${VERSION}" >> VERSION
 
-      - name: 'Start Xvfb'
+      - name: 'Start xvfb'
         run: |
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-      - name: 'Cache gems'
+      - name: Load gems from cache
         uses: actions/cache@v4
         with:
           path: vendor/bundle
@@ -132,16 +132,21 @@ jobs:
           RAILS_ENV: test
         run: |
           bundle exec rake panda:core:assets:compile
+          # Copy compiled assets to dummy app for tests
+          mkdir -p public/panda-core-assets
+          cp ../../public/panda-core-assets/* public/panda-core-assets/
           echo "✅ Asset compilation complete"
-          echo "Assets in public directory:"
-          ls -la public/panda-core-assets/ || echo "No core assets directory"
+          echo "Dummy app assets:"
+          ls -la public/panda-core-assets/
 
       - name: 'Run specs'
         env:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: 'test'
+          RSPEC_COLOR: 'true'
+          TERM: 'xterm-256color'
         run: |
-          bundle exec rspec --format progress
+          script -q -e -c "bundle exec rspec --format documentation --color" /dev/null
 
       - name: 'Upload coverage'
         uses: actions/upload-artifact@v5
