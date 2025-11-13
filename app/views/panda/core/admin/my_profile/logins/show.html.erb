@@ -1,0 +1,57 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do %>
+  <%= render Panda::Core::Admin::HeadingComponent.new(level: 1, text: "Login & Security") %>
+
+  <!-- Connected Accounts -->
+  <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
+    <% panel.heading(text: "Connected Accounts", description: "Manage your OAuth authentication providers") %>
+    <% panel.body do %>
+      <div class="space-y-4">
+        <% enabled_providers = Panda::Core.config.authentication_providers %>
+        <% if enabled_providers.empty? %>
+          <p class="text-sm text-gray-500">No authentication providers are currently enabled.</p>
+        <% else %>
+          <% enabled_providers.each do |provider| %>
+            <%= render Panda::Core::Admin::MyProfile::ConnectedAccountComponent.new(
+              provider: provider,
+              user: user
+            ) %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <!-- Login History -->
+  <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
+    <% panel.heading(text: "Login History", description: "Recent login activity for your account") %>
+    <% panel.body do %>
+      <div class="space-y-4">
+        <p class="text-sm text-gray-500">Login history tracking will be implemented in a future release.</p>
+        <!-- Future implementation:
+        - Table showing date/time, location, IP address, device/browser
+        - Filter/search capabilities
+        - Export functionality
+        -->
+      </div>
+    <% end %>
+  <% end %>
+
+  <!-- Two-Factor Authentication (Future) -->
+  <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
+    <% panel.heading(text: "Two-Factor Authentication", description: "Add an extra layer of security to your account") %>
+    <% panel.body do %>
+      <div class="space-y-4">
+        <p class="text-sm text-gray-500">
+          Two-factor authentication will be available in a future release.
+          Track progress in <a href="https://github.com/tastybamboo/panda-core/issues/34" class="text-blue-600 hover:text-blue-800 underline" target="_blank">GitHub Issue #34</a>.
+        </p>
+        <!-- Future implementation:
+        - TOTP setup with QR code
+        - Backup codes generation
+        - SMS fallback option (optional)
+        - Recovery options
+        -->
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

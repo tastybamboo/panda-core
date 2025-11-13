@@ -97,8 +97,15 @@
              class="space-y-1 hidden"
              style="display: none;"
              data-navigation-toggle-target="menu">
-          <%= link_to panda_core.admin_my_profile_path, class: "#{is_my_profile_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60'} group flex items-center w-full py-2 pr-2 pl-11 rounded-md text-sm font-normal transition-all" do %>
+          <%
+            is_edit_profile_active = request.path == panda_core.edit_admin_my_profile_path
+            is_logins_active = request.path.starts_with?(panda_core.admin_my_profile_logins_path)
+          %>
+          <%= link_to panda_core.edit_admin_my_profile_path, class: "#{is_edit_profile_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60'} group flex items-center w-full py-2 pr-2 pl-11 rounded-md text-sm font-normal transition-all" do %>
             My Profile
+          <% end %>
+          <%= link_to panda_core.admin_my_profile_logins_path, class: "#{is_logins_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60'} group flex items-center w-full py-2 pr-2 pl-11 rounded-md text-sm font-normal transition-all" do %>
+            Login & Security
           <% end %>
           <%= button_to panda_core.admin_logout_path, method: :delete, id: "logout-link", data: { turbo: false }, class: "text-white hover:bg-mid/60 group flex items-center w-full py-2 pr-2 pl-11 rounded-md text-sm font-normal transition-all text-left" do %>
             Logout
