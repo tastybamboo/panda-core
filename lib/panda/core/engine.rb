@@ -57,6 +57,21 @@ module Panda
         # Configuration is already initialized with defaults in Configuration class
       end
 
+      # Static asset middleware for serving public files and JavaScript modules
+      initializer "panda.core.static_assets", before: :build_middleware_stack do |app|
+        # Make files in public available to the main app (e.g. /panda-core-assets/panda-logo.png)
+        app.config.middleware.use Rack::Static,
+          urls: ["/panda-core-assets"],
+          root: Panda::Core::Engine.root.join("public"),
+          header_rules: [
+            # Disable caching in development for instant CSS updates
+            [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
+          ]
+
+        # JavaScript files are copied to public/panda-core-assets/js/ and served via the panda-core-assets middleware above
+        # No additional middleware needed - the first Rack::Static handles both CSS and JS
+      end
+
       # Auto-compile CSS for test/development environments
       initializer "panda_core.auto_compile_assets", after: :load_config_initializers do |app|
         # Only auto-compile in test or when explicitly requested

@@ -151,8 +151,9 @@ module Panda
             version = asset_version
             "/panda-core-assets/panda-core-#{version}.js"
           else
-            # Return importmap path
-            "/assets/panda/core/application.js"
+            # Return path for development/test mode
+            # JavaScript is served via importmap, but static files are at this location
+            "/panda-core-assets/js/application.js"
           end
         end
 
