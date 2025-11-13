@@ -125,19 +125,13 @@ jobs:
           cp ../../db/migrate/*.rb db/migrate/
           bundle exec rails db:drop db:create db:migrate
 
-      - name: 'Compile assets'
-        working-directory: spec/dummy
+      - name: Prepare dummy assets (Core)
         env:
-          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
+          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
         run: |
-          bundle exec rake panda:core:assets:compile
-          # Copy compiled assets to dummy app for tests
-          mkdir -p public/panda-core-assets
-          cp ../../public/panda-core-assets/* public/panda-core-assets/
-          echo "✅ Asset compilation complete"
-          echo "Dummy app assets:"
-          ls -la public/panda-core-assets/
+          echo "🚧 Preparing dummy assets (Core)..."
+          bundle exec rake panda:core:assets:dummy
 
       - name: 'Run specs'
         env:
