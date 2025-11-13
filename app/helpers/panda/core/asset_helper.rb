@@ -27,7 +27,7 @@ module Panda
           # Build the importmap JSON manually since paths are already absolute
           imports = {}
           Panda::Core.importmap.instance_variable_get(:@packages).each do |name, package|
-            imports[name] = package[:path]
+            imports[name] = package.path
           end
 
           importmap_json = JSON.generate({"imports" => imports})
