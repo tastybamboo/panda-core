@@ -194,7 +194,9 @@ module Panda
           return nil unless mod.respond_to?(:importmap)
 
           mod.importmap
-        rescue NameError, NoMethodError
+        rescue NoMethodError
+          nil
+        rescue NameError
           nil
         end
 

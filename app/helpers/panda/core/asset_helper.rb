@@ -41,10 +41,10 @@ module Panda
           # Add entry points for each registered module
           Panda::Core::ModuleRegistry.modules.each do |gem_name, info|
             # Extract module namespace from gem name (e.g., "panda-cms" -> "cms")
-            module_slug = gem_name.sub(/^panda-/, '')
+            module_slug = gem_name.sub(/^panda-/, "")
 
             # Check if the module is actually loaded
-            module_name = info[:engine].sub(/::Engine$/, '')
+            module_name = info[:engine].sub(/::Engine$/, "")
             next unless Object.const_defined?(module_name)
 
             entry_points << %(<script type="module">import "panda/#{module_slug}/application"</script>)
