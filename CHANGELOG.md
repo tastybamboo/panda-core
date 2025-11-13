@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.2] - 2025-11-13
+
+### Added
+
+- CI-specific Capybara configuration in `lib/panda/core/testing/support/system/ci_capybara_config.rb`
+  - Automatic Puma 6 and 7+ compatibility detection
+  - Activates in GitHub Actions or when `CI_SYSTEM_SPECS=true`
+  - Configurable wait times and thread counts via environment variables
+  - Verbose logging for debugging CI test issues
+- ModuleRegistry-based unified importmap system
+  - Centralized JavaScript module management
+  - Automatic ES Module Shims inclusion
+  - Proper `.js` extension handling for imports
+- Settings controller at `/admin/settings` for future site configuration
+- Comprehensive logout system specs (5 specs covering all logout scenarios)
+  - Logout and redirect testing
+  - Session clearing verification
+  - Re-login capability testing
+  - Logout notification event testing
+
+### Changed
+
+- CI workflow improvements
+  - Colored RSpec output with script command for better readability
+  - Added `RSPEC_COLOR` and `TERM` environment variables
+  - Bundler audit now runs both `--update` and `check`
+- Unskipped nested navigation specs (now use real Settings/My Profile routes)
+- Updated navigation tests to use real routes instead of fake test routes
+
+### Fixed
+
+- Asset compilation now copies files to dummy app directory for tests
+- Fixed importmap accessor for package paths
+- Removed invalid `:type` metadata from `:suite` hook in CI config
+- Cleaned up stale asset handling in CI workflows
+- Fixed JavaScript module loading with proper import map setup
+
 ## [0.9.1] - 2025-11-12
 
 ### Changed
