@@ -136,9 +136,14 @@ module Panda
             Dir.chdir(dummy_root) do
               # Load full Rails env for importmap
               require dummy_root.join("config/environment")
-              json = Rails.application.importmap.to_json(
-                resolver: ActionController::Base.helpers
-              )
+              map = Rails.application.importmap
+
+              # Explicitly refresh engine importmap installs
+              Panda::Core::Engine.initializers
+                .find { |i| i.name == "panda_core.importmap" }
+                &.run(Rails.application)
+
+              json = map.to_json(resolver: ActionController::Base.helpers)
 
               output_dir = dummy_root.join("public/assets")
               FileUtils.mkdir_p(output_dir)
