@@ -19,6 +19,9 @@ Panda::Core::Engine.routes.draw do
     # Profile management
     resource :my_profile, only: %i[show edit update], controller: "admin/my_profile", path: "my_profile"
 
+    # Settings
+    resource :settings, only: [:show], controller: "admin/settings"
+
     # Test-only authentication endpoint (available in development and test environments)
     # This bypasses OAuth for faster, more reliable test execution
     # Development: Used by Capybara system tests which run Rails server in development mode

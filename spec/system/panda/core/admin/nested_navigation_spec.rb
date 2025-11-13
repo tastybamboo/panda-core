@@ -151,7 +151,7 @@ RSpec.describe "Nested navigation", type: :system do
 
   context "with active child item" do
     before do
-      # Configure navigation with nested items
+      # Configure navigation with nested items using real routes
       Panda::Core.configure do |config|
         config.admin_navigation_items = ->(user) {
           [
@@ -161,11 +161,11 @@ RSpec.describe "Nested navigation", type: :system do
               icon: "fa-solid fa-house"
             },
             {
-              label: "Team",
-              icon: "fa-solid fa-users",
+              label: "Settings",
+              icon: "fa-solid fa-gear",
               children: [
-                {label: "Overview", path: "/admin/team/overview"},
-                {label: "Members", path: "/admin/team/members"}
+                {label: "Site Settings", path: "/admin/settings"},
+                {label: "My Profile", path: "/admin/my_profile"}
               ]
             }
           ]
@@ -173,27 +173,24 @@ RSpec.describe "Nested navigation", type: :system do
       end
     end
 
-    # Note: These tests would require actual routes to be set up
-    # They serve as documentation for the expected behavior
-    it "expands parent menu automatically when child is active", :skip do
-      # Create a test route for team members
-      visit "/admin/team/members"
+    it "expands parent menu automatically when child is active", js: true do
+      visit "/admin/settings"
 
-      # The Team menu should be automatically expanded
-      expect(page).to have_content("Overview")
-      expect(page).to have_content("Members")
+      # The Settings menu should be automatically expanded
+      expect(page).to have_content("Site Settings")
+      expect(page).to have_content("My Profile")
 
-      # The Members link should be highlighted
-      members_link = find("a", text: "Members")
-      expect(members_link[:class]).to include("bg-mid")
+      # The Settings link should be visible and highlighted
+      settings_link = find("a", text: "Site Settings")
+      expect(settings_link[:class]).to include("bg-mid")
     end
 
-    it "highlights parent menu when child is active", :skip do
-      visit "/admin/team/overview"
+    it "highlights parent menu when child is active", js: true do
+      visit "/admin/my_profile"
 
-      # The Team button should have active styling
-      team_button = find("button", text: "Team")
-      expect(team_button[:class]).to include("bg-mid")
+      # The Settings button should have active styling
+      settings_button = find("button", text: "Settings")
+      expect(settings_button[:class]).to include("bg-mid")
     end
   end
 end
