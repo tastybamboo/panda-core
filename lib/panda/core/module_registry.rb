@@ -277,6 +277,99 @@ module Panda
           nil
         end
       end
+
+      # Custom Rack middleware to serve JavaScript modules from all registered Panda modules
+      #
+      # This middleware checks all registered modules' app/javascript/panda directories
+      # and serves the first matching file. This solves the problem of multiple Rack::Static
+      # instances blocking each other.
+      #
+      class JavaScriptMiddleware
+        def initialize(app)
+          @app = app
+        end
+
+        def call(env)
+          request = Rack::Request.new(env)
+          path = request.path_info
+
+          # Only handle /panda/core/* and /panda/cms/* style JavaScript module requests
+          # Skip paths like /panda-core-assets/* (public assets handled by Rack::Static)
+          return @app.call(env) unless path.start_with?("/panda/")
+
+          # Strip /panda/ prefix to get relative path
+          # e.g., "/panda/cms/application.js" -> "cms/application.js"
+          relative_path = path.sub(%r{^/panda/}, "")
+          return @app.call(env) if relative_path.empty?
+
+          # Try to find the file in registered modules
+          file_path = find_javascript_file(relative_path)
+
+          if file_path && File.file?(file_path)
+            puts "[JavaScriptMiddleware] Serving: #{path} from #{file_path}"
+            serve_file(file_path, env)
+          else
+            puts "[JavaScriptMiddleware] Not found: #{path} (tried #{relative_path})"
+            @app.call(env)
+          end
+        rescue => e
+          # On error, log and pass to next middleware
+          puts "[JavaScriptMiddleware] Error: #{e.message}"
+          Rails.logger.error("[ModuleRegistry::JavaScriptMiddleware] Error: #{e.message}\n#{e.backtrace.join("\n")}") if defined?(Rails.logger)
+          @app.call(env)
+        end
+
+        private
+
+        def find_javascript_file(relative_path)
+          # Check each registered module's JavaScript directory
+          ModuleRegistry.modules.each do |gem_name, info|
+            next unless ModuleRegistry.send(:engine_available?, info[:engine])
+
+            root = ModuleRegistry.send(:engine_root, info[:engine])
+            next unless root
+
+            # Check in app/javascript/panda/
+            candidate = root.join("app/javascript/panda", relative_path)
+            return candidate.to_s if candidate.exist? && candidate.file?
+          end
+
+          nil
+        end
+
+        def serve_file(file_path, env)
+          # Read file content
+          content = File.read(file_path)
+
+          # Determine content type
+          content_type = case File.extname(file_path)
+          when ".js"
+            "application/javascript; charset=utf-8"
+          when ".json"
+            "application/json; charset=utf-8"
+          else
+            "text/plain; charset=utf-8"
+          end
+
+          # Determine cache control
+          cache_control = if Rails.env.development? || Rails.env.test?
+            "no-cache, no-store, must-revalidate"
+          else
+            "public, max-age=31536000"
+          end
+
+          # Return response
+          [
+            200,
+            {
+              "Content-Type" => content_type,
+              "Content-Length" => content.bytesize.to_s,
+              "Cache-Control" => cache_control
+            },
+            [content]
+          ]
+        end
+      end
     end
   end
 end
