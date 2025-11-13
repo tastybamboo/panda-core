@@ -152,8 +152,8 @@ module Panda
             "/panda-core-assets/panda-core-#{version}.js"
           else
             # Return path for development/test mode
-            # JavaScript is served via importmap, but static files are at this location
-            "/panda-core-assets/js/application.js"
+            # JavaScript is served via importmap from app/javascript
+            "/panda/core/application.js"
           end
         end
 

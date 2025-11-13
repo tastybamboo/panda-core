@@ -68,8 +68,14 @@ module Panda
             [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
           ]
 
-        # JavaScript files are copied to public/panda-core-assets/js/ and served via the panda-core-assets middleware above
-        # No additional middleware needed - the first Rack::Static handles both CSS and JS
+        # Make JavaScript files available for importmap
+        # Serve from app/javascript with proper MIME types
+        app.config.middleware.use Rack::Static,
+          urls: ["/panda/core"],
+          root: Panda::Core::Engine.root.join("app/javascript"),
+          header_rules: [
+            [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
+          ]
       end
 
       # Auto-compile CSS for test/development environments

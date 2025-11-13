@@ -10,13 +10,11 @@
     <!-- ES Module Shims polyfill - must load BEFORE importmap (blocking, not async) -->
     <script src="https://ga.jspm.io/npm:[email protected]/dist/es-module-shims.js" crossorigin="anonymous"></script>
 
+    <!-- Panda JavaScript (Core + all registered modules via ModuleRegistry) -->
+    <%= panda_core_javascript %>
+
     <% if defined?(Panda::CMS) && controller.class.name.start_with?("Panda::CMS") %>
-      <!-- CMS Assets (includes Core JavaScript in combined importmap) -->
-      <%= panda_cms_javascript %>
       <%= render "panda/cms/shared/favicons" %>
-    <% else %>
-      <!-- Core-only JavaScript (when CMS is not present) -->
-      <%= panda_core_javascript %>
     <% end %>
 
     <%= yield :head %>
