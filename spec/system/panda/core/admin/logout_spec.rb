@@ -10,11 +10,12 @@ RSpec.describe "Admin logout", type: :system do
   end
 
   describe "logging out" do
-    it "logs out the user and redirects to login page" do
+    it "logs out the user and redirects to login page", js: true do
       visit "/admin"
       expect(page).to have_content("Dashboard")
 
-      # Click logout button
+      # Open user menu and click logout
+      find("button", text: admin_user.name).click
       click_on "Logout"
 
       # Should redirect to login page
@@ -22,10 +23,12 @@ RSpec.describe "Admin logout", type: :system do
       expect(page).to have_content("Successfully logged out")
     end
 
-    it "clears the session after logout" do
+    it "clears the session after logout", js: true do
       visit "/admin"
       expect(page).to have_content("Dashboard")
 
+      # Open user menu and click logout
+      find("button", text: admin_user.name).click
       click_on "Logout"
 
       # Try to visit admin page after logout
@@ -35,10 +38,12 @@ RSpec.describe "Admin logout", type: :system do
       expect(page).to have_current_path("/admin/login")
     end
 
-    it "shows login page after logout without admin content" do
+    it "shows login page after logout without admin content", js: true do
       visit "/admin"
       expect(page).to have_content("Dashboard")
 
+      # Open user menu and click logout
+      find("button", text: admin_user.name).click
       click_on "Logout"
 
       # Should be on login page
@@ -49,8 +54,11 @@ RSpec.describe "Admin logout", type: :system do
       expect(page).not_to have_content(admin_user.name)
     end
 
-    it "allows logging in again after logout" do
+    it "allows logging in again after logout", js: true do
       visit "/admin"
+
+      # Open user menu and click logout
+      find("button", text: admin_user.name).click
       click_on "Logout"
 
       # Should be able to login again
@@ -63,13 +71,16 @@ RSpec.describe "Admin logout", type: :system do
   end
 
   describe "logout notifications" do
-    it "triggers user_logout notification" do
+    it "triggers user_logout notification", js: true do
       events = []
       ActiveSupport::Notifications.subscribe("panda.core.user_logout") do |*args|
         events << ActiveSupport::Notifications::Event.new(*args)
       end
 
       visit "/admin"
+
+      # Open user menu and click logout
+      find("button", text: admin_user.name).click
       click_on "Logout"
 
       expect(events.size).to eq(1)

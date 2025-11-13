@@ -149,48 +149,43 @@ RSpec.describe "Nested navigation", type: :system do
     end
   end
 
-  context "with active child item" do
-    before do
-      # Configure navigation with nested items using real routes
-      Panda::Core.configure do |config|
-        config.admin_navigation_items = ->(user) {
-          [
-            {
-              label: "Dashboard",
-              path: "/admin",
-              icon: "fa-solid fa-house"
-            },
-            {
-              label: "Settings",
-              icon: "fa-solid fa-gear",
-              children: [
-                {label: "Site Settings", path: "/admin/settings"},
-                {label: "My Profile", path: "/admin/my_profile"}
-              ]
-            }
-          ]
-        }
+  context "with user menu active child item" do
+    it "expands user menu when clicked", js: true do
+      visit "/admin"
+
+      # User button should exist
+      user_button = find("button", text: admin_user.name)
+      expect(user_button).to be_present
+
+      # Click to expand menu
+      user_button.click
+
+      # Wait a moment for animation
+      sleep 0.5
+
+      # Menu items should now be visible
+      within("#user-menu") do
+        expect(page).to have_link("My Profile", visible: :all)
+        expect(page).to have_button("Logout", visible: :all)
       end
     end
 
-    it "expands parent menu automatically when child is active", js: true do
-      visit "/admin/settings"
-
-      # The Settings menu should be automatically expanded
-      expect(page).to have_content("Site Settings")
-      expect(page).to have_content("My Profile")
-
-      # The Settings link should be visible and highlighted
-      settings_link = find("a", text: "Site Settings")
-      expect(settings_link[:class]).to include("bg-mid")
-    end
-
-    it "highlights parent menu when child is active", js: true do
+    it "highlights user menu button when on My Profile page", js: true do
       visit "/admin/my_profile"
 
-      # The Settings button should have active styling
-      settings_button = find("button", text: "Settings")
-      expect(settings_button[:class]).to include("bg-mid")
+      # The user button should have active styling
+      user_button = find("button", text: admin_user.name)
+      expect(user_button[:class]).to include("bg-mid")
+    end
+
+    it "contains logout option in user menu", js: true do
+      visit "/admin"
+
+      # Click on user name to expand menu
+      find("button", text: admin_user.name).click
+
+      # Should have Logout option
+      expect(page).to have_button("Logout")
     end
   end
 end

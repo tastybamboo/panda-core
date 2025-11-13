@@ -70,8 +70,10 @@ module Panda
 
         # Make JavaScript files available for importmap
         # Serve from app/javascript with proper MIME types
+        # Important: Strip only /panda, so /panda/core/foo.js looks for app/javascript/core/foo.js
+        # But our files are at app/javascript/panda/core/foo.js, so we serve from parent dir
         app.config.middleware.use Rack::Static,
-          urls: ["/panda/core"],
+          urls: ["/panda"],
           root: Panda::Core::Engine.root.join("app/javascript"),
           header_rules: [
             [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
