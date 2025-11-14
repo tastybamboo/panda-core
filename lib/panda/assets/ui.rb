@@ -38,32 +38,12 @@ module Panda
         "#{colour("1")}#{str}#{reset}"
       end
 
-      def banner(title)
-        line = "─" * [title.length + 10, 20].max
+      def banner(title, status: nil)
+        line = "─" * [title.size + 10, 20].max
         puts
         puts cyan("┌#{line}┐")
         puts cyan("│ ") + bold(title) + cyan(" │")
         puts cyan("└#{line}┘")
-      end
-
-      def step(title)
-        puts "• #{title}"
-      end
-
-      def ok(msg)
-        puts "   #{green("✓")} #{msg}"
-      end
-
-      def warn(msg)
-        puts "   #{yellow("!")} #{msg}"
-      end
-
-      def error(msg)
-        puts "   #{red("✗")} #{msg}"
-      end
-
-      def divider
-        puts cyan("-" * 60)
       end
     end
   end
