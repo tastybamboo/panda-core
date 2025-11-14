@@ -5,23 +5,25 @@ require "panda/core/testing/assets/runner"
 namespace :panda do
   namespace :core do
     namespace :assets do
-      desc "Prepare Panda Core dummy assets (Propshaft, JS copy, importmap)"
+
+      desc "Prepare Panda Core dummy assets (compile + importmap + copy JS)"
       task prepare_dummy: :environment do
-        Panda::Core::Testing::Assets::Runner.new(:core).prepare
+        Panda::Core::Testing::Assets::Runner.new(:core).run_prepare_only
       end
 
       desc "Verify Panda Core dummy assets (manifest + importmap + HTTP checks)"
       task verify_dummy: :environment do
-        Panda::Core::Testing::Assets::Runner.new(:core).verify
+        Panda::Core::Testing::Assets::Runner.new(:core).run_verify_only
       end
 
-      desc "Full Core dummy asset pipeline (prepare + verify)"
+      desc "Full Panda Core asset pipeline (prepare + verify)"
       task dummy: :environment do
-        Panda::Core::Testing::Assets::Runner.new(:core).run
+        Panda::Core::Testing::Assets::Runner.run(:core)
       end
 
-      # Allow CMS to call core’s verification in its own CI
-      task prepare_and_verify_dummy: [:prepare_dummy, :verify_dummy]
+      # Core does **not** include CMS tasks; CMS will define those
+      desc "Prepare + verify Panda Core assets (alias for :dummy)"
+      task prepare_and_verify_dummy: :environment => :dummy
     end
   end
 end
