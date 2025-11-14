@@ -5,13 +5,18 @@ module Panda
     module Testing
       module Assets
         class Preparer
-          attr_reader :engine, :dummy_root, :engine_root
+          attr_reader :engine, :dummy_root, :engine_root, :timings
 
           def initialize(engine)
             @engine = engine.to_sym
-            @engine_root = (engine == :core) ?
-                             Panda::Core::Engine.root :
-                             Panda::CMS::Engine.root
+            @timings = {}
+            @engine_root =
+              case engine
+              when :core then Panda::Core::Engine.root
+              when :cms then Panda::CMS::Engine.root
+              else
+                raise ArgumentError, "Unknown engine #{engine.inspect}"
+              end
 
             @dummy_root = resolve_dummy_root
           end
@@ -26,14 +31,14 @@ module Panda
             raise "❌ Could not locate dummy root (looked for #{candidate})"
           end
 
-          def call
-            prepare_propshaft
-            copy_engine_js
-            generate_importmap
+          def prepare
+            step(:propshaft) { prepare_propshaft }
+            step(:copy_js) { copy_engine_js }
+            step(:importmap_generate) { generate_importmap }
           end
 
           # --------------------------------------------------------------
-          # Steps
+          # Propshaft asset compilation
           # --------------------------------------------------------------
 
           def prepare_propshaft
@@ -48,17 +53,30 @@ module Panda
             puts "   ✓ Propshaft assets compiled"
           end
 
+          # --------------------------------------------------------------
+          # JS copy (importmap-based engines)
+          # --------------------------------------------------------------
+
           def copy_engine_js
             puts "• Copying engine JS modules into dummy app"
 
             src = engine_root.join("app/javascript/panda/#{engine}")
             dst = dummy_root.join("app/javascript/panda/#{engine}")
 
+            unless src.exist?
+              puts "   ! No JS source found at #{src} (skipping)"
+              return
+            end
+
             FileUtils.mkdir_p(dst)
             FileUtils.cp_r(src.children, dst)
 
             puts "   ✓ Copied JS from #{src} to #{dst}"
           end
+
+          # --------------------------------------------------------------
+          # Importmap generation
+          # --------------------------------------------------------------
 
           def generate_importmap
             puts "• Generating importmap.json from dummy Rails app"
@@ -74,6 +92,17 @@ module Panda
             end
 
             puts "   ✓ Wrote #{dummy_root.join("public/assets/importmap.json")}"
+          end
+
+          # --------------------------------------------------------------
+          # Timing helper
+          # --------------------------------------------------------------
+
+          def step(name)
+            start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            yield
+            finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            timings[name] = (finish - start).round(3)
           end
         end
       end
