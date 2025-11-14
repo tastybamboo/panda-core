@@ -19,6 +19,9 @@ namespace :panda do
       task dummy: :environment do
         Panda::Core::Testing::Assets::Runner.run(:core)
       end
+
+      # Optional alias (valid syntax)
+      task prepare_and_verify_dummy: :dummy
     end
   end
 end
