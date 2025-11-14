@@ -1,64 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "optparse"
-require "pathname"
-
-ENV["RAILS_ENV"] ||= "test"
-
-root = Pathname.new(Dir.pwd)
+require_relative "../lib/panda/assets/runner"
 
 begin
-  require root.join("config/environment").to_s
-rescue LoadError
-  warn "Could not load Rails environment from #{root}/config/environment.rb"
+  Panda::Assets::Runner.run_all!
+  puts "✔ Panda assets verified successfully"
+rescue => e
+  warn "✘ Panda assets failed: #{e.message}"
   exit 1
 end
-
-require "panda/assets/runner"
-
-options = {
-  engine: :core
-}
-
-OptionParser.new do |opts|
-  opts.banner = "Usage: panda-assets [options]"
-
-  opts.on("--engine ENGINE", "Engine key (core, cms, etc.)") do |e|
-    options[:engine] = e.to_sym
-  end
-end.parse!(ARGV)
-
-dummy_root =
-  if Rails.root.basename.to_s == "dummy"
-    Rails.root
-  else
-    Rails.root.join("spec/dummy")
-  end
-
-engine_js_roots =
-  case options[:engine]
-  when :core
-    roots = []
-    er = Panda::Core::Engine.root
-    roots << er.join("app/javascript/panda/core") if er.join("app/javascript/panda/core").directory?
-    roots << er.join("vendor/javascript/panda/core") if er.join("vendor/javascript/panda/core").directory?
-    roots
-  when :cms
-    roots = []
-    er = Panda::CMS::Engine.root
-    roots << er.join("app/javascript/panda/cms") if er.join("app/javascript/panda/cms").directory?
-    roots << er.join("vendor/javascript/panda/cms") if er.join("vendor/javascript/panda/cms").directory?
-    roots
-  else
-    []
-  end
-
-config = {
-  dummy_root: dummy_root,
-  engine_js_roots: engine_js_roots,
-  engine_js_prefix: "panda/#{options[:engine]}"
-}
-
-result = Panda::Assets::Runner.run(options[:engine], config)
-exit(result.ok ? 0 : 1)

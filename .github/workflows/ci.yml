@@ -125,12 +125,8 @@ jobs:
           cp ../../db/migrate/*.rb db/migrate/
           bundle exec rails db:drop db:create db:migrate
 
-      - name: Prepare + verify dummy assets (Core + all modules)
-        env:
-          DATABASE_URL: postgres://postgres:password@postgres:5432/test
-        run: |
-          echo "🚧 Preparing dummy assets (Core + modules)…"
-          bundle exec rake panda:assets:prepare_and_verify_all
+      - name: Verify Panda Assets
+        uses: ./.github/workflows/panda-assets-verify.yml
 
       - name: 'Run specs'
         env:
