@@ -306,15 +306,15 @@ module Panda
           file_path = find_javascript_file(relative_path)
 
           if file_path && File.file?(file_path)
-            puts "[JavaScriptMiddleware] Serving: #{path} from #{file_path}"
+            puts "[JavaScriptMiddleware] Serving: #{path} from #{file_path}" if ENV["RSPEC_DEBUG"]
             serve_file(file_path, env)
           else
-            puts "[JavaScriptMiddleware] Not found: #{path} (tried #{relative_path})"
+            puts "[JavaScriptMiddleware] Not found: #{path} (tried #{relative_path})" if ENV["RSPEC_DEBUG"]
             @app.call(env)
           end
         rescue => e
           # On error, log and pass to next middleware
-          puts "[JavaScriptMiddleware] Error: #{e.message}"
+          puts "[JavaScriptMiddleware] Error: #{e.message}" if ENV["RSPEC_DEBUG"]
           Rails.logger.error("[ModuleRegistry::JavaScriptMiddleware] Error: #{e.message}\n#{e.backtrace.join("\n")}") if defined?(Rails.logger)
           @app.call(env)
         end
