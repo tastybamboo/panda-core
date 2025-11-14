@@ -576,6 +576,29 @@ module Panda
           # Misc helpers
           # ----------------------------------------------------------------------
 
+          def generate_importmap_json(importmap)
+            # 1. Decide if resolver keyword is required
+            supports_resolver =
+              importmap.method(:to_json).parameters.any? { |type, name| name == :resolver }
+
+            json_string =
+              if supports_resolver
+                importmap.to_json(resolver: ActionController::Base.helpers)
+              else
+                importmap.to_json
+              end
+
+            # 2. Now parse the JSON into a uniform hash
+            case json_string
+            when String
+              JSON.parse(json_string)
+            when Hash
+              json_string
+            else
+              {}
+            end
+          end
+
           def safe_const_get(name)
             return nil unless name
             Object.const_get(name)

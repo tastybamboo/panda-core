@@ -125,13 +125,12 @@ jobs:
           cp ../../db/migrate/*.rb db/migrate/
           bundle exec rails db:drop db:create db:migrate
 
-      - name: Prepare + verify dummy assets (Core)
+      - name: Prepare + verify dummy assets (Core + all modules)
         env:
-          RAILS_ENV: test
-          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
+          DATABASE_URL: postgres://postgres:password@postgres:5432/test
         run: |
-          echo "🚧 Preparing dummy assets (Core)..."
-          bundle exec rake panda:core:assets:prepare_and_verify_dummy
+          echo "🚧 Preparing dummy assets (Core + modules)…"
+          bundle exec rake panda:assets:prepare_and_verify_all
 
       - name: 'Run specs'
         env:
@@ -157,10 +156,10 @@ jobs:
           path: spec/dummy/tmp/capybara/**/*
           if-no-files-found: ignore
 
-      - name: Upload asset verification report (Core)
+      - name: Upload asset verification report
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: panda-core-assets-report
+          name: panda-assets-report
           path: spec/dummy/tmp/panda_assets_report.html
           retention-days: 7

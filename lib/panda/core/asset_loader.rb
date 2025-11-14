@@ -248,6 +248,16 @@ module Panda
           options[:src] = source.start_with?("/") ? source : "/assets/#{source}"
           content_tag(:script, "", options)
         end
+
+        def self.last_dummy_asset_report
+          # Only expose this in test/CI/development — never in production
+          return nil unless Rails.env.test? || ENV["CI"].present?
+
+          if defined?(Panda::Core::Assets::ReportRegistry) &&
+              Panda::Core::Assets::ReportRegistry.present?
+            Panda::Core::Assets::ReportRegistry.last
+          end
+        end
       end
     end
   end

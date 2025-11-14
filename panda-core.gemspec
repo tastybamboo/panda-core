@@ -44,7 +44,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency "literal", "~> 1.8"
   spec.add_dependency "tailwind_merge", "~> 1.3"
 
+  # Database dependencies
   spec.add_development_dependency "pg"
+
+  # Webrick to handle asset compilation
+  spec.add_dependency "webrick"
 
   # Testing
   spec.add_development_dependency "rspec-rails"
