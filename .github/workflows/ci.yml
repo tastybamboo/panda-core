@@ -127,7 +127,7 @@ jobs:
           RSPEC_COLOR: 'true'
           TERM: 'xterm-256color'
         run: |
-          script -q -e -c "bundle exec rspec --format documentation --color" /dev/null
+          bundle exec rspec --format documentation --color
 
       - name: 'Upload coverage'
         uses: actions/upload-artifact@v5
@@ -136,7 +136,7 @@ jobs:
           name: coverage
           path: coverage/
 
-      - name: 'Upload always on failure'
+      - name: Upload Capybara assets
         uses: actions/upload-artifact@v5
         if: always()
         with:
