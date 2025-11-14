@@ -92,11 +92,7 @@ module Panda
 
           # Compile CSS with timestamp
           require "open3"
-          require "fileutils"
 
-          FileUtils.mkdir_p(assets_dir)
-
-          # Get content paths from ModuleRegistry
           content_paths = Panda::Core::ModuleRegistry.tailwind_content_paths
           content_flags = content_paths.map { |path| "--content '#{path}'" }.join(" ")
 
