@@ -68,7 +68,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
           POSTGRES_DB: test
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -102,24 +101,40 @@ jobs:
           bundle config without development
           bundle install --jobs 4 --retry 3
 
-      - name: Panda asset generation and verification
-        uses: tastybamboo/panda-assets-verify-action@v1
-        with:
-          dummy_root: spec/dummy
-
+      #
+      # 🧩 IMPORTANT: Run database migrations BEFORE panda-assets-verify-action,
+      # because the asset pipeline loads Rails, and Rails loads ActiveRecord,
+      # and the dummy app's schema must exist before that happens.
+      #
       - name: 'Setup test database'
         working-directory: spec/dummy
         env:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
         run: |
-          # Clean up ALL migrations in dummy app to start fresh
           rm -rf db/migrate
           mkdir -p db/migrate
-          # Copy engine migrations to dummy app (required because engine disables migrations in test mode)
           cp ../../db/migrate/*.rb db/migrate/
           bundle exec rails db:drop db:create db:migrate
 
+      #
+      # 🐼 Run Panda Asset Verification
+      # This will:
+      # - compile propshaft
+      # - build importmap.json
+      # - copy engine JS
+      # - start an HTTP server and verify asset reachability
+      # - write HTML report
+      # - upload HTML report as an artifact
+      #
+      - name: Panda asset generation and verification
+        uses: tastybamboo/panda-assets-verify-action@v1
+        with:
+          dummy_root: spec/dummy
+
+      #
+      # 🧪 Run application tests
+      #
       - name: 'Run specs'
         env:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
@@ -143,11 +158,3 @@ jobs:
           name: capybara-screenshots
           path: spec/dummy/tmp/capybara/**/*
           if-no-files-found: ignore
-
-      - name: Upload asset verification report
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: panda-assets-report
-          path: spec/dummy/tmp/panda_assets_report.html
-          retention-days: 7

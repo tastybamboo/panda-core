@@ -41,8 +41,8 @@ Capybara.register_server :puma_ci do |app, port, host|
     Port: port,
     Threads: "#{min_threads}:#{max_threads}",
     Workers: 0,
-    Silent: false,
-    Verbose: true,
+    Silent: !ENV["RSPEC_DEBUG"],
+    Verbose: ENV["RSPEC_DEBUG"],
     PreloadApp: false
   }
 
