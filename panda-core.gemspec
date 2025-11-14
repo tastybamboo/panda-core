@@ -26,6 +26,9 @@ Gem::Specification.new do |spec|
     "VERSION"
   ]
 
+  spec.executables << "panda-assets"
+  spec.bindir = "bin"
+
   spec.add_dependency "image_processing", "~> 1.2"
   spec.add_dependency "importmap-rails"
   spec.add_dependency "omniauth"

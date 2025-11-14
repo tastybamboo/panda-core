@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Simple CLI wrapper around Panda::Core::Testing::Assets::Runner
+#
+# Usage:
+#   bundle exec panda-assets           # defaults to :core
+#   bundle exec panda-assets core      # same
+#   bundle exec panda-assets cms       # for panda-cms host app
+#
+# This expects to be run from within a Rails app or engine where
+# Rails.root points to the host or dummy app (spec/dummy).
+
+require "bundler/setup"
+require "rails"
+require "panda/core/testing/assets/runner"
+
+kind = (ARGV[0] || "core").to_sym
+
+runner = Panda::Core::Testing::Assets::Runner.new(kind)
+runner.run
