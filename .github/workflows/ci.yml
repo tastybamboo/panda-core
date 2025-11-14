@@ -55,6 +55,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      checks: write
     env:
       BUNDLE_PATH: 'vendor/bundle'
       RAILS_ENV: test
