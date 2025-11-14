@@ -1,57 +1,74 @@
 # frozen_string_literal: true
 
-require "pathname"
-require_relative "report"
 require_relative "preparer"
 require_relative "verifier"
+require_relative "report"
 
 module Panda
   module Core
     module Testing
       module Assets
-        Config = Struct.new(
-          :engine_label,
-          :engine_root,
-          :engine_js_subpath,
-          :dummy_root,
-          :rails_env,
-          keyword_init: true
-        )
+        class Runner
+          Result = Struct.new(:prepare, :verify)
 
-        module_function
+          def initialize(engine)
+            @engine = engine
+          end
 
-        # Shared helper – find spec/dummy regardless of current working directory
-        def find_dummy_root
-          root = Rails.root
-          return root if root.basename.to_s == "dummy"
+          #
+          # Full pipeline (prepare + verify + report)
+          #
+          def run
+            prepare_result = Preparer.new(@engine).run
+            verify_result = Verifier.new(@engine).run
 
-          candidate = root.join("spec/dummy")
-          return candidate if candidate.exist?
+            combined = Result.new(prepare_result, verify_result)
 
-          raise "❌ Cannot find dummy root – expected #{candidate}"
-        end
+            Report.write(@engine, combined)
 
-        # Entry point – shared runner used by both panda-core and panda-cms
-        def run!(options = {})
-          config = Config.new(
-            engine_label: options.fetch(:engine_label),
-            engine_root: Pathname(options.fetch(:engine_root)),
-            engine_js_subpath: options.fetch(:engine_js_subpath), # e.g. "panda/core" or "panda/cms"
-            dummy_root: Pathname(options.fetch(:dummy_root) { find_dummy_root }),
-            rails_env: options.fetch(:rails_env, "test")
-          )
+            if verification_failed?(verify_result)
+              puts "\n❌ Asset verification FAILED for #{@engine}\n\n"
+              exit 1
+            else
+              puts "\n✅ Asset verification OK for #{@engine}\n\n"
+            end
 
-          report = Report.new(config)
+            combined
+          end
 
-          report.banner(" #{config.engine_label} dummy assets – PREPARE + VERIFY ")
+          #
+          # Just preparation (no verification)
+          #
+          def prepare
+            Preparer.new(@engine).run
+          end
 
-          preparer = Preparer.new(config, report)
-          verifier = Verifier.new(config, report)
+          #
+          # Just verification (used in debugging)
+          #
+          def verify
+            verify_result = Verifier.new(@engine).run
 
-          prepare_ok = preparer.prepare!
-          verify_ok = prepare_ok ? verifier.verify! : false
+            if verification_failed?(verify_result)
+              puts "\n❌ Asset verification FAILED for #{@engine}\n\n"
+              exit 1
+            else
+              puts "\n✅ Asset verification OK for #{@engine}\n\n"
+            end
 
-          report.finish!(prepare_ok: prepare_ok, verify_ok: verify_ok)
+            verify_result
+          end
+
+          private
+
+          #
+          # Decide whether verification had ANY failures
+          #
+          def verification_failed?(verify_result)
+            verify_result.any? do |_stage, data|
+              data[:status] == :failed
+            end
+          end
         end
       end
     end
