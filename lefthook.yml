@@ -10,7 +10,7 @@ pre-commit:
       run: bundle outdated --strict
     - name: standardrb
       run: bundle exec standardrb --fix {staged_files}
-      glob: "*.rb"
+      glob: '*.rb'
       stage_fixed: true
 
 pre-push:
