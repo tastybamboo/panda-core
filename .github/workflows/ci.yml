@@ -102,15 +102,10 @@ jobs:
           bundle config without development
           bundle install --jobs 4 --retry 3
 
-      - name: 'Cache assets'
-        uses: actions/cache@v4
+      - name: Panda asset generation and verification
+        uses: tastybamboo/panda-assets-verify-action@v1
         with:
-          path: |
-            spec/dummy/public/panda-core-assets
-            spec/dummy/tmp/cache/assets
-          key: ${{ runner.os }}-assets-${{ hashFiles('app/assets/**/*', 'app/javascript/**/*') }}
-          restore-keys: |
-            ${{ runner.os }}-assets-
+          dummy_root: spec/dummy
 
       - name: 'Setup test database'
         working-directory: spec/dummy
@@ -124,9 +119,6 @@ jobs:
           # Copy engine migrations to dummy app (required because engine disables migrations in test mode)
           cp ../../db/migrate/*.rb db/migrate/
           bundle exec rails db:drop db:create db:migrate
-
-      - name: Verify Panda Assets
-        uses: ./.github/workflows/panda-assets-verify.yml
 
       - name: 'Run specs'
         env:
