@@ -4,75 +4,117 @@ require "benchmark"
 require_relative "ui"
 require_relative "preparer"
 require_relative "verifier"
+require_relative "summary"
+require_relative "html_report"
 
 module Panda
   module Assets
     class Runner
-      Result = Struct.new(
-        :ok,
-        :prepare,
-        :verify,
-        keyword_init: true
-      )
-
-      def self.run(engine_key, config)
-        new(engine_key, config).run
-      end
-
-      def self.prepare(engine_key, config)
-        new(engine_key, config).prepare_only
-      end
-
-      def self.verify(engine_key, config)
-        new(engine_key, config).verify_only
-      end
-
-      attr_reader :engine_key, :config
-
-      def initialize(engine_key, config)
+      #
+      # Support two construction modes:
+      #   Runner.new                   → full-suite (all modules)
+      #   Runner.new(:core, config)    → single-engine
+      #
+      def initialize(engine_key = nil, config = {})
         @engine_key = engine_key
         @config = config
       end
 
+      #
+      # ────────────────────────────────────────────
+      # CLASS METHODS
+      # ────────────────────────────────────────────
+      #
+      class << self
+        #
+        # Unified CI entrypoint (all modules)
+        #
+        def run_all!
+          new.run_all!
+        end
+
+        #
+        # Legacy single-engine API
+        #
+        def run(engine_key, config = {})
+          new(engine_key, config).run
+        end
+
+        def prepare(engine_key, config = {})
+          new(engine_key, config).prepare_only
+        end
+
+        def verify(engine_key, config = {})
+          new(engine_key, config).verify_only
+        end
+      end
+
+      #
+      # ────────────────────────────────────────────
+      # SINGLE ENGINE PIPELINE (legacy)
+      # ────────────────────────────────────────────
+      #
+      def run
+        summary = Summary.new
+
+        prepare!(summary, @engine_key)
+        verify!(summary, @engine_key)
+
+        HTMLReport.write!(summary)
+
+        summary
+      end
+
       def prepare_only
-        preparer.prepare
+        summary = Summary.new
+        prepare!(summary, @engine_key)
+        HTMLReport.write!(summary)
+        summary
       end
 
       def verify_only
-        verifier.verify
+        summary = Summary.new
+        verify!(summary, @engine_key)
+        HTMLReport.write!(summary)
+        summary
       end
 
-      def run
-        Panda::Assets::UI.banner("Panda #{engine_label} dummy assets – PREPARE + VERIFY")
+      #
+      # ────────────────────────────────────────────
+      # FULL SUITE PIPELINE (CI)
+      # ────────────────────────────────────────────
+      #
+      def run_all!
+        summary = Summary.new
 
-        prepare_result = preparer.prepare
-        checks = {
-          prepare_propshaft: prepare_result.errors.none? { |e| e.include?("Propshaft") },
-          prepare_copy_js: true,
-          prepare_importmap: true
-        }
+        # Core first
+        prepare!(summary, :core)
+        verify!(summary, :core)
 
-        checks.each { |k, v| prepare_result.errors << k.to_s unless v }
+        # All registered modules next
+        Panda::Core::ModuleRegistry.registered_modules.each do |name|
+          prepare!(summary, name.to_sym)
+          verify!(summary, name.to_sym)
+        end
 
-        verify_result = verifier.verify
+        HTMLReport.write!(summary)
 
-        ok = prepare_result.ok && verify_result.ok
+        raise "Panda assets pipeline failed" if summary.failed?
 
-        Result.new(ok: ok, prepare: prepare_result, verify: verify_result)
+        summary
       end
 
       private
 
-      def engine_label
-        engine_key.to_s.split("_").map(&:capitalize).join(" ")
+      #
+      # Delegation wrappers
+      #
+      def prepare!(summary, engine_key)
+        Preparer.new(summary, engine_key).run
       end
 
-      def preparer
-        @preparer ||= Panda::Assets::Preparer.new(engine_key, config)
-      end
-
-      def verifier
-        @verifier ||= Panda::Assets::Verifier.new(engine_key, config)
+      def verify!(summary, engine_key)
+        Verifier.new(summary, engine_key).run
       end
     end
   end

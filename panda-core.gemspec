@@ -46,11 +46,11 @@ Gem::Specification.new do |spec|
 
   # Database dependencies
   spec.add_development_dependency "pg"
-
   # Webrick to handle asset compilation
   spec.add_dependency "webrick"
 
   # Testing
+  spec.add_development_dependency "benchmark"
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "rails-controller-testing"
   spec.add_development_dependency "capybara"
