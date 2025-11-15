@@ -163,11 +163,11 @@ jobs:
             database: 'sqlite'
             experimental: false
 
-          # Add any experimental/beta versions here
-          # - ruby: '3.5'
-          #   rails: '8.2.0'
-          #   database: 'postgresql'
-          #   experimental: true
+        # Add any experimental/beta versions here
+        # - ruby: '3.5'
+        #   rails: '8.2.0'
+        #   database: 'postgresql'
+        #   experimental: true
 
         exclude:
           # Rails 7.0 is not compatible with Ruby 3.4
