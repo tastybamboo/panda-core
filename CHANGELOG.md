@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.4] - 2025-11-15
+
+### Fixed
+
+- **CI Asset Compilation** - Replaced rake task with panda-assets-verify-action
+  - Fixes Chrome timeout issues during system specs
+  - Uses dedicated GitHub Action for asset verification
+  - Ensures proper asset compilation in CI environment
+  - Resolves Ferrum::ProcessTimeoutError from JavaScript/asset failures
+
+### Changed
+
+- Removed non-existent js-verification job dependency from CI workflow
+- Added proper permissions for GitHub Actions in CI workflow
+- Migrated from rake-based asset compilation to GitHub Action approach
+
+### Technical Details
+
+- Asset verification now handled by `tastybamboo/panda-assets-verify-action@v1`
+- Database migrations run before asset verification to ensure schema exists
+- Proper artifact generation for asset reports
+
 ## [0.9.3] - 2025-11-13
 
 ### Added
