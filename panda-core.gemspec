@@ -64,7 +64,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "standard"
   spec.add_development_dependency "brakeman"
   spec.add_development_dependency "bundler-audit"
-  
+
   # Development Tools
   spec.add_development_dependency "debug"
   spec.add_development_dependency "pry-rails"
