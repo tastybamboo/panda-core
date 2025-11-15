@@ -35,5 +35,7 @@ jobs:
         with:
           comment-summary-in-pr: always
           fail-on-severity: moderate
-          deny-licenses: GPL-1.0-or-later, LGPL-2.0-or-later
+          # Only allow permissive licenses suitable for commercial use
+          # Using allow-licenses instead of deprecated deny-licenses
+          allow-licenses: MIT, BSD-3-Clause, BSD-2-Clause, Apache-2.0, ISC, 0BSD, Unlicense, CC0-1.0, Ruby, Beerware, WTFPL
           retry-on-snapshot-warnings: true
