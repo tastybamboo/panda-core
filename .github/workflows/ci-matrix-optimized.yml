@@ -163,7 +163,7 @@ jobs:
             database: 'sqlite'
             experimental: false
 
-          # Add any experimental/beta versions here
+          # Add any experimental/beta versions here  # yamllint disable-line rule:comments-indentation
           # - ruby: '3.5'
           #   rails: '8.2.0'
           #   database: 'postgresql'
