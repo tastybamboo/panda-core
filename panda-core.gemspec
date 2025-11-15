@@ -26,6 +26,9 @@ Gem::Specification.new do |spec|
     "VERSION"
   ]
 
+  spec.executables << "panda-assets"
+  spec.bindir = "bin"
+
   spec.add_dependency "image_processing", "~> 1.2"
   spec.add_dependency "importmap-rails"
   spec.add_dependency "omniauth"
@@ -41,9 +44,13 @@ Gem::Specification.new do |spec|
   spec.add_dependency "literal", "~> 1.8"
   spec.add_dependency "tailwind_merge", "~> 1.3"
 
+  # Database dependencies
   spec.add_development_dependency "pg"
+  # Webrick to handle asset compilation
+  spec.add_dependency "webrick"
 
   # Testing
+  spec.add_development_dependency "benchmark"
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "rails-controller-testing"
   spec.add_development_dependency "capybara"

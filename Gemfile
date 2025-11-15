@@ -43,6 +43,7 @@ end
 
 group :development do
   gem "pry-rails"
+  gem "benchmark" # Used to profile asset compilation
 end
 
 group :test do
