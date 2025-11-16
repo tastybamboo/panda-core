@@ -2,7 +2,7 @@
 
 module Panda
   module Core
-    # Version 0.10.1 - Fix duplicate JavaScript imports
-    VERSION = "0.10.1"
+    # Version 0.10.2 - Fix JavaScript middleware fallback for CI environments
+    VERSION = "0.10.2"
   end
 end

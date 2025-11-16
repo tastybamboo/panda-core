@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.2] - 2025-11-16
+
+### Fixed
+
+- **JavaScript Middleware Fallback for CI** - Added robust fallback paths for JavaScript middleware
+  - JavaScriptMiddleware now tries multiple possible root paths to locate module files
+  - Supports both standard gem installation paths and CI-specific environments
+  - Checks: gem root, engine root, and Rails.root for module files
+  - Adds verbose error logging to diagnose Rails startup failures in CI
+  - Fixes issue where middleware couldn't find JavaScript files in certain CI setups
+  - Ensures proper asset serving across different deployment environments
+
+### Technical Details
+
+- Enhanced `ModuleRegistry::JavaScriptMiddleware` with fallback path resolution
+- Added detailed logging for Rails initialization errors in CI environments
+- Improved robustness of asset serving across gem installations and CI pipelines
+
 ## [0.10.1] - 2025-11-16
 
 ### Fixed
