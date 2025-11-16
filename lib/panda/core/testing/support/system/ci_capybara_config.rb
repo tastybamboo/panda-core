@@ -36,13 +36,24 @@ Capybara.register_server :puma_ci do |app, port, host|
   min_threads = Integer(ENV.fetch("PUMA_MIN_THREADS", "2"))
   max_threads = Integer(ENV.fetch("PUMA_MAX_THREADS", "2"))
 
+  # Wrap the app to catch startup errors
+  wrapped_app = proc do |env|
+    app.call(env)
+  rescue => e
+    puts "[CI ERROR] Rails middleware error during request:"
+    puts "[CI ERROR] #{e.class}: #{e.message}"
+    puts "[CI ERROR] Backtrace:"
+    puts e.backtrace.first(10).join("\n")
+    raise e
+  end
+
   options = {
     Host: host,
     Port: port,
     Threads: "#{min_threads}:#{max_threads}",
     Workers: 0,
-    Silent: !ENV["RSPEC_DEBUG"],
-    Verbose: ENV["RSPEC_DEBUG"],
+    Silent: false,  # Always verbose in CI to catch startup errors
+    Verbose: true,
     PreloadApp: false
   }
 
@@ -53,11 +64,11 @@ Capybara.register_server :puma_ci do |app, port, host|
     # Puma <= 6.x signature:
     #   run(app, options_hash)
     puts "[CI Config] Using Puma <= 6 API (arity 2)"
-    Rack::Handler::Puma.run(app, options)
+    Rack::Handler::Puma.run(wrapped_app, options)
   else
     # Puma >= 7.x signature:
     #   run(app, **options)
     puts "[CI Config] Using Puma >= 7 API (keyword args)"
-    Rack::Handler::Puma.run(app, **options)
+    Rack::Handler::Puma.run(wrapped_app, **options)
   end
 end
