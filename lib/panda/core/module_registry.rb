@@ -303,13 +303,34 @@ module Panda
           return @app.call(env) if relative_path.empty?
 
           # Try to find the file in registered modules
+          if ENV["RSPEC_DEBUG"]
+            puts "[JavaScriptMiddleware] Looking for: #{path} (relative: #{relative_path})"
+          end
+
           file_path = find_javascript_file(relative_path)
 
           if file_path && File.file?(file_path)
-            puts "[JavaScriptMiddleware] Serving: #{path} from #{file_path}" if ENV["RSPEC_DEBUG"]
+            puts "[JavaScriptMiddleware] ✅ Serving: #{path} from #{file_path}" if ENV["RSPEC_DEBUG"]
             serve_file(file_path, env)
           else
-            puts "[JavaScriptMiddleware] Not found: #{path} (tried #{relative_path})" if ENV["RSPEC_DEBUG"]
+            if ENV["RSPEC_DEBUG"]
+              puts "[JavaScriptMiddleware] ❌ Not found: #{path}"
+              puts "[JavaScriptMiddleware]    Searched relative path: #{relative_path}"
+              puts "[JavaScriptMiddleware]    Checked locations:"
+              ModuleRegistry.modules.each do |gem_name, info|
+                if ModuleRegistry.send(:engine_available?, info[:engine])
+                  root = ModuleRegistry.send(:engine_root, info[:engine])
+                  if root
+                    puts "[JavaScriptMiddleware]      - #{root.join("app/javascript/panda", relative_path)}"
+                    puts "[JavaScriptMiddleware]      - #{root.join("public/panda", relative_path)}"
+                  end
+                end
+              end
+              if defined?(Rails.root)
+                puts "[JavaScriptMiddleware]      - #{Rails.root.join("app/javascript/panda", relative_path)}"
+                puts "[JavaScriptMiddleware]      - #{Rails.root.join("public/panda", relative_path)}"
+              end
+            end
             @app.call(env)
           end
         rescue => e
@@ -329,9 +350,24 @@ module Panda
             root = ModuleRegistry.send(:engine_root, info[:engine])
             next unless root
 
-            # Check in app/javascript/panda/
+            # Check in app/javascript/panda/ (primary location)
             candidate = root.join("app/javascript/panda", relative_path)
             return candidate.to_s if candidate.exist? && candidate.file?
+
+            # Fallback to public/panda/ (for CI environments where assets are copied)
+            public_candidate = root.join("public/panda", relative_path)
+            return public_candidate.to_s if public_candidate.exist? && public_candidate.file?
+          end
+
+          # Also check Rails.root if available (for dummy apps in CI)
+          if defined?(Rails.root)
+            # Check app/javascript/panda/ in Rails.root
+            rails_candidate = Rails.root.join("app/javascript/panda", relative_path)
+            return rails_candidate.to_s if rails_candidate.exist? && rails_candidate.file?
+
+            # Fallback to public/panda/ in Rails.root
+            rails_public_candidate = Rails.root.join("public/panda", relative_path)
+            return rails_public_candidate.to_s if rails_public_candidate.exist? && rails_public_candidate.file?
           end
 
           nil
