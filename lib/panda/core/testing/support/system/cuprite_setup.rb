@@ -67,6 +67,9 @@ module Panda
           # Add CI-specific options
           if ENV["GITHUB_ACTIONS"] == "true"
             options[:browser_options].merge!(ci_browser_options)
+
+            # Ensure CI uses xvfb to run the browser
+            options[:browser_options][:xvfb] = true
           end
 
           Capybara.register_driver :cuprite do |app|
