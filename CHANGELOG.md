@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2025-11-16
+
+### Added
+
+- **MultipleExceptionError Detection** - Automatic detection and handling of multiple exceptions in system tests
+  - Detects when tests encounter multiple exceptions (e.g., browser crashes, timeout errors)
+  - Groups exceptions by class for cleaner, more concise output
+  - Skips automatic retry logic when multiple exceptions detected
+  - Significantly reduces CI time by avoiding futile retries on catastrophic failures
+  - Applied to both `system_test_helpers.rb` and `better_system_tests.rb`
+  - Benefits all Panda gems using panda-core test infrastructure
+
+### Fixed
+
+- **ES Module Shims Loading** - Corrected ES module shims loading in `_header.html.erb`
+  - Ensures proper JavaScript module loading across all browsers
+  - Fixes compatibility issues with older browsers
+
+### Changed
+
+- **Verbose Debug Output Suppression** - Reduced noise in CI test output
+  - Suppresses repetitive exception messages when MultipleExceptionError is detected
+  - Screenshot capture errors no longer print duplicate exception details
+  - Cleaner CI logs make it easier to identify actual test failures
+
+### Performance
+
+- **Faster CI Execution** - Tests with browser crashes or multiple exceptions now fail fast
+  - No retry attempts on MultipleExceptionError (previously would retry and hang)
+  - Tests move immediately to next test instead of waiting for timeout
+  - Can save 2+ minutes per failed test in CI environments
+
+### Technical Details
+
+- MultipleExceptionError handler integrated into around hooks
+- Checks both caught exceptions and `example.exception` for RSpec-aggregated errors
+- Sets `multiple_exception_detected` metadata flag to coordinate with after hooks
+- Example output shows grouped exceptions: "Ferrum::ProcessTimeoutError (5 occurrences)"
+
 ## [0.9.4] - 2025-11-15
 
 ### Fixed
