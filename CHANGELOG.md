@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.1] - 2025-11-16
+
+### Fixed
+
+- **Duplicate JavaScript Imports** - Removed hardcoded Core entry points in asset helper
+  - Core was being added twice: once hardcoded and once from ModuleRegistry
+  - Now relies solely on ModuleRegistry for all modules including Core
+  - Fixes duplicate `panda/core/application` and `panda/core/controllers/index` imports
+  - Ensures clean JavaScript imports: Core once, CMS once (when present)
+
+### Technical Details
+
+- Removed legacy hardcoded Core entry points from `AssetHelper#panda_core_javascript`
+- ModuleRegistry is now the single source of truth for all Panda module JavaScript
+- Prevents future duplication bugs as new modules are added
+
 ## [0.10.0] - 2025-11-16
 
 ### Added

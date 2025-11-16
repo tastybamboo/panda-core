@@ -2,7 +2,7 @@
 
 module Panda
   module Core
-    # Version 0.10.0 - MultipleExceptionError detection and ES shims fix
-    VERSION = "0.10.0"
+    # Version 0.10.1 - Fix duplicate JavaScript imports
+    VERSION = "0.10.1"
   end
 end
