@@ -31,12 +31,8 @@ module Panda
 
           importmap_json = JSON.generate({"imports" => imports})
 
-          # Generate entry point script tags for Core and all registered modules
+          # Generate entry point script tags for all registered modules (including Core)
           entry_points = []
-
-          # Core entry points (always included)
-          entry_points << '<script type="module">import "panda/core/application"</script>'
-          entry_points << '<script type="module">import "panda/core/controllers/index"</script>'
 
           # Add entry points for each registered module
           Panda::Core::ModuleRegistry.modules.each do |gem_name, info|
