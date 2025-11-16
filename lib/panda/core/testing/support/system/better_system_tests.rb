@@ -45,25 +45,59 @@ module Panda
 
             # Enable automatic screenshots on failure
             # Add CI-specific timeout and retry logic for form interactions
+            # Includes MultipleExceptionError detection
             around(:each, type: :system) do |example|
-              if ENV["GITHUB_ACTIONS"] == "true"
-                # In CI, wrap the test execution with additional error handling
-                begin
-                  example.run
-                rescue => e
-                  # Log any error for debugging
-                  puts "[CI] Test error detected: #{e.class} - #{e.message}"
-                  puts "[CI] Current URL: #{begin
-                    page.current_url
-                  rescue
-                    ""
-                  end}"
+              exception = nil
 
-                  # Re-raise the original error
-                  raise e
-                end
-              else
+              begin
                 example.run
+              rescue => e
+                exception = e
+              end
+
+              # Also check example.exception in case RSpec aggregated exceptions there
+              exception ||= example.exception
+
+              # Handle MultipleExceptionError specially - don't retry, just report and skip
+              if exception.is_a?(RSpec::Core::MultipleExceptionError)
+                puts "\n" + ("=" * 80)
+                puts "⚠️  MULTIPLE EXCEPTIONS - SKIPPING TEST (NO RETRY)"
+                puts "=" * 80
+                puts "Test: #{example.full_description}"
+                puts "File: #{example.metadata[:file_path]}:#{example.metadata[:line_number]}"
+                puts "Total exceptions: #{exception.all_exceptions.count}"
+                puts "=" * 80
+
+                # Group exceptions by class for cleaner output
+                exceptions_by_class = exception.all_exceptions.group_by(&:class)
+                exceptions_by_class.each do |klass, exs|
+                  puts "\n#{klass.name} (#{exs.count} occurrence#{"s" if exs.count > 1}):"
+                  puts "  #{exs.first.message.split("\n").first}"
+                end
+
+                puts "\n" + ("=" * 80)
+                puts "⚠️  Skipping retry - moving to next test"
+                puts "=" * 80 + "\n"
+
+                # Mark this so after hooks can skip verbose output
+                example.metadata[:multiple_exception_detected] = true
+
+                # Re-raise to mark test as failed, but don't retry
+                raise exception
+              end
+
+              # For other exceptions in CI, log and re-raise
+              if exception && ENV["GITHUB_ACTIONS"] == "true"
+                puts "[CI] Test error detected: #{exception.class} - #{exception.message}"
+                puts "[CI] Current URL: #{begin
+                  page.current_url
+                rescue
+                  ""
+                end}"
+                raise exception
+              elsif exception
+                # Not in CI, just re-raise
+                raise exception
               end
             end
 
@@ -127,8 +161,11 @@ module Panda
                 end
               rescue => e
                 puts "Failed to capture screenshot: #{e.message}"
-                puts "Exception class: #{example.exception.class}"
-                puts "Exception message: #{example.exception.message}"
+                # Skip verbose output if already handled by MultipleExceptionError handler
+                unless example.metadata[:multiple_exception_detected]
+                  puts "Exception class: #{example.exception.class}"
+                  puts "Exception message: #{example.exception.message}"
+                end
               end
             end
           end
