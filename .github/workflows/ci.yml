@@ -113,10 +113,9 @@ jobs:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
         run: |
-          rm -rf db/migrate
-          mkdir -p db/migrate
-          cp ../../db/migrate/*.rb db/migrate/
-          bundle exec rails db:drop db:create db:migrate
+          bundle exec rails db:drop db:create
+          bundle exec rails railties:install:migrations
+          bundle exec rails db:migrate
 
       #
       # 🐼 Run Panda Asset Verification

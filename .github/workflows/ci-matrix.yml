@@ -122,11 +122,10 @@ jobs:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
         run: |
-          echo "🗄️ Dropping and creating database..."
+          echo "🗄️ Setting up database..."
           bundle exec rails db:drop db:create
-
-          echo "📋 Loading schema (baseline with all tables)..."
-          bundle exec rails db:schema:load
+          bundle exec rails railties:install:migrations
+          bundle exec rails db:migrate
 
           echo "✅ Database ready"
 
@@ -259,11 +258,10 @@ jobs:
           DATABASE_URL: 'sqlite3:db/test.sqlite3'
           RAILS_ENV: test
         run: |
-          echo "🗄️ Dropping and creating database..."
+          echo "🗄️ Setting up database..."
           bundle exec rails db:drop db:create
-
-          echo "📋 Loading schema (baseline with all tables)..."
-          bundle exec rails db:schema:load
+          bundle exec rails railties:install:migrations
+          bundle exec rails db:migrate
 
           echo "✅ Database ready"
 
