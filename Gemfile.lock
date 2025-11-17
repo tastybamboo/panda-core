@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (0.10.2)
+    panda-core (0.10.3)
       image_processing (~> 1.2)
       importmap-rails
       literal (~> 1.8)
@@ -481,6 +481,8 @@ GEM
     snaky_hash (2.0.3)
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
+    sqlite3 (2.8.0-arm64-darwin)
+    sqlite3 (2.8.0-x86_64-linux-gnu)
     standard (1.51.1)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
@@ -578,6 +580,7 @@ DEPENDENCIES
   simplecov-lcov
   simplecov_json_formatter
   simplecov_lcov_formatter
+  sqlite3
   standard
   standard-rails
   stringio

@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.3] - 2025-11-17
+
+### Fixed
+
+- **CI Artifact Naming Conflicts** - Resolved 409 conflict errors in matrix builds
+  - Added `artifact_suffix` parameter to panda-assets-verify-action
+  - Each matrix job now uploads uniquely named artifacts (includes Ruby/Rails versions)
+  - Prevents "an artifact with this name already exists" errors
+  - Fixes apply to both PostgreSQL and SQLite test jobs
+
+- **GitHub Actions JSON Parsing** - Fixed control character errors in github-script
+  - Asset verification summary now passed via environment variables
+  - Eliminates "Bad control character in string literal" parsing errors
+  - More robust handling of JSON output with newlines and special characters
+
+### Changed
+
+- **SQLite Tests Non-Blocking** - SQLite compatibility tests no longer block CI pipeline
+  - Added `continue-on-error: true` to SQLite jobs in both workflow files
+  - Matrix summary updated to warn about SQLite failures without failing build
+  - Allows development to continue while SQLite compatibility issues are resolved
+
+- **Puma Server Logs Suppressed** - Test output now cleaner without request logs
+  - Server logs silent by default in CI mode (previously verbose)
+  - Controlled via `CAPYBARA_SERVER_VERBOSE` environment variable
+  - Set `CAPYBARA_SERVER_VERBOSE=true` to enable logging for debugging
+  - Significantly reduces noise in test output
+
+### Technical Details
+
+- Updated `panda-assets-verify-action@v1` with artifact_suffix support
+- Modified `ci_capybara_config.rb` to default Silent: true, Verbose: false
+- CI workflows updated: ci-matrix.yml and ci-matrix-optimized.yml
+- Artifact names now include matrix variables: `-ruby-X.X-rails-X.X.X-{postgresql|sqlite}`
+
 ## [0.10.2] - 2025-11-16
 
 ### Fixed
