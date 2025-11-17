@@ -47,13 +47,16 @@ Capybara.register_server :puma_ci do |app, port, host|
     raise e
   end
 
+  # Allow conditional silencing of server logs via CAPYBARA_SERVER_VERBOSE
+  verbose = ENV.fetch("CAPYBARA_SERVER_VERBOSE", "false") == "true"
+
   options = {
     Host: host,
     Port: port,
     Threads: "#{min_threads}:#{max_threads}",
     Workers: 0,
-    Silent: false,  # Always verbose in CI to catch startup errors
-    Verbose: true,
+    Silent: !verbose,
+    Verbose: verbose,
     PreloadApp: false
   }
 

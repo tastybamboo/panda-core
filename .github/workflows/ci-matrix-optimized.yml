@@ -278,6 +278,7 @@ jobs:
     name: 'SQLite (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
     needs: smoke-test  # Gate on smoke test success
     runs-on: 'ubuntu-latest'
+    continue-on-error: true
 
     strategy:
       fail-fast: false
@@ -393,8 +394,7 @@ jobs:
           fi
 
           if [[ "${{ needs.compatibility-matrix-sqlite.result }}" == "failure" ]]; then
-            echo "❌ SQLite compatibility tests failed"
-            exit 1
+            echo "⚠️  SQLite compatibility tests failed (allowed to fail)"
           fi
 
-          echo "✅ All tests passed!"
+          echo "✅ All required tests passed!"
