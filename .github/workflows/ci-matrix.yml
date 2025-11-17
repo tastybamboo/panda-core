@@ -122,10 +122,20 @@ jobs:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
         run: |
-          rm -rf db/migrate
-          mkdir -p db/migrate
-          cp ../../db/migrate/*.rb db/migrate/
-          bundle exec rails db:drop db:create db:migrate
+          echo "🗄️ Dropping and creating database..."
+          bundle exec rails db:drop db:create
+
+          echo "📋 Installing migrations from engine..."
+          bundle exec rails railties:install:migrations
+
+          echo "📋 Migration files in dummy app:"
+          ls -la db/migrate/ || echo "No migration files found"
+
+          echo "🔄 Running migrations..."
+          bundle exec rails db:migrate --trace
+
+          echo "📊 Migration status:"
+          bundle exec rails db:migrate:status
 
       - name: 'Verify database schema'
         working-directory: spec/dummy
@@ -256,10 +266,20 @@ jobs:
           DATABASE_URL: 'sqlite3:db/test.sqlite3'
           RAILS_ENV: test
         run: |
-          rm -rf db/migrate
-          mkdir -p db/migrate
-          cp ../../db/migrate/*.rb db/migrate/
-          bundle exec rails db:drop db:create db:migrate
+          echo "🗄️ Dropping and creating database..."
+          bundle exec rails db:drop db:create
+
+          echo "📋 Installing migrations from engine..."
+          bundle exec rails railties:install:migrations
+
+          echo "📋 Migration files in dummy app:"
+          ls -la db/migrate/ || echo "No migration files found"
+
+          echo "🔄 Running migrations..."
+          bundle exec rails db:migrate --trace
+
+          echo "📊 Migration status:"
+          bundle exec rails db:migrate:status
 
       - name: 'Verify database schema'
         working-directory: spec/dummy
