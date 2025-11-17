@@ -108,9 +108,7 @@ jobs:
           RAILS_ENV: test
         run: |
           echo "🗄️ Setting up database..."
-          bundle exec rails db:drop db:create
-          bundle exec rails railties:install:migrations
-          bundle exec rails db:migrate
+          bundle exec rails db:create db:schema:load
 
           echo "✅ Database ready"
 
@@ -147,13 +145,13 @@ jobs:
   # Full matrix tests - only run if smoke test passes
   compatibility-matrix-postgresql:
     name: 'PostgreSQL (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
-    needs: smoke-test  # Gate on smoke test success
+    needs: smoke-test # Gate on smoke test success
     runs-on: 'ubuntu-latest'
-    continue-on-error: ${{ matrix.experimental == true }}  # Allow experimental to fail
+    continue-on-error: ${{ matrix.experimental == true }} # Allow experimental to fail
 
     strategy:
       fail-fast: false
-      max-parallel: 10  # Limit parallel jobs to avoid overwhelming CI
+      max-parallel: 10 # Limit parallel jobs to avoid overwhelming CI
       matrix:
         ruby: ['3.2', '3.3', '3.4']
         rails: ['7.0.10', '7.1.6', '7.2.3', '8.0.4', '8.1.1']
@@ -280,7 +278,7 @@ jobs:
 
   compatibility-matrix-sqlite:
     name: 'SQLite (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
-    needs: smoke-test  # Gate on smoke test success
+    needs: smoke-test # Gate on smoke test success
     runs-on: 'ubuntu-latest'
     continue-on-error: true
 
