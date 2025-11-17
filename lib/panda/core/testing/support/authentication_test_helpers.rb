@@ -23,7 +23,7 @@ module Panda
           user.firstname = attributes[:firstname] || "Admin" if user.respond_to?(:firstname=)
           user.lastname = attributes[:lastname] || "User" if user.respond_to?(:lastname=)
           user.name = attributes[:name] || "Admin User" if user.respond_to?(:name=) && !user.respond_to?(:firstname=)
-          user.image_url = attributes[:image_url] || default_image_url if user.respond_to?(:image_url=)
+          user.image_url = attributes[:image_url] || default_image_url
           # Use is_admin for the actual column, but support both for compatibility
           if user.respond_to?(:is_admin=)
             user.is_admin = attributes.fetch(:admin, true)
@@ -45,7 +45,7 @@ module Panda
           user.firstname = attributes[:firstname] || "Regular" if user.respond_to?(:firstname=)
           user.lastname = attributes[:lastname] || "User" if user.respond_to?(:lastname=)
           user.name = attributes[:name] || "Regular User" if user.respond_to?(:name=) && !user.respond_to?(:firstname=)
-          user.image_url = attributes[:image_url] || default_image_url(dark: true) if user.respond_to?(:image_url=)
+          user.image_url = attributes[:image_url] || default_image_url(dark: true)
           # Use is_admin for the actual column, but support both for compatibility
           if user.respond_to?(:is_admin=)
             user.is_admin = attributes.fetch(:admin, false)
