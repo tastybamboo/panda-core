@@ -128,12 +128,6 @@ jobs:
           echo "📋 Loading schema (baseline with all tables)..."
           bundle exec rails db:schema:load
 
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running any new migrations not in schema.rb..."
-          bundle exec rails db:migrate
-
           echo "✅ Database ready"
 
       - name: 'Verify database schema'
@@ -270,12 +264,6 @@ jobs:
 
           echo "📋 Loading schema (baseline with all tables)..."
           bundle exec rails db:schema:load
-
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running any new migrations not in schema.rb..."
-          bundle exec rails db:migrate
 
           echo "✅ Database ready"
 

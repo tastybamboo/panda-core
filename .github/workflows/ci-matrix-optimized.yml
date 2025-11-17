@@ -113,12 +113,6 @@ jobs:
           echo "📋 Loading schema (panda_core tables)..."
           bundle exec rails db:schema:load
 
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running engine migrations..."
-          bundle exec rails db:migrate
-
           echo "✅ Database ready"
 
       - name: Panda asset generation and verification
@@ -248,12 +242,6 @@ jobs:
           echo "📋 Loading schema (panda_core tables)..."
           bundle exec rails db:schema:load
 
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running engine migrations..."
-          bundle exec rails db:migrate
-
           echo "✅ Database ready"
 
       #
@@ -356,12 +344,6 @@ jobs:
 
           echo "📋 Loading schema (panda_core tables)..."
           bundle exec rails db:schema:load
-
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running engine migrations..."
-          bundle exec rails db:migrate
 
           echo "✅ Database ready"
 
