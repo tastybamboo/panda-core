@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.4] - 2025-11-17
+
+### Fixed
+
+- **Database Configuration for CI Tests** - Improved database setup and migration handling
+  - Fixed SQLite database configuration support in CI environment
+  - Proper migration installation using `railties:install:migrations`
+  - Database setup now runs from spec/dummy directory for correct context
+  - Removed duplicate spec/dummy/Gemfile that caused configuration conflicts
+  - Schema version tracking now matches latest migration timestamps
+  - Added existing panda_core tables to schema.rb for proper initialization
+
+### Changed
+
+- **Database Setup Workflow** - Simplified and standardized database preparation
+  - Use `schema:load` before running new migrations for faster setup
+  - Migrations now properly read from panda-core engine directory
+  - Both optimized and standard matrix workflows use consistent database setup
+  - Removed unnecessary migration steps that caused confusion
+
+### Technical Details
+
+- CI workflows updated to use `railties:install:migrations` for engine migrations
+- Database setup sequence: drop → create → install migrations → migrate
+- Schema.rb now properly tracks all panda_core tables for test environment
+- Eliminated path-based conflicts from spec/dummy having its own Gemfile
+
 ## [0.10.3] - 2025-11-17
 
 ### Fixed

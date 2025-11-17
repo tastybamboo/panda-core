@@ -2,7 +2,7 @@
 
 module Panda
   module Core
-    # Version 0.10.3 - CI improvements and test configuration fixes
-    VERSION = "0.10.3"
+    # Version 0.10.4 - Database configuration improvements for CI tests
+    VERSION = "0.10.4"
   end
 end
