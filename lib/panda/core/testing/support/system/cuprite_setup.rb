@@ -2,6 +2,7 @@
 
 require "ferrum"
 require "capybara/cuprite"
+require_relative "ferrum_console_logger"
 
 # Shared Cuprite driver configuration for all Panda gems
 # This provides standard Cuprite setup with sensible defaults that work across gems
@@ -17,6 +18,14 @@ module Panda
   module Core
     module Testing
       module CupriteSetup
+        # Class variable to store the console logger instance
+        # This allows tests to access console logs after they run
+        @console_logger = nil
+
+        class << self
+          attr_accessor :console_logger
+        end
+
         # Base Cuprite options shared across all drivers
         def self.base_options
           default_timeout = 2
@@ -72,6 +81,10 @@ module Panda
             options[:browser_options][:xvfb] = true
           end
 
+          # Create console logger for capturing browser console messages
+          self.console_logger = Panda::Core::Testing::Support::System::FerrumConsoleLogger.new
+          options[:logger] = console_logger
+
           Capybara.register_driver :cuprite do |app|
             Capybara::Cuprite::Driver.new(app, **options)
           end
@@ -85,6 +98,9 @@ module Panda
           if ENV["GITHUB_ACTIONS"] == "true"
             options[:browser_options].merge!(ci_browser_options)
           end
+
+          # Use the same console logger instance for mobile driver
+          options[:logger] = console_logger if console_logger
 
           Capybara.register_driver :cuprite_mobile do |app|
             Capybara::Cuprite::Driver.new(app, **options)
