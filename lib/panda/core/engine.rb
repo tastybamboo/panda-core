@@ -24,7 +24,6 @@ require_relative "shared/inflections_config"
 require_relative "shared/generator_config"
 
 # Load engine configuration modules
-require_relative "engine/test_config"
 require_relative "engine/autoload_config"
 require_relative "engine/middleware_config"
 require_relative "engine/importmap_config"
@@ -45,7 +44,6 @@ module Panda
       include Shared::GeneratorConfig
 
       # Include engine-specific configuration modules
-      include TestConfig
       include AutoloadConfig
       include MiddlewareConfig
       include ImportmapConfig
