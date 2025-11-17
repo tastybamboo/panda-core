@@ -113,9 +113,19 @@ jobs:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
         run: |
+          echo "🗄️ Dropping and creating database..."
           bundle exec rails db:drop db:create
+
+          echo "📋 Loading schema (panda_core tables)..."
+          bundle exec rails db:schema:load
+
+          echo "📦 Installing migrations from engines..."
           bundle exec rails railties:install:migrations
+
+          echo "🔄 Running engine migrations..."
           bundle exec rails db:migrate
+
+          echo "✅ Database ready"
 
       #
       # 🐼 Run Panda Asset Verification
