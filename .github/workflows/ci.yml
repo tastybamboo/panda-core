@@ -114,7 +114,7 @@ jobs:
           RAILS_ENV: test
         run: |
           echo "🗄️ Creating database and loading schema..."
-          bundle exec rails db:create db:schema:load
+          bundle exec rails db:schema:load
 
           echo "✅ Database ready"
 
