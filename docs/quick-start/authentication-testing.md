@@ -60,7 +60,7 @@ RSpec.describe "Widget Management", type: :system do
     # Login via test endpoint
     admin = create_admin_user
     visit "/admin/test_login/#{admin.id}"
-    sleep 0.3  # Brief wait for session
+    # sleep 0.3  # Brief wait for session
 
     # Test the workflow
     visit "/admin/widgets"
@@ -123,7 +123,7 @@ sign_in_as(admin_user)  # Works with any user
 ```ruby
 # Direct endpoint visit (simple, recommended)
 visit "/admin/test_login/#{user.id}"
-sleep 0.3
+# sleep 0.3
 
 # Or use convenience helpers
 login_with_google(user)
@@ -228,7 +228,7 @@ RSpec.describe "Content Publishing Workflow", type: :system do
   it "allows admin to create and publish post" do
     admin = create_admin_user
     visit "/admin/test_login/#{admin.id}"
-    sleep 0.3
+    # sleep 0.3
 
     # Step 1: Create draft
     visit "/admin/posts/new"
@@ -280,7 +280,7 @@ expect(flash[:success]).to eq("...")
 
 # SYSTEM SPECS (User workflows, no flash)
 visit "/admin/test_login/#{admin.id}"
-sleep 0.3
+# sleep 0.3
 visit "/admin"
 expect(page).to have_content("Dashboard")
 ```

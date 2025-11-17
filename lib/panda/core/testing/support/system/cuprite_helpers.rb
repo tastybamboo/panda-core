@@ -44,7 +44,7 @@ module Panda
               ready = page.evaluate_script("document.readyState")
               break if ready == "complete"
 
-              sleep 0.1
+              # sleep 0.1
             end
           end
         rescue Timeout::Error
@@ -64,7 +64,7 @@ module Panda
               end
               break if loaded
 
-              sleep 0.1
+              # sleep 0.1
             end
           end
           true
@@ -82,7 +82,7 @@ module Panda
           while Time.now - start_time < timeout
             return true if page.has_css?(selector, visible: true)
 
-            sleep 0.1
+            # sleep 0.1
           end
           false
         end
@@ -96,7 +96,7 @@ module Panda
           while Time.now - start_time < timeout
             return true if page.has_text?(text)
 
-            sleep 0.1
+            # sleep 0.1
           end
           false
         end
@@ -122,7 +122,7 @@ module Panda
           while Time.now - start_time < timeout
             return true if page.html != initial_dom
 
-            sleep 0.1
+            # sleep 0.1
           end
           false
         end
@@ -147,7 +147,7 @@ module Panda
         def click_on_selectors(*css_selectors)
           css_selectors.each do |selector|
             find(selector).click
-            sleep 0.1 # Add a small delay to allow JavaScript to run
+            # sleep 0.1 # Add a small delay to allow JavaScript to run
           end
         end
 
@@ -160,7 +160,7 @@ module Panda
           while Time.now - start_time < timeout
             return true if page.has_field?(field_name, with: value)
 
-            sleep 0.1
+            # sleep 0.1
           end
           false
         end
@@ -179,7 +179,7 @@ module Panda
 
             if retries <= 2 && elapsed < max_duration && ENV["GITHUB_ACTIONS"]
               puts "[CI] Element not found on fill_in '#{locator}', retry #{retries}/2 (#{elapsed.round(1)}s elapsed)"
-              sleep 0.5
+              # sleep 0.5
               retry
             else
               puts "[CI] Giving up on fill_in '#{locator}' after #{retries} retries and #{elapsed.round(1)}s" if ENV["GITHUB_ACTIONS"]
@@ -201,7 +201,7 @@ module Panda
 
             if retries <= 2 && elapsed < max_duration && ENV["GITHUB_ACTIONS"]
               puts "[CI] Element not found on select '#{value}' from '#{from}', retry #{retries}/2 (#{elapsed.round(1)}s elapsed)"
-              sleep 0.5
+              # sleep 0.5
               retry
             else
               puts "[CI] Giving up on select '#{value}' from '#{from}' after #{retries} retries and #{elapsed.round(1)}s" if ENV["GITHUB_ACTIONS"]
@@ -223,7 +223,7 @@ module Panda
 
             if retries <= 2 && elapsed < max_duration && ENV["GITHUB_ACTIONS"]
               puts "[CI] Element not found on click_button '#{locator}', retry #{retries}/2 (#{elapsed.round(1)}s elapsed)"
-              sleep 0.5
+              # sleep 0.5
               retry
             else
               puts "[CI] Giving up on click_button '#{locator}' after #{retries} retries and #{elapsed.round(1)}s" if ENV["GITHUB_ACTIONS"]

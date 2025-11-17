@@ -114,7 +114,7 @@ module Panda
                 end
 
                 # Wait for DOM to be ready
-                sleep 0.5
+                # sleep 0.5
 
                 # Get comprehensive page info
                 page_html = begin
