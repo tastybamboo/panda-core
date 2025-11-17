@@ -28,6 +28,7 @@ group :development, :test do
   gem "rake"
   gem "reek"
   gem "ruby-lsp"
+  gem "sqlite3"
   gem "standard"
   gem "standard-rails"
   gem "stringio"
