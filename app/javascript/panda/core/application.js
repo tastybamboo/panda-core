@@ -3,6 +3,11 @@ import '@fortawesome/fontawesome-free'
 
 const application = Application.start()
 
+// Always propagate Stimulus controller errors for better debugging
+application.handleError = (error, message, detail) => {
+  throw error
+}
+
 // Configure Stimulus development experience
 application.debug = false
 window.Stimulus = application
