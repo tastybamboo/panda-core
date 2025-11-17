@@ -141,6 +141,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql
 
       #
       # 🧪 Run application tests
@@ -246,6 +247,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-sqlite
 
       #
       # 🧪 Run application tests
