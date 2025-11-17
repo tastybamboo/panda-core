@@ -220,13 +220,7 @@ jobs:
           bundle config without development
           bundle install --jobs 4 --retry 3
 
-      #
-      # 🧩 IMPORTANT: Run database migrations BEFORE panda-assets-verify-action,
-      # because the asset pipeline loads Rails, and Rails loads ActiveRecord,
-      # and the dummy app's schema must exist before that happens.
-      #
       - name: 'Setup test database'
-        working-directory: spec/dummy
         env:
           DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
           RAILS_ENV: test
@@ -325,7 +319,6 @@ jobs:
       # and the dummy app's schema must exist before that happens.
       #
       - name: 'Setup test database'
-        working-directory: spec/dummy
         env:
           DATABASE_URL: 'sqlite3:db/test.sqlite3'
           RAILS_ENV: test
