@@ -110,14 +110,8 @@ jobs:
           echo "🗄️ Dropping and creating database..."
           bundle exec rails db:drop db:create
 
-          echo "📋 Loading schema (baseline with all tables)..."
+          echo "📋 Loading schema (complete database structure)..."
           bundle exec rails db:schema:load
-
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running any new migrations not in schema.rb..."
-          bundle exec rails db:migrate
 
           echo "✅ Database ready"
 
@@ -245,14 +239,8 @@ jobs:
           echo "🗄️ Dropping and creating database..."
           bundle exec rails db:drop db:create
 
-          echo "📋 Loading schema (baseline with all tables)..."
+          echo "📋 Loading schema (complete database structure)..."
           bundle exec rails db:schema:load
-
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running any new migrations not in schema.rb..."
-          bundle exec rails db:migrate
 
           echo "✅ Database ready"
 
@@ -354,14 +342,8 @@ jobs:
           echo "🗄️ Dropping and creating database..."
           bundle exec rails db:drop db:create
 
-          echo "📋 Loading schema (baseline with all tables)..."
+          echo "📋 Loading schema (complete database structure)..."
           bundle exec rails db:schema:load
-
-          echo "📦 Installing migrations from engines..."
-          bundle exec rails railties:install:migrations
-
-          echo "🔄 Running any new migrations not in schema.rb..."
-          bundle exec rails db:migrate
 
           echo "✅ Database ready"
 
