@@ -1,3 +1,24 @@
+<%
+  adapter = ENV.fetch("DATABASE_ADAPTER", "postgresql")
+%>
+
+<% if adapter == "sqlite" %>
+# SQLite configuration
+default: &default
+  adapter: sqlite3
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  <<: *default
+  database: db/development.sqlite3
+
+test:
+  <<: *default
+  database: db/test.sqlite3
+
+<% else %>
+# PostgreSQL configuration (default)
 default: &default
   adapter: postgresql
   encoding: unicode
@@ -16,3 +37,4 @@ development:
 test:
   <<: *default
   database: panda_core_dummy_test
+<% end %>

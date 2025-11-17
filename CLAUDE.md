@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with panda-core.
 
+## Development Workflow
+
+**IMPORTANT: All test commands and Rails commands must be run from the `spec/dummy` directory.**
+
+The dummy Rails application in `spec/dummy` provides the test environment for the engine. When running tests or Rails tasks:
+- Change to `spec/dummy` directory first
+- Run commands like `bundle exec rspec`, `rails db:migrate`, etc. from there
+- The dummy app's database configuration supports both PostgreSQL (default) and SQLite (via `DATABASE_ADAPTER=sqlite` env var)
+
 ## Project Overview
 
 Panda Core is a lightweight Rails engine that provides shared development tools, configurations, and utilities for Panda CMS and other future panda-* gems. It serves as the foundation dependency that other Panda ecosystem gems build upon.
@@ -216,3 +225,4 @@ This architecture transforms panda-core from a minimal utility library into a pr
 # Run YAML linter
 yamllint -c .yamllint .
 ```
+- In this directory, always run tests from spec/dummy
