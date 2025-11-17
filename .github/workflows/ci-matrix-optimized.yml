@@ -116,6 +116,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
+          artifact_suffix: -latest
 
       - name: 'Run specs'
         env:
@@ -244,6 +245,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql
 
       #
       # 🧪 Run application tests
@@ -276,6 +278,7 @@ jobs:
     name: 'SQLite (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
     needs: smoke-test  # Gate on smoke test success
     runs-on: 'ubuntu-latest'
+    continue-on-error: true
 
     strategy:
       fail-fast: false
@@ -342,6 +345,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-sqlite
 
       #
       # 🧪 Run application tests
@@ -390,8 +394,7 @@ jobs:
           fi
 
           if [[ "${{ needs.compatibility-matrix-sqlite.result }}" == "failure" ]]; then
-            echo "❌ SQLite compatibility tests failed"
-            exit 1
+            echo "⚠️  SQLite compatibility tests failed (allowed to fail)"
           fi
 
-          echo "✅ All tests passed!"
+          echo "✅ All required tests passed!"

@@ -102,7 +102,7 @@ RSpec.configure do |config|
         nil
       end
 
-      sleep 0.5
+      # sleep 0.5
 
       # Get comprehensive page info
       page_html = begin

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails"
+# require "active_support/core_ext/module/attribute_accessors"
 
 module Panda
   module Core

@@ -113,7 +113,7 @@ RSpec.describe "Admin Dashboard", type: :system do
   it "allows admin to access dashboard" do
     # Use test endpoint to set session (works across processes with Redis)
     visit "/admin/test_login/#{admin.id}"
-    sleep 0.3  # Brief wait for session to be set
+    # sleep 0.3  # Brief wait for session to be set
 
     # Navigate to protected page
     visit "/admin"
@@ -126,7 +126,7 @@ RSpec.describe "Admin Dashboard", type: :system do
   it "prevents regular user access" do
     regular_user = create_regular_user
     visit "/admin/test_login/#{regular_user.id}"
-    sleep 0.3
+    # sleep 0.3
 
     # Should be redirected to login
     expect(page).to have_current_path("/admin/login")
@@ -283,7 +283,7 @@ RSpec.describe "Widget Management", type: :system do
   it "allows admin to manage widgets" do
     # Login via test endpoint
     visit "/admin/test_login/#{admin.id}"
-    sleep 0.3
+    # sleep 0.3
 
     # Navigate to widgets
     visit "/admin/widgets"

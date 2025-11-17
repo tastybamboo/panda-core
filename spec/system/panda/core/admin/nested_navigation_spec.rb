@@ -91,9 +91,6 @@ RSpec.describe "Nested navigation", type: :system do
       # Collapse the menu
       team_button.click
 
-      # Wait for collapse animation/transition
-      sleep 0.3
-
       # Sub-menu items should be hidden again
       expect(page).not_to have_css("a", text: "Overview", visible: true)
     end

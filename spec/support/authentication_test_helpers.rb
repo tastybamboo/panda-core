@@ -134,13 +134,13 @@ module Panda
         visit "/admin/test_login/#{user.id}?return_to=#{return_path}"
 
         # Wait briefly for session to be set
-        sleep 0.2
+        # sleep 0.2
 
         # Manually visit the destination since Cuprite doesn't reliably follow redirects
         if expect_success
           visit return_path
           # Wait for page to load
-          sleep 0.2
+          # sleep 0.2
 
           # Verify we're on the expected path
           expect(page).to have_current_path(return_path, wait: 2)

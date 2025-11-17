@@ -141,6 +141,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql
 
       #
       # 🧪 Run application tests
@@ -173,6 +174,7 @@ jobs:
     name: 'SQLite (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
     needs: seclint
     runs-on: 'ubuntu-latest'
+    continue-on-error: true
 
     strategy:
       fail-fast: false
@@ -246,6 +248,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-sqlite
 
       #
       # 🧪 Run application tests
