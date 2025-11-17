@@ -3,14 +3,6 @@ import '@fortawesome/fontawesome-free'
 
 const application = Application.start()
 
-// From https://janko.io/upgrading-from-selenium-to-cuprite/
-if (process.env.RAILS_ENV === 'test') {
-  // propagate errors that happen inside Stimulus controllers
-  application.handleError = (error, message, detail) => {
-    throw error
-  }
-}
-
 // Configure Stimulus development experience
 application.debug = false
 window.Stimulus = application
