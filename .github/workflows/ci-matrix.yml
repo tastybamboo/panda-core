@@ -127,6 +127,33 @@ jobs:
           cp ../../db/migrate/*.rb db/migrate/
           bundle exec rails db:drop db:create db:migrate
 
+      - name: 'Verify database schema'
+        working-directory: spec/dummy
+        env:
+          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
+          RAILS_ENV: test
+        run: |
+          echo "🔍 Verifying critical tables exist..."
+
+          # Check panda_core_users table
+          if ! bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?('panda_core_users') ? 0 : 1)"; then
+            echo "❌ CRITICAL: panda_core_users table not found!"
+            echo "Available tables:"
+            bundle exec rails runner "puts ActiveRecord::Base.connection.tables.join(', ')"
+            exit 1
+          fi
+
+          # Check active_storage_blobs table
+          if ! bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?('active_storage_blobs') ? 0 : 1)"; then
+            echo "❌ CRITICAL: active_storage_blobs table not found!"
+            echo "Available tables:"
+            bundle exec rails runner "puts ActiveRecord::Base.connection.tables.join(', ')"
+            exit 1
+          fi
+
+          echo "✅ Database schema verified successfully"
+          bundle exec rails runner "puts 'Tables: ' + ActiveRecord::Base.connection.tables.join(', ')"
+
       #
       # 🐼 Run Panda Asset Verification
       # This will:
@@ -233,6 +260,33 @@ jobs:
           mkdir -p db/migrate
           cp ../../db/migrate/*.rb db/migrate/
           bundle exec rails db:drop db:create db:migrate
+
+      - name: 'Verify database schema'
+        working-directory: spec/dummy
+        env:
+          DATABASE_URL: 'sqlite3:db/test.sqlite3'
+          RAILS_ENV: test
+        run: |
+          echo "🔍 Verifying critical tables exist..."
+
+          # Check panda_core_users table
+          if ! bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?('panda_core_users') ? 0 : 1)"; then
+            echo "❌ CRITICAL: panda_core_users table not found!"
+            echo "Available tables:"
+            bundle exec rails runner "puts ActiveRecord::Base.connection.tables.join(', ')"
+            exit 1
+          fi
+
+          # Check active_storage_blobs table
+          if ! bundle exec rails runner "exit(ActiveRecord::Base.connection.table_exists?('active_storage_blobs') ? 0 : 1)"; then
+            echo "❌ CRITICAL: active_storage_blobs table not found!"
+            echo "Available tables:"
+            bundle exec rails runner "puts ActiveRecord::Base.connection.tables.join(', ')"
+            exit 1
+          fi
+
+          echo "✅ Database schema verified successfully"
+          bundle exec rails runner "puts 'Tables: ' + ActiveRecord::Base.connection.tables.join(', ')"
 
       #
       # 🐼 Run Panda Asset Verification
