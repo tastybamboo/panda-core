@@ -32,7 +32,7 @@ end
 admin = create_admin_user
 
 # Create with custom attributes
-admin = create_admin_user(email: "custom@example.com", firstname: "Custom")
+admin = create_admin_user(email: "custom@example.com", name: "Custom Name")
 
 # Create a regular (non-admin) user
 user = create_regular_user

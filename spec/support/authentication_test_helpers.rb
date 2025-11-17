@@ -20,9 +20,7 @@ module Panda
         admin_id = "8f481fcb-d9c8-55d7-ba17-5ea5d9ed8b7a"
         Panda::Core::User.find_or_create_by!(id: admin_id) do |user|
           user.email = attributes[:email] || "admin@example.com"
-          user.firstname = attributes[:firstname] || "Admin" if user.respond_to?(:firstname=)
-          user.lastname = attributes[:lastname] || "User" if user.respond_to?(:lastname=)
-          user.name = attributes[:name] || "Admin User" if user.respond_to?(:name=) && !user.respond_to?(:firstname=)
+          user.name = attributes[:name] || "Admin User"
           user.image_url = attributes[:image_url] || default_image_url
           # Use is_admin for the actual column, but support both for compatibility
           if user.respond_to?(:is_admin=)
@@ -42,9 +40,7 @@ module Panda
         regular_id = "9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d"
         Panda::Core::User.find_or_create_by!(id: regular_id) do |user|
           user.email = attributes[:email] || "user@example.com"
-          user.firstname = attributes[:firstname] || "Regular" if user.respond_to?(:firstname=)
-          user.lastname = attributes[:lastname] || "User" if user.respond_to?(:lastname=)
-          user.name = attributes[:name] || "Regular User" if user.respond_to?(:name=) && !user.respond_to?(:firstname=)
+          user.name = attributes[:name] || "Regular User"
           user.image_url = attributes[:image_url] || default_image_url(dark: true)
           # Use is_admin for the actual column, but support both for compatibility
           if user.respond_to?(:is_admin=)
