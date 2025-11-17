@@ -9,7 +9,15 @@ module BrowserConsoleLogger
 
       if respond_to?(:page) && page.driver.is_a?(Capybara::Cuprite::Driver)
         begin
-          console_logs = page.driver.browser.console_messages
+          # Access the console logger via the CupriteSetup module
+          console_logger = Panda::Core::Testing::CupriteSetup.console_logger
+
+          unless console_logger
+            puts "\n⚠️  Console logger not available"
+            next
+          end
+
+          console_logs = console_logger.logs
 
           if console_logs.any?
             puts "\n" + "=" * 80
@@ -17,17 +25,15 @@ module BrowserConsoleLogger
             puts "=" * 80
 
             console_logs.each_with_index do |msg, index|
-              type_icon = case msg["type"]
+              level = msg.level.downcase
+              type_icon = case level
               when "error" then "❌"
               when "warning" then "⚠️"
               when "info" then "ℹ️"
               else "📝"
               end
 
-              puts "#{index + 1}. [#{msg["type"].upcase}] #{type_icon}"
-              puts "   Message: #{msg["message"]}"
-              puts "   Source: #{msg["source"]}" if msg["source"]
-              puts "   Line: #{msg["line"]}" if msg["line"]
+              puts "#{index + 1}. #{type_icon} #{msg}"
               puts ""
             end
 
@@ -37,6 +43,7 @@ module BrowserConsoleLogger
           end
         rescue => e
           puts "\n⚠️  Failed to capture console logs: #{e.message}"
+          puts "   #{e.class}: #{e.backtrace.first(3).join("\n   ")}" if ENV["DEBUG"]
         end
       end
     end
