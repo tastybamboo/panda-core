@@ -67,13 +67,12 @@ RSpec.describe Panda::Core::AssetHelper, type: :helper do
     context "when using GitHub assets" do
       before do
         allow(Panda::Core::AssetLoader).to receive(:use_github_assets?).and_return(true)
-        allow(Panda::Core::AssetLoader).to receive(:javascript_url).and_return("/panda-core-assets/core.js")
       end
 
-      it "uses the asset loader URL" do
+      it "still uses importmap (Rails 8 approach)" do
         result = helper.panda_core_javascript
-        expect(result).to include("panda-core-assets/core.js")
-        expect(result).not_to include('<script type="importmap">')
+        expect(result).to include('<script type="importmap">')
+        expect(result).to include('"panda/core/application"')
       end
     end
   end

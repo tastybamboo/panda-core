@@ -43,10 +43,18 @@ module Panda
           # This allows system tests to load CSS/JS from the engine's public directory
           return false if Rails.env.test? || in_test_environment?
 
-          # Use GitHub assets in production or when explicitly enabled
-          Rails.env.production? ||
-            ENV["PANDA_CORE_USE_GITHUB_ASSETS"] == "true" ||
-            !development_assets_available?
+          # In production, prefer local compiled assets over GitHub
+          # Only use GitHub assets when explicitly enabled or when local assets aren't available
+          if Rails.env.production?
+            # Check if compiled assets exist locally
+            return false if compiled_assets_available?
+
+            # Only use GitHub as fallback if explicitly enabled
+            return ENV["PANDA_CORE_USE_GITHUB_ASSETS"] == "true"
+          end
+
+          # In development, use GitHub assets only when explicitly enabled or development assets unavailable
+          ENV["PANDA_CORE_USE_GITHUB_ASSETS"] == "true" || !development_assets_available?
         end
 
         private
@@ -57,26 +65,16 @@ module Panda
 
           tags = []
 
-          # JavaScript tag with integrity check
-          js_url = "#{base_url}panda-core-#{version}.js"
-
-          js_attrs = {
-            src: js_url
+          # CSS tag - load from main branch (always latest)
+          css_url = "#{base_url}panda-core.css"
+          css_attrs = {
+            rel: "stylesheet",
+            href: css_url
           }
-          # In CI environment, don't use defer to ensure immediate execution
-          js_attrs[:defer] = true unless ENV["GITHUB_ACTIONS"] == "true"
+          tags << tag(:link, css_attrs)
 
-          tags << content_tag(:script, "", js_attrs)
-
-          # CSS tag if CSS bundle exists
-          css_url = "#{base_url}panda-core-#{version}.css"
-          if github_asset_exists?(version, "panda-core-#{version}.css")
-            css_attrs = {
-              rel: "stylesheet",
-              href: css_url
-            }
-            tags << tag(:link, css_attrs)
-          end
+          # Note: JavaScript uses importmap (no bundled file needed)
+          # The importmap is generated in panda_core_javascript helper
 
           tags.join("\n").html_safe
         end
@@ -126,13 +124,9 @@ module Panda
         end
 
         def github_javascript_url
-          version = asset_version
-          # In test environment with local compiled assets, use local URL
-          if Rails.env.test? && compiled_assets_available?
-            "/panda-core-assets/panda-core-#{version}.js"
-          else
-            "#{github_base_url(version)}panda-core-#{version}.js"
-          end
+          # JavaScript uses importmap - no bundled file needed
+          # This method is kept for compatibility but shouldn't be used
+          nil
         end
 
         def github_css_url
@@ -142,7 +136,8 @@ module Panda
             css_file = "/panda-core-assets/panda-core-#{version}.css"
             File.exist?(Rails.root.join("public#{css_file}")) ? css_file : nil
           else
-            "#{github_base_url(version)}panda-core-#{version}.css"
+            # Load unversioned CSS from main branch (always latest)
+            "#{github_base_url(version)}panda-core.css"
           end
         end
 
@@ -189,7 +184,7 @@ module Panda
         end
 
         def github_base_url(version)
-          "https://github.com/tastybamboo/panda-core/releases/download/v#{version}/"
+          "https://raw.githubusercontent.com/tastybamboo/panda-core/main/public/panda-core-assets/"
         end
 
         def github_asset_exists?(_version, _filename)
@@ -204,10 +199,18 @@ module Panda
         end
 
         def compiled_assets_available?
-          # Check if compiled assets exist in test location
+          # Check if compiled assets exist
           version = asset_version
-          js_file = Rails.public_path.join("panda-core-assets", "panda-core-#{version}.js")
-          js_file.exist?
+
+          # In production/hosting app, check the app's public directory first
+          if defined?(Rails.public_path)
+            app_js_file = Rails.public_path.join("panda-core-assets", "panda-core-#{version}.js")
+            return true if app_js_file.exist?
+          end
+
+          # Fall back to checking the engine's public directory
+          engine_js_file = Panda::Core::Engine.root.join("public", "panda-core-assets", "panda-core-#{version}.js")
+          engine_js_file.exist?
         end
 
         def in_test_environment?
