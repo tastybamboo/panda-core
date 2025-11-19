@@ -12,6 +12,41 @@ pre-commit:
       run: bundle exec standardrb --fix {staged_files}
       glob: '*.rb'
       stage_fixed: true
+    - name: compile-css
+      run: |
+        # Only compile if CSS-affecting files have changed
+        if git diff --cached --name-only | grep -qE '(app/assets/|app/views/|app/components/|lib/panda/core/version.rb)'; then
+          echo "📦 Compiling CSS..."
+
+          # Install tailwindcss CLI if not present
+          if [ ! -f "./tailwindcss" ]; then
+            echo "Installing tailwindcss CLI..."
+            curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-arm64
+            chmod +x tailwindcss-macos-arm64
+            mv tailwindcss-macos-arm64 tailwindcss
+          fi
+
+          # Compile CSS
+          ./tailwindcss \
+            -i app/assets/tailwind/application.css \
+            -o public/panda-core-assets/panda-core.css \
+            --content './app/views/**/*.erb' \
+            --content './app/components/**/*.rb' \
+            --minify
+
+          # Get version
+          VERSION=$(ruby -r ./lib/panda/core/version.rb -e 'puts Panda::Core::VERSION')
+
+          # Create versioned copy
+          cp public/panda-core-assets/panda-core.css \
+             public/panda-core-assets/panda-core-${VERSION}.css
+
+          # Stage the compiled files
+          git add public/panda-core-assets/panda-core.css
+          git add public/panda-core-assets/panda-core-${VERSION}.css
+
+          echo "✅ CSS compiled and staged"
+        fi
 
 pre-push:
   parallel: true
