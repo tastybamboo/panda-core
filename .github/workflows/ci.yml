@@ -92,6 +92,20 @@ jobs:
         run: |
           echo "${VERSION}" >> VERSION
 
+      - name: 'Install DBUS dependencies'
+        run: |
+          sudo apt-get install xorg dbus-x11 xfonts-100dpi xfonts-75dpi xfonts-cyrillic libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb -y
+
+      - name: 'Setup D-Bus session'
+        run: |
+          mkdir -p /run/user/$(id -u)
+          export XDG_RUNTIME_DIR=/run/user/$(id -u)
+          export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
+          dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS --nofork --nopidfile --syslog-only &
+          sleep 1
+          echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> $GITHUB_ENV
+          echo "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus" >> $GITHUB_ENV
+
       - name: 'Start xvfb'
         run: |
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
