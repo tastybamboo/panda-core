@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.6] - 2025-11-19
+
+### Added
+
+- **Pre-commit Hook for CSS Compilation** - Automated CSS compilation using lefthook
+  - Added compile-css job to lefthook pre-commit hook
+  - CSS is now compiled and committed in the same commit as source changes
+  - Simpler workflow - no waiting for CI to compile and commit back
+  - Removed GitHub Action workflow in favor of local pre-commit hook
+  - Added tailwindcss binary to .gitignore
+
+### Changed
+
+- **User Model Cleanup** - Removed legacy firstname/lastname field references
+  - Removed checks for firstname/lastname fields (replaced with name field)
+  - Simplified user code to use unified name field everywhere
+  - Updated stubbed code and rake tasks to use name field instead of firstname/lastname
+  - Removed unnecessary image_url existence checks (field always exists)
+
+### Fixed
+
+- **Asset Loading System** - Complete refactor of asset loading strategy (from #50)
+  - AssetLoader now uses raw.githubusercontent.com instead of GitHub releases API
+  - Prevents 404 errors when trying to load assets from releases
+  - Production prefers local compiled assets, falls back to GitHub URLs only if needed
+  - Asset paths now use importmap for JavaScript (Rails 8 approach, no bundling)
+  - Added comprehensive AssetLoader tests for reliability
+  - When installed from RubyGems: serves assets from gem via Rack::Static
+  - When no local assets available: falls back to raw.githubusercontent.com
+
+## [0.10.5] - 2025-11-18
+
+### Fixed
+
+- **CI Browser Startup Failures** - Added `--no-dbus` flag to prevent Chrome crashes
+  - Chrome in CI was failing with D-Bus connection errors
+  - Added `--no-dbus` flag to base browser options
+  - Prevents Chrome from attempting D-Bus connections in containerized environments
+  - Resolves Ferrum::ProcessTimeoutError in CI environments
+
+- **Production Asset Loading** - Fixed eager loading issues in production
+  - Exclude ViewComponent/Lookbook preview files from production eager loading
+  - Prevents "uninitialized constant" errors during asset precompilation
+  - Initializer explicitly removes spec/components/previews from eager_load_paths and autoload_paths in production
+  - Allow running in production without Propshaft dependency
+
+### Changed
+
+- **Dependency Updates** - Updated gem dependencies to latest versions
+
 ## [0.10.4] - 2025-11-17
 
 ### Fixed
