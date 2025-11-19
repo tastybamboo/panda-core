@@ -65,7 +65,8 @@ module Panda
           {
             "disable-web-security": nil,
             "allow-file-access-from-files": nil,
-            "allow-file-access": nil
+            "allow-file-access": nil,
+            "no-dbus": nil  # Disable D-Bus to prevent connection errors in Docker/CI
           }
         end
 
