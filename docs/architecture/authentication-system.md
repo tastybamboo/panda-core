@@ -26,8 +26,7 @@ The User model is the central authentication entity:
 class Panda::Core::User < ApplicationRecord
   # OAuth fields
   attribute :email
-  attribute :firstname
-  attribute :lastname
+  attribute :name
   attribute :admin, :boolean, default: false
 
   # OAuth integration

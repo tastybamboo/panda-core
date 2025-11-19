@@ -82,15 +82,14 @@ namespace :panda do
         end
       end
 
-      desc "Create a new admin user (EMAIL=user@example.com FIRSTNAME=John LASTNAME=Doe)"
+      desc "Create a new admin user (EMAIL=user@example.com NAME='John Doe')"
       task create_admin: :environment do
         email = ENV["EMAIL"]
-        firstname = ENV["FIRSTNAME"] || "Admin"
-        lastname = ENV["LASTNAME"] || "User"
+        name = ENV["NAME"] || "Admin User"
 
         unless email
           puts "Error: EMAIL parameter is required"
-          puts "Usage: rails panda:core:users:create_admin EMAIL=user@example.com FIRSTNAME=John LASTNAME=Doe"
+          puts "Usage: rails panda:core:users:create_admin EMAIL=user@example.com NAME='John Doe'"
           exit 1
         end
 
@@ -107,20 +106,11 @@ namespace :panda do
         end
 
         # Build attributes hash based on schema
-        attributes = {
+        user = Panda::Core::User.create!(
           email: email.downcase,
+          name: name,
           is_admin: true
-        }
-
-        # Add name attributes based on schema
-        if Panda::Core::User.column_names.include?("name")
-          attributes[:name] = "#{firstname} #{lastname}".strip
-        elsif Panda::Core::User.column_names.include?("firstname") && Panda::Core::User.column_names.include?("lastname")
-          attributes[:firstname] = firstname
-          attributes[:lastname] = lastname
-        end
-
-        user = Panda::Core::User.create!(attributes)
+        )
         puts "✓ Created admin user '#{user.email}'"
         puts "  Name: #{user.name}" if user.respond_to?(:name)
         puts "  Admin: #{user.admin?}"

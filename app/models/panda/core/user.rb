@@ -42,23 +42,12 @@ module Panda
           return user
         end
 
-        # Support both schema versions: 'name' column or 'firstname'/'lastname' columns
         attributes = {
           email: auth_hash.info.email.downcase,
+          name: (auth_hash.info.name || "Unknown User"),
           image_url: auth_hash.info.image,
           is_admin: User.count.zero? # First user is admin
         }
-
-        # Add name attributes based on schema
-        if column_names.include?("name")
-          attributes[:name] = auth_hash.info.name || "Unknown User"
-        elsif column_names.include?("firstname") && column_names.include?("lastname")
-          # Split name into firstname/lastname if provided
-          full_name = auth_hash.info.name || "Unknown User"
-          name_parts = full_name.split(" ", 2)
-          attributes[:firstname] = name_parts[0] || "Unknown"
-          attributes[:lastname] = name_parts[1] || "User"
-        end
 
         user = create!(attributes)
 
@@ -81,12 +70,7 @@ module Panda
       end
 
       def name
-        # Support both schema versions:
-        # - Main app: has 'name' column
-        # - Test app: has 'firstname' and 'lastname' columns
-        if respond_to?(:firstname) && respond_to?(:lastname)
-          "#{firstname} #{lastname}".strip
-        elsif self[:name].present?
+        if self[:name].present?
           self[:name]
         else
           email&.split("@")&.first || "Unknown User"

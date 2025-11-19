@@ -9,17 +9,12 @@ RSpec.describe Panda::Core::Admin::UserActivityComponent do
         "Panda::Core::User"
       end
 
-      attr_accessor :firstname, :lastname, :email, :_avatar_url
+      attr_accessor :name, :email, :_avatar_url
 
-      def initialize(firstname:, lastname:, email:, avatar_url: nil)
-        @firstname = firstname
-        @lastname = lastname
+      def initialize(name:, email:, avatar_url: nil)
+        @name = name
         @email = email
         @_avatar_url = avatar_url
-      end
-
-      def name
-        "#{firstname} #{lastname}".strip
       end
 
       def avatar_url(size: nil)
@@ -32,7 +27,7 @@ RSpec.describe Panda::Core::Admin::UserActivityComponent do
     end
   end
 
-  let(:user) { user_class.new(firstname: "Alice", lastname: "Smith", email: "alice@example.com") }
+  let(:user) { user_class.new(name: "Alice Smith", email: "alice@example.com") }
   let(:time) { 2.hours.ago }
 
   before do

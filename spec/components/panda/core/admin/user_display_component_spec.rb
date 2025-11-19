@@ -4,11 +4,7 @@ require "rails_helper"
 
 RSpec.describe Panda::Core::Admin::UserDisplayComponent do
   let(:user_struct) do
-    Struct.new(:firstname, :lastname, :email, :_avatar_url) do
-      def name
-        "#{firstname} #{lastname}"
-      end
-
+    Struct.new(:name, :email, :_avatar_url) do
       def avatar_url(size: nil)
         _avatar_url
       end
@@ -16,11 +12,11 @@ RSpec.describe Panda::Core::Admin::UserDisplayComponent do
   end
 
   let(:user_with_avatar) do
-    user_struct.new("Alice", "Smith", "alice@example.com", "https://example.com/avatar.jpg")
+    user_struct.new("Alice Smith", "alice@example.com", "https://example.com/avatar.jpg")
   end
 
   let(:user_without_avatar) do
-    user_struct.new("Bob", "Jones", "bob@example.com", nil)
+    user_struct.new("Bob Jones", "bob@example.com", nil)
   end
 
   describe "rendering" do
