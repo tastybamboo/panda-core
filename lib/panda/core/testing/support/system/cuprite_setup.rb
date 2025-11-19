@@ -55,7 +55,8 @@ module Panda
               "ignore-certificate-errors": nil,
               "allow-insecure-localhost": nil,
               "enable-features": "NetworkService,NetworkServiceInProcess",
-              "disable-blink-features": "AutomationControlled"
+              "disable-blink-features": "AutomationControlled",
+              "no-dbus": true
             }
           }
         end
