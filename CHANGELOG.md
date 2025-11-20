@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.7] - 2025-11-20
+
+### Added
+
+- **CSS Compilation Documentation** - Comprehensive guide to the CSS compilation system
+  - Documented ModuleRegistry system for unified CSS compilation across all Panda gems
+  - Added bin/compile-css wrapper script for convenience
+  - Enhanced compile_css rake task with better logging and module summary
+  - Explained how CSS compilation works across panda-core, panda-cms, and cms-pro
+
+- **Favicon Assets** - Added complete favicon set to public/panda-core-assets
+  - Android Chrome icons (192x192, 512x512)
+  - Apple touch icon
+  - Browser config and favicons (16x16, 32x32, ico)
+  - MS tile icon
+  - Safari pinned tab SVG
+  - Site webmanifest
+
+- **Brand Assets** - Added Panda logo files to public/panda-core-assets
+  - panda-logo-screenprint.png
+  - panda-nav.png
+
+### Changed
+
+- **Rake Task Organization** - Reorganized rake tasks for better structure
+  - Moved user-related tasks to lib/tasks/panda/core/users.rake
+  - Created lib/tasks/panda/shared.rake for shared functionality
+  - Added lib/tasks/panda/core/ci_tasks.rake for CI-specific tasks
+  - Removed legacy panda_core.rake and panda_core_tasks.rake
+
+### Fixed
+
+- Cleaned up stale CSS files from spec/dummy
+- Removed old panda-core-0.1.16.css and panda-core-0.8.0.css files
+- Updated CSS compilation to use proper Tailwind v4 configuration
+
 ## [0.10.6] - 2025-11-19
 
 ### Added
