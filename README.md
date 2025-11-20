@@ -144,33 +144,6 @@ Panda Core uses Tailwind CSS v4 to compile all admin interface styling.
 
 **Quick Start** - Compile full CSS (Core + CMS):
 
-```bash
-cd /path/to/panda-core
-
-bundle exec tailwindcss -i app/assets/tailwind/application.css \
-  -o public/panda-core-assets/panda-core.css \
-  --content '../cms/app/views/**/*.erb' \
-  --content '../cms/app/components/**/*.rb' \
-  --content '../cms/app/javascript/**/*.js' \
-  --content 'app/views/**/*.erb' \
-  --content 'app/components/**/*.rb' \
-  --minify
-```
-
-**Result**: `panda-core.css` (~37KB) with all utility classes
-
-**Important**: Always compile with full content before committing!
-
-For complete documentation on:
-- Development workflows (Core-only vs full stack)
-- Release processes
-- Troubleshooting
-- Best practices
-
-See **[docs/ASSET_COMPILATION.md](docs/ASSET_COMPILATION.md)**
-
-**How Asset Serving Works:**
-
 Core's Rack middleware serves `/panda-core-assets/` from the gem's `public/` directory:
 
 ```ruby
@@ -190,7 +163,7 @@ This means:
 **What Gets Compiled:**
 
 The compilation process:
-- Scans all Core and CMS views/components for Tailwind classes (via `tailwind.config.js`)
+- Scans all Core and registered modules' views/components for Tailwind classes
 - Includes EditorJS content styles for rich text editing
 - Applies theme variables for default and sky themes
 - Outputs a single minified CSS file (~37KB)
@@ -208,28 +181,15 @@ Panda CMS depends on Panda Core and loads its CSS automatically:
 <link rel="stylesheet" href="/panda-core-assets/panda-core.css">
 ```
 
-CMS no longer compiles its own CSS - all styling comes from Core.
-
-**Content Scanning**
-
-The `tailwind.config.js` file configures content scanning to include:
-- Core views: `../../app/views/**/*.html.erb`
-- Core components: `../../app/components/**/*.rb`
-- CMS views: `../../../cms/app/views/**/*.html.erb`
-- CMS components: `../../../cms/app/components/**/*.rb`
-- CMS JavaScript: `../../../cms/app/javascript/**/*.js`
-
 This ensures all Tailwind classes used across the Panda ecosystem are included in the compiled CSS.
 
-**Customizing Styles**
+To regenerate CSS, run (from inside `panda-core` or another engine):
 
-To customize the admin interface styles:
+```
+bundle exec rake app:panda:compile_css
+```
 
-1. Edit `app/assets/tailwind/application.css` in panda-core
-2. Add custom CSS in the appropriate `@layer` (base, components, or utilities)
-3. Recompile: `bundle exec tailwindcss -i app/assets/tailwind/application.css -o public/panda-core-assets/panda-core.css --minify`
-4. Copy the updated CSS to test locations if needed
-5. Restart your Rails server to see changes
+You should run this from the top-most or last registered engine in your application.
 
 **Theme System**
 

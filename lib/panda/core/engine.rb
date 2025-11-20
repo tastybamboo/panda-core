@@ -81,8 +81,10 @@ Panda::Core::ModuleRegistry.register(
   gem_name: "panda-core",
   engine: "Panda::Core::Engine",
   paths: {
+    builders: "app/builders/panda/core/**/*.rb",
+    components: "app/components/panda/core/**/*.rb",
+    helpers: "app/helpers/panda/core/**/*.rb",
     views: "app/views/panda/core/**/*.erb",
-    components: "app/components/panda/core/**/*.rb"
-    # JavaScript paths are auto-discovered from config/importmap.rb
+    javascripts: "app/assets/javascript/panda/core/**/*.js"
   }
 )

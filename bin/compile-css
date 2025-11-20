@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "fileutils"
+
+GEM_ROOT = File.expand_path("..", __dir__)
+
+def system!(*args)
+  system(*args, exception: true)
+end
+
+FileUtils.chdir GEM_ROOT do
+  puts "== Compiling Panda CSS =="
+  puts "This will compile CSS for all registered Panda modules (core, cms, cms-pro, etc.)"
+  puts "Output: public/panda-core-assets/panda-core.css"
+  puts ""
+
+  system!("bundle exec rake panda:compile_css")
+
+  puts ""
+  puts "✅ CSS compilation complete!"
+end

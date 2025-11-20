@@ -219,6 +219,85 @@ Panda::Core.on(:admin_action) { |user, action, resource| audit_log(user, action,
 
 This architecture transforms panda-core from a minimal utility library into a proper foundation for the Panda ecosystem, while keeping panda-cms focused on content management rather than authentication concerns.
 
+## CSS Compilation
+
+### Overview
+
+Panda Core uses a unified CSS compilation system that compiles Tailwind CSS for **all registered Panda modules** into a single consolidated CSS file. The ModuleRegistry system allows each Panda gem to register its view templates and components, which are then automatically included in the CSS compilation.
+
+### The ModuleRegistry System
+
+Each Panda gem registers itself during engine initialization:
+
+```ruby
+# In panda-core/lib/panda/core/engine.rb
+Panda::Core::ModuleRegistry.register(
+  gem_name: "panda-core",
+  engine: "Panda::Core::Engine",
+  paths: {
+    builders: "app/builders/panda/core/**/*.rb",
+    components: "app/components/panda/core/**/*.rb",
+    helpers: "app/helpers/panda/core/**/*.rb",
+    views: "app/views/panda/core/**/*.erb",
+    javascripts: "app/assets/javascript/panda/core/**/*.js"
+  }
+)
+```
+
+When CSS compilation runs, it automatically discovers and includes **all loaded modules** (panda-core, panda-cms, cms-pro, etc.).
+
+### Compiling CSS
+
+**Rake task (recommended):**
+```bash
+# From any panda gem directory
+bundle exec rake app:panda:compile_css
+
+# From spec/dummy directory
+bundle exec rake panda:compile_css
+```
+
+**Wrapper script:**
+```bash
+# Simple convenience wrapper
+bin/compile-css
+```
+
+### What Happens
+
+1. Task queries ModuleRegistry for all loaded Panda modules
+2. Builds Tailwind CLI command scanning all registered file paths
+3. Compiles using Tailwind CSS v4 with minification
+4. **Always outputs to panda-core** (auto-locates the gem):
+   - `core/public/panda-core-assets/panda-core.css` (~72 KB)
+   - `core/public/panda-core-assets/panda-core-{version}.css`
+
+**Key insight:** Running the task from panda-cms will still output CSS to panda-core's directory. The task finds panda-core using `Gem::Specification.find_by_name` and puts the CSS there automatically.
+
+### Included Content
+
+The compiled CSS includes Tailwind classes from:
+
+- **panda-core**: Admin UI, forms, buttons, layouts, components
+- **panda-cms**: CMS views and components (when loaded)
+- **cms-pro**: Pro features (when loaded)
+- **Any registered modules**: Via ModuleRegistry
+
+This single-file approach reduces HTTP requests and ensures consistent styling across the entire Panda ecosystem.
+
+### When to Compile
+
+- After changing Tailwind classes in any Panda gem
+- Before creating a release
+- When tests need updated CSS
+- After adding new components or views
+
+### Tailwind Configuration
+
+**Source:** `app/assets/tailwind/application.css`
+**Version:** Tailwind CSS v4 (CSS-based config with `@theme`)
+**Themes:** `default` (purple), `sky` (blue)
+
 ## Code Quality Commands
 
 ```bash

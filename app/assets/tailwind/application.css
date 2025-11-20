@@ -1,13 +1,5 @@
 @import 'tailwindcss';
 
-@source "../../app/views/**/*.html.erb";
-@source "../../app/components/**/*.html.erb";
-@source "../../app/components/**/*.rb";
-@source "../../app/helpers/**/*.rb";
-@source "../../../cms/app/views/**/*.html.erb";
-@source "../../../cms/app/components/**/*.html.erb";
-@source "../../../cms/app/components/**/*.rb";
-
 @theme {
   /* Legacy colors */
   --color-white: var(--color-white);
@@ -249,6 +241,12 @@
 
   .btn-danger {
     @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
+  a.block-link:after {
+    position: absolute;
+    content: '';
+    inset: 0;
   }
 }
 

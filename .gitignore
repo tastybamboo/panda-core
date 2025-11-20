@@ -10,10 +10,6 @@
 /spec/dummy/tmp/
 /spec/dummy/public/panda-core-assets/
 /spec/examples.txt
-# Ignore timestamp-based dev/test files (10-digit unix timestamps)
-/public/panda-core-assets/panda-core-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]*.css
-# Ignore unversioned symlink
-/public/panda-core-assets/panda-core.css
 .byebug_history
 .DS_Store
 *.gem

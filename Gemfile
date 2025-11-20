@@ -32,7 +32,7 @@ group :development, :test do
   gem "standard"
   gem "standard-rails"
   gem "stringio"
-  gem "tailwindcss-rails"
+  gem "tailwindcss-rails", "~> 4"
   gem "yard-activerecord"
 
   # OAuth provider gems (optional - host apps install what they need)
@@ -44,7 +44,6 @@ end
 
 group :development do
   gem "pry-rails"
-  gem "benchmark" # Used to profile asset compilation
 end
 
 group :test do

@@ -43,19 +43,18 @@ Gem::Specification.new do |spec|
 
   # Database dependencies
   spec.add_development_dependency "pg"
-  # Webrick to handle asset compilation
   spec.add_dependency "webrick"
 
   # Testing
-  spec.add_development_dependency "benchmark"
-  spec.add_development_dependency "rspec-rails"
-  spec.add_development_dependency "rails-controller-testing"
   spec.add_development_dependency "capybara"
   spec.add_development_dependency "cuprite"
   spec.add_development_dependency "database_cleaner-active_record"
+  spec.add_development_dependency "rspec-rails"
+  spec.add_development_dependency "rails-controller-testing"
   spec.add_development_dependency "shoulda-matchers"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-json"
+  spec.add_development_dependency "tailwindcss-rails", "~> 4"
 
   # Linting & Code Quality
   spec.add_development_dependency "standard"
