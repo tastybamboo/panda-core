@@ -75,22 +75,20 @@ RSpec.configure do |config|
     if ENV["GITHUB_ACTIONS"] == "true"
       puts "\n🔍 CI Environment Detected - Checking Core JavaScript Infrastructure..."
 
-      # Verify compiled assets exist (find any panda-core assets)
+      # Verify JavaScript importmap assets exist
+      # Note: CSS is now pre-compiled via pre-commit hook and committed to repo
       asset_dir = Rails.root.join("public/panda-core-assets")
       js_assets = Dir.glob(asset_dir.join("panda-core-*.js"))
-      css_assets = Dir.glob(asset_dir.join("panda-core-*.css"))
 
-      unless js_assets.any? && css_assets.any?
-        puts "❌ CRITICAL: Compiled Core assets missing!"
+      unless js_assets.any?
+        puts "❌ CRITICAL: JavaScript importmap assets missing!"
         puts "   JavaScript files found: #{js_assets.count}"
-        puts "   CSS files found: #{css_assets.count}"
         puts "   Looking in: #{asset_dir}"
-        fail "Compiled assets not found - check asset compilation step"
+        fail "JavaScript importmap assets not found - check asset generation step"
       end
 
-      puts "✅ Compiled Core assets found:"
+      puts "✅ JavaScript importmap assets found:"
       puts "   JavaScript: #{File.basename(js_assets.first)} (#{File.size(js_assets.first)} bytes)"
-      puts "   CSS: #{File.basename(css_assets.first)} (#{File.size(css_assets.first)} bytes)"
 
       # Test basic Rails application responsiveness
       puts "\n🔍 Testing Rails application responsiveness..."
