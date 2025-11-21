@@ -48,7 +48,7 @@ jobs:
   # Run latest version first as a smoke test
   # This ensures basic functionality works before testing older versions
   smoke-test:
-    name: '🚀 Latest (Rails 8.1.1, Ruby 3.4, PostgreSQL)'
+    name: '🚀 Latest (Rails 8.1.1, Ruby 3.4, PostgreSQL 18)'
     needs: seclint
     runs-on: 'ubuntu-latest'
 
@@ -70,7 +70,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:18
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
@@ -188,7 +188,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:18
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
