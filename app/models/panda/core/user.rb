@@ -71,14 +71,6 @@ module Panda
         true
       end
 
-      def name
-        if self[:name].present?
-          self[:name]
-        else
-          email&.split("@")&.first || "Unknown User"
-        end
-      end
-
       # Returns the URL for the user's avatar
       # Prefers Active Storage attachment over OAuth provider URL
       # @param size [Symbol] The variant size (:thumb, :small, :medium, :large, or nil for original)
