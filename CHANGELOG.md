@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2025-11-21
+
+### Added
+
+- **SQLite3 Support** - Full cross-database compatibility with PostgreSQL and SQLite3 (#52)
+  - Added HasUUID concern for transparent UUID generation across databases
+  - PostgreSQL uses native `gen_random_uuid()` function
+  - SQLite uses application-level UUID generation via SecureRandom
+  - All models with UUID primary keys automatically include HasUUID
+  - Consolidated migrations to avoid duplication
+  - Updated CI to test both databases across all Ruby/Rails combinations
+
+- **PostgreSQL Version Matrix Testing** - Expanded CI coverage for PostgreSQL compatibility (#53)
+  - Added testing for PostgreSQL 12, 15, 17, and 18
+  - Representative combinations across Ruby and Rails versions
+  - Ensures compatibility with older and newer PostgreSQL releases
+
+### Changed
+
+- **CI Improvements** - Updated GitHub Actions workflows
+  - Bumped actions/checkout from v5 to v6 (#54)
+  - Fixed CI asset verification to only check JavaScript importmaps
+  - Use `db:schema:load` for database setup to avoid migration issues
+
+### Documentation
+
+- **Database Support** - Added comprehensive SQLite3 documentation
+  - Updated README with database support information
+  - Added CLAUDE.md guidance for cross-database development
+  - Documented UUID strategy for both databases
+
 ## [0.10.7] - 2025-11-20
 
 ### Added
