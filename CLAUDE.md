@@ -11,6 +11,28 @@ The dummy Rails application in `spec/dummy` provides the test environment for th
 - Run commands like `bundle exec rspec`, `rails db:migrate`, etc. from there
 - The dummy app's database configuration supports both PostgreSQL (default) and SQLite (via `DATABASE_ADAPTER=sqlite` env var)
 
+### Database Support
+
+Panda Core supports both PostgreSQL and SQLite3 for development and testing:
+
+**PostgreSQL (default):**
+```bash
+bundle exec rails db:create db:migrate
+bundle exec rspec
+```
+
+**SQLite3:**
+```bash
+DATABASE_ADAPTER=sqlite bundle exec rails db:migrate
+DATABASE_ADAPTER=sqlite bundle exec rspec
+```
+
+**Cross-Database UUID Support:**
+- UUIDs work identically on both databases via the `HasUUID` concern
+- PostgreSQL uses native `gen_random_uuid()` function
+- SQLite uses `SecureRandom.uuid` at the application level
+- All models with UUID primary keys automatically include `HasUUID`
+
 ## Project Overview
 
 Panda Core is a lightweight Rails engine that provides shared development tools, configurations, and utilities for Panda CMS and other future panda-* gems. It serves as the foundation dependency that other Panda ecosystem gems build upon.
@@ -297,6 +319,67 @@ This single-file approach reduces HTTP requests and ensures consistent styling a
 **Source:** `app/assets/tailwind/application.css`
 **Version:** Tailwind CSS v4 (CSS-based config with `@theme`)
 **Themes:** `default` (purple), `sky` (blue)
+
+## JavaScript Architecture
+
+### Overview
+
+All Panda gems use an **importmap-based architecture** with individual ES modules. JavaScript files are served as individual modules via custom Rack middleware - **no compilation or bundling required**.
+
+**Key principle:** JavaScript is NOT compiled. Individual `.js` files are served directly from `app/javascript/panda/[gem]/` in each gem.
+
+### How It Works
+
+1. **ModuleRegistry** - Each gem registers its JavaScript paths during engine initialization
+2. **JavaScriptMiddleware** - Intercepts `/panda/*` requests and serves files from registered gems
+3. **Importmap** - Browser loads modules using native ES imports
+4. **No Build Step** - Files served directly, no webpack/esbuild/rollup needed
+
+### Example Flow
+
+```
+Browser Request → GET /panda/core/controllers/toggle_controller.js
+                ↓
+JavaScriptMiddleware → Finds file in panda-core's app/javascript/
+                ↓
+Serves raw ES module → Content-Type: application/javascript
+```
+
+### Importmap Configuration
+
+Each gem defines its JavaScript imports in `config/importmap.rb`:
+
+```ruby
+# panda-core/config/importmap.rb
+pin "panda/core/application", to: "/panda/core/application.js"
+pin_all_from Panda::Core::Engine.root.join("app/javascript/panda/core/controllers"),
+             under: "controllers", to: "/panda/core/controllers"
+```
+
+### File Structure
+
+```
+app/javascript/panda/core/
+├── application.js          # Main entry point
+├── controllers/            # Stimulus controllers
+│   ├── toggle_controller.js
+│   ├── menu_controller.js
+│   └── ...
+└── vendor/                 # Vendored dependencies
+    └── @hotwired--stimulus.js
+```
+
+### Benefits of This Approach
+
+- **No compilation** - Faster development iteration
+- **Better caching** - Individual files = granular browser caching
+- **Simpler debugging** - Source maps not needed, files are unmodified
+- **Consistent across gems** - All Panda modules use same pattern
+- **Native ES modules** - Leverages browser-native module loading
+
+### Legacy Note
+
+You may find old compiled bundle files (like `panda-core-0.1.16.js`) in test directories. These are **legacy artifacts** from before the importmap migration and should be ignored/deleted. The current architecture does not create or use compiled bundles.
 
 ## Code Quality Commands
 

@@ -3,6 +3,8 @@
 module Panda
   module Core
     class User < ApplicationRecord
+      include HasUUID
+
       self.table_name = "panda_core_users"
 
       # Active Storage attachment for avatar with variants
@@ -67,14 +69,6 @@ module Panda
 
       def active_for_authentication?
         true
-      end
-
-      def name
-        if self[:name].present?
-          self[:name]
-        else
-          email&.split("@")&.first || "Unknown User"
-        end
       end
 
       # Returns the URL for the user's avatar

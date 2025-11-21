@@ -48,7 +48,7 @@ jobs:
   # Run latest version first as a smoke test
   # This ensures basic functionality works before testing older versions
   smoke-test:
-    name: '🚀 Latest (Rails 8.1.1, Ruby 3.4, PostgreSQL)'
+    name: '🚀 Latest (Rails 8.1.1, Ruby 3.4, PostgreSQL 18)'
     needs: seclint
     runs-on: 'ubuntu-latest'
 
@@ -70,7 +70,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:18
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
@@ -142,7 +142,7 @@ jobs:
 
   # Full matrix tests - only run if smoke test passes
   compatibility-matrix-postgresql:
-    name: 'PostgreSQL (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
+    name: 'PostgreSQL ${{ matrix.postgres }} (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
     needs: smoke-test # Gate on smoke test success
     runs-on: 'ubuntu-latest'
     continue-on-error: ${{ matrix.experimental == true }} # Allow experimental to fail
@@ -153,6 +153,7 @@ jobs:
       matrix:
         ruby: ['3.2', '3.3', '3.4']
         rails: ['7.0.10', '7.1.6', '7.2.3', '8.0.4', '8.1.1']
+        postgres: ['18'] # Default to PostgreSQL 18 for all combinations
         experimental: [false]
 
         # Add any experimental/beta versions here  # yamllint disable-line rule:comments-indentation
@@ -161,14 +162,36 @@ jobs:
         #     rails: '8.2.0'
         #     experimental: true
 
+        # Test older PostgreSQL versions with representative Ruby/Rails combinations
+        include:
+          # PostgreSQL 12 with Ruby 3.2 and Rails 7.1 (LTS)
+          - ruby: '3.2'
+            rails: '7.1.6'
+            postgres: '12'
+            experimental: false
+
+          # PostgreSQL 15 with Ruby 3.3 and Rails 7.2
+          - ruby: '3.3'
+            rails: '7.2.3'
+            postgres: '15'
+            experimental: false
+
+          # PostgreSQL 17 with Ruby 3.4 and Rails 8.0
+          - ruby: '3.4'
+            rails: '8.0.4'
+            postgres: '17'
+            experimental: false
+
         exclude:
           # Rails 7.0 is not compatible with Ruby 3.4
           - ruby: '3.4'
             rails: '7.0.10'
+            postgres: '18'
 
           # Skip the combination already tested in smoke-test
           - ruby: '3.4'
             rails: '8.1.1'
+            postgres: '18'
 
     container:
       image: ghcr.io/tastybamboo/panda-ci:ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
@@ -188,7 +211,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
@@ -236,7 +259,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
-          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
 
       #
       # 🧪 Run application tests
@@ -254,21 +277,112 @@ jobs:
         uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: coverage-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql
+          name: coverage-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
           path: coverage/
 
       - name: Upload Capybara assets
         uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: capybara-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql
+          name: capybara-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
+          path: spec/dummy/tmp/capybara/**/*
+          if-no-files-found: ignore
+
+  # SQLite compatibility matrix
+  compatibility-matrix-sqlite:
+    name: 'SQLite (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
+    needs: smoke-test
+    runs-on: 'ubuntu-latest'
+    continue-on-error: ${{ matrix.experimental == true }}
+
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        ruby: ['3.2', '3.3', '3.4']
+        rails: ['7.0.10', '7.1.6', '7.2.3', '8.0.4', '8.1.1']
+        experimental: [false]
+
+        exclude:
+          # Rails 7.0 is not compatible with Ruby 3.4
+          - ruby: '3.4'
+            rails: '7.0.10'
+
+    container:
+      image: ghcr.io/tastybamboo/panda-ci:ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
+      options: --shm-size=2gb
+
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+
+    env:
+      BUNDLE_PATH: 'vendor/bundle'
+      RAILS_ENV: test
+      DISPLAY: ':99'
+      RAILS_VERSION: ${{ matrix.rails }}
+      DATABASE_ADAPTER: 'sqlite'
+
+    steps:
+      - uses: 'actions/checkout@v5'
+
+      - name: 'Update VERSION'
+        env:
+          VERSION: ${{ github.event.pull_request.head.sha }}
+        run: |
+          echo "${VERSION}" >> VERSION
+
+      - name: 'Start xvfb'
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+      - name: 'Bundle install (main gem)'
+        run: |
+          bundle config without development
+          bundle install --jobs 4 --retry 3
+
+      - name: 'Setup test database'
+        env:
+          RAILS_ENV: test
+        run: |
+          echo "🗄️ Setting up SQLite database..."
+          bundle exec rails db:migrate
+          echo "✅ Database ready"
+
+      - name: Panda asset generation and verification
+        uses: tastybamboo/panda-assets-verify-action@v1
+        with:
+          dummy_root: spec/dummy
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-sqlite
+
+      - name: 'Run specs'
+        env:
+          RAILS_ENV: 'test'
+          RSPEC_COLOR: 'true'
+          TERM: 'xterm-256color'
+        run: |
+          bundle exec rspec --format documentation --color
+
+      - name: 'Upload coverage'
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: coverage-${{ matrix.ruby }}-${{ matrix.rails }}-sqlite
+          path: coverage/
+
+      - name: Upload Capybara assets
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: capybara-${{ matrix.ruby }}-${{ matrix.rails }}-sqlite
           path: spec/dummy/tmp/capybara/**/*
           if-no-files-found: ignore
 
   # Summary job to ensure all tests passed
   matrix-summary:
     name: 'Matrix Tests Summary'
-    needs: [smoke-test, compatibility-matrix-postgresql]
+    needs: [smoke-test, compatibility-matrix-postgresql, compatibility-matrix-sqlite]
     runs-on: 'ubuntu-latest'
     if: always()
     steps:
@@ -281,6 +395,11 @@ jobs:
 
           if [[ "${{ needs.compatibility-matrix-postgresql.result }}" == "failure" ]]; then
             echo "❌ Some PostgreSQL compatibility tests failed"
+            exit 1
+          fi
+
+          if [[ "${{ needs.compatibility-matrix-sqlite.result }}" == "failure" ]]; then
+            echo "❌ Some SQLite compatibility tests failed"
             exit 1
           fi
 

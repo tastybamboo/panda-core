@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# This migration comes from panda_core (originally 20250809000001)
 class CreatePandaCoreUsers < ActiveRecord::Migration[7.1]
   def change
     # Enable pgcrypto extension for PostgreSQL UUID generation
