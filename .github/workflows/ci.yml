@@ -259,7 +259,7 @@ jobs:
         uses: tastybamboo/panda-assets-verify-action@v1
         with:
           dummy_root: spec/dummy
-          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql
+          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
 
       #
       # 🧪 Run application tests
@@ -277,14 +277,14 @@ jobs:
         uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: coverage-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql
+          name: coverage-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
           path: coverage/
 
       - name: Upload Capybara assets
         uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: capybara-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql
+          name: capybara-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
           path: spec/dummy/tmp/capybara/**/*
           if-no-files-found: ignore
 
