@@ -24,7 +24,7 @@ jobs:
       new_version: ${{ steps.version_check.outputs.version }}
       tag_name: ${{ steps.version_check.outputs.tag }}
     steps:
-      - uses: 'actions/checkout@v5'
+      - uses: 'actions/checkout@v6'
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_branch }}
@@ -109,7 +109,7 @@ jobs:
     permissions:
       contents: write # For creating tags and releases
     steps:
-      - uses: 'actions/checkout@v5'
+      - uses: 'actions/checkout@v6'
         with:
           fetch-depth: 0
 
