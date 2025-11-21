@@ -31,6 +31,13 @@ module Panda
           default_timeout = 2
           default_process_timeout = 2
 
+          process_timeout_value = ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i || default_process_timeout
+
+          # Debug output
+          if ENV["CI"] || ENV["DEBUG"]
+            puts "[Cuprite Config] process_timeout = #{process_timeout_value} (ENV: #{ENV["CUPRITE_PROCESS_TIMEOUT"].inspect})"
+          end
+
           {
             window_size: [1440, 1000],
             inspector: ENV["INSPECTOR"].in?(%w[y 1 yes true]),
@@ -39,7 +46,7 @@ module Panda
             timeout: ENV["CUPRITE_TIMEOUT"]&.to_i || default_timeout,
             js_errors: true,  # IMPORTANT: Report JavaScript errors as test failures
             ignore_default_browser_options: false,
-            process_timeout: ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i || default_process_timeout,
+            process_timeout: process_timeout_value,
             wait_for_network_idle: false,  # Don't wait for all network requests
             pending_connection_errors: false,  # Don't fail on pending external connections
             browser_options: {
@@ -56,7 +63,8 @@ module Panda
               "allow-insecure-localhost": nil,
               "enable-features": "NetworkService,NetworkServiceInProcess",
               "disable-blink-features": "AutomationControlled",
-              "no-dbus": true
+              "no-dbus": true,
+              "log-level": "3"  # Suppress D-Bus warnings (0=INFO, 1=WARNING, 2=ERROR, 3=FATAL)
             }
           }
         end
@@ -85,6 +93,16 @@ module Panda
           # Create console logger for capturing browser console messages
           self.console_logger = Panda::Core::Testing::Support::System::FerrumConsoleLogger.new
           options[:logger] = console_logger
+
+          # Debug output for CI
+          if ENV["CI"] || ENV["DEBUG"]
+            puts "[Cuprite Config] Final driver options:"
+            puts "  timeout: #{options[:timeout]}"
+            puts "  process_timeout: #{options[:process_timeout]}"
+            puts "  headless: #{options[:headless]}"
+            puts "  window_size: #{options[:window_size]}"
+            puts "  Browser options count: #{options[:browser_options].keys.count}"
+          end
 
           Capybara.register_driver :cuprite do |app|
             Capybara::Cuprite::Driver.new(app, **options)
