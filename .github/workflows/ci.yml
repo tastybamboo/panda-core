@@ -347,7 +347,7 @@ jobs:
           RAILS_ENV: test
         run: |
           echo "🗄️ Setting up SQLite database..."
-          bundle exec rails db:migrate
+          bundle exec rails db:schema:load
           echo "✅ Database ready"
 
       - name: Panda asset generation and verification
