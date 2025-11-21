@@ -15,6 +15,7 @@ module Panda
               inflect.acronym "CMS"
               inflect.acronym "SEO"
               inflect.acronym "AI"
+              inflect.acronym "UUID"
             end
           end
         end

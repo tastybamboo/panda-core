@@ -3,6 +3,8 @@
 module Panda
   module Core
     class User < ApplicationRecord
+      include HasUUID
+
       self.table_name = "panda_core_users"
 
       # Active Storage attachment for avatar with variants
