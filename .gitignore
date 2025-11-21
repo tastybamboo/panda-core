@@ -5,6 +5,8 @@
 /tmp/
 /spec/dummy/coverage
 /spec/dummy/db/*.sqlite3*
+# Don't copy our own engine files
+/spec/dummy/db/migrate/*.panda_core.rb
 /spec/dummy/log/*.log*
 /spec/dummy/storage/
 /spec/dummy/tmp/
@@ -15,6 +17,7 @@
 *.gem
 /coverage
 .claude/settings.local.json
+db/test.sqlite3
 # Tailwind CSS standalone binary
 /tailwindcss
 /tailwindcss-*
