@@ -142,7 +142,7 @@ jobs:
 
   # Full matrix tests - only run if smoke test passes
   compatibility-matrix-postgresql:
-    name: 'PostgreSQL (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
+    name: 'PostgreSQL ${{ matrix.postgres }} (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
     needs: smoke-test # Gate on smoke test success
     runs-on: 'ubuntu-latest'
     continue-on-error: ${{ matrix.experimental == true }} # Allow experimental to fail
@@ -153,6 +153,7 @@ jobs:
       matrix:
         ruby: ['3.2', '3.3', '3.4']
         rails: ['7.0.10', '7.1.6', '7.2.3', '8.0.4', '8.1.1']
+        postgres: ['18'] # Default to PostgreSQL 18 for all combinations
         experimental: [false]
 
         # Add any experimental/beta versions here  # yamllint disable-line rule:comments-indentation
@@ -161,14 +162,36 @@ jobs:
         #     rails: '8.2.0'
         #     experimental: true
 
+        # Test older PostgreSQL versions with representative Ruby/Rails combinations
+        include:
+          # PostgreSQL 12 with Ruby 3.2 and Rails 7.1 (LTS)
+          - ruby: '3.2'
+            rails: '7.1.6'
+            postgres: '12'
+            experimental: false
+
+          # PostgreSQL 15 with Ruby 3.3 and Rails 7.2
+          - ruby: '3.3'
+            rails: '7.2.3'
+            postgres: '15'
+            experimental: false
+
+          # PostgreSQL 17 with Ruby 3.4 and Rails 8.0
+          - ruby: '3.4'
+            rails: '8.0.4'
+            postgres: '17'
+            experimental: false
+
         exclude:
           # Rails 7.0 is not compatible with Ruby 3.4
           - ruby: '3.4'
             rails: '7.0.10'
+            postgres: '18'
 
           # Skip the combination already tested in smoke-test
           - ruby: '3.4'
             rails: '8.1.1'
+            postgres: '18'
 
     container:
       image: ghcr.io/tastybamboo/panda-ci:ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
@@ -188,7 +211,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:18
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
