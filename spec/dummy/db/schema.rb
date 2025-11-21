@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_17_192845) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_21_005640) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -62,7 +62,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_17_192845) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "panda_core_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "panda_core_users", id: :uuid, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "current_theme"
     t.string "email", null: false

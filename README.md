@@ -5,6 +5,26 @@ Core functionality shared between Panda Software gems:
 - [Panda CMS](https://github.com/tastybamboo/panda-cms)
 - [Panda Editor](https://github.com/tastybamboo/panda-editor)
 
+## Requirements
+
+### Database Support
+
+Panda Core supports both PostgreSQL and SQLite3 databases:
+
+**PostgreSQL** (recommended for production):
+
+- PostgreSQL 12, 15, 17, 18
+- Tested against all versions in CI
+- Uses native UUID generation (`gen_random_uuid()`)
+
+**SQLite3** (development/testing):
+
+- SQLite 3.x
+- Uses application-level UUID generation
+- Ideal for local development and testing
+
+Both databases are tested extensively in CI across multiple Ruby and Rails versions to ensure cross-database compatibility.
+
 ## Installation
 
 Add this line to your application's Gemfile:
