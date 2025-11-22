@@ -1,0 +1,44 @@
+# frozen_string_literal: true
+# Gemfile for panda-core dummy app - loads all panda gems for CSS compilation
+
+source "https://rubygems.org"
+
+# Use forked awesome_nested_set that supports Rails 8.1+
+gem "awesome_nested_set", git: "https://github.com/caonUlisses/awesome_nested_set.git", branch: "main"
+
+# Rails version
+gem "rails", "~> 8.1"
+
+# Asset pipeline essentials
+gem "propshaft", "~> 1.1.0"
+gem "importmap-rails", "~> 2.0"
+gem "turbo-rails", "~> 2.0"
+gem "stimulus-rails", "~> 1.3"
+
+# Database adapter
+gem "pg", "~> 1.5"
+
+# Web server
+gem "puma", ">= 5.0"
+
+# Tailwind for CSS compilation
+gem "tailwindcss-rails", "~> 4"
+
+# OAuth providers for authentication (needed for dummy app config)
+gem "omniauth-google-oauth2"
+gem "omniauth-github"
+gem "omniauth-microsoft_graph"
+
+# Load all panda gems from the monorepo (UI gems with CSS/components)
+gem "panda-core", path: "../.."
+gem "panda-cms", path: "../../../panda-cms"
+gem "panda-editor", path: "../../../panda-editor"
+
+# Optional: panda-cms-pro (only if available - it's a private gem)
+if File.directory?(File.expand_path("../../../panda-cms-pro", __dir__))
+  gem "panda-cms-pro", path: "../../../panda-cms-pro"
+end
+
+group :test do
+  gem "debug", platforms: %i[mri windows]
+end
