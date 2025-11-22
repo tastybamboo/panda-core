@@ -63,7 +63,7 @@ module Panda
               "allow-insecure-localhost": nil,
               "enable-features": "NetworkService,NetworkServiceInProcess",
               "disable-blink-features": "AutomationControlled",
-              "no-dbus": true,
+              "no-dbus": nil,
               "log-level": "3"  # Suppress D-Bus warnings (0=INFO, 1=WARNING, 2=ERROR, 3=FATAL)
             }
           }
