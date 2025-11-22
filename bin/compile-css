@@ -15,7 +15,7 @@ FileUtils.chdir GEM_ROOT do
   puts "Output: public/panda-core-assets/panda-core.css"
   puts ""
 
-  system!("bundle exec rake panda:compile_css")
+  system!("cd spec/dummy && bundle exec rake panda:compile_css")
 
   puts ""
   puts "✅ CSS compilation complete!"
