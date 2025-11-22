@@ -86,8 +86,8 @@ module Panda
           if ENV["GITHUB_ACTIONS"] == "true"
             options[:browser_options].merge!(ci_browser_options)
 
-            # Ensure CI uses xvfb to run the browser
-            options[:browser_options][:xvfb] = true
+            # Ensure CI uses xvfb to run the browser (Cuprite option, not browser flag)
+            options[:xvfb] = true
           end
 
           # Create console logger for capturing browser console messages
