@@ -33,11 +33,20 @@ namespace :panda do
     puts "\n🎨 Output: #{output_dir}/panda-core.css"
     puts ""
 
-    command = ["bundle exec tailwindcss",
-      "-i #{core_gemspec.full_gem_path}/app/assets/tailwind/application.css",
-      "-o #{output_dir}/panda-core.css"]
+    # Generate temporary input CSS with dynamic @source directives
+    base_css_path = "#{core_gemspec.full_gem_path}/app/assets/tailwind/application.css"
+    temp_css_path = "#{core_gemspec.full_gem_path}/tmp/tailwind-dynamic.css"
 
+    # Ensure tmp directory exists
+    FileUtils.mkdir_p(File.dirname(temp_css_path))
+
+    # Read base CSS content
+    base_css_content = File.read(base_css_path)
+
+    # Build @source directives for all registered modules
+    source_directives = []
     content_paths_count = 0
+
     registered_modules.each do |gem_name, info|
       gem_path = begin
         gem_spec = Gem::Specification.find_by_name(gem_name)
@@ -48,7 +57,9 @@ namespace :panda do
       end
 
       info[:paths].each do |asset_type, path|
-        command << "--content '#{gem_path}/#{path}'"
+        full_path = "#{gem_path}/#{path}"
+        puts "   📁 #{asset_type}: #{full_path}"
+        source_directives << "@source \"#{full_path}\";"
         content_paths_count += 1
       end
     end
@@ -56,10 +67,25 @@ namespace :panda do
     puts "📂 Scanning #{content_paths_count} content path(s) for Tailwind classes..."
     puts ""
 
+    # Create temporary CSS file with @source directives inserted after @import
+    temp_css_content = base_css_content.sub(
+      /@import\s+['"]tailwindcss['"];/,
+      "@import 'tailwindcss';\n\n/* Dynamic source paths from ModuleRegistry */\n#{source_directives.join("\n")}\n"
+    )
+
+    File.write(temp_css_path, temp_css_content)
+
+    command = ["bundle exec tailwindcss",
+      "-i #{temp_css_path}",
+      "-o #{output_dir}/panda-core.css"]
+
     command << "--minify"
-    command << "--verbose"
+    # command << "--verbose"  # Enable for debugging
 
     system(command.join(" "))
+
+    # Clean up temporary file
+    File.delete(temp_css_path) if File.exist?(temp_css_path)
 
     puts "\n" + ("=" * 80)
     if File.exist?("#{output_dir}/panda-core.css")

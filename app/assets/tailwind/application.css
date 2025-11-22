@@ -153,6 +153,11 @@
   html[data-theme='sky'] .bg-gradient-admin {
     background: linear-gradient(to bottom right, rgb(20, 32, 74), rgb(42, 102, 159));
   }
+
+  /* Remove rounded bottom-left corner on admin sidebar */
+  .bg-gradient-admin {
+    border-bottom-left-radius: 0;
+  }
 }
 
 /* Form input styles */
