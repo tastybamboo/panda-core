@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/tastybamboo/panda-cms.git
-  revision: 2f6dc66668ab004b919059894f2c6c02d439f3a0
+  revision: 672f730f1f36e340879740c99f2328d8e1ea506d
   branch: chore/test-migrations
   specs:
     panda-cms (0.10.2)
@@ -244,7 +244,7 @@ GEM
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
-    omniauth-rails_csrf_protection (1.0.2)
+    omniauth-rails_csrf_protection (2.0.0)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
     panda-core (0.11.0)

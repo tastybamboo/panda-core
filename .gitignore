@@ -18,6 +18,8 @@
 /coverage
 .claude/settings.local.json
 db/test.sqlite3
-# Tailwind CSS standalone binary
 /tailwindcss
 /tailwindcss-*
+panda-assets-report/
+panda-assets-summary/
+screenshots/
