@@ -1,0 +1,28 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "ff4d2962c91c5ada71770727538337d34d68274c5a479e666b8a842c00eb659b",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "lib/panda/core/testing/support/system/cuprite_helpers.rb",
+      "line": 71,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "system(\"ffmpeg -y -framerate 8 -pattern_type glob -i '#{File.join(dir, \"frames\")}/*.png' -c:v libx264 -pix_fmt yuv420p '#{Rails.root.join(\"spec/tmp/capybara/#{example.metadata[:full_description].parameterize}.mp4\")}'\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Panda::Core::Testing::CupriteHelpers",
+        "method": "record_video!"
+      },
+      "user_input": "File.join(dir, \"frames\")",
+      "confidence": "Medium",
+      "cwe_id": [
+        77
+      ],
+      "note": "This is using a predefined directory, not user input."
+    }
+  ],
+  "brakeman_version": "7.1.1"
+}
