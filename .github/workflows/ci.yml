@@ -54,7 +54,7 @@ jobs:
 
     container:
       image: ghcr.io/tastybamboo/panda-ci:ruby-3.4-rails-8.1.1
-      options: --shm-size=2gb
+      options: --shm-size=2gb --tmpfs /dev/shm:rw,nosuid,nodev,mode=1777
 
     permissions:
       contents: read
@@ -92,6 +92,14 @@ jobs:
         run: |
           echo "${VERSION}" >> VERSION
 
+      - name: Prepare Chrome temp dirs
+        run: |
+          mkdir -p /home/panda/tmp /home/panda/chrome
+          chmod 777 /home/panda/tmp /home/panda/chrome
+        env:
+          TMPDIR: /home/panda/tmp
+          CHROME_USER_DATA_DIR: /home/panda/chrome
+
       - name: 'Start xvfb'
         run: |
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
@@ -122,6 +130,8 @@ jobs:
           RAILS_ENV: 'test'
           RSPEC_COLOR: 'true'
           TERM: 'xterm-256color'
+          TMPDIR: /home/panda/tmp
+          CHROME_USER_DATA_DIR: /home/panda/chrome
         run: |
           bundle exec rspec --format documentation --color
 
@@ -195,7 +205,7 @@ jobs:
 
     container:
       image: ghcr.io/tastybamboo/panda-ci:ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
-      options: --shm-size=2gb
+      options: --shm-size=2gb --tmpfs /dev/shm:rw,nosuid,nodev,mode=1777
 
     permissions:
       contents: read
@@ -232,6 +242,14 @@ jobs:
           VERSION: ${{ github.event.pull_request.head.sha }}
         run: |
           echo "${VERSION}" >> VERSION
+
+      - name: 'Prepare Chrome temp dirs'
+        run: |
+          mkdir -p /home/panda/tmp /home/panda/chrome
+          chmod 777 /home/panda/tmp /home/panda/chrome
+        env:
+          TMPDIR: /home/panda/tmp
+          CHROME_USER_DATA_DIR: /home/panda/chrome
 
       - name: 'Start xvfb'
         run: |
@@ -270,6 +288,8 @@ jobs:
           RAILS_ENV: 'test'
           RSPEC_COLOR: 'true'
           TERM: 'xterm-256color'
+          TMPDIR: /home/panda/tmp
+          CHROME_USER_DATA_DIR: /home/panda/chrome
         run: |
           bundle exec rspec --format documentation --color
 
@@ -310,7 +330,7 @@ jobs:
 
     container:
       image: ghcr.io/tastybamboo/panda-ci:ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
-      options: --shm-size=2gb
+      options: --shm-size=2gb --tmpfs /dev/shm:rw,nosuid,nodev,mode=1777
 
     permissions:
       contents: read
@@ -332,6 +352,14 @@ jobs:
           VERSION: ${{ github.event.pull_request.head.sha }}
         run: |
           echo "${VERSION}" >> VERSION
+
+      - name: Prepare Chrome temp dirs
+        run: |
+          mkdir -p /home/panda/tmp /home/panda/chrome
+          chmod 777 /home/panda/tmp /home/panda/chrome
+        env:
+          TMPDIR: /home/panda/tmp
+          CHROME_USER_DATA_DIR: /home/panda/chrome
 
       - name: 'Start xvfb'
         run: |
@@ -361,6 +389,8 @@ jobs:
           RAILS_ENV: 'test'
           RSPEC_COLOR: 'true'
           TERM: 'xterm-256color'
+          TMPDIR: /home/panda/tmp
+          CHROME_USER_DATA_DIR: /home/panda/chrome
         run: |
           bundle exec rspec --format documentation --color
 
