@@ -83,11 +83,10 @@ module Panda
           options = base_options.dup
 
           # Add CI-specific options
+          # Note: xvfb is started by the CI workflow, not by Cuprite
+          # Cuprite will use the DISPLAY env var set by the workflow
           if ENV["GITHUB_ACTIONS"] == "true"
             options[:browser_options].merge!(ci_browser_options)
-
-            # Ensure CI uses xvfb to run the browser (Cuprite option, not browser flag)
-            options[:xvfb] = true
           end
 
           # Create console logger for capturing browser console messages
