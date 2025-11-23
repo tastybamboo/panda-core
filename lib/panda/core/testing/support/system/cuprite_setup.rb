@@ -64,7 +64,7 @@ module Panda
               "enable-features": "NetworkService,NetworkServiceInProcess",
               "disable-blink-features": "AutomationControlled",
               "no-dbus": nil,
-              "log-level": "3"  # Suppress D-Bus warnings (0=INFO, 1=WARNING, 2=ERROR, 3=FATAL)
+              "log-level": ENV["CI"] ? "0" : "3"  # Verbose logging in CI to debug startup issues
             }
           }
         end
