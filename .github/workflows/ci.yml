@@ -67,6 +67,7 @@ jobs:
       DISPLAY: ':99'
       RAILS_VERSION: '8.1.1'
       DATABASE_ADAPTER: 'postgresql'
+      DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
 
     services:
       postgres:
@@ -218,6 +219,7 @@ jobs:
       DISPLAY: ':99'
       RAILS_VERSION: ${{ matrix.rails }}
       DATABASE_ADAPTER: 'postgresql'
+      DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
 
     services:
       postgres:
