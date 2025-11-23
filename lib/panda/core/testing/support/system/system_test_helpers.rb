@@ -102,7 +102,9 @@ RSpec.configure do |config|
         nil
       end
 
-      # sleep 0.5
+      name = example.metadata[:full_description].parameterize
+
+      save_html!(name)
 
       # Get comprehensive page info
       page_html = begin
@@ -132,20 +134,13 @@ RSpec.configure do |config|
       end
 
       # Use Capybara's save_screenshot method
-      screenshot_path = Capybara.save_screenshot
+      screenshot_path = save_screenshot!(name)
       if screenshot_path
         puts "Screenshot saved to: #{screenshot_path}"
         puts "Page title: #{page_title}" if page_title.present?
         puts "Current URL: #{current_url}" if current_url.present?
         puts "Current path: #{current_path}" if current_path.present?
         puts "Page content length: #{page_html.length} characters"
-
-        # Save page HTML for debugging in CI
-        if ENV["GITHUB_ACTIONS"] && page_html.present?
-          html_debug_path = screenshot_path.gsub(".png", ".html")
-          File.write(html_debug_path, page_html)
-          puts "Page HTML saved to: #{html_debug_path}"
-        end
       end
     rescue => e
       puts "Failed to capture screenshot: #{e.message}"

@@ -16,6 +16,77 @@ module Panda
   module Core
     module Testing
       module CupriteHelpers
+        #
+        # Save a PNG screenshot for the current page.
+        #
+        def save_screenshot!(name = nil)
+          name ||= example.metadata[:full_description].parameterize
+          path = Rails.root.join("spec/tmp/capybara/#{name}.png")
+
+          page.save_screenshot(path, full: true) # rubocop:disable Lint/Debugger
+          puts "📸 Saved screenshot: #{path}"
+
+          path
+        end
+
+        #
+        # Record a small MP4 video of the test — uses Cuprite's Chrome DevTools API
+        #
+        def record_video!(name = nil, seconds: 3)
+          name ||= example.metadata[:full_description].parameterize
+          path = Rails.root.join("spec/tmp/capybara/#{name}.mp4")
+
+          FileUtils.mkdir_p(File.dirname(path))
+
+          session = page.driver.browser
+          client = session.client
+
+          # Enable screencast
+          client.command("Page.startScreencast", format: "png", quality: 80, maxWidth: 1280, maxHeight: 800)
+
+          frames = []
+
+          start = Time.now
+          while Time.now - start < seconds
+            message = client.listen
+            if message["method"] == "Page.screencastFrame"
+              frames << message["params"]["data"]
+              client.command("Page.screencastFrameAck", sessionId: message["params"]["sessionId"])
+            end
+          end
+
+          # Stop
+          client.command("Page.stopScreencast")
+
+          # Convert frames to MP4 using ffmpeg
+          Dir.mktmpdir do |dir|
+            png_dir = File.join(dir, "frames")
+            FileUtils.mkdir_p(png_dir)
+
+            frames.each_with_index do |data, i|
+              File.binwrite(File.join(png_dir, "frame-%05d.png" % i), Base64.decode64(data))
+            end
+
+            system <<~CMD
+              ffmpeg -y -framerate 8 -pattern_type glob -i '#{png_dir}/*.png' -c:v libx264 -pix_fmt yuv420p '#{path}'
+            CMD
+          end
+
+          puts "🎥 Saved video: #{path}"
+          path
+        rescue => e
+          puts "⚠️ Failed to record video: #{e.message}"
+          nil
+        end
+
+        def save_html!(name = nil)
+          name ||= example.metadata[:full_description].parameterize
+          path = Rails.root.join("spec/tmp/capybara/#{name}.html")
+          File.write(path, page.html)
+          puts "📝 Saved HTML snapshot: #{path}"
+          path
+        end
+
         # Ensure page is loaded and stable before interacting
         def ensure_page_loaded
           # Check if we're on about:blank and need to reload

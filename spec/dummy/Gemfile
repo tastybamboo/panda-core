@@ -30,15 +30,14 @@ gem "omniauth-github"
 gem "omniauth-microsoft_graph"
 
 # Load all panda gems from the monorepo (UI gems with CSS/components)
-gem "panda-core", path: "../.."
-gem "panda-cms", path: "../../../panda-cms"
-gem "panda-editor", path: "../../../panda-editor"
+gem "panda-core"
+gem "panda-cms", github: "tastybamboo/panda-cms", branch: "chore/test-migrations"
+gem "panda-editor"
 
-# Optional: panda-cms-pro (only if available - it's a private gem)
-if File.directory?(File.expand_path("../../../panda-cms-pro", __dir__))
-  gem "panda-cms-pro", path: "../../../panda-cms-pro"
-end
+# gem "panda-cms-pro"
 
 group :test do
   gem "debug", platforms: %i[mri windows]
+  gem "rspec"
+  gem "rspec-rails"
 end
