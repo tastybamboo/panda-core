@@ -110,6 +110,11 @@ module Panda
           end
 
           Capybara.register_driver :cuprite do |app|
+            if ENV["CI"] || ENV["DEBUG"]
+              puts "[Cuprite Driver Instantiation] Creating driver with options:"
+              puts "  timeout: #{options[:timeout].inspect}"
+              puts "  process_timeout: #{options[:process_timeout].inspect}"
+            end
             Capybara::Cuprite::Driver.new(app, **options)
           end
         end
