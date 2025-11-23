@@ -29,9 +29,16 @@ module Panda
 
         # Base Cuprite options shared across all drivers
         def self.base_options
+          default_timeout = 2
+          default_process_timeout = 2
+
+          cuprite_timeout = ENV["CUPRITE_TIMEOUT"]&.to_i || default_timeout
+          process_timeout_value = ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i || default_process_timeout
+
           # Debug output
           if ENV["CI"] || ENV["DEBUG"]
-            puts "[Cuprite Config] process_timeout = #{process_timeout_value} (ENV: #{ENV["CUPRITE_PROCESS_TIMEOUT"].inspect})"
+            puts "[Cuprite Config] timeout = #{cuprite_timeout}, process_timeout = #{process_timeout_value}"
+            puts "[Cuprite Config] ENV: CUPRITE_TIMEOUT=#{ENV["CUPRITE_TIMEOUT"].inspect}, CUPRITE_PROCESS_TIMEOUT=#{ENV["CUPRITE_PROCESS_TIMEOUT"].inspect}"
           end
 
           browser_path = ENV["BROWSER_PATH"] || Panda::Core::Testing::Support::System::ChromePath.resolve
@@ -42,10 +49,10 @@ module Panda
             inspector: ENV["INSPECTOR"].in?(%w[y 1 yes true]),
             headless: !ENV["HEADLESS"].in?(%w[n 0 no false]),
             slowmo: ENV["SLOWMO"]&.to_f || 0,
-            timeout: ENV.fetch("CUPRITE_PROCESS_TIMEOUT", 2).to_i,
+            timeout: cuprite_timeout,
             js_errors: true,  # IMPORTANT: Report JavaScript errors as test failures
             ignore_default_browser_options: false,
-            process_timeout: ENV.fetch("CUPRITE_PROCESS_TIMEOUT", 2).to_i,
+            process_timeout: process_timeout_value,
             wait_for_network_idle: false,  # Don't wait for all network requests
             pending_connection_errors: false,  # Don't fail on pending external connections
             browser_options: {
