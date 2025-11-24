@@ -29,11 +29,19 @@ module Panda
 
         # Base Cuprite options shared across all drivers
         def self.base_options
-          default_timeout = 2
-          default_process_timeout = 2
+          # Prefer Cuprite-specific env vars, then Ferrum fallbacks, then CI-friendly defaults
+          ci_default_timeout = 10
+          ci_default_process_timeout = 20
+          default_timeout = ENV["CI"] ? ci_default_timeout : 2
+          default_process_timeout = ENV["CI"] ? ci_default_process_timeout : 2
 
-          cuprite_timeout = ENV["CUPRITE_TIMEOUT"]&.to_i || default_timeout
-          process_timeout_value = ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i || default_process_timeout
+          cuprite_timeout = ENV["CUPRITE_TIMEOUT"]&.to_i ||
+            ENV["FERRUM_TIMEOUT"]&.to_i ||
+            default_timeout
+
+          process_timeout_value = ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i ||
+            ENV["FERRUM_PROCESS_TIMEOUT"]&.to_i ||
+            default_process_timeout
 
           # Debug output
           if ENV["CI"] || ENV["DEBUG"]

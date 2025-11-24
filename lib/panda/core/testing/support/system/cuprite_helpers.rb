@@ -23,6 +23,7 @@ module Panda
           name ||= example.metadata[:full_description].parameterize
           path = Rails.root.join("spec/tmp/capybara/#{name}.png")
 
+          FileUtils.mkdir_p(File.dirname(path))
           page.save_screenshot(path, full: true) # rubocop:disable Lint/Debugger
           puts "📸 Saved screenshot: #{path}"
 
@@ -82,6 +83,7 @@ module Panda
         def save_html!(name = nil)
           name ||= example.metadata[:full_description].parameterize
           path = Rails.root.join("spec/tmp/capybara/#{name}.html")
+          FileUtils.mkdir_p(File.dirname(path))
           File.write(path, page.html)
           puts "📝 Saved HTML snapshot: #{path}"
           path

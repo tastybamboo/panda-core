@@ -1,15 +1,3 @@
-GIT
-  remote: https://github.com/jfi/ferrum.git
-  revision: 052b00467d39e3cddd189987bf3c50de1f4a6953
-  ref: 052b00467d39e3cddd189987bf3c50de1f4a6953
-  specs:
-    ferrum (0.17.1)
-      addressable (~> 2.5)
-      base64 (~> 0.2)
-      concurrent-ruby (~> 1.1)
-      webrick (~> 1.7)
-      websocket-driver (~> 0.7)
-
 PATH
   remote: .
   specs:
@@ -212,6 +200,12 @@ GEM
       net-http (~> 0.5)
     fasterer (0.11.0)
       ruby_parser (>= 3.19.1)
+    ferrum (0.17.1)
+      addressable (~> 2.5)
+      base64 (~> 0.2)
+      concurrent-ruby (~> 1.1)
+      webrick (~> 1.7)
+      websocket-driver (~> 0.7)
     ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     globalid (1.3.0)
@@ -560,7 +554,6 @@ DEPENDENCIES
   erb_lint
   faker
   fasterer
-  ferrum!
   importmap-rails
   listen
   omniauth-github
