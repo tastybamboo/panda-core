@@ -45,7 +45,7 @@ namespace :panda do
         if user.admin?
           puts "User '#{user.email}' is already an admin"
         else
-          user.update!(is_admin: true)
+          user.update!(admin: true)
           puts "✓ Granted admin privileges to '#{user.email}'"
         end
       end
@@ -75,7 +75,7 @@ namespace :panda do
             exit 1
           end
 
-          user.update!(is_admin: false)
+          user.update!(admin: false)
           puts "✓ Revoked admin privileges from '#{user.email}'"
         else
           puts "User '#{user.email}' is not an admin"
@@ -109,7 +109,7 @@ namespace :panda do
         user = Panda::Core::User.create!(
           email: email.downcase,
           name: name,
-          is_admin: true
+          admin: true
         )
         puts "✓ Created admin user '#{user.email}'"
         puts "  Name: #{user.name}" if user.respond_to?(:name)

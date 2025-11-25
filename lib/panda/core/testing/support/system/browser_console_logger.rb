@@ -9,8 +9,7 @@ module BrowserConsoleLogger
 
       if respond_to?(:page) && page.driver.is_a?(Capybara::Cuprite::Driver)
         begin
-          # Access the console logger via the CupriteSetup module
-          console_logger = Panda::Core::Testing::CupriteSetup.console_logger
+          console_logger = Panda::Core::Testing::CupriteSetup.console_logger if defined?(Panda::Core::Testing::CupriteSetup)
 
           unless console_logger
             puts "\n⚠️  Console logger not available"

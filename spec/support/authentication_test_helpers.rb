@@ -22,12 +22,7 @@ module Panda
           user.email = attributes[:email] || "admin@example.com"
           user.name = attributes[:name] || "Admin User"
           user.image_url = attributes[:image_url] || default_image_url
-          # Use is_admin for the actual column, but support both for compatibility
-          if user.respond_to?(:is_admin=)
-            user.is_admin = attributes.fetch(:admin, true)
-          elsif user.respond_to?(:admin=)
-            user.admin = attributes.fetch(:admin, true)
-          end
+          user.admin = attributes.fetch(:admin, true)
           # Only set OAuth fields if they exist on the model
           user.uid = attributes[:uid] || "admin_oauth_uid_123" if user.respond_to?(:uid=)
           user.provider = attributes[:provider] || "google_oauth2" if user.respond_to?(:provider=)
@@ -42,12 +37,7 @@ module Panda
           user.email = attributes[:email] || "user@example.com"
           user.name = attributes[:name] || "Regular User"
           user.image_url = attributes[:image_url] || default_image_url(dark: true)
-          # Use is_admin for the actual column, but support both for compatibility
-          if user.respond_to?(:is_admin=)
-            user.is_admin = attributes.fetch(:admin, false)
-          elsif user.respond_to?(:admin=)
-            user.admin = attributes.fetch(:admin, false)
-          end
+          user.admin = attributes.fetch(:admin, false)
           # Only set OAuth fields if they exist on the model
           user.uid = attributes[:uid] || "user_oauth_uid_456" if user.respond_to?(:uid=)
           user.provider = attributes[:provider] || "google_oauth2" if user.respond_to?(:provider=)

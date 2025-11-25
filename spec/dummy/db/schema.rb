@@ -67,7 +67,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_21_005640) do
     t.string "current_theme"
     t.string "email", null: false
     t.string "image_url"
-    t.boolean "is_admin", default: false, null: false
+    t.boolean "admin", default: false, null: false
     t.string "name"
     t.string "oauth_avatar_url"
     t.datetime "updated_at", null: false

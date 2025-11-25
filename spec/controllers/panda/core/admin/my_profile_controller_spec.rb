@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Panda::Core::Admin::MyProfileController, type: :controller do
   routes { Panda::Core::Engine.routes }
 
-  let(:user) { Panda::Core::User.create!(email: "test@example.com", name: "Test User", is_admin: true) }
+  let(:user) { Panda::Core::User.create!(email: "test@example.com", name: "Test User", admin: true) }
 
   before do
     session[:user_id] = user.id
@@ -153,18 +153,18 @@ RSpec.describe Panda::Core::Admin::MyProfileController, type: :controller do
         expect(response).to have_http_status(:redirect)
       end
 
-      it "does not permit is_admin parameter" do
+      it "does not permit admin parameter" do
         patch :update, params: {
           user: {
             name: "Updated Name",
             email: "test@example.com",
-            is_admin: false
+            admin: false
           }
         }
 
         user.reload
         # Should remain admin since parameter not permitted
-        expect(user.is_admin).to be true
+        expect(user.admin).to be true
       end
     end
   end

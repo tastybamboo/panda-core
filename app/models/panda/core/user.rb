@@ -31,6 +31,8 @@ module Panda
         end
       }
 
+      alias_attribute :is_admin, :admin
+
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)
 
@@ -48,7 +50,7 @@ module Panda
           email: auth_hash.info.email.downcase,
           name: auth_hash.info.name || "Unknown User",
           image_url: auth_hash.info.image,
-          is_admin: User.count.zero? # First user is admin
+          admin: User.count.zero? # First user is admin
         }
 
         user = create!(attributes)
@@ -62,7 +64,6 @@ module Panda
       end
 
       # Admin status check
-      # Note: Column is named 'admin' in newer schemas, 'is_admin' in older ones
       def admin?
         self[:admin] || self[:is_admin] || false
       end

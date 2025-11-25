@@ -19,6 +19,13 @@ end
 RSpec.configure do |config|
   config.include Panda::Core::Testing::SystemTestHelpers, type: :system
 
+  tmp = ENV["TMPDIR"]
+  if tmp && File.world_writable?(tmp)
+    config.before(:suite) do
+      warn "⚠️  TMPDIR is world-writable: #{tmp}"
+    end
+  end
+
   # Make urls in mailers contain the correct server host
   config.around(:each, type: :system) do |ex|
     was_host = Rails.application.default_url_options[:host]
