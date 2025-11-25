@@ -3,13 +3,13 @@
     {
       "warning_type": "Command Injection",
       "warning_code": 14,
-      "fingerprint": "ff4d2962c91c5ada71770727538337d34d68274c5a479e666b8a842c00eb659b",
+      "fingerprint": "29d5b60b583fc98e293f6ac47f153bbf5db48a03963f8c9a7711bd251ecf2d81",
       "check_name": "Execute",
       "message": "Possible command injection",
       "file": "lib/panda/core/testing/support/system/cuprite_helpers.rb",
-      "line": 71,
+      "line": 78,
       "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
-      "code": "system(\"ffmpeg -y -framerate 8 -pattern_type glob -i '#{File.join(dir, \"frames\")}/*.png' -c:v libx264 -pix_fmt yuv420p '#{Rails.root.join(\"spec/tmp/capybara/#{example.metadata[:full_description].parameterize}.mp4\")}'\\n\")",
+      "code": "system(\"ffmpeg -y -framerate 8 -pattern_type glob -i '#{File.join(dir, \"frames\")}/*.png' -c:v libx264 -pix_fmt yuv420p '#{capybara_artifacts_dir.join(\"#{example.metadata[:full_description].parameterize}.mp4\")}'\\n\")",
       "render_path": null,
       "location": {
         "type": "method",
@@ -21,7 +21,7 @@
       "cwe_id": [
         77
       ],
-      "note": "This is using a predefined directory, not user input."
+      "note": "This does not use user input and is based on environment variables and the current folder"
     }
   ],
   "brakeman_version": "7.1.1"
