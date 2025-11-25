@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "pathname"
+
 # Helper methods for Cuprite-based system tests
 #
 # This module provides utility methods for working with Cuprite in system tests:
@@ -16,12 +18,16 @@ module Panda
   module Core
     module Testing
       module CupriteHelpers
-        #
+        # Resolve the configured Capybara artifacts directory
+        def capybara_artifacts_dir
+          Pathname.new(Capybara.save_path || Rails.root.join("tmp/capybara"))
+        end
+
         # Save a PNG screenshot for the current page.
         #
         def save_screenshot!(name = nil)
           name ||= example.metadata[:full_description].parameterize
-          path = Rails.root.join("spec/tmp/capybara/#{name}.png")
+          path = capybara_artifacts_dir.join("#{name}.png")
 
           FileUtils.mkdir_p(File.dirname(path))
           page.save_screenshot(path, full: true) # rubocop:disable Lint/Debugger
@@ -35,7 +41,7 @@ module Panda
         #
         def record_video!(name = nil, seconds: 3)
           name ||= example.metadata[:full_description].parameterize
-          path = Rails.root.join("spec/tmp/capybara/#{name}.mp4")
+          path = capybara_artifacts_dir.join("#{name}.mp4")
 
           FileUtils.mkdir_p(File.dirname(path))
 
@@ -82,7 +88,7 @@ module Panda
 
         def save_html!(name = nil)
           name ||= example.metadata[:full_description].parameterize
-          path = Rails.root.join("spec/tmp/capybara/#{name}.html")
+          path = capybara_artifacts_dir.join("#{name}.html")
           FileUtils.mkdir_p(File.dirname(path))
           File.write(path, page.html)
           puts "📝 Saved HTML snapshot: #{path}"

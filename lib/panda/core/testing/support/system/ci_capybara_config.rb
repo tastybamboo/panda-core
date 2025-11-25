@@ -1,77 +1,66 @@
-# frozen_string_literal: true
+require "capybara/cuprite"
 
-# CI-specific Capybara configuration
-# This file configures Capybara for GitHub Actions and other CI environments
-# It uses a more robust Puma setup with compatibility for Puma 6 and 7+
+Capybara.default_max_wait_time = ENV.fetch("CAPYBARA_MAX_WAIT_TIME", "5").to_i
+Capybara.raise_server_errors = true
 
-return unless defined?(Capybara)
+# Server selection (overridable via env)
+server_name = ENV.fetch("CAPYBARA_SERVER", "puma").to_sym
+Capybara.server = server_name
+Capybara.server_host = ENV.fetch("CAPYBARA_SERVER_HOST", "127.0.0.1")
+# Allow dynamic port by leaving blank
+port_env = ENV["CAPYBARA_PORT"]
+Capybara.server_port = (port_env && !port_env.empty?) ? port_env.to_i : nil
+app_host_env = ENV["CAPYBARA_APP_HOST"]
+Capybara.app_host = app_host_env unless app_host_env.to_s.empty?
+Capybara.always_include_port = !Capybara.app_host.nil?
+Capybara.default_driver = :rack_test
 
-ci_mode = ENV["GITHUB_ACTIONS"] == "true" || ENV["CI_SYSTEM_SPECS"] == "true"
-return unless ci_mode
+HEADLESS = !(ENV["HEADFUL"] == "true")
 
-require "rack/handler/puma"
+def panda_core_cuprite_options(window_size:)
+  ci_default_timeout = 10
+  ci_default_process_timeout = 30
+  default_timeout = ENV["CI"] ? ci_default_timeout : 5
+  default_process_timeout = ENV["CI"] ? ci_default_process_timeout : 10
 
-RSpec.configure do |config|
-  config.before(:suite) do
-    Capybara.server = :puma_ci
-    Capybara.default_max_wait_time = Integer(ENV.fetch("CAPYBARA_MAX_WAIT_TIME", 5))
+  cuprite_timeout = ENV["CUPRITE_TIMEOUT"]&.to_i ||
+    ENV["FERRUM_TIMEOUT"]&.to_i ||
+    default_timeout
 
-    port = Integer(ENV.fetch("CAPYBARA_PORT", 3001))
-    Capybara.server_host = "127.0.0.1"
-    Capybara.server_port = port
-    Capybara.app_host = "http://127.0.0.1:#{port}"
-    Capybara.always_include_port = true
+  process_timeout_value = ENV["CUPRITE_PROCESS_TIMEOUT"]&.to_i ||
+    ENV["FERRUM_PROCESS_TIMEOUT"]&.to_i ||
+    default_process_timeout
 
-    puts "[CI Config] Capybara.server      = #{Capybara.server.inspect}"
-    puts "[CI Config] Capybara.app_host    = #{Capybara.app_host.inspect}"
-    puts "[CI Config] Capybara.server_host = #{Capybara.server_host.inspect}"
-    puts "[CI Config] Capybara.server_port = #{Capybara.server_port.inspect}"
-    puts "[CI Config] Capybara.max_wait    = #{Capybara.default_max_wait_time}s"
-  end
-end
+  browser_path = ENV["BROWSER_PATH"] ||
+    ["/usr/bin/chromium", "/usr/bin/chromium-browser", "/usr/bin/google-chrome"].find { |p| File.exist?(p) }
 
-Capybara.register_server :puma_ci do |app, port, host|
-  puts "[CI Config] Starting Puma (single mode) on #{host}:#{port}"
-
-  min_threads = Integer(ENV.fetch("PUMA_MIN_THREADS", "2"))
-  max_threads = Integer(ENV.fetch("PUMA_MAX_THREADS", "2"))
-
-  # Wrap the app to catch startup errors
-  wrapped_app = proc do |env|
-    app.call(env)
-  rescue => e
-    puts "[CI ERROR] Rails middleware error during request:"
-    puts "[CI ERROR] #{e.class}: #{e.message}"
-    puts "[CI ERROR] Backtrace:"
-    puts e.backtrace.first(10).join("\n")
-    raise e
-  end
-
-  # Allow conditional silencing of server logs via CAPYBARA_SERVER_VERBOSE
-  verbose = ENV.fetch("CAPYBARA_SERVER_VERBOSE", "false") == "true"
-
-  options = {
-    Host: host,
-    Port: port,
-    Threads: "#{min_threads}:#{max_threads}",
-    Workers: 0,
-    Silent: !verbose,
-    Verbose: verbose,
-    PreloadApp: false
+  {
+    window_size: window_size,
+    headless: HEADLESS,
+    browser_path: browser_path,
+    timeout: cuprite_timeout,
+    process_timeout: process_timeout_value,
+    js_errors: true,
+    browser_options: {
+      "disable-gpu" => nil,
+      "disable-dev-shm-usage" => nil,
+      "no-sandbox" => nil,
+      "disable-setuid-sandbox" => nil,
+      "remote-debugging-port" => "0"
+    },
+    screenshot_options: {
+      full: true,
+      quality: 85
+    }
   }
-
-  # --- Puma Compatibility Layer (supports Puma 6 AND Puma 7+) ---
-  puma_run = Rack::Handler::Puma.method(:run)
-
-  if puma_run.arity == 2
-    # Puma <= 6.x signature:
-    #   run(app, options_hash)
-    puts "[CI Config] Using Puma <= 6 API (arity 2)"
-    Rack::Handler::Puma.run(wrapped_app, options)
-  else
-    # Puma >= 7.x signature:
-    #   run(app, **options)
-    puts "[CI Config] Using Puma >= 7 API (keyword args)"
-    Rack::Handler::Puma.run(wrapped_app, **options)
-  end
 end
+
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app, **panda_core_cuprite_options(window_size: [1400, 900]))
+end
+
+Capybara.register_driver(:cuprite_mobile) do |app|
+  Capybara::Cuprite::Driver.new(app, **panda_core_cuprite_options(window_size: [375, 667]))
+end
+
+Capybara.javascript_driver = :cuprite

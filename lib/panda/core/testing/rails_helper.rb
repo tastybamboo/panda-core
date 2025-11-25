@@ -104,11 +104,6 @@ RSpec.configure do |config|
     ActionMailer::Base.logger = nil if defined?(ActionMailer)
   end
 
-  # Suppress Rails command output during generator tests
-  config.before(:each, type: :generator) do
-    allow(Rails::Command).to receive(:invoke).and_return(true)
-  end
-
   # Force all examples to run
   config.filter_run_including({})
   config.run_all_when_everything_filtered = true
@@ -169,13 +164,29 @@ RSpec.configure do |config|
   OmniAuth.config.test_mode = true if defined?(OmniAuth)
 
   # DatabaseCleaner configuration
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.start
+  end
+
+  config.before(:each, type: :system) do
+    driven_by :cuprite
+  end
+
+  config.append_after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  config.use_transactional_fixtures = false
+
   config.before(:suite) do
     # Allow DATABASE_URL in CI environment
-    if ENV["DATABASE_URL"]
+    if ENV["DATABASE_URL"] &&
+        ENV["SKIP_DB_CLEAN_WITH_DATABASE_URL"].nil? &&
+        ENV["ACT"] != "true"
       DatabaseCleaner.allow_remote_database_url = true
+      DatabaseCleaner.clean_with(:truncation)
     end
-
-    DatabaseCleaner.clean_with :truncation
 
     # Hook for gems to add custom suite setup
     # Gems can define Panda::Testing.before_suite_hook and it will be called here

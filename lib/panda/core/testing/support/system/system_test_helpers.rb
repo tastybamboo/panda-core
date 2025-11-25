@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "cuprite_helpers"
-require_relative "better_system_tests"
 
 # Generic system test helpers for Cuprite-based testing
 # These methods work for any Rails application using Cuprite
@@ -11,7 +10,6 @@ module Panda
     module Testing
       module SystemTestHelpers
         include CupriteHelpers
-        include BetterSystemTests
       end
     end
   end
