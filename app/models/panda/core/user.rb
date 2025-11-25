@@ -20,18 +20,9 @@ module Panda
       before_save :downcase_email
 
       # Scopes
-      # Support both 'admin' (newer) and 'is_admin' (older) column names
       scope :admins, -> {
-        if column_names.include?("admin")
-          where(admin: true)
-        elsif column_names.include?("is_admin")
-          where(is_admin: true)
-        else
-          none
-        end
+        where(admin: true)
       }
-
-      alias_attribute :is_admin, :admin
 
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)
@@ -65,7 +56,7 @@ module Panda
 
       # Admin status check
       def admin?
-        self[:admin] || self[:is_admin] || false
+        admin
       end
 
       def active_for_authentication?
