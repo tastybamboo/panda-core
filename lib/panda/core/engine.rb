@@ -33,19 +33,14 @@ module Panda
       include PhlexConfig
       include AdminControllerConfig
 
-      config.middleware.insert_before ActionDispatch::Static, Rack::Static,
+      app.config.middleware.insert_before Rack::Sendfile, Rack::Static,
         urls: ["/panda-core-assets"],
         root: Panda::Core::Engine.root.join("public"),
         header_rules: [
-          [:all, {
-            "Cache-Control" =>
-              Rails.env.development? ?
-                "no-cache, no-store, must-revalidate" :
-                "public, max-age=31536000"
-          }]
+          [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
         ]
 
-      config.middleware.insert_before ActionDispatch::Static,
+      config.middleware.insert_before Rack::Sendfile,
         Panda::Core::ModuleRegistry::JavaScriptMiddleware
     end
   end
