@@ -23,11 +23,9 @@ module Panda
     class Engine < ::Rails::Engine
       isolate_namespace Panda::Core
 
-      # Include shared configuration modules
       include Shared::InflectionsConfig
       include Shared::GeneratorConfig
 
-      # Include engine-specific configuration modules
       include AutoloadConfig
       include MiddlewareConfig
       include ImportmapConfig
@@ -35,33 +33,25 @@ module Panda
       include PhlexConfig
       include AdminControllerConfig
 
-      initializer "panda_core.config" do |app|
-        # Configuration is already initialized with defaults in Configuration class
-      end
+      config.middleware.insert_before ActionDispatch::Static, Rack::Static,
+        urls: ["/panda-core-assets"],
+        root: Panda::Core::Engine.root.join("public"),
+        header_rules: [
+          [:all, {
+            "Cache-Control" =>
+              Rails.env.development? ?
+                "no-cache, no-store, must-revalidate" :
+                "public, max-age=31536000"
+          }]
+        ]
 
-      # Static asset middleware for serving public files and JavaScript modules
-      # Must run before Propshaft to intercept /panda/* requests, but we can't
-      # guarantee Propshaft is in the host application, so just insert it
-      # high up in the middleware stack
-      initializer "panda.core.static_assets" do |app|
-        # Serve public assets (CSS, images, etc.)
-        app.config.middleware.insert_before ActionDispatch::Static, Rack::Static,
-          urls: ["/panda-core-assets"],
-          root: Panda::Core::Engine.root.join("public"),
-          header_rules: [
-            # Disable caching in development for instant CSS updates
-            [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
-          ]
-
-        # Use ModuleRegistry's custom middleware to serve JavaScript from all registered modules
-        # This middleware checks all modules and serves from the first matching location
-        app.config.middleware.insert_before ActionDispatch::Static, Panda::Core::ModuleRegistry::JavaScriptMiddleware
-      end
+      config.middleware.insert_before ActionDispatch::Static,
+        Panda::Core::ModuleRegistry::JavaScriptMiddleware
     end
   end
 end
 
-# Register Core module with ModuleRegistry for JavaScript serving
+# Register for JS module serving
 Panda::Core::ModuleRegistry.register(
   gem_name: "panda-core",
   engine: "Panda::Core::Engine",
