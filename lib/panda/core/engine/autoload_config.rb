@@ -2,22 +2,21 @@
 
 module Panda
   module Core
-    class Engine < ::Rails::Engine
-      # Autoload paths configuration
+    module Engine
       module AutoloadConfig
         extend ActiveSupport::Concern
 
         included do
-          config.eager_load_namespaces << Panda::Core::Engine
+          # These must run BEFORE initialization, so this is allowed
+          config.autoload_paths << root.join("app/builders")
+          config.autoload_paths << root.join("app/components")
+          config.autoload_paths << root.join("app/services")
+          config.autoload_paths << root.join("app/models")
+          config.autoload_paths << root.join("app/helpers")
+          config.autoload_paths << root.join("app/constraints")
 
-          # Add engine's app directories to autoload paths
-          # Note: Only add the root directories, not nested subdirectories
-          # Zeitwerk will automatically discover nested modules from these roots
-          config.autoload_paths += Dir[root.join("app", "models")]
-          config.autoload_paths += Dir[root.join("app", "controllers")]
-          config.autoload_paths += Dir[root.join("app", "builders")]
-          config.autoload_paths += Dir[root.join("app", "components")]
-          config.autoload_paths += Dir[root.join("app", "services")]
+          # Mirror eager-load as needed
+          config.eager_load_paths.concat(config.autoload_paths)
         end
       end
     end
