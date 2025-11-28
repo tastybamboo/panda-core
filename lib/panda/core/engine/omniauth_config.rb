@@ -1,8 +1,6 @@
 module Panda
   module Core
     class Engine < ::Rails::Engine
-      include Panda::Core::MiddlewareHelpers
-
       initializer "panda_core.omniauth" do |app|
         require_relative "../oauth_providers"
         Panda::Core::OAuthProviders.setup
