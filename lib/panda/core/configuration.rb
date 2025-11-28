@@ -1,3 +1,5 @@
+require "active_support/core_ext/numeric/bytes"
+
 module Panda
   module Core
     class Configuration
