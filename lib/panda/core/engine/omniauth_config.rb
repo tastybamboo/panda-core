@@ -1,38 +1,55 @@
+# frozen_string_literal: true
+
 module Panda
   module Core
     class Engine < ::Rails::Engine
-      initializer "panda_core.omniauth" do |app|
-        require_relative "../oauth_providers"
-        Panda::Core::OAuthProviders.setup
+      module OmniauthConfig
+        extend ActiveSupport::Concern
 
-        # Global OmniAuth configuration (Rack 3 + Rails 8 safe)
-        OmniAuth.config.path_prefix = "#{Panda::Core.config.admin_path}/auth"
-        OmniAuth.config.allowed_request_methods = [:post]
+        included do
+          initializer "panda_core.omniauth" do |app|
+            # Load provider list + configuration defaults
+            require_relative "../oauth_providers"
+            Panda::Core::OAuthProviders.setup
 
-        # Build a Rack::Builder instance manually (Rack 3 safe)
-        builder = Rack::Builder.new do
-          Panda::Core.config.authentication_providers.each do |provider_name, settings|
-            provider_opts = settings[:options] || {}
-
-            if settings[:path_name].present?
-              provider_opts = provider_opts.merge(name: settings[:path_name])
+            # -------------------------------------------------------
+            # Global OmniAuth configuration (Rails 8 / Rack 3 safe)
+            # -------------------------------------------------------
+            OmniAuth.configure do |c|
+              c.allowed_request_methods = [:post]
+              c.path_prefix = "#{Panda::Core.config.admin_path}/auth"
+              # You may add:
+              # c.silence_ready = true
+              # c.silence_warnings = true
             end
 
-            case provider_name.to_s
-            when "microsoft_graph"
-              provider :microsoft_graph, settings[:client_id], settings[:client_secret], provider_opts
-            when "google_oauth2"
-              provider :google_oauth2, settings[:client_id], settings[:client_secret], provider_opts
-            when "github"
-              provider :github, settings[:client_id], settings[:client_secret], provider_opts
-            when "developer"
-              provider :developer if Rails.env.development?
+            # -------------------------------------------------------
+            # Insert OmniAuth middleware safely
+            #   Using your safe helper, we avoid touching frozen stacks
+            # -------------------------------------------------------
+            Panda::Core::Middleware.use(app, OmniAuth::Builder) do
+              Panda::Core.config.authentication_providers.each do |provider_name, settings|
+                options = settings[:options] || {}
+
+                # Override path_name (strategy name) if provided
+                options = options.merge(name: settings[:path_name]) if settings[:path_name].present?
+
+                case provider_name.to_s
+                when "microsoft_graph"
+                  provider :microsoft_graph, settings[:client_id], settings[:client_secret], options
+                when "google_oauth2"
+                  provider :google_oauth2, settings[:client_id], settings[:client_secret], options
+                when "github"
+                  provider :github, settings[:client_id], settings[:client_secret], options
+                when "developer"
+                  provider :developer if Rails.env.development?
+                else
+                  Rails.logger.warn("[panda-core] Unknown OmniAuth provider: #{provider_name.inspect}")
+                end
+              end
             end
           end
         end
-
-        # Insert the built middleware safely in Rails 8
-        safe_insert_before app, ActionDispatch::Executor, builder
       end
     end
   end

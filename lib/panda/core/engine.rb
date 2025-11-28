@@ -1,22 +1,20 @@
-require "rubygems"
-require "stringio"
-require "rails/engine"
-require "omniauth"
+# frozen_string_literal: true
 
-# Load shared configuration modules
+require "rails"
+require "omniauth"
+require "panda/core/middleware"
+require "panda/core/module_registry"
+
+# Shared modules
 require_relative "shared/inflections_config"
 require_relative "shared/generator_config"
 
-# Load engine configuration modules
+# Engine modules
 require_relative "engine/autoload_config"
-require_relative "engine/middleware_config"
 require_relative "engine/importmap_config"
 require_relative "engine/omniauth_config"
 require_relative "engine/phlex_config"
 require_relative "engine/admin_controller_config"
-
-# Load module registry
-require_relative "module_registry"
 
 module Panda
   module Core
@@ -27,26 +25,43 @@ module Panda
       include Shared::GeneratorConfig
 
       include AutoloadConfig
-      include MiddlewareConfig
       include ImportmapConfig
-      include OmniauthConfig
+      include OmniauthConfig     # ← lives in its own file now
       include PhlexConfig
       include AdminControllerConfig
 
-      app.config.middleware.insert_before Rack::Sendfile, Rack::Static,
-        urls: ["/panda-core-assets"],
-        root: Panda::Core::Engine.root.join("public"),
-        header_rules: [
-          [:all, {"Cache-Control" => Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"}]
-        ]
+      initializer "panda_core.configuration" do
+        # left intentionally quiet
+      end
 
-      config.middleware.insert_before Rack::Sendfile,
-        Panda::Core::ModuleRegistry::JavaScriptMiddleware
+      initializer "panda_core.static_assets" do |app|
+        Panda::Core::Middleware.use(
+          app,
+          Rack::Static,
+          urls: ["/panda-core-assets"],
+          root: Panda::Core::Engine.root.join("public"),
+          header_rules: [
+            [
+              :all,
+              {
+                "Cache-Control" =>
+                  Rails.env.development? ?
+                    "no-cache, no-store, must-revalidate" :
+                    "public, max-age=31536000"
+              }
+            ]
+          ]
+        )
+
+        Panda::Core::Middleware.use(
+          app,
+          Panda::Core::ModuleRegistry::JavaScriptMiddleware
+        )
+      end
     end
   end
 end
 
-# Register for JS module serving
 Panda::Core::ModuleRegistry.register(
   gem_name: "panda-core",
   engine: "Panda::Core::Engine",
