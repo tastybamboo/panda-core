@@ -4,7 +4,7 @@ require "active_support/concern"
 
 module Panda
   module Core
-    module Engine
+    class Engine
       module OmniauthConfig
         extend ActiveSupport::Concern
 
@@ -27,7 +27,6 @@ module Panda
         }.freeze
 
         included do
-          # Main initializer
           initializer "panda_core.omniauth" do |app|
             require_relative "../oauth_providers"
             Panda::Core::OAuthProviders.setup
@@ -64,8 +63,6 @@ module Panda
           OmniAuth.configure do |c|
             c.allowed_request_methods = [:post]
             c.path_prefix = "#{Panda::Core.config.admin_path}/auth"
-            # c.silence_ready = true
-            # c.silence_warnings = true
           end
         end
 
@@ -91,9 +88,7 @@ module Panda
             return
           end
 
-          if symbol == :developer && !Rails.env.development?
-            return
-          end
+          return if symbol == :developer && !Rails.env.development?
 
           options = (settings[:options] || {}).dup
           options[:name] = settings[:path_name] if settings[:path_name].present?
