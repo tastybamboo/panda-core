@@ -2,14 +2,15 @@
 
 require "rails"
 require "omniauth"
+
 require "panda/core/middleware"
 require "panda/core/module_registry"
 
-# Shared modules
+# Shared engine mixins
 require_relative "shared/inflections_config"
 require_relative "shared/generator_config"
 
-# Engine modules
+# Engine mixins
 require_relative "engine/autoload_config"
 require_relative "engine/importmap_config"
 require_relative "engine/omniauth_config"
@@ -21,19 +22,32 @@ module Panda
     class Engine < ::Rails::Engine
       isolate_namespace Panda::Core
 
+      #
+      # Include shared behaviours
+      #
       include Shared::InflectionsConfig
       include Shared::GeneratorConfig
 
+      #
+      # Include engine-level concerns
+      #
       include AutoloadConfig
       include ImportmapConfig
-      include OmniauthConfig     # ← lives in its own file now
+      include OmniauthConfig
       include PhlexConfig
       include AdminControllerConfig
 
+      #
+      # Misc configuration point
+      #
       initializer "panda_core.configuration" do
-        # left intentionally quiet
+        # Intentionally quiet — used as a stable anchor point
       end
 
+      #
+      # Static asset handling for:
+      #   /panda-core-assets
+      #
       initializer "panda_core.static_assets" do |app|
         Panda::Core::Middleware.use(
           app,
@@ -62,6 +76,9 @@ module Panda
   end
 end
 
+#
+# Register engine with ModuleRegistry
+#
 Panda::Core::ModuleRegistry.register(
   gem_name: "panda-core",
   engine: "Panda::Core::Engine",
