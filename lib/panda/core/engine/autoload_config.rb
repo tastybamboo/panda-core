@@ -2,7 +2,7 @@
 
 module Panda
   module Core
-    module Engine
+    class Engine < ::Rails::Engine
       module AutoloadConfig
         extend ActiveSupport::Concern
 
