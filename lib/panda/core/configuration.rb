@@ -9,6 +9,7 @@ module Panda
         :cache_store,
         :parent_controller,
         :parent_mailer,
+        :auto_mount_engine,
         :mailer_sender,
         :mailer_default_url_options,
         :session_token_cookie,
@@ -40,6 +41,7 @@ module Panda
         @cache_store = :memory_store
         @parent_controller = "ActionController::API"
         @parent_mailer = "ActionMailer::Base"
+        @auto_mount_engine = true
         @mailer_sender = "support@example.com"
         @mailer_default_url_options = {host: "localhost:3000"}
         @session_token_cookie = :panda_session

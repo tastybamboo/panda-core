@@ -13,6 +13,8 @@ module Panda
                   "/usr/bin/chromium",
                   "/usr/bin/chromium-browser",
                   "/usr/bin/google-chrome",
+                  "/opt/google/chrome/google-chrome",
+                  "/opt/google/chrome/chrome",
 
                   # macOS Homebrew paths (Chromium)
                   "/opt/homebrew/bin/chromium",

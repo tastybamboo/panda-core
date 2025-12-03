@@ -16,6 +16,7 @@ require_relative "engine/importmap_config"
 require_relative "engine/omniauth_config"
 require_relative "engine/phlex_config"
 require_relative "engine/admin_controller_config"
+require_relative "engine/route_config"
 
 module Panda
   module Core
@@ -36,6 +37,7 @@ module Panda
       include OmniauthConfig
       include PhlexConfig
       include AdminControllerConfig
+      include RouteConfig
 
       #
       # Misc configuration point

@@ -19,9 +19,15 @@ module Panda
 
       before_save :downcase_email
 
+      # Determine which column stores admin flag (supports legacy `admin` and new `is_admin`)
+      def self.admin_column
+        # Prefer canonical `admin` if available, otherwise fall back to legacy `is_admin`
+        @admin_column ||= column_names.include?("admin") ? "admin" : "is_admin"
+      end
+
       # Scopes
       scope :admins, -> {
-        where(admin: true)
+        where(admin_column => true)
       }
 
       def self.find_or_create_from_auth_hash(auth_hash)
@@ -41,7 +47,7 @@ module Panda
           email: auth_hash.info.email.downcase,
           name: auth_hash.info.name || "Unknown User",
           image_url: auth_hash.info.image,
-          admin: User.count.zero? # First user is admin
+          admin_column => User.count.zero? # First user is admin
         }
 
         user = create!(attributes)
@@ -56,8 +62,19 @@ module Panda
 
       # Admin status check
       def admin?
-        admin
+        ActiveRecord::Type::Boolean.new.cast(admin)
       end
+
+      # Support both legacy `admin` and new `is_admin` columns
+      def admin
+        self[self.class.admin_column]
+      end
+
+      def admin=(value)
+        self[self.class.admin_column] = ActiveRecord::Type::Boolean.new.cast(value)
+      end
+      alias_method :is_admin, :admin
+      alias_method :is_admin=, :admin=
 
       def active_for_authentication?
         true

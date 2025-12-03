@@ -164,17 +164,15 @@ RSpec.configure do |config|
   OmniAuth.config.test_mode = true if defined?(OmniAuth)
 
   # DatabaseCleaner configuration
-  config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.start
+  config.around(:each) do |example|
+    DatabaseCleaner.strategy = example.metadata[:type] == :system ? :truncation : :transaction
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 
   config.before(:each, type: :system) do
     driven_by :cuprite
-  end
-
-  config.append_after(:each) do
-    DatabaseCleaner.clean
   end
 
   config.use_transactional_fixtures = false
