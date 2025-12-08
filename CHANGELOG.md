@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.1] - 2025-12-08
+
+### Fixed
+
+- **Duplicate Migration Loading** - Fixed issue where engine migrations were being loaded twice
+  - Removed manual addition of engine's db/migrate path in dummy app configuration
+  - Rails engines automatically include their migration paths; manual addition caused duplicates
+  - Resolved "Duplicate migration" errors in CI and local environments
+
 ## [0.12.0] - 2025-12-08
 
 ### Added
