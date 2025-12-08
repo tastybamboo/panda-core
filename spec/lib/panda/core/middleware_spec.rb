@@ -11,6 +11,7 @@ RSpec.describe Panda::Core::Middleware do
   class MW3; end
   class MW4; end
   class CustomStatic; end
+  class MW99; end
   # rubocop:enable Lint/ConstantDefinitionInBlock
 
   #
@@ -124,8 +125,10 @@ RSpec.describe Panda::Core::Middleware do
     end
 
     it "does not match unrelated class" do
+      unknown_middleware = Class.new
+
       expect(
-        described_class.send(:middleware_exists?, app, MW99 = Class.new)
+        described_class.send(:middleware_exists?, app, unknown_middleware)
       ).to be false
     end
   end

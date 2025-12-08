@@ -27,13 +27,15 @@ module Panda
         }.freeze
 
         included do
-          initializer "panda_core.omniauth" do |app|
-            require_relative "../oauth_providers"
-            Panda::Core::OAuthProviders.setup
+          if respond_to?(:initializer)
+            initializer "panda_core.omniauth" do |app|
+              require_relative "../oauth_providers"
+              Panda::Core::OAuthProviders.setup
 
-            load_yaml_provider_overrides!
-            configure_omniauth_globals
-            mount_omniauth_middleware(app)
+              load_yaml_provider_overrides!
+              configure_omniauth_globals
+              mount_omniauth_middleware(app)
+            end
           end
         end
 
