@@ -5,6 +5,70 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2025-12-08
+
+### Added
+
+- **Cross-Platform Browser Path Finder** - Enhanced browser detection for system tests
+  - Support for Chrome, Chromium, and Edge across macOS, Linux, and Windows
+  - Automatic browser path detection for Cuprite configuration
+  - Improved CI environment browser setup
+
+- **Legacy User Support** - Enhanced backward compatibility for user administration
+  - Support for both `admin` and `is_admin` attributes on users
+  - Improved testing helpers for legacy user scenarios
+  - Seamless migration path for existing applications
+
+### Changed
+
+- **Rails 8.1 Compatibility** - Updated initializer load ordering for Rails 8.1
+  - Fixed middleware configuration loading for latest Rails
+  - Resolved OmniAuth middleware initialization issues
+  - Improved middleware ordering for Ruby 3.4 compatibility
+
+- **Middleware Improvements** - Enhanced middleware handling and configuration
+  - Fixed ActionDispatch::Static middleware detection in dev/test
+  - Improved OmniAuth middleware integration
+  - Better middleware ordering for different Rails environments
+
+- **Test Infrastructure** - Enhanced system test reliability
+  - Longer timeouts for Cuprite browser operations
+  - Improved Chrome path detection in CI
+  - Better DATABASE_URL configuration for system specs
+  - Enhanced Chrome logging for CI debugging
+
+- **Ruby 3.4 Support** - Updated dependencies for Ruby 3.4 compatibility
+  - Upgraded to Ruby 3.3.10 for production stability
+  - Updated Ferrum with Ruby 3.4 forwardable fixes
+  - Resolved ActiveSupport::Configurable deprecation warnings
+
+- **Tailwind CSS v4** - Implemented Tailwind CSS v4.1.17 compatibility
+  - Migration to @source directives
+  - Updated pre-compiled CSS with v4 styles
+  - Added dummy app Gemfile for CSS compilation
+
+### Fixed
+
+- **Database Configuration** - Resolved test database setup issues
+  - Fixed DATABASE_URL configuration for system specs
+  - Improved PostgreSQL/SQLite3 compatibility
+
+- **Browser Testing** - Resolved Chrome/Chromium startup issues in CI
+  - Fixed Cuprite timeout configuration
+  - Corrected Chrome flags (no-dbus)
+  - Removed conflicting xvfb options
+  - Added verbose logging for debugging
+
+- **User Administration** - Fixed admin/is_admin attribute handling
+  - Seamless support for legacy `is_admin` attribute
+  - Database schema updates for user model
+
+### Security
+
+- **Dependency Updates** - Updated security-sensitive dependencies
+  - Bumped actions/checkout from 5 to 6 in CI workflows
+  - Updated Brakeman configuration
+
 ## [0.11.0] - 2025-11-21
 
 ### Added
