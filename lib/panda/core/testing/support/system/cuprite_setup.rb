@@ -43,7 +43,7 @@ module Panda
             ignore_default_browser_options: false,
             process_timeout: process_timeout_value,
             wait_for_network_idle: false,
-            pending_connection_errors: false,
+            pending_connection_errors: ENV["CI"] != "true",
             browser_options: {
               "no-sandbox": nil,
               "disable-gpu": nil,
