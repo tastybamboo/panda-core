@@ -1,7 +1,7 @@
 require "ferrum"
 require "capybara/cuprite"
 require_relative "ferrum_console_logger"
-require_relative "browser_path"
+require_relative "chrome_path"
 
 module Panda
   module Core
@@ -30,7 +30,7 @@ module Panda
           puts "[Cuprite Config] timeout = #{cuprite_timeout}, process_timeout = #{process_timeout_value}" if ENV["CI"] || ENV["DEBUG"]
           puts "[Cuprite Config] ENV: CUPRITE_TIMEOUT=#{ENV["CUPRITE_TIMEOUT"].inspect}, CUPRITE_PROCESS_TIMEOUT=#{ENV["CUPRITE_PROCESS_TIMEOUT"].inspect}" if ENV["CI"] || ENV["DEBUG"]
 
-          browser_path = ENV["BROWSER_PATH"] || Panda::Core::Testing::Support::System::BrowserPath.resolve
+          browser_path = ENV["BROWSER_PATH"] || Panda::Core::Testing::Support::System::ChromePath.resolve
 
           {
             browser_path: browser_path,
