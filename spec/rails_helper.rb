@@ -11,6 +11,10 @@ SimpleCov.start
 
 ENV["RAILS_ENV"] ||= "test"
 
+# Act sets ACT=true; drop DATABASE_URL to avoid the before(:suite) truncation
+# hook deadlocking against act's Postgres service.
+ENV.delete("DATABASE_URL") if ENV["ACT"] == "true"
+
 require "rubygems"
 require "bundler/setup"
 

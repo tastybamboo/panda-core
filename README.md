@@ -271,6 +271,21 @@ bundle exec rspec spec/generators
 bundle exec rspec spec/system
 ```
 
+### CI/Docker parity
+
+The GitHub Actions workflow now builds a reusable CI image (Chrome + PostgreSQL + Ruby). You can reuse it locally:
+
+```
+bin/ci build   # build the CI image locally
+bin/ci test    # run the suite inside the container
+```
+
+To dry-run the workflow with `act` (uses the locally built image tagged `:local`):
+
+```
+act -j test-stable
+```
+
 ## Contributing
 
 1. Fork it

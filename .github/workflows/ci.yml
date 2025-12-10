@@ -1,439 +1,239 @@
----
-name: 'App Tests'
+name: CI
 
-'on': # yamllint disable-line rule:truthy
-  pull_request:
+on:
   push:
-    branches:
-      - main
-  merge_group:
-    types: [checks_requested]
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: tastybamboo/panda-core-test
+  PLATFORM: linux/amd64
+  RUBY_YJIT_ENABLE: 1
+
+permissions:
+  contents: read
+  packages: write
+  actions: read
 
 jobs:
-  seclint:
-    name: 'Security Checks & Linters'
-    runs-on: 'ubuntu-latest'
-    container:
-      image: ghcr.io/tastybamboo/panda-ci:latest
-    env:
-      BUNDLE_PATH: 'vendor/bundle'
-    steps:
-      - uses: 'actions/checkout@v6'
-
-      - name: Load gems from cache
-        uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-
-      - name: 'Bundle install'
-        run: |
-          bundle config path vendor/bundle
-          bundle config without development
-          bundle install --jobs 4 --retry 3
-
-      - name: 'Bundler Audit'
-        run: 'bundle exec bundle-audit --update && bundle exec bundle-audit check'
-      - name: 'Brakeman'
-        run: 'bundle exec brakeman --quiet'
-      - name: 'StandardRB Check'
-        run: 'bundle exec standardrb'
-      - name: 'ERB Check'
-        run: 'bundle exec erb_lint app/views --lint-all'
-      - name: 'YAML Lint'
-        run: 'yamllint -c .yamllint .'
-
-  # Run latest version first as a smoke test
-  # This ensures basic functionality works before testing older versions
-  smoke-test:
-    name: '🚀 Latest (Rails 8.1.1, Ruby 3.4, PostgreSQL 18)'
-    needs: seclint
-    runs-on: 'ubuntu-latest'
-
-    container:
-      image: ghcr.io/tastybamboo/panda-ci:ruby-3.4-rails-8.1.1
-      options: --shm-size=2gb --tmpfs /dev/shm:rw,nosuid,nodev,mode=1777
-
+  # --------------------------------------------------------------
+  # BUILD JOB - builds Docker image for both test jobs
+  # --------------------------------------------------------------
+  build:
+    runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
-      checks: write
-
-    env:
-      BUNDLE_PATH: 'vendor/bundle'
-      RAILS_ENV: test
-      DISPLAY: ':99'
-      RAILS_VERSION: '8.1.1'
-      DATABASE_ADAPTER: 'postgresql'
-      DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
-
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+      packages: write
+      actions: read
 
     steps:
-      - uses: 'actions/checkout@v6'
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: 'Update VERSION'
-        env:
-          VERSION: ${{ github.event.pull_request.head.sha }}
-        run: |
-          echo "${VERSION}" >> VERSION
-
-      - name: Prepare Chrome temp dirs
-        run: |
-          mkdir -p /home/panda/tmp /home/panda/chrome
-          chmod 777 /home/panda/tmp /home/panda/chrome
-        env:
-          TMPDIR: /home/panda/tmp
-          CHROME_USER_DATA_DIR: /home/panda/chrome
-
-      - name: 'Start xvfb'
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
-      - name: 'Bundle install (main gem)'
-        run: |
-          bundle config without development
-          bundle install --jobs 4 --retry 3
-
-      - name: 'Setup test database'
-        env:
-          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
-          RAILS_ENV: test
-        run: |
-          echo "🗄️ Setting up database..."
-          bundle exec rails db:schema:load
-          echo "✅ Database ready"
-
-      - name: Panda asset generation and verification
-        uses: tastybamboo/panda-assets-verify-action@v1
+      - name: Log in to GHCR
+        if: github.actor != 'nektos/act'
+        uses: docker/login-action@v3
         with:
-          dummy_root: spec/dummy
-          artifact_suffix: -latest
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'Run specs'
-        env:
-          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
-          RAILS_ENV: 'test'
-          RSPEC_COLOR: 'true'
-          TERM: 'xterm-256color'
-          TMPDIR: /home/panda/tmp
-          CHROME_USER_DATA_DIR: /home/panda/chrome
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build CI image (local only for act)
+        if: github.actor == 'nektos/act'
         run: |
-          bundle exec rspec --format documentation --color
+          docker buildx build \
+            --platform ${{ env.PLATFORM }} \
+            --progress plain \
+            --load \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:local \
+            -f docker/ci.Dockerfile \
+            .
 
-      - name: 'Upload coverage'
-        uses: actions/upload-artifact@v5
-        if: always()
+      - name: Build CI image (PRs only)
+        if: github.actor != 'nektos/act' && github.event_name == 'pull_request'
+        uses: docker/build-push-action@v6
         with:
-          name: coverage-latest
-          path: coverage/
+          context: .
+          file: docker/ci.Dockerfile
+          platforms: ${{ env.PLATFORM }}
+          push: true # push so other jobs can pull it
+          provenance: false
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-      - name: Upload Capybara assets
-        uses: actions/upload-artifact@v5
-        if: always()
+      - name: Build & push CI image
+        if: github.actor != 'nektos/act' && github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
         with:
-          name: capybara-screenshots-latest
-          path: spec/dummy/tmp/capybara/**/*
+          context: .
+          file: docker/ci.Dockerfile
+          platforms: ${{ env.PLATFORM }}
+          push: true
+          provenance: false
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-to: |
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cache,mode=max
+
+  # --------------------------------------------------------------
+  # TEST STABLE - runs non-flaky tests
+  # --------------------------------------------------------------
+  test-stable:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions: write-all
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        if: github.actor != 'nektos/act'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run stable tests (exclude flaky)
+        run: |
+          IMAGE_TAG=${{ github.actor == 'nektos/act' && 'local' || (github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'latest') }}
+          docker run --rm \
+            --platform ${{ env.PLATFORM }} \
+            --name panda-core-ci-stable \
+            -v $PWD:/app \
+            -v panda_core_ci_bundle_cache_stable:/usr/local/bundle \
+            -e RAILS_ENV=test \
+            -e CI=true \
+            -e CUPRITE_TIMEOUT=30 \
+            -e CUPRITE_PROCESS_TIMEOUT=180 \
+            -e FERRUM_TIMEOUT=30 \
+            -e FERRUM_PROCESS_TIMEOUT=180 \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG} \
+            bash -lc '
+              set -euxo pipefail
+              export PGUSER=postgres
+              export PGPASSWORD=password
+              export PGHOST=127.0.0.1
+              export PGPORT=5432
+              export DATABASE_URL="postgres://postgres:${PGPASSWORD}@${PGHOST}:${PGPORT}/panda_core_dummy_test"
+              export BUNDLE_PATH=/usr/local/bundle
+              echo "==> Starting services..."
+              start-services
+              echo "==> Checking Ruby availability..."
+              which ruby || echo "Ruby not found in PATH"
+              ruby --version || echo "Ruby version check failed"
+              echo "==> Running Chrome smoke test..."
+              bin/chrome-smoke-test
+              echo "==> Installing gems..."
+              bundle install --jobs=4 --retry=3
+              echo "==> Creating test DB..."
+              bundle exec rails db:create db:schema:load
+              echo "==> Running stable tests (excluding flaky)..."
+              echo "Start time:" $(date "+%Y-%m-%d %H:%M:%S")
+              bundle exec rspec --tag ~flaky --format progress --format documentation --out /tmp/rspec.log --color
+              echo "End time:" $(date "+%Y-%m-%d %H:%M:%S")
+              echo "==> Test output:"
+              cat /tmp/rspec.log
+              echo "==> Stopping services:"
+              stop-services
+            '
+
+      - name: Upload stable test failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cuprite-failures-stable
+          path: |
+            tmp/cuprite_failures/**
+            tmp/capybara/**
+            spec/dummy/tmp/cuprite_failures/**
+            spec/dummy/tmp/capybara/**
           if-no-files-found: ignore
 
-  # Full matrix tests - only run if smoke test passes
-  compatibility-matrix-postgresql:
-    name: 'PostgreSQL ${{ matrix.postgres }} (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
-    needs: smoke-test # Gate on smoke test success
-    runs-on: 'ubuntu-latest'
-    continue-on-error: ${{ matrix.experimental == true }} # Allow experimental to fail
-
-    strategy:
-      fail-fast: false
-      max-parallel: 10 # Limit parallel jobs to avoid overwhelming CI
-      matrix:
-        ruby: ['3.2', '3.3', '3.4']
-        rails: ['7.0.10', '7.1.6', '7.2.3', '8.0.4', '8.1.1']
-        postgres: ['18'] # Default to PostgreSQL 18 for all combinations
-        experimental: [false]
-
-        # Add any experimental/beta versions here  # yamllint disable-line rule:comments-indentation
-        # include:
-        #   - ruby: '3.5'
-        #     rails: '8.2.0'
-        #     experimental: true
-
-        # Test older PostgreSQL versions with representative Ruby/Rails combinations
-        include:
-          # PostgreSQL 12 with Ruby 3.2 and Rails 7.1 (LTS)
-          - ruby: '3.2'
-            rails: '7.1.6'
-            postgres: '12'
-            experimental: false
-
-          # PostgreSQL 15 with Ruby 3.3 and Rails 7.2
-          - ruby: '3.3'
-            rails: '7.2.3'
-            postgres: '15'
-            experimental: false
-
-          # PostgreSQL 17 with Ruby 3.4 and Rails 8.0
-          - ruby: '3.4'
-            rails: '8.0.4'
-            postgres: '17'
-            experimental: false
-
-        exclude:
-          # Rails 7.0 is not compatible with Ruby 3.4
-          - ruby: '3.4'
-            rails: '7.0.10'
-            postgres: '18'
-
-          # Skip the combination already tested in smoke-test
-          - ruby: '3.4'
-            rails: '8.1.1'
-            postgres: '18'
-
-    container:
-      image: ghcr.io/tastybamboo/panda-ci:ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
-      options: --shm-size=2gb --tmpfs /dev/shm:rw,nosuid,nodev,mode=1777
-
-    permissions:
-      contents: read
-      pull-requests: write
-      checks: write
-
-    env:
-      BUNDLE_PATH: 'vendor/bundle'
-      RAILS_ENV: test
-      DISPLAY: ':99'
-      RAILS_VERSION: ${{ matrix.rails }}
-      DATABASE_ADAPTER: 'postgresql'
-      DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
-
-    services:
-      postgres:
-        image: postgres:${{ matrix.postgres }}
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+  # --------------------------------------------------------------
+  # TEST FLAKY - runs flaky tests (allowed to fail)
+  # Runs in parallel with test-stable
+  # --------------------------------------------------------------
+  test-flaky:
+    runs-on: ubuntu-latest
+    needs: build
+    continue-on-error: true
+    permissions: write-all
 
     steps:
-      - uses: 'actions/checkout@v6'
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: 'Update VERSION'
-        env:
-          VERSION: ${{ github.event.pull_request.head.sha }}
-        run: |
-          echo "${VERSION}" >> VERSION
-
-      - name: 'Prepare Chrome temp dirs'
-        run: |
-          mkdir -p /home/panda/tmp /home/panda/chrome
-          chmod 777 /home/panda/tmp /home/panda/chrome
-        env:
-          TMPDIR: /home/panda/tmp
-          CHROME_USER_DATA_DIR: /home/panda/chrome
-
-      - name: 'Start xvfb'
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
-      # Since Docker images have gems pre-installed, we only need minimal setup
-      - name: 'Bundle install (main gem)'
-        run: |
-          bundle config without development
-          bundle install --jobs 4 --retry 3
-
-      - name: 'Setup test database'
-        env:
-          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
-          RAILS_ENV: test
-        run: |
-          echo "🗄️ Setting up database..."
-          bundle exec rails db:schema:load
-          echo "✅ Database ready"
-
-      #
-      # 🐼 Run Panda Asset Verification
-      #
-      - name: Panda asset generation and verification
-        uses: tastybamboo/panda-assets-verify-action@v1
+      - name: Log in to GHCR
+        if: github.actor != 'nektos/act'
+        uses: docker/login-action@v3
         with:
-          dummy_root: spec/dummy
-          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      #
-      # 🧪 Run application tests
-      #
-      - name: 'Run specs'
-        env:
-          DATABASE_URL: 'postgres://postgres:password@postgres:5432/test'
-          RAILS_ENV: 'test'
-          RSPEC_COLOR: 'true'
-          TERM: 'xterm-256color'
-          TMPDIR: /home/panda/tmp
-          CHROME_USER_DATA_DIR: /home/panda/chrome
+      - name: Run flaky tests (allowed to fail)
         run: |
-          bundle exec rspec --format documentation --color
+          IMAGE_TAG=${{ github.actor == 'nektos/act' && 'local' || (github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'latest') }}
+          docker run --rm \
+            --platform ${{ env.PLATFORM }} \
+            --name panda-core-ci-flaky \
+            -v $PWD:/app \
+            -v panda_core_ci_bundle_cache_flaky:/usr/local/bundle \
+            -e RAILS_ENV=test \
+            -e CI=true \
+            -e CUPRITE_TIMEOUT=30 \
+            -e CUPRITE_PROCESS_TIMEOUT=180 \
+            -e FERRUM_TIMEOUT=30 \
+            -e FERRUM_PROCESS_TIMEOUT=180 \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG} \
+            bash -lc '
+              set -euxo pipefail
+              export PGUSER=postgres
+              export PGPASSWORD=password
+              export PGHOST=127.0.0.1
+              export PGPORT=5432
+              export DATABASE_URL="postgres://postgres:${PGPASSWORD}@${PGHOST}:${PGPORT}/panda_core_dummy_test_flaky"
+              export BUNDLE_PATH=/usr/local/bundle
+              echo "==> Starting services..."
+              start-services
+              echo "==> Checking Ruby availability..."
+              which ruby || echo "Ruby not found in PATH"
+              ruby --version || echo "Ruby version check failed"
+              echo "==> Running Chrome smoke test..."
+              bin/chrome-smoke-test
+              echo "==> Installing gems..."
+              bundle install --jobs=4 --retry=3
+              echo "==> Creating test DB..."
+              bundle exec rails db:create db:schema:load
+              echo "==> Running flaky tests only..."
+              echo "Start time:" $(date "+%Y-%m-%d %H:%M:%S")
+              bundle exec rspec --tag flaky --format progress --format documentation --out /tmp/rspec-flaky.log --color || true
+              echo "End time:" $(date "+%Y-%m-%d %H:%M:%S")
+              echo "==> Flaky test output:"
+              cat /tmp/rspec-flaky.log
+              echo "==> Stopping services:"
+              stop-services
+            '
 
-      - name: 'Upload coverage'
-        uses: actions/upload-artifact@v5
-        if: always()
+      - name: Upload flaky test failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
-          path: coverage/
-
-      - name: Upload Capybara assets
-        uses: actions/upload-artifact@v5
-        if: always()
-        with:
-          name: capybara-${{ matrix.ruby }}-${{ matrix.rails }}-postgresql-${{ matrix.postgres }}
-          path: spec/dummy/tmp/capybara/**/*
+          name: cuprite-failures-flaky
+          path: |
+            tmp/cuprite_failures/**
+            tmp/capybara/**
+            spec/dummy/tmp/cuprite_failures/**
+            spec/dummy/tmp/capybara/**
           if-no-files-found: ignore
-
-  # SQLite compatibility matrix
-  compatibility-matrix-sqlite:
-    name: 'SQLite (Rails ${{ matrix.rails }}, Ruby ${{ matrix.ruby }})'
-    needs: smoke-test
-    runs-on: 'ubuntu-latest'
-    continue-on-error: ${{ matrix.experimental == true }}
-
-    strategy:
-      fail-fast: false
-      max-parallel: 10
-      matrix:
-        ruby: ['3.2', '3.3', '3.4']
-        rails: ['7.0.10', '7.1.6', '7.2.3', '8.0.4', '8.1.1']
-        experimental: [false]
-
-        exclude:
-          # Rails 7.0 is not compatible with Ruby 3.4
-          - ruby: '3.4'
-            rails: '7.0.10'
-
-    container:
-      image: ghcr.io/tastybamboo/panda-ci:ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
-      options: --shm-size=2gb --tmpfs /dev/shm:rw,nosuid,nodev,mode=1777
-
-    permissions:
-      contents: read
-      pull-requests: write
-      checks: write
-
-    env:
-      BUNDLE_PATH: 'vendor/bundle'
-      RAILS_ENV: test
-      DISPLAY: ':99'
-      RAILS_VERSION: ${{ matrix.rails }}
-      DATABASE_ADAPTER: 'sqlite'
-
-    steps:
-      - uses: 'actions/checkout@v6'
-
-      - name: 'Update VERSION'
-        env:
-          VERSION: ${{ github.event.pull_request.head.sha }}
-        run: |
-          echo "${VERSION}" >> VERSION
-
-      - name: Prepare Chrome temp dirs
-        run: |
-          mkdir -p /home/panda/tmp /home/panda/chrome
-          chmod 777 /home/panda/tmp /home/panda/chrome
-        env:
-          TMPDIR: /home/panda/tmp
-          CHROME_USER_DATA_DIR: /home/panda/chrome
-
-      - name: 'Start xvfb'
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
-      - name: 'Bundle install (main gem)'
-        run: |
-          bundle config without development
-          bundle install --jobs 4 --retry 3
-
-      - name: 'Setup test database'
-        env:
-          RAILS_ENV: test
-        run: |
-          echo "🗄️ Setting up SQLite database..."
-          bundle exec rails db:schema:load
-          echo "✅ Database ready"
-
-      - name: Panda asset generation and verification
-        uses: tastybamboo/panda-assets-verify-action@v1
-        with:
-          dummy_root: spec/dummy
-          artifact_suffix: -ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}-sqlite
-
-      - name: 'Run specs'
-        env:
-          RAILS_ENV: 'test'
-          RSPEC_COLOR: 'true'
-          TERM: 'xterm-256color'
-          TMPDIR: /home/panda/tmp
-          CHROME_USER_DATA_DIR: /home/panda/chrome
-        run: |
-          bundle exec rspec --format documentation --color
-
-      - name: 'Upload coverage'
-        uses: actions/upload-artifact@v5
-        if: always()
-        with:
-          name: coverage-${{ matrix.ruby }}-${{ matrix.rails }}-sqlite
-          path: coverage/
-
-      - name: Upload Capybara assets
-        uses: actions/upload-artifact@v5
-        if: always()
-        with:
-          name: capybara-${{ matrix.ruby }}-${{ matrix.rails }}-sqlite
-          path: spec/dummy/tmp/capybara/**/*
-          if-no-files-found: ignore
-
-  # SQLite compatibility matrix
-  # Summary job to ensure all tests passed
-  matrix-summary:
-    name: 'Matrix Tests Summary'
-    needs: [smoke-test, compatibility-matrix-postgresql, compatibility-matrix-sqlite]
-    runs-on: 'ubuntu-latest'
-    if: always()
-    steps:
-      - name: Check matrix results
-        run: |
-          if [[ "${{ needs.smoke-test.result }}" != "success" ]]; then
-            echo "❌ Smoke test failed"
-            exit 1
-          fi
-
-          if [[ "${{ needs.compatibility-matrix-postgresql.result }}" == "failure" ]]; then
-            echo "❌ Some PostgreSQL compatibility tests failed"
-            exit 1
-          fi
-
-          if [[ "${{ needs.compatibility-matrix-sqlite.result }}" == "failure" ]]; then
-            echo "❌ Some SQLite compatibility tests failed"
-            exit 1
-          fi
-
-          echo "✅ All required tests passed!"

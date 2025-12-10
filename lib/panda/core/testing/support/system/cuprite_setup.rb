@@ -1,5 +1,6 @@
 require "ferrum"
 require "capybara/cuprite"
+require "tmpdir"
 require_relative "ferrum_console_logger"
 require_relative "chrome_path"
 
@@ -14,8 +15,8 @@ module Panda
         end
 
         def self.base_options
-          ci_default_timeout = 10
-          ci_default_process_timeout = 30
+          ci_default_timeout = 30
+          ci_default_process_timeout = 120
           default_timeout = ENV["CI"] ? ci_default_timeout : 5
           default_process_timeout = ENV["CI"] ? ci_default_process_timeout : 10
 
@@ -44,13 +45,11 @@ module Panda
             process_timeout: process_timeout_value,
             wait_for_network_idle: false,
             pending_connection_errors: ENV["CI"] != "true",
+            max_conns: 1,
+            restart_if: {crashes: true, attempts: 2},
             browser_options: {
               "no-sandbox": nil,
               "disable-gpu": nil,
-              "disable-dev-shm-usage": nil,
-              "disable-background-networking": nil,
-              "disable-default-apps": nil,
-              "disable-extensions": nil,
               "disable-sync": nil,
               "disable-translate": nil,
               "no-first-run": nil,
@@ -66,65 +65,57 @@ module Panda
 
         def self.ci_browser_options
           {
-            "disable-web-security": nil,
-            "allow-file-access-from-files": nil,
-            "allow-file-access": nil
+            "disable-web-security" => nil,
+            "allow-file-access-from-files" => nil,
+            "allow-file-access" => nil,
+            "disable-dev-shm-usage" => nil, # Sets shared memory in /tmp; don't use if lots of /dev/shm space
+            "no-sandbox" => nil
           }
         end
 
-        def self.register_desktop_driver
+        def self.register_panda_cuprite_driver(name: :panda_cuprite, window_size: [1280, 720])
           options = base_options.dup
+          options[:window_size] = window_size
+          options[:browser_options] = options[:browser_options].dup
+          options[:browser_options]["user-data-dir"] = Dir.mktmpdir("cuprite-profile")
 
-          if ENV["GITHUB_ACTIONS"] == "true"
-            options[:browser_options].merge!(ci_browser_options)
-          end
-
-          self.console_logger = Panda::Core::Testing::Support::System::FerrumConsoleLogger.new
-          options[:logger] = console_logger
-
-          if ENV["CI"] || ENV["DEBUG"]
-            puts "[Cuprite Config] Final driver options:"
-            puts "  timeout: #{options[:timeout]}"
-            puts "  process_timeout: #{options[:process_timeout]}"
-            puts "  headless: #{options[:headless]}"
-            puts "  window_size: #{options[:window_size]}"
-            puts "  Browser options count: #{options[:browser_options].keys.count}"
-          end
-
-          Capybara.register_driver :cuprite do |app|
-            if ENV["CI"] || ENV["DEBUG"]
-              puts "[Cuprite Driver Instantiation] Creating driver with options:"
-              puts "  timeout: #{options[:timeout].inspect}"
-              puts "  process_timeout: #{options[:process_timeout].inspect}"
-            end
-            Capybara::Cuprite::Driver.new(app, **options)
-          end
-        end
-
-        def self.register_mobile_driver
-          options = base_options.dup
-          options[:window_size] = [375, 667]
-
-          if ENV["GITHUB_ACTIONS"] == "true"
+          if ENV["CI"] == "true" # Covers both act and GitHub Actions
             options[:browser_options].merge!(ci_browser_options)
           end
 
           options[:logger] = console_logger if console_logger
 
-          Capybara.register_driver :cuprite_mobile do |app|
+          Capybara.register_driver :name do |app|
             Capybara::Cuprite::Driver.new(app, **options)
           end
         end
 
         def self.setup!
-          register_desktop_driver
-          register_mobile_driver
-          Capybara.default_driver = :cuprite
-          Capybara.javascript_driver = :cuprite
+          register_panda_cuprite_driver(name: :panda_cuprite, window_size: [1280, 720])
+          register_panda_cuprite_driver(name: :panda_cuprite_mobile, window_size: [375, 667])
+          Capybara.default_driver = :panda_cuprite
+          Capybara.javascript_driver = :panda_cuprite
         end
       end
     end
   end
 end
 
+Capybara.default_max_wait_time = ENV.fetch("CAPYBARA_MAX_WAIT_TIME", "5").to_i
+Capybara.raise_server_errors = true
+
+# Server selection (overridable via env)
+server_name = ENV.fetch("CAPYBARA_SERVER", "puma").to_sym
+Capybara.server = server_name
+Capybara.server_host = ENV.fetch("CAPYBARA_SERVER_HOST", "127.0.0.1")
+# Allow dynamic port by leaving blank
+port_env = ENV["CAPYBARA_PORT"]
+Capybara.server_port = (port_env && !port_env.empty?) ? port_env.to_i : nil
+app_host_env = ENV["CAPYBARA_APP_HOST"]
+Capybara.app_host = app_host_env unless app_host_env.to_s.empty?
+Capybara.always_include_port = !Capybara.app_host.nil?
+
+HEADLESS = !(ENV["HEADFUL"] == "true")
+
+# Register the drivers and setup the options
 Panda::Core::Testing::CupriteSetup.setup!

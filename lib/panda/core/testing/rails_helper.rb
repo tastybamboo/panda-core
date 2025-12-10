@@ -165,14 +165,14 @@ RSpec.configure do |config|
 
   # DatabaseCleaner configuration
   config.around(:each) do |example|
-    DatabaseCleaner.strategy = example.metadata[:type] == :system ? :truncation : :transaction
+    DatabaseCleaner.strategy = (example.metadata[:type] == :system) ? :truncation : :transaction
     DatabaseCleaner.cleaning do
       example.run
     end
   end
 
   config.before(:each, type: :system) do
-    driven_by :cuprite
+    driven_by :panda_cuprite
   end
 
   config.use_transactional_fixtures = false
