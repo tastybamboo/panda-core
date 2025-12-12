@@ -85,7 +85,7 @@ module Panda
 
           options[:logger] = console_logger if console_logger
 
-          Capybara.register_driver :name do |app|
+          Capybara.register_driver name do |app|
             Capybara::Cuprite::Driver.new(app, **options)
           end
         end

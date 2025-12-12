@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.12.2] - 2025-12-09
+## [0.12.2] - 2025-12-12
 
-### Fixed
+### Added
 
-- **Browser Path Finder** - Reverted browser path finder changes to fix CI timeouts
-  - Simplified browser detection to resolve timeout issues in GitHub Actions
-  - Improved CI stability for system tests
+- **Containerised CI runner** - New `bin/ci` workflow and Docker image for running system specs with Chrome and PostgreSQL locally and in CI
+  - Chrome smoke test to validate browser availability before specs
+  - Service scripts for PostgreSQL lifecycle inside the container
+
+### Changed
+
+- **Cuprite driver registration** - Fixed the Capybara Cuprite setup to register drivers with their actual names (e.g. `:panda_cuprite`, `:panda_cuprite_mobile`)
+- **CI image hardening** - CI Docker image now includes libvips runtime/dev packages and will fail fast if vips is missing; added `--no-cache` flag support to `bin/ci build`/`push` for reproducible rebuilds
 
 ## [0.12.1] - 2025-12-08
 
