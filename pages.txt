@@ -1,0 +1,13 @@
+INSERT INTO "public"."panda_cms_menu_items" ("id", "text", "panda_cms_menu_id", "panda_cms_page_id", "external_url", "sort_order", "created_at", "updated_at", "parent_id", "lft", "rgt", "depth", "children_count") VALUES
+('0dd3b295-c28e-491e-9ca8-500b461c0a0c', 'What We Do', '2398b708-3571-40b9-9327-2441eb88e071', 'b1b6d047-f001-454a-8db9-f7537aa97870', NULL, 1, '2025-11-18 10:27:20.610273', '2025-11-18 10:27:21.551895', '705f74b6-fb5e-4c87-8263-5f1e7ceaaec1', 2, 15, 1, 4);
+
+
+
+
+
+  <meta name="description" content="We’re a charity improving mental health for neurodivergent people.">
+  <meta type="keywords" content="mental health, neurodivergent, neurodiversity, adhd, autism, autistic, dyslexia, dyspraxia, mental health charity, mental health support, mental health awareness, mental health resources">
+  <meta name="author" content="neurobetter">
+  
+  
+  
