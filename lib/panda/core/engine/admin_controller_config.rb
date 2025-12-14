@@ -13,7 +13,11 @@ module Panda
           initializer "panda_core.admin_controller_alias", before: :eager_load! do
             # Explicitly require the base controller to ensure it's loaded
             # before any controllers try to inherit from the alias
-            require_dependency "panda/core/admin/base_controller" rescue nil
+            begin
+              require "panda/core/admin/base_controller"
+            rescue LoadError
+              # Controller not available yet - skip alias setup
+            end
 
             # Create the alias for convenience
             if defined?(Panda::Core::Admin::BaseController) && !Panda::Core.const_defined?(:AdminController)
