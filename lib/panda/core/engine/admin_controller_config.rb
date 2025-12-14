@@ -10,16 +10,14 @@ module Panda
         included do
           # Create AdminController alias after controllers are loaded
           # This allows other gems to inherit from Panda::Core::AdminController
-          initializer "panda_core.admin_controller_alias", after: :load_config_initializers do
-            ActiveSupport.on_load(:action_controller_base) do
-              # Safely create the alias, handling cases where BaseController isn't loaded yet
-              begin
-                base_controller = "Panda::Core::Admin::BaseController".constantize
-                Panda::Core.const_set(:AdminController, base_controller) unless Panda::Core.const_defined?(:AdminController)
-              rescue NameError => e
-                # BaseController not loaded yet - this is fine during asset precompilation
-                Rails.logger.debug("Skipping AdminController alias setup: #{e.message}") if Rails.logger
-              end
+          initializer "panda_core.admin_controller_alias", before: :eager_load! do
+            # Explicitly require the base controller to ensure it's loaded
+            # before any controllers try to inherit from the alias
+            require_dependency "panda/core/admin/base_controller" rescue nil
+
+            # Create the alias for convenience
+            if defined?(Panda::Core::Admin::BaseController) && !Panda::Core.const_defined?(:AdminController)
+              Panda::Core.const_set(:AdminController, Panda::Core::Admin::BaseController)
             end
           end
         end
