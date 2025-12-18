@@ -83,6 +83,12 @@ module Panda
 
           return if symbol == :developer && !Rails.env.development?
 
+          # Skip providers without credentials (except developer which doesn't need them)
+          unless symbol == :developer || (settings[:client_id].present? && settings[:client_secret].present?)
+            Rails.logger.info("[panda-core] Skipping OmniAuth provider #{name.inspect}: missing client_id or client_secret")
+            return
+          end
+
           options = (settings[:options] || {}).dup
           options[:name] = settings[:path_name] if settings[:path_name].present?
 
