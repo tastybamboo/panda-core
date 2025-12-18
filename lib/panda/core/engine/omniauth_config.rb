@@ -33,8 +33,13 @@ module Panda
               Panda::Core::OAuthProviders.setup
 
               load_yaml_provider_overrides!
-              configure_omniauth_globals
               mount_omniauth_middleware(app)
+
+              # Configure OmniAuth globals AFTER all initializers have run
+              # This ensures Panda::Core.config.admin_path has been set by the app
+              app.config.after_initialize do
+                configure_omniauth_globals
+              end
             end
           end
         end
