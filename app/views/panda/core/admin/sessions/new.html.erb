@@ -7,9 +7,8 @@
       <%= Panda::Core.config.login_page_title || "Sign in to your account" %>
     </h2>
   </div>
-  <% if @providers&.any? || Panda::Core.config.authentication_providers.any? %>
-    <% providers = @providers || Panda::Core.config.authentication_providers.keys %>
-    <% providers.each do |provider| %>
+  <% if @providers&.any? %>
+    <% @providers.each do |provider| %>
       <% provider_config = Panda::Core.config.authentication_providers[provider] %>
       <% provider_path = provider_config&.dig(:path_name) || provider %>
       <div class="mt-4 text-center sm:mx-auto sm:w-full sm:max-w-sm">
