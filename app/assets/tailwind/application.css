@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Legacy colors */
+  /* Legacy colors - DEPRECATED: Use primary-* scale instead */
   --color-white: var(--color-white);
   --color-black: var(--color-black);
   --color-light: var(--color-light);
@@ -13,7 +13,7 @@
   --color-warning: var(--color-warning);
   --color-error: var(--color-error);
 
-  /* Tailwind UI compatible primary scale */
+  /* Primary color scale (Glacier/Teal) */
   --color-primary-50: var(--color-primary-50);
   --color-primary-100: var(--color-primary-100);
   --color-primary-200: var(--color-primary-200);
@@ -25,6 +25,31 @@
   --color-primary-800: var(--color-primary-800);
   --color-primary-900: var(--color-primary-900);
   --color-primary-950: var(--color-primary-950);
+
+  /* Semantic colors */
+  --color-success-50: var(--color-success-50);
+  --color-success-100: var(--color-success-100);
+  --color-success-500: var(--color-success-500);
+  --color-success-600: var(--color-success-600);
+  --color-success-700: var(--color-success-700);
+
+  --color-error-50: var(--color-error-50);
+  --color-error-100: var(--color-error-100);
+  --color-error-500: var(--color-error-500);
+  --color-error-600: var(--color-error-600);
+  --color-error-700: var(--color-error-700);
+
+  --color-warning-50: var(--color-warning-50);
+  --color-warning-100: var(--color-warning-100);
+  --color-warning-500: var(--color-warning-500);
+  --color-warning-600: var(--color-warning-600);
+  --color-warning-700: var(--color-warning-700);
+
+  --color-info-50: var(--color-info-50);
+  --color-info-100: var(--color-info-100);
+  --color-info-500: var(--color-info-500);
+  --color-info-600: var(--color-info-600);
+  --color-info-700: var(--color-info-700);
 
   /* Map indigo to primary for Tailwind UI compatibility */
   --color-indigo-50: var(--color-primary-50);
@@ -58,30 +83,58 @@
     --color-white: rgb(249, 249, 249); /* #F9F9F9 */
     --color-black: rgb(26, 22, 29); /* #1A161D */
 
-    /* Legacy color variables (kept for backwards compatibility) */
-    --color-light: rgb(238, 206, 230); /* #EECEE6 */
-    --color-mid: rgb(141, 94, 183); /* #8D5EB7 */
-    --color-dark: rgb(33, 29, 73); /* #211D49 */
+    /* Legacy color variables - DEPRECATED: Map to primary scale */
+    --color-light: rgb(241, 249, 250); /* Maps to primary-50 */
+    --color-mid: rgb(60, 135, 158); /* Maps to primary-500 */
+    --color-dark: rgb(24, 41, 52); /* Maps to primary-950 */
 
     --color-highlight: rgb(208, 64, 20); /* #D04014 */
 
-    --color-active: rgb(0, 135, 85); /* #008755 */
-    --color-warning: rgb(250, 207, 142); /* #FACF8E */
-    --color-inactive: rgb(216, 247, 245); /* #d6e4f7 */
-    --color-error: rgb(245, 129, 129); /* #F58181 */
+    --color-active: rgb(22, 163, 74); /* green-600 - success */
+    --color-warning: rgb(245, 158, 11); /* amber-500 */
+    --color-inactive: rgb(219, 234, 254); /* blue-100 */
+    --color-error: rgb(220, 38, 38); /* red-600 */
 
-    /* Full Tailwind UI compatible color scale - Primary (Purple palette) */
-    --color-primary-50: rgb(250, 245, 255); /* Very light purple */
-    --color-primary-100: rgb(243, 232, 255); /* Lighter purple */
-    --color-primary-200: rgb(233, 213, 255); /* Light purple */
-    --color-primary-300: rgb(216, 180, 254); /* Medium light purple */
-    --color-primary-400: rgb(192, 132, 252); /* Medium purple */
-    --color-primary-500: rgb(141, 94, 183); /* Main brand color (mid) */
-    --color-primary-600: rgb(120, 80, 160); /* Darker purple */
-    --color-primary-700: rgb(100, 65, 140); /* Dark purple */
-    --color-primary-800: rgb(60, 45, 100); /* Very dark purple */
-    --color-primary-900: rgb(33, 29, 73); /* Darkest (dark) */
-    --color-primary-950: rgb(24, 20, 50); /* Ultra dark */
+    /* Primary color scale - Glacier (Teal) */
+    --color-primary-50: rgb(241, 249, 250); /* #f1f9fa */
+    --color-primary-100: rgb(219, 238, 242); /* #dbeef2 */
+    --color-primary-200: rgb(188, 221, 229); /* #bcdde5 */
+    --color-primary-300: rgb(131, 191, 207); /* #83bfcf */
+    --color-primary-400: rgb(87, 163, 185); /* #57a3b9 */
+    --color-primary-500: rgb(60, 135, 158); /* #3c879e */
+    --color-primary-600: rgb(52, 110, 134); /* #346e86 */
+    --color-primary-700: rgb(48, 91, 110); /* #305b6e */
+    --color-primary-800: rgb(46, 77, 92); /* #2e4d5c */
+    --color-primary-900: rgb(42, 66, 79); /* #2a424f */
+    --color-primary-950: rgb(24, 41, 52); /* #182934 */
+
+    /* Semantic colors - Success (Green) */
+    --color-success-50: rgb(240, 253, 244); /* green-50 */
+    --color-success-100: rgb(220, 252, 231); /* green-100 */
+    --color-success-500: rgb(34, 197, 94); /* green-500 */
+    --color-success-600: rgb(22, 163, 74); /* green-600 */
+    --color-success-700: rgb(21, 128, 61); /* green-700 */
+
+    /* Semantic colors - Error (Red) */
+    --color-error-50: rgb(254, 242, 242); /* red-50 */
+    --color-error-100: rgb(254, 226, 226); /* red-100 */
+    --color-error-500: rgb(239, 68, 68); /* red-500 */
+    --color-error-600: rgb(220, 38, 38); /* red-600 */
+    --color-error-700: rgb(185, 28, 28); /* red-700 */
+
+    /* Semantic colors - Warning (Amber) */
+    --color-warning-50: rgb(255, 251, 235); /* amber-50 */
+    --color-warning-100: rgb(254, 243, 199); /* amber-100 */
+    --color-warning-500: rgb(245, 158, 11); /* amber-500 */
+    --color-warning-600: rgb(217, 119, 6); /* amber-600 */
+    --color-warning-700: rgb(180, 83, 9); /* amber-700 */
+
+    /* Semantic colors - Info (Blue) */
+    --color-info-50: rgb(239, 246, 255); /* blue-50 */
+    --color-info-100: rgb(219, 234, 254); /* blue-100 */
+    --color-info-500: rgb(59, 130, 246); /* blue-500 */
+    --color-info-600: rgb(37, 99, 235); /* blue-600 */
+    --color-info-700: rgb(29, 78, 216); /* blue-700 */
 
     /* Gray scale for UI elements */
     --color-gray-50: rgb(249, 250, 251);
@@ -97,33 +150,62 @@
     --color-gray-950: rgb(3, 7, 18);
   }
 
-  html[data-theme='sky'] {
+  html[data-theme='ocean'] {
     --color-white: rgb(249, 249, 249); /* #F9F9F9 */
     --color-black: rgb(26, 22, 29); /* #1A161D */
 
-    /* Legacy color variables (kept for backwards compatibility) */
-    --color-light: rgb(204, 238, 242); /* #CCEEF2 */
-    --color-mid: rgb(42, 102, 159); /* #2A669F */
-    --color-dark: rgb(20, 32, 74); /* #14204A */
+    /* Legacy color variables - DEPRECATED: Map to primary scale */
+    --color-light: rgb(239, 246, 255); /* Maps to primary-50 (blue-50) */
+    --color-mid: rgb(59, 130, 246); /* Maps to primary-500 (blue-500) */
+    --color-dark: rgb(30, 58, 138); /* Maps to primary-950 (blue-950) */
+
     --color-highlight: rgb(208, 64, 20); /* #D04014 */
 
-    --color-active: rgb(69, 154, 89); /* #459A59 - darker green with better contrast */
-    --color-warning: rgb(244, 190, 102); /* #F4BE66 */
-    --color-inactive: rgb(216, 247, 245); /* #d6e4f7 */
-    --color-error: rgb(208, 64, 20); /* #D04014 */
+    --color-active: rgb(22, 163, 74); /* green-600 - success */
+    --color-warning: rgb(245, 158, 11); /* amber-500 */
+    --color-inactive: rgb(219, 234, 254); /* blue-100 */
+    --color-error: rgb(220, 38, 38); /* red-600 */
 
-    /* Full Tailwind UI compatible color scale - Primary (Blue palette) */
-    --color-primary-50: rgb(240, 249, 255); /* Very light blue */
-    --color-primary-100: rgb(224, 242, 254); /* Lighter blue */
-    --color-primary-200: rgb(186, 230, 253); /* Light blue */
-    --color-primary-300: rgb(125, 211, 252); /* Medium light blue */
-    --color-primary-400: rgb(56, 189, 248); /* Medium blue */
-    --color-primary-500: rgb(42, 102, 159); /* Main brand color (mid) */
-    --color-primary-600: rgb(35, 85, 132); /* Darker blue */
-    --color-primary-700: rgb(28, 68, 106); /* Dark blue */
-    --color-primary-800: rgb(22, 52, 82); /* Very dark blue */
-    --color-primary-900: rgb(20, 32, 74); /* Darkest (dark) */
-    --color-primary-950: rgb(15, 24, 55); /* Ultra dark */
+    /* Primary color scale - Ocean (Blue) */
+    --color-primary-50: rgb(239, 246, 255); /* blue-50 */
+    --color-primary-100: rgb(219, 234, 254); /* blue-100 */
+    --color-primary-200: rgb(191, 219, 254); /* blue-200 */
+    --color-primary-300: rgb(147, 197, 253); /* blue-300 */
+    --color-primary-400: rgb(96, 165, 250); /* blue-400 */
+    --color-primary-500: rgb(59, 130, 246); /* blue-500 */
+    --color-primary-600: rgb(37, 99, 235); /* blue-600 */
+    --color-primary-700: rgb(29, 78, 216); /* blue-700 */
+    --color-primary-800: rgb(30, 64, 175); /* blue-800 */
+    --color-primary-900: rgb(30, 58, 138); /* blue-900 */
+    --color-primary-950: rgb(23, 37, 84); /* blue-950 */
+
+    /* Semantic colors - Success (Green) */
+    --color-success-50: rgb(240, 253, 244);
+    --color-success-100: rgb(220, 252, 231);
+    --color-success-500: rgb(34, 197, 94);
+    --color-success-600: rgb(22, 163, 74);
+    --color-success-700: rgb(21, 128, 61);
+
+    /* Semantic colors - Error (Red) */
+    --color-error-50: rgb(254, 242, 242);
+    --color-error-100: rgb(254, 226, 226);
+    --color-error-500: rgb(239, 68, 68);
+    --color-error-600: rgb(220, 38, 38);
+    --color-error-700: rgb(185, 28, 28);
+
+    /* Semantic colors - Warning (Amber) */
+    --color-warning-50: rgb(255, 251, 235);
+    --color-warning-100: rgb(254, 243, 199);
+    --color-warning-500: rgb(245, 158, 11);
+    --color-warning-600: rgb(217, 119, 6);
+    --color-warning-700: rgb(180, 83, 9);
+
+    /* Semantic colors - Info (Teal - different from primary for ocean theme) */
+    --color-info-50: rgb(241, 249, 250);
+    --color-info-100: rgb(219, 238, 242);
+    --color-info-500: rgb(60, 135, 158);
+    --color-info-600: rgb(52, 110, 134);
+    --color-info-700: rgb(48, 91, 110);
 
     /* Gray scale for UI elements (same across themes) */
     --color-gray-50: rgb(249, 250, 251);
@@ -145,24 +227,16 @@
     inset: 0;
   }
 
-  /* Admin gradient backgrounds */
-  html[data-theme='default'] .bg-gradient-admin {
-    background: linear-gradient(to bottom right, rgb(33, 29, 73), rgb(141, 94, 183));
-  }
-
-  html[data-theme='sky'] .bg-gradient-admin {
-    background: linear-gradient(to bottom right, rgb(20, 32, 74), rgb(42, 102, 159));
-  }
-
-  /* Remove rounded bottom-left corner on admin sidebar */
+  /* Admin gradient backgrounds - neutral gray for chrome */
   .bg-gradient-admin {
+    background: linear-gradient(to bottom right, rgb(17, 24, 39), rgb(55, 65, 81));
     border-bottom-left-radius: 0;
   }
 }
 
 /* Form input styles */
 @layer components {
-  /* Base form field styles - matches panda-cms admin pattern */
+  /* Base form field styles */
   input[type='text'],
   input[type='email'],
   input[type='password'],
@@ -177,17 +251,17 @@
   input[type='search'],
   textarea {
     @apply block w-full rounded-md border-0 p-2 text-gray-900 bg-white;
-    @apply ring-1 ring-inset ring-mid placeholder:text-gray-300;
-    @apply focus:ring-1 focus:ring-inset focus:ring-dark;
+    @apply ring-1 ring-inset ring-primary-400 placeholder:text-gray-400;
+    @apply focus:ring-2 focus:ring-inset focus:ring-primary-600;
     @apply hover:cursor-pointer sm:leading-6;
     @apply disabled:ring-gray-300 disabled:focus:ring-gray-300 disabled:bg-gray-50 disabled:cursor-not-allowed;
   }
 
-  /* Select specific styling - matches panda-cms admin pattern */
+  /* Select specific styling */
   select {
     @apply block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 bg-white;
-    @apply ring-1 ring-inset ring-mid;
-    @apply focus:ring-1 focus:ring-inset focus:ring-dark;
+    @apply ring-1 ring-inset ring-primary-400;
+    @apply focus:ring-2 focus:ring-inset focus:ring-primary-600;
     @apply hover:cursor-pointer sm:leading-6;
     @apply disabled:ring-gray-300 disabled:focus:ring-gray-300 disabled:bg-gray-50 disabled:cursor-not-allowed;
     @apply appearance-none bg-right bg-no-repeat;
@@ -199,8 +273,8 @@
   /* Checkbox and radio styling */
   input[type='checkbox'],
   input[type='radio'] {
-    @apply w-4 h-4 text-indigo-600 bg-white border-gray-300 rounded transition-colors duration-200;
-    @apply focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+    @apply w-4 h-4 text-primary-600 bg-white border-gray-300 rounded transition-colors duration-200;
+    @apply focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
     @apply disabled:bg-gray-100 disabled:cursor-not-allowed;
   }
 
@@ -222,30 +296,34 @@
   input.error,
   textarea.error,
   select.error {
-    @apply ring-red-500 focus:ring-red-500;
+    @apply ring-error-500 focus:ring-error-500;
   }
 
   .field-error {
-    @apply text-sm text-red-600 mt-1;
+    @apply text-sm text-error-600 mt-1;
   }
 
   /* Button styling */
   .btn {
     @apply inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-md transition-colors duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2;
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-primary {
-    @apply bg-mid text-white hover:opacity-90 focus:ring-mid;
+    @apply bg-primary-500 text-white hover:bg-primary-600 focus-visible:outline-primary-600;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+    @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus-visible:outline-gray-500;
   }
 
   .btn-danger {
-    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    @apply bg-error-600 text-white hover:bg-error-700 focus-visible:outline-error-600;
+  }
+
+  .btn-success {
+    @apply bg-success-600 text-white hover:bg-success-700 focus-visible:outline-success-600;
   }
 
   a.block-link:after {
@@ -258,7 +336,7 @@
 /* EditorJS content styles */
 @layer components {
   .codex-editor__redactor .ce-block .ce-block__content {
-    @apply text-base font-normal font-sans text-dark leading-[1.6] space-y-[1.6rem];
+    @apply text-base font-normal font-sans text-gray-900 leading-[1.6] space-y-[1.6rem];
 
     h1.ce-header {
       @apply text-3xl md:text-4xl font-semibold font-sans leading-[1.2];
@@ -277,7 +355,7 @@
       @apply leading-[1.6] tracking-wide max-w-[85ch];
 
       a {
-        @apply text-[#1A9597] underline underline-offset-2 hover:text-[#158486] focus:outline-2 focus:outline-offset-2 focus:outline-[#1A9597];
+        @apply text-primary-600 underline underline-offset-2 hover:text-primary-700 focus:outline-2 focus:outline-offset-2 focus:outline-primary-600;
       }
 
       strong,
@@ -291,10 +369,10 @@
     }
 
     .cdx-quote {
-      @apply bg-[#eef0f3] border-l-inactive border-l-8 p-6 mb-4;
+      @apply bg-gray-100 border-l-primary-300 border-l-8 p-6 mb-4;
 
       .cdx-quote__caption {
-        @apply block ml-6 mt-2 text-sm text-dark;
+        @apply block ml-6 mt-2 text-sm text-gray-600;
       }
 
       .cdx-quote__text {
@@ -302,7 +380,7 @@
         @apply pl-6;
 
         &:before {
-          @apply -ml-8 mr-2 text-dark text-6xl leading-4 align-text-bottom font-serif;
+          @apply -ml-8 mr-2 text-primary-600 text-6xl leading-4 align-text-bottom font-serif;
           content: open-quote;
         }
 
@@ -353,18 +431,18 @@
     }
 
     .cdx-table {
-      @apply w-full border-collapse border-2 border-dark my-6;
+      @apply w-full border-collapse border-2 border-gray-300 my-6;
 
       &__head {
-        @apply font-semibold border-dark border-r-2 p-3 bg-light;
+        @apply font-semibold border-gray-300 border-r-2 p-3 bg-gray-100;
       }
 
       &__row {
-        @apply border-dark border-b-2;
+        @apply border-gray-300 border-b-2;
       }
 
       &__cell {
-        @apply border-dark border-r-2 p-3;
+        @apply border-gray-300 border-r-2 p-3;
       }
     }
 

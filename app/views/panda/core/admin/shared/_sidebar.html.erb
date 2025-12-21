@@ -42,7 +42,7 @@
                     data-action="click->navigation-toggle#toggle"
                     aria-controls="sub-menu-<%= index %>"
                     aria-expanded="false"
-                    class="<%= is_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60' %> transition-all group flex items-center w-full gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal">
+                    class="<%= is_active ? 'bg-primary-500 text-white' : 'text-white hover:bg-primary-500/60' %> transition-all group flex items-center w-full gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal">
               <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
               <span class="flex-1 text-left"><%= item[:label] %></span>
               <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
@@ -56,14 +56,14 @@
                 <%
                   child_is_active = child[:path] && (request.path == child[:path] || request.path.starts_with?(child[:path] + "/"))
                 %>
-                <%= link_to child[:path], class: "#{child_is_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60'} group flex items-center w-full py-2 pr-2 pl-11 rounded-md text-sm font-normal transition-all" do %>
+                <%= link_to child[:path], class: "#{child_is_active ? 'bg-primary-500 text-white' : 'text-white hover:bg-primary-500/60'} group flex items-center w-full py-2 pr-2 pl-11 rounded-md text-sm font-normal transition-all" do %>
                   <%= child[:label] %>
                 <% end %>
               <% end %>
             </div>
           </div>
         <% else %>
-          <%= link_to item[:path], class: "#{is_active ? "bg-mid text-white relative flex items-center transition-all py-3 px-2 mb-2 rounded-md group gap-x-3 text-base leading-6 font-normal" : "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal"}" do %>
+          <%= link_to item[:path], class: "#{is_active ? "bg-primary-500 text-white relative flex items-center transition-all py-3 px-2 mb-2 rounded-md group gap-x-3 text-base leading-6 font-normal" : "text-white hover:bg-primary-500/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal"}" do %>
             <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
             <span><%= item[:label] %></span>
           <% end %>
@@ -71,7 +71,7 @@
       </li>
     <% end %>
     <li>
-      <%= button_to panda_core.admin_logout_path, method: :delete, id: "logout-link", data: { turbo: false }, class: "text-white hover:bg-mid/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full" do %>
+      <%= button_to panda_core.admin_logout_path, method: :delete, id: "logout-link", data: { turbo: false }, class: "text-white hover:bg-primary-500/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full" do %>
         <span class="text-center w-6"><i class="text-xl fa-solid fa-door-open fa-fw"></i></span>
         <span>Logout</span>
       <% end %>
@@ -81,7 +81,7 @@
         # Check if we're in the my_profile section
         is_my_profile_active = request.path.starts_with?("#{Panda::Core.config.admin_path}/my_profile")
       %>
-      <%= link_to panda_core.admin_my_profile_path, class: "#{is_my_profile_active ? 'bg-mid text-white' : 'text-white hover:bg-mid/60'} transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full", title: "My Profile" do %>
+      <%= link_to panda_core.admin_my_profile_path, class: "#{is_my_profile_active ? 'bg-primary-500 text-white' : 'text-white hover:bg-primary-500/60'} transition-all group flex items-center gap-x-3 py-3 px-2 mb-2 rounded-md text-base leading-6 font-normal w-full", title: "My Profile" do %>
         <% if current_user.avatar.attached? %>
           <span class="text-center w-6"><%= image_tag main_app.url_for(current_user.avatar), alt: current_user.name, class: "w-auto h-7 rounded-full object-cover" %></span>
         <% elsif !current_user.image_url.to_s.empty? %>

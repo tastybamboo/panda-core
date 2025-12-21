@@ -17,7 +17,7 @@ RSpec.describe Panda::Core::Admin::ButtonComponent do
       component = described_class.new(text: "Save", action: :save, href: "/save")
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("a.bg-mid")
+      expect(output).to have_css("a.bg-primary-500")
       expect(output).to have_css("a.text-white")
     end
 
@@ -25,7 +25,7 @@ RSpec.describe Panda::Core::Admin::ButtonComponent do
       component = described_class.new(text: "Delete", action: :delete, href: "/delete")
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("a.text-red-600")
+      expect(output).to have_css("a.text-error-600")
     end
 
     it "renders with custom link" do

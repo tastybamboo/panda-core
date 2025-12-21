@@ -343,6 +343,10 @@ module Panda
         private
 
         def find_javascript_file(relative_path)
+          # Build list of paths to try - include .js extension fallback
+          paths_to_try = [relative_path]
+          paths_to_try << "#{relative_path}.js" unless relative_path.end_with?(".js")
+
           # Check each registered module's JavaScript directory
           ModuleRegistry.modules.each do |gem_name, info|
             next unless ModuleRegistry.send(:engine_available?, info[:engine])
@@ -350,24 +354,28 @@ module Panda
             root = ModuleRegistry.send(:engine_root, info[:engine])
             next unless root
 
-            # Check in app/javascript/panda/ (primary location)
-            candidate = root.join("app/javascript/panda", relative_path)
-            return candidate.to_s if candidate.exist? && candidate.file?
+            paths_to_try.each do |path|
+              # Check in app/javascript/panda/ (primary location)
+              candidate = root.join("app/javascript/panda", path)
+              return candidate.to_s if candidate.exist? && candidate.file?
 
-            # Fallback to public/panda/ (for CI environments where assets are copied)
-            public_candidate = root.join("public/panda", relative_path)
-            return public_candidate.to_s if public_candidate.exist? && public_candidate.file?
+              # Fallback to public/panda/ (for CI environments where assets are copied)
+              public_candidate = root.join("public/panda", path)
+              return public_candidate.to_s if public_candidate.exist? && public_candidate.file?
+            end
           end
 
           # Also check Rails.root if available (for dummy apps in CI)
           if defined?(Rails.root)
-            # Check app/javascript/panda/ in Rails.root
-            rails_candidate = Rails.root.join("app/javascript/panda", relative_path)
-            return rails_candidate.to_s if rails_candidate.exist? && rails_candidate.file?
+            paths_to_try.each do |path|
+              # Check app/javascript/panda/ in Rails.root
+              rails_candidate = Rails.root.join("app/javascript/panda", path)
+              return rails_candidate.to_s if rails_candidate.exist? && rails_candidate.file?
 
-            # Fallback to public/panda/ in Rails.root
-            rails_public_candidate = Rails.root.join("public/panda", relative_path)
-            return rails_public_candidate.to_s if rails_public_candidate.exist? && rails_public_candidate.file?
+              # Fallback to public/panda/ in Rails.root
+              rails_public_candidate = Rails.root.join("public/panda", path)
+              return rails_public_candidate.to_s if rails_public_candidate.exist? && rails_public_candidate.file?
+            end
           end
 
           nil

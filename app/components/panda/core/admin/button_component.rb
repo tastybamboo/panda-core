@@ -71,13 +71,13 @@ module Panda
         def action_classes
           case @action
           when :save, :create
-            "text-white bg-mid hover:bg-mid/80"
+            "text-white bg-primary-500 hover:bg-primary-600 focus-visible:outline-primary-600"
           when :save_inactive
             "text-white bg-gray-400"
           when :secondary
             "text-gray-700 border-2 border-gray-500 bg-white hover:bg-gray-100 active:bg-gray-200 transition-colors"
           when :delete, :destroy, :danger
-            "text-red-600 border border-red-600 bg-red-100 hover:bg-red-200 hover:text-red-700 focus-visible:outline-red-300"
+            "text-error-600 border border-error-600 bg-error-100 hover:bg-error-200 hover:text-error-700 focus-visible:outline-error-300"
           else
             "text-gray-700 border-2 border-gray-500 bg-white hover:bg-gray-100 active:bg-gray-200 transition-colors"
           end
