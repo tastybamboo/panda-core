@@ -3,6 +3,17 @@
 require "rails"
 # require "active_support/core_ext/module/attribute_accessors"
 
+# Load inflections early so they're available for generators
+# This must happen before any code tries to camelize/classify strings
+# containing "cms", "seo", "ai", or "uuid"
+require "active_support/inflector"
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.acronym "CMS"
+  inflect.acronym "SEO"
+  inflect.acronym "AI"
+  inflect.acronym "UUID"
+end
+
 module Panda
   module Core
     def self.root
