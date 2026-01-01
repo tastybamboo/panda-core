@@ -57,6 +57,7 @@ jobs:
       - name: Setup database
         env:
           DATABASE_URL: postgres://postgres:password@postgres:5432/test
+          BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
         run: |
           cd spec/dummy
           bundle exec rails db:create db:schema:load
@@ -127,6 +128,7 @@ jobs:
       - name: Setup database
         env:
           DATABASE_URL: postgres://postgres:password@postgres:5432/test
+          BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
         run: |
           cd spec/dummy
           bundle exec rails db:create db:schema:load
