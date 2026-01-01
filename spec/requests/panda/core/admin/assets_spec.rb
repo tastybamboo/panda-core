@@ -9,7 +9,10 @@ RSpec.describe "Admin asset loading", type: :request do
   let(:assets_dir) { Panda::Core::Engine.root.join("public", "panda-core-assets") }
 
   before do
-    sign_in_as(admin_user)
+    # Stub authentication since these tests are about CSS asset loading, not auth
+    # In Ruby 4.0.0, session data doesn't persist properly between before block and request
+    allow_any_instance_of(Panda::Core::Admin::BaseController).to receive(:authenticate_admin_user!)
+    allow_any_instance_of(Panda::Core::Admin::BaseController).to receive(:current_user).and_return(admin_user)
   end
 
   it "prefers the newest compiled CSS asset when available" do
