@@ -27,7 +27,7 @@ module Panda
               # Re-check inside the mapper to avoid duplicate mounts during reloads
               next if route_set.named_routes.key?(:panda_core)
 
-              mount Panda::Core::Engine => "/", as: "panda_core"
+              mount Panda::Core::Engine => "/", :as => "panda_core"
             end
           end
         end

@@ -44,9 +44,9 @@ module Panda
         end
 
         attributes = {
-          email: auth_hash.info.email.downcase,
-          name: auth_hash.info.name || "Unknown User",
-          image_url: auth_hash.info.image,
+          :email => auth_hash.info.email.downcase,
+          :name => auth_hash.info.name || "Unknown User",
+          :image_url => auth_hash.info.image,
           admin_column => User.count.zero? # First user is admin
         }
 
