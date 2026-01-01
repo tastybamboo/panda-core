@@ -43,15 +43,14 @@ jobs:
       - name: Cache gems
         uses: actions/cache@v4
         with:
-          path: spec/dummy/vendor/bundle
-          key: ${{ runner.os }}-gems-stable-${{ hashFiles('spec/dummy/Gemfile.lock') }}
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-stable-${{ hashFiles('Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-stable-
             ${{ runner.os }}-gems-
 
       - name: Bundle install
         run: |
-          cd spec/dummy
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
@@ -65,9 +64,7 @@ jobs:
       - name: Run stable tests
         env:
           DATABASE_URL: postgres://postgres:password@postgres:5432/test
-        run: |
-          cd spec/dummy
-          bundle exec rspec --tag ~flaky --format progress --color
+        run: bundle exec rspec --tag ~flaky --format progress --color
 
       - name: Upload failure artifacts
         if: failure()
@@ -116,15 +113,14 @@ jobs:
       - name: Cache gems
         uses: actions/cache@v4
         with:
-          path: spec/dummy/vendor/bundle
-          key: ${{ runner.os }}-gems-flaky-${{ hashFiles('spec/dummy/Gemfile.lock') }}
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-flaky-${{ hashFiles('Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-flaky-
             ${{ runner.os }}-gems-
 
       - name: Bundle install
         run: |
-          cd spec/dummy
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
@@ -138,9 +134,7 @@ jobs:
       - name: Run flaky tests
         env:
           DATABASE_URL: postgres://postgres:password@postgres:5432/test
-        run: |
-          cd spec/dummy
-          bundle exec rspec --tag flaky --format progress --color || true
+        run: bundle exec rspec --tag flaky --format progress --color || true
 
       - name: Upload failure artifacts
         if: failure()
