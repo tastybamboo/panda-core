@@ -9,8 +9,6 @@ gemspec
 group :development, :test do
   gem "annotaterb"
   gem "awesome_print"
-  gem "better_errors"
-  gem "binding_of_caller"
   gem "brakeman"
   gem "bullet"
   gem "bundler-audit"
@@ -43,6 +41,8 @@ group :development, :test do
 end
 
 group :development do
+  gem "better_errors"
+  gem "binding_of_caller"
   gem "pry-rails"
 end
 

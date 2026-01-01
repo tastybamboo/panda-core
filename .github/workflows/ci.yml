@@ -60,7 +60,7 @@ jobs:
           BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
         run: |
           cd spec/dummy
-          bundle exec rails db:create db:schema:load
+          bundle exec rails db:drop db:create db:schema:load || bundle exec rails db:schema:load
 
       - name: Run stable tests
         env:
@@ -131,7 +131,7 @@ jobs:
           BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile
         run: |
           cd spec/dummy
-          bundle exec rails db:create db:schema:load
+          bundle exec rails db:drop db:create db:schema:load || bundle exec rails db:schema:load
 
       - name: Run flaky tests
         env:
