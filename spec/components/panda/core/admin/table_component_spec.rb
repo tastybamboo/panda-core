@@ -126,7 +126,7 @@ RSpec.describe Panda::Core::Admin::TableComponent do
       end
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("div.table-row.bg-dark")
+      expect(output).to have_css("div.table-row.bg-gray-800")
     end
   end
 end

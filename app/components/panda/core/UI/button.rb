@@ -89,15 +89,15 @@ module Panda
         def variant_classes
           case @variant
           when :primary
-            # Blue primary button with dark mode support
-            "bg-blue-600 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500"
+            # Primary button with dark mode support
+            "bg-primary-500 text-white shadow-xs hover:bg-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 dark:bg-primary-400 dark:shadow-none dark:hover:bg-primary-500 dark:focus-visible:outline-primary-500"
           when :secondary
             # White/gray secondary button with ring and dark mode support
             "bg-white text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20"
           when :success
-            "bg-green-600 text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 dark:bg-green-500 dark:shadow-none dark:hover:bg-green-400 dark:focus-visible:outline-green-500"
+            "bg-success-600 text-white shadow-xs hover:bg-success-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600 dark:bg-success-500 dark:shadow-none dark:hover:bg-success-600 dark:focus-visible:outline-success-500"
           when :danger
-            "bg-red-600 text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400 dark:focus-visible:outline-red-500"
+            "bg-error-600 text-white shadow-xs hover:bg-error-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error-600 dark:bg-error-500 dark:shadow-none dark:hover:bg-error-600 dark:focus-visible:outline-error-500"
           when :ghost
             "bg-transparent text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
           else # :default

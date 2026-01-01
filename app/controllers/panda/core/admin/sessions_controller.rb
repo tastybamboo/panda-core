@@ -10,7 +10,10 @@ module Panda
         skip_before_action :authenticate_admin_user!, only: [:new, :create, :destroy, :failure]
 
         def new
-          @providers = Core.config.authentication_providers.keys
+          # Only show providers that have valid credentials configured
+          @providers = Core.config.authentication_providers.select do |_key, config|
+            config[:client_id].present? && config[:client_secret].present?
+          end.keys
         end
 
         def create

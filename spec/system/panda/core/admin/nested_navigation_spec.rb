@@ -179,7 +179,7 @@ RSpec.describe "Nested navigation", type: :system do
 
       # The Settings link should be visible and highlighted
       settings_link = find("a", text: "Site Settings")
-      expect(settings_link[:class]).to include("bg-mid")
+      expect(settings_link[:class]).to include("bg-primary-500")
     end
 
     it "highlights parent menu when child is active", js: true do
@@ -187,7 +187,7 @@ RSpec.describe "Nested navigation", type: :system do
 
       # The Settings button should have active styling
       settings_button = find("button", text: "Settings")
-      expect(settings_button[:class]).to include("bg-mid")
+      expect(settings_button[:class]).to include("bg-primary-500")
     end
   end
 end

@@ -53,7 +53,7 @@ RSpec.describe Panda::Core::UI::Button do
       )
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("a.bg-blue-600")
+      expect(output).to have_css("a.bg-primary-500")
     end
 
     it "applies link styling with secondary variant" do
@@ -73,7 +73,7 @@ RSpec.describe Panda::Core::UI::Button do
       component = described_class.new(text: "Primary", variant: :primary)
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("button.bg-blue-600.text-white")
+      expect(output).to have_css("button.bg-primary-500.text-white")
     end
 
     it "applies secondary variant styling" do
@@ -87,14 +87,14 @@ RSpec.describe Panda::Core::UI::Button do
       component = described_class.new(text: "Success", variant: :success)
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("button.bg-green-600.text-white")
+      expect(output).to have_css("button.bg-success-600.text-white")
     end
 
     it "applies danger variant styling" do
       component = described_class.new(text: "Danger", variant: :danger)
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("button.bg-red-600.text-white")
+      expect(output).to have_css("button.bg-error-600.text-white")
     end
 
     it "applies ghost variant styling" do
@@ -147,7 +147,7 @@ RSpec.describe Panda::Core::UI::Button do
       component = described_class.new(text: "Primary", variant: :primary)
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("button.shadow-xs.hover\\:bg-blue-500")
+      expect(output).to have_css("button.shadow-xs.hover\\:bg-primary-600")
     end
 
     it "includes ring styles for secondary" do
@@ -161,7 +161,7 @@ RSpec.describe Panda::Core::UI::Button do
       component = described_class.new(text: "Primary", variant: :primary)
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("button.dark\\:bg-blue-500.dark\\:hover\\:bg-blue-400")
+      expect(output).to have_css("button.dark\\:bg-primary-400.dark\\:hover\\:bg-primary-500")
     end
   end
 

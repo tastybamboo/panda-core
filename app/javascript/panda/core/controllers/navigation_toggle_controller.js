@@ -21,7 +21,7 @@ export default class extends Controller {
   connect() {
     // Ensure menu starts in correct state
     // Check if this menu should be expanded by default (if a child is active)
-    const hasActiveChild = this.menuTarget.querySelector(".bg-mid")
+    const hasActiveChild = this.menuTarget.querySelector(".bg-primary-500")
     if (hasActiveChild) {
       this.expand()
     } else {

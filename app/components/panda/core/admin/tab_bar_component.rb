@@ -21,7 +21,7 @@ module Panda
             select(
               id: "tabs",
               name: "tabs",
-              class: "block py-1.5 pr-10 pl-3 w-full text-gray-900 rounded-md border-0 ring-1 ring-inset focus:ring-2 focus:ring-inset ring-mid focus:border-panda-dark focus:ring-panda-dark"
+              class: "block py-1.5 pr-10 pl-3 w-full text-gray-900 rounded-md border-0 ring-1 ring-inset focus:ring-2 focus:ring-inset ring-primary-400 focus:border-primary-600 focus:ring-primary-600"
             ) do
               @tabs.each do |tab|
                 option { tab[:name] }
@@ -46,7 +46,7 @@ module Panda
         def render_tab(tab, is_current = false)
           classes = "py-4 px-1 text-sm font-medium whitespace-nowrap border-b-2 "
           classes += if is_current || tab[:current]
-            "border-panda-dark text-panda-dark"
+            "border-primary-600 text-primary-600"
           else
             "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
           end
@@ -66,7 +66,7 @@ module Panda
         end
 
         def render_view_button(type, selected: false)
-          button_class = "p-1.5 text-gray-400 rounded-md focus:ring-2 focus:ring-inset focus:outline-none focus:ring-panda-dark"
+          button_class = "p-1.5 text-gray-400 rounded-md focus:ring-2 focus:ring-inset focus:outline-none focus:ring-primary-600"
           button_class += if selected
             " ml-0.5 bg-white shadow-sm"
           else

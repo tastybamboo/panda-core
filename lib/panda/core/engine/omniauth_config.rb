@@ -33,8 +33,13 @@ module Panda
               Panda::Core::OAuthProviders.setup
 
               load_yaml_provider_overrides!
-              configure_omniauth_globals
               mount_omniauth_middleware(app)
+
+              # Configure OmniAuth globals AFTER all initializers have run
+              # This ensures Panda::Core.config.admin_path has been set by the app
+              app.config.after_initialize do
+                configure_omniauth_globals
+              end
             end
           end
         end
@@ -82,6 +87,12 @@ module Panda
           end
 
           return if symbol == :developer && !Rails.env.development?
+
+          # Skip providers without credentials (except developer which doesn't need them)
+          unless symbol == :developer || (settings[:client_id].present? && settings[:client_secret].present?)
+            Rails.logger.info("[panda-core] Skipping OmniAuth provider #{name.inspect}: missing client_id or client_secret")
+            return
+          end
 
           options = (settings[:options] || {}).dup
           options[:name] = settings[:path_name] if settings[:path_name].present?

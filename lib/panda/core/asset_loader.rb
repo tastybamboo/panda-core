@@ -45,7 +45,7 @@ module Panda
 
           # In production, prefer local compiled assets over GitHub
           # Only use GitHub assets when explicitly enabled or when local assets aren't available
-          if Rails.env.production?
+          if Rails.env.production? || Rails.env.staging?
             # Check if compiled assets exist locally
             return false if compiled_assets_available?
 

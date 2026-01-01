@@ -149,7 +149,7 @@ module Panda
                 @template.image_tag("", alt: "Crop preview", data: {image_cropper_target: "preview"}, class: "max-w-full") +
                   # Cropper controls
                   content_tag(:div, class: "mt-4 flex gap-2 flex-wrap") do
-                    @template.button_tag("Crop & Save", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500", data: {action: "click->image-cropper#crop"}) +
+                    @template.button_tag("Crop & Save", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-600", data: {action: "click->image-cropper#crop"}) +
                       @template.button_tag("Cancel", type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#cancel"}) +
                       @template.button_tag(type: "button", class: "inline-flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50", data: {action: "click->image-cropper#reset"}) do
                         @template.content_tag(:i, "", class: "fa-solid fa-rotate-left") +
@@ -200,7 +200,7 @@ module Panda
                   end +
                     # Upload area
                     content_tag(:div, class: "mt-4 flex items-baseline justify-center text-sm leading-6 text-gray-600 dark:text-gray-400") do
-                      content_tag(:label, for: field_id, class: "relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:focus-within:outline-indigo-500 dark:hover:text-indigo-300") do
+                      content_tag(:label, for: field_id, class: "relative cursor-pointer rounded-md bg-transparent font-semibold text-primary-600 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary-600 hover:text-primary-500 dark:text-primary-400 dark:focus-within:outline-primary-500 dark:hover:text-primary-300") do
                         content_tag(:span, "Upload a file") +
                           super(method, options.reverse_merge(
                             id: field_id,
@@ -261,11 +261,11 @@ module Panda
       def submit(value = nil, options = {})
         value ||= submit_default_value
 
-        # Use the primary mid color for save/create actions
+        # Use the primary color for save/create actions
         action = object.persisted? ? :save : :create
         button_classes = case action
         when :save, :create
-          "text-white bg-mid hover:bg-mid/80"
+          "text-white bg-primary-500 hover:bg-primary-600"
         when :save_inactive
           "text-white bg-gray-400"
         when :secondary
@@ -275,7 +275,7 @@ module Panda
         end
 
         # Combine with common button classes
-        classes = "inline-flex items-center rounded-md font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 px-3 py-2 #{button_classes}"
+        classes = "inline-flex items-center rounded-md font-medium shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 px-3 py-2 #{button_classes}"
 
         options[:class] = options[:class] ? "#{options[:class]} #{classes}" : classes
 
@@ -317,7 +317,7 @@ module Panda
                 is_checked = (current_value.to_s == choice_value.to_s)
 
                 content_tag(:label, class: "flex items-center gap-x-3 rounded-lg border border-gray-300 px-3 py-3 text-sm/6 font-medium cursor-pointer hover:bg-gray-50 dark:border-white/10 dark:hover:bg-white/5") do
-                  radio_button(method, choice_value, {id: choice_id, checked: is_checked, class: "size-4 border-gray-300 text-indigo-600 focus:ring-indigo-600 dark:border-white/10 dark:bg-white/5"}) +
+                  radio_button(method, choice_value, {id: choice_id, checked: is_checked, class: "size-4 border-gray-300 text-primary-600 focus:ring-primary-600 dark:border-white/10 dark:bg-white/5"}) +
                     content_tag(:span, choice_label, class: "text-gray-900 dark:text-white")
                 end
               end.join.html_safe
@@ -344,7 +344,7 @@ module Panda
       end
 
       def base_input_styles
-        "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+        "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-primary-500"
       end
 
       def input_styles
@@ -360,7 +360,7 @@ module Panda
       end
 
       def select_styles
-        "block w-full rounded-md bg-white px-3 py-1.5 pr-8 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 appearance-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:focus:outline-indigo-500"
+        "block w-full rounded-md bg-white px-3 py-1.5 pr-8 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 appearance-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:focus:outline-primary-500"
       end
 
       def select_svg
@@ -401,7 +401,7 @@ module Panda
       def error_message(attribute)
         return unless object.respond_to?(:errors) && object.errors[attribute]&.any?
 
-        content_tag(:p, class: "mt-2 text-sm text-red-600") do
+        content_tag(:p, class: "mt-2 text-sm text-error-600") do
           object.errors[attribute].join(", ")
         end
       end

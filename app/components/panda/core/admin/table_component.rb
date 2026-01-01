@@ -33,7 +33,7 @@ module Panda
         private
 
         def render_table_with_rows
-          div(class: "table overflow-x-auto mb-12 w-full rounded-lg border border-dark", style: "table-layout: fixed;") do
+          div(class: "table overflow-x-auto mb-12 w-full rounded-lg border border-gray-700", style: "table-layout: fixed;") do
             render_header
             render_rows
           end
@@ -49,7 +49,7 @@ module Panda
 
         def render_header
           div(class: "table-header-group") do
-            div(class: "table-row text-base font-medium text-white bg-dark") do
+            div(class: "table-row text-base font-medium text-white bg-gray-800") do
               @columns.each_with_index do |column, i|
                 header_classes = "table-cell sticky top-0 z-10 p-4"
                 header_classes += " rounded-tl-md" if i.zero?
@@ -70,7 +70,7 @@ module Panda
                 data: {post_id: row.id}
               ) do
                 @columns.each do |column|
-                  div(class: "table-cell py-5 px-3 h-20 text-sm align-middle whitespace-nowrap border-b border-dark/20") do
+                  div(class: "table-cell py-5 px-3 h-20 text-sm align-middle whitespace-nowrap border-b border-gray-700/20") do
                     # Capture the cell content by calling the block with the row
                     render_cell_content(row, column.cell)
                   end
