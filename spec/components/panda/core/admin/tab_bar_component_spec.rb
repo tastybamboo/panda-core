@@ -25,7 +25,7 @@ RSpec.describe Panda::Core::Admin::TabBarComponent do
       component = described_class.new(tabs: tabs)
       output = Capybara.string(component.call)
 
-      expect(output).to have_css("a.border-panda-dark.text-panda-dark", text: "All Posts")
+      expect(output).to have_css("a.border-primary-600.text-primary-600", text: "All Posts")
     end
 
     it "renders mobile select" do
