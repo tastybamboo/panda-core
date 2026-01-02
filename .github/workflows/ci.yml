@@ -12,6 +12,8 @@ jobs:
   test-stable:
     name: Test (stable)
     runs-on: ubuntu-latest
+    outputs:
+      has_flaky_tests: ${{ steps.check-flaky.outputs.has_flaky }}
     container:
       image: ghcr.io/tastybamboo/panda-ci:ruby-4.0.0
     env:
@@ -35,6 +37,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+
+      - name: Check for flaky tests
+        id: check-flaky
+        run: |
+          if grep -rq "flaky: true\|:flaky\b" spec/; then
+            echo "has_flaky=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_flaky=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Start Xvfb
         run: |
@@ -78,6 +89,8 @@ jobs:
 
   test-flaky:
     name: Test (flaky)
+    needs: test-stable
+    if: needs.test-stable.outputs.has_flaky_tests == 'true'
     runs-on: ubuntu-latest
     continue-on-error: true
     container:
