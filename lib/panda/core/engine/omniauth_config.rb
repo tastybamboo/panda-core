@@ -26,6 +26,28 @@ module Panda
           "developer" => :developer
         }.freeze
 
+        class_methods do
+          # Load YAML provider overrides during engine definition (before middleware setup)
+          def load_yaml_provider_overrides_early!
+            path = root.join("config/providers.yml")
+            return unless File.exist?(path)
+
+            yaml = YAML.load_file(path) || {}
+            (yaml["providers"] || {}).each do |name, settings|
+              Panda::Core.config.authentication_providers[name.to_s] ||= {}
+              Panda::Core.config.authentication_providers[name.to_s].deep_merge!(settings)
+            end
+          end
+
+          # Configure OmniAuth globals
+          def configure_omniauth_globals
+            OmniAuth.configure do |c|
+              c.allowed_request_methods = [:post]
+              c.path_prefix = "#{Panda::Core.config.admin_path}/auth"
+            end
+          end
+        end
+
         included do
           # Load YAML overrides early during engine definition so they're available
           # when the OmniAuth middleware block is evaluated
@@ -76,28 +98,6 @@ module Panda
                 provider symbol, options
               end
             end
-          end
-        end
-
-        private
-
-        # Load YAML provider overrides during engine definition (before middleware setup)
-        def load_yaml_provider_overrides_early!
-          path = root.join("config/providers.yml")
-          return unless File.exist?(path)
-
-          yaml = YAML.load_file(path) || {}
-          (yaml["providers"] || {}).each do |name, settings|
-            Panda::Core.config.authentication_providers[name.to_s] ||= {}
-            Panda::Core.config.authentication_providers[name.to_s].deep_merge!(settings)
-          end
-        end
-
-        # Configure OmniAuth globals
-        def configure_omniauth_globals
-          OmniAuth.configure do |c|
-            c.allowed_request_methods = [:post]
-            c.path_prefix = "#{Panda::Core.config.admin_path}/auth"
           end
         end
 
