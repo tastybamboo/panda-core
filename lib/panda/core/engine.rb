@@ -51,6 +51,7 @@ module Panda
       #   /panda-core-assets
       #
       # Configured during engine load phase to avoid Rails 8.1.2+ frozen middleware stack
+      # Use no-cache in development for easier debugging, long cache in production
       config.app_middleware.use(
         Rack::Static,
         urls: ["/panda-core-assets"],
@@ -59,7 +60,11 @@ module Panda
           [
             :all,
             {
-              "Cache-Control" => "public, max-age=31536000"
+              "Cache-Control" => if defined?(::Rails) && ::Rails.env.development?
+                "no-cache, no-store, must-revalidate"
+              else
+                "public, max-age=31536000"
+              end
             }
           ]
         ]
