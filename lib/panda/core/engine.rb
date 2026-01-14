@@ -50,30 +50,22 @@ module Panda
       # Static asset handling for:
       #   /panda-core-assets
       #
-      initializer "panda_core.static_assets" do |app|
-        Panda::Core::Middleware.use(
-          app,
-          Rack::Static,
-          urls: ["/panda-core-assets"],
-          root: Panda::Core::Engine.root.join("public"),
-          header_rules: [
-            [
-              :all,
-              {
-                "Cache-Control" =>
-                  Rails.env.development? ?
-                    "no-cache, no-store, must-revalidate" :
-                    "public, max-age=31536000"
-              }
-            ]
+      # Configured during engine load phase to avoid Rails 8.1.2+ frozen middleware stack
+      config.app_middleware.use(
+        Rack::Static,
+        urls: ["/panda-core-assets"],
+        root: Panda::Core::Engine.root.join("public"),
+        header_rules: [
+          [
+            :all,
+            {
+              "Cache-Control" => "public, max-age=31536000"
+            }
           ]
-        )
+        ]
+      )
 
-        Panda::Core::Middleware.use(
-          app,
-          Panda::Core::ModuleRegistry::JavaScriptMiddleware
-        )
-      end
+      config.app_middleware.use(Panda::Core::ModuleRegistry::JavaScriptMiddleware)
     end
   end
 end

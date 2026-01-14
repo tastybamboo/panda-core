@@ -28,17 +28,42 @@ module Panda
 
         included do
           if respond_to?(:initializer)
-            initializer "panda_core.omniauth" do |app|
+            # Register OmniAuth middleware during configuration phase
+            # Rails 8.1.2+ freezes the middleware stack before initializers run
+            config.before_initialize do |app|
               require_relative "../oauth_providers"
               Panda::Core::OAuthProviders.setup
+            end
 
+            initializer "panda_core.omniauth_providers" do |app|
               load_yaml_provider_overrides!
-              mount_omniauth_middleware(app)
 
               # Configure OmniAuth globals AFTER all initializers have run
               # This ensures Panda::Core.config.admin_path has been set by the app
               app.config.after_initialize do
                 configure_omniauth_globals
+              end
+            end
+          end
+
+          # Add OmniAuth middleware during engine configuration
+          # This runs before the middleware stack is frozen
+          config.app_middleware.use OmniAuth::Builder do
+            Panda::Core.config.authentication_providers.each do |name, settings|
+              symbol = PROVIDER_REGISTRY[name.to_s]
+              next unless symbol
+              next if symbol == :developer && !Rails.env.development?
+
+              has_credentials = settings[:client_id].present? && settings[:client_secret].present?
+              next if symbol != :developer && !has_credentials
+
+              options = (settings[:options] || {}).dup
+              options[:name] = settings[:path_name] if settings[:path_name].present?
+
+              if settings[:client_id] && settings[:client_secret]
+                provider symbol, settings[:client_id], settings[:client_secret], options
+              else
+                provider symbol, options
               end
             end
           end
@@ -66,44 +91,6 @@ module Panda
           end
         end
 
-        # 3. Middleware insertion
-        def mount_omniauth_middleware(app)
-          ctx = self  # Capture the Engine/Concern context
-
-          Panda::Core::Middleware.use(app, OmniAuth::Builder) do
-            Panda::Core.config.authentication_providers.each do |name, settings|
-              ctx.send(:configure_provider, self, name, settings)
-            end
-          end
-        end
-
-        # 4. Provider builder
-        def configure_provider(builder, name, settings)
-          symbol = PROVIDER_REGISTRY[name.to_s]
-
-          unless symbol
-            Rails.logger.warn("[panda-core] Unknown OmniAuth provider: #{name.inspect}")
-            return
-          end
-
-          return if symbol == :developer && !Rails.env.development?
-
-          # Skip providers without credentials (except developer which doesn't need them)
-          has_credentials = settings[:client_id].present? && settings[:client_secret].present?
-          if symbol != :developer && !has_credentials
-            Rails.logger.info("[panda-core] Skipping OmniAuth provider #{name.inspect}: missing client_id or client_secret")
-            return
-          end
-
-          options = (settings[:options] || {}).dup
-          options[:name] = settings[:path_name] if settings[:path_name].present?
-
-          if settings[:client_id] && settings[:client_secret]
-            builder.provider symbol, settings[:client_id], settings[:client_secret], options
-          else
-            builder.provider symbol, options
-          end
-        end
       end
     end
   end
