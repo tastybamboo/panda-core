@@ -29,7 +29,7 @@ module Panda
         class_methods do
           # Load YAML provider overrides during engine definition (before middleware setup)
           def load_yaml_provider_overrides_early!
-            path = root.join("config/providers.yml")
+            path = Panda::Core::Engine.root.join("config/providers.yml")
             return unless File.exist?(path)
 
             yaml = YAML.load_file(path) || {}
