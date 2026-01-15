@@ -93,6 +93,10 @@ module Panda
         end
 
         included do
+          # Only run Rails Engine-specific code when included into an actual Engine
+          # This prevents errors when the module is included into test dummy classes
+          next unless self < ::Rails::Engine
+
           # Load YAML overrides early during engine definition so they're available
           # when the OmniAuth middleware block is evaluated
           load_yaml_provider_overrides_early!
