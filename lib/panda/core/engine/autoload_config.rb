@@ -6,17 +6,29 @@ module Panda
       module AutoloadConfig
         extend ActiveSupport::Concern
 
-        included do
-          # These must run BEFORE initialization, so this is allowed
-          config.autoload_paths << root.join("app/builders")
-          config.autoload_paths << root.join("app/components")
-          config.autoload_paths << root.join("app/services")
-          config.autoload_paths << root.join("app/models")
-          config.autoload_paths << root.join("app/helpers")
-          config.autoload_paths << root.join("app/constraints")
+        # Custom autoload paths for panda-core
+        # Note: Must be Strings (not Pathnames) for Rails 8.1.2+ compatibility
+        AUTOLOAD_DIRECTORIES = %w[
+          app/builders
+          app/components
+          app/services
+          app/models
+          app/helpers
+          app/constraints
+        ].freeze
 
-          # Mirror eager-load as needed
-          config.eager_load_paths.concat(config.autoload_paths)
+        included do
+          # Use initializer with before: to ensure paths are added before
+          # Rails freezes the autoload_paths array in Rails 8.1.2+
+          initializer "panda_core.set_autoload_paths", before: :set_autoload_paths do |app|
+            AUTOLOAD_DIRECTORIES.each do |dir|
+              path = root.join(dir).to_s
+              next unless File.directory?(path)
+
+              app.config.autoload_paths << path unless app.config.autoload_paths.include?(path)
+              app.config.eager_load_paths << path unless app.config.eager_load_paths.include?(path)
+            end
+          end
         end
       end
     end
