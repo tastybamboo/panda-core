@@ -64,7 +64,7 @@ module Panda
             # This ensures Panda::Core.config.admin_path has been set by the app
             initializer "panda_core.omniauth_globals" do |app|
               app.config.after_initialize do
-                configure_omniauth_globals
+                Panda::Core::Engine.configure_omniauth_globals
               end
             end
           end
