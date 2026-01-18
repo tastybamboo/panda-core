@@ -1,19 +1,20 @@
 <main class="overflow-auto flex-1 h-full min-h-full max-h-full">
   <div class="overflow-auto px-2 pt-2 mx-auto sm:px-6 lg:px-6">
-    <%# Render heading if defined %>
-    <% if @heading_content %>
-      <%= @heading_content.call %>
+    <% if heading %>
+      <%= heading %>
     <% end %>
 
-    <%# Render tab bar if defined %>
-    <% if @tab_bar_content %>
-      <%= @tab_bar_content.call %>
+    <% if tab_bar %>
+      <%= tab_bar %>
     <% end %>
 
-    <%# Main content section %>
     <section class="<%= section_classes %>">
       <div class="flex-1 mt-4 w-full h-full">
-        <%= render_body_content %> <!-- DEBUG: body_html=<%= @body_html.inspect %>, content_method=<%= respond_to?(:content).inspect %> -->
+        <% if body %>
+          <%= body %>
+        <% elsif content.present? %>
+          <%= content %>
+        <% end %>
       </div>
     </section>
   </div>

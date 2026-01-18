@@ -1,25 +1,23 @@
 <div class="heading-wrapper">
-  <% if @level == 1 %>
-    <%= content_tag :h1, class: heading_classes(@meta.present?) do %>
-      <%= render_content %>
-    <% end %>
-  <% elsif @level == 2 %>
-    <%= content_tag :h2, class: heading_classes(@meta.present?) do %>
-      <%= render_content %>
-    <% end %>
-  <% elsif @level == 3 %>
-    <%= content_tag :h3, class: heading_classes(@meta.present?) do %>
-      <%= render_content %>
-    <% end %>
-  <% elsif @level == :panel %>
-    <%= content_tag :h3, @text, class: panel_heading_classes %>
-  <% else %>
-    <%= content_tag :h2, class: heading_classes(@meta.present?) do %>
-      <%= render_content %>
+  <% heading_tag = case level when 1 then :h1 when 2 then :h2 when 3 then :h3 else :h2 end %>
+  
+  <%= tag.send(heading_tag, class: heading_classes) do %>
+    <div class="grow flex items-center gap-x-2">
+      <% if icon.present? %>
+        <%= tag.i(class: icon) %>
+      <% end %>
+      <span><%= text %></span>
+    </div>
+    <% if buttons.any? %>
+      <span class="actions flex gap-x-2 mt-1 min-h-[2.5rem]">
+        <% buttons.each do |button| %>
+          <%= button %>
+        <% end %>
+      </span>
     <% end %>
   <% end %>
 
-  <% if @meta %>
-    <%= content_tag :p, raw(@meta), class: "text-sm text-black/60 -mt-1 mb-5" %>
+  <% if meta %>
+    <%= tag.p(raw(meta), class: "text-sm text-black/60 -mt-1 mb-5") %>
   <% end %>
 </div>
