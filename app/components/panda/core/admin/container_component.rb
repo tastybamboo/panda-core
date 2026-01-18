@@ -4,44 +4,12 @@ module Panda
   module Core
     module Admin
       class ContainerComponent < Panda::Core::Base
-    def initialize(full_height: false, **attrs)
-    @full_height = full_height
-      super(**attrs)
-    end
-
-    attr_reader :full_height
-
-        def before_render
-           # Capture block content differently based on context (ERB vs Phlex)
-           # The block yields self to allow DSL-style calls like container.heading(...)
-           if content.present?
-             if defined?(view_context) && view_context
-               # Called from ERB - capture the block content
-               # Don't pass self as an argument - just call the block
-               @body_html = view_context.capture(&content)
-             else
-               # Called from Phlex - execute block directly to set instance variables
-               content.call(self)
-             end
-           end
-
-          # Set content_for :sidebar if slideover is present (enables breadcrumb toggle button)
-          # This must happen before rendering so the layout can use it
-          if @slideover_block && @slideover_title && defined?(view_context) && view_context
-            view_context.content_for(:sidebar) do
-              # The block contains ERB content, capture it for the sidebar
-              view_context.capture(&@slideover_block)
-            end
-            view_context.content_for(:sidebar_title, @slideover_title)
-
-            # Set footer content if present
-            if @footer_block
-              view_context.content_for(:sidebar_footer) do
-                view_context.capture(&@footer_block)
-              end
-            end
-          end
+        def initialize(full_height: false, **attrs)
+          @full_height = full_height
+          super(**attrs)
         end
+
+
 
         def heading(**props, &block)
           @heading_content = -> { render(Panda::Core::Admin::HeadingComponent.new(**props), &block) }
@@ -53,28 +21,64 @@ module Panda
 
         def slideover(**props, &block)
           @slideover_title = props[:title] || "Settings"
-          @slideover_block = block   # Save the block for content_for
+          @slideover_block = block
         end
 
         def footer(&block)
-           @footer_block = block
-         end
+          @footer_block = block
+        end
 
-         def render_body_content
-           @body_html || content
-         end
-
-         # Alias for ViewComponent-style API compatibility
-         alias_method :with_slideover, :slideover
-         alias_method :with_footer, :footer
+        # Override call to render custom HTML since we have complex DSL logic
+        def call
+          tag.main(class: "overflow-auto flex-1 h-full min-h-full max-h-full") do
+            tag.div(class: "overflow-auto px-2 pt-2 mx-auto sm:px-6 lg:px-6") do
+              content_tag(:div) do
+                [
+                  render_heading,
+                  render_tab_bar,
+                  render_section
+                ].compact.join.html_safe
+              end
+            end
+          end
+        end
 
         private
 
+        attr_reader :full_height
+
         def section_classes
           base = "flex-auto"
-          height = @full_height ? "h-[calc(100vh-9rem)]" : nil
+          height = full_height ? "h-[calc(100vh-9rem)]" : nil
           [base, height].compact.join(" ")
         end
+
+        def render_heading
+          return unless @heading_content
+          @heading_content.call
+        end
+
+        def render_tab_bar
+          return unless @tab_bar_content
+          @tab_bar_content.call
+        end
+
+        def render_section
+          tag.section(class: section_classes) do
+            tag.div(class: "flex-1 mt-4 w-full h-full") do
+              # content is a proc - call it to get the rendered HTML
+              if content.present?
+                content.call
+              else
+                ""
+              end
+            end
+          end
+        end
+
+        # Alias for ViewComponent-style API compatibility
+        alias_method :with_slideover, :slideover
+        alias_method :with_footer, :footer
       end
     end
   end
