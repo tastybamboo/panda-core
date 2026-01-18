@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html data-theme="<%= Panda::Core::Current&.user&.current_theme || Panda::Core.config.default_theme %>" class="<%= @html_class %>">
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : (Panda::Core.config.admin_title || "Panda Admin") %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css">
+    <%= panda_core_stylesheet %>
+
+    <!-- ES Module Shims polyfill - must load BEFORE importmap -->
+    <script async src="https://ga.jspm.io/npm:es-module-shims@2.6.2/dist/es-module-shims.js"></script>
+
+    <!-- Panda JavaScript (Core + all registered modules via ModuleRegistry) -->
+    <%= panda_core_javascript %>
+
+    <% if defined?(Panda::CMS) && controller.class.name.start_with?("Panda::CMS") %>
+      <%= render "panda/cms/shared/favicons" %>
+    <% end %>
+
+    <%= yield :head %>
+  </head>
+  <body class="overflow-hidden h-full <%= @body_class %>" data-environment="<%= Rails.env %>">
