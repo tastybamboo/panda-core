@@ -27,44 +27,28 @@ module Panda
       #   )
       #
       class Badge < Panda::Core::Base
-        prop :text, String
-        prop :variant, Symbol, default: :default
-        prop :size, Symbol, default: :medium
-        prop :removable, _Boolean, default: false
-        prop :rounded, _Boolean, default: false
-
-        def view_template
-          span(**@attrs) do
-            plain text
-            if removable
-              whitespace
-              button(
-                type: "button",
-                class: "inline-flex items-center ml-1 hover:opacity-70",
-                aria: {label: "Remove"}
-              ) do
-                svg(
-                  class: "h-3 w-3",
-                  xmlns: "http://www.w3.org/2000/svg",
-                  viewBox: "0 0 20 20",
-                  fill: "currentColor"
-                ) do |s|
-                  s.path(
-                    d: "M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
-                  )
-                end
-              end
-            end
-          end
+        def initialize(text:, variant: :default, size: :medium, removable: false, rounded: false, **attrs)
+          @text = text
+          @variant = variant
+          @size = size
+          @removable = removable
+          @rounded = rounded
+          super(**attrs)
         end
+
+        attr_reader :text, :variant, :size, :removable, :rounded
+
+        def removable?
+          removable
+        end
+
+        private
 
         def default_attrs
           {
             class: badge_classes
           }
         end
-
-        private
 
         def badge_classes
           base = "inline-flex items-center font-medium"

@@ -1,0 +1,5 @@
+<%= content_tag :select, @attrs do %>
+  <%= render_prompt if @prompt %>
+  <%= render_blank if @include_blank && !@prompt %>
+  <%= render_options %>
+<% end %>

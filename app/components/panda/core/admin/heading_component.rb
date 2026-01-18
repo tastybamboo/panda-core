@@ -4,34 +4,18 @@ module Panda
   module Core
     module Admin
       class HeadingComponent < Panda::Core::Base
-        prop :text, String
-        prop :level, _Nilable(_Union(Integer, Symbol)), default: -> { 2 }
-        prop :icon, String, default: ""
-        prop :meta, _Nilable(String), default: -> {}
-        prop :additional_styles, _Nilable(_Union(String, Array)), default: -> { "" }
+    def initialize(text: "", icon: "", meta: nil, **attrs)
+    @text = text
+    @icon = icon
+    @meta = meta
+      super(**attrs)
+    end
 
-        def view_template(&block)
+    attr_reader :text, :icon, :meta
+
+        def before_render
           # Capture any buttons defined via block
-          instance_eval(&block) if block_given?
-
-          div(class: "heading-wrapper") do
-            case @level
-            when 1
-              h1(class: heading_classes(@meta.present?)) { render_content }
-            when 2
-              h2(class: heading_classes(@meta.present?)) { render_content }
-            when 3
-              h3(class: heading_classes(@meta.present?)) { render_content }
-            when :panel
-              h3(class: panel_heading_classes) { @text }
-            else
-              h2(class: heading_classes(@meta.present?)) { render_content }
-            end
-
-            if @meta
-              p(class: "text-sm text-black/60 -mt-1 mb-5") { raw(@meta) }
-            end
-          end
+          instance_eval(&content) if content.present?
         end
 
         def button(**props)
@@ -42,13 +26,13 @@ module Panda
         private
 
         def render_content
-          div(class: "grow flex items-center gap-x-2") do
-            i(class: @icon) if @icon.present?
-            span { @text }
-          end
-
-          span(class: "actions flex gap-x-2 mt-1 min-h-[2.5rem]") do
-            @buttons&.each { |btn| render(btn) }
+          content_tag(:div, class: "grow flex items-center gap-x-2") do
+            icon_html = @icon.present? ? content_tag(:i, "", class: @icon) : ""
+            text_html = content_tag(:span, @text)
+            (icon_html + text_html).html_safe
+          end +
+          content_tag(:span, class: "actions flex gap-x-2 mt-1 min-h-[2.5rem]") do
+            safe_join(@buttons&.map { |btn| render(btn) } || [])
           end
         end
 

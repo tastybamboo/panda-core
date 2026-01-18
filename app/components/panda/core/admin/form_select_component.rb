@@ -4,21 +4,17 @@ module Panda
   module Core
     module Admin
       class FormSelectComponent < Panda::Core::Base
-        prop :name, String
-        prop :options, Array
-        prop :selected, _Nilable(_Union(String, Integer)), default: -> {}
-        prop :prompt, _Nilable(String), default: -> {}
-        prop :required, _Boolean, default: -> { false }
-        prop :disabled, _Boolean, default: -> { false }
-        prop :include_blank, _Boolean, default: -> { false }
+    def initialize(name: "", options: [], prompt:, required: false, disabled: false, include_blank: false, **attrs)
+    @name = name
+    @options = options
+    @prompt = prompt
+    @required = required
+    @disabled = disabled
+    @include_blank = include_blank
+      super(**attrs)
+    end
 
-        def view_template
-          select(**@attrs) do
-            render_prompt if @prompt
-            render_blank if @include_blank && !@prompt
-            render_options
-          end
-        end
+    attr_reader :name, :options, :prompt, :required, :disabled, :include_blank
 
         def default_attrs
           base_attrs = {
@@ -46,21 +42,22 @@ module Panda
         end
 
         def render_prompt
-          option(value: "", disabled: true, selected: @selected.nil?) { @prompt }
+          content_tag(:option, @prompt, value: "", disabled: true, selected: @selected.nil?)
         end
 
         def render_blank
-          option(value: "") { "" }
+          content_tag(:option, "", value: "")
         end
 
         def render_options
-          @options.each do |option_data|
-            label, value = option_data
-            option_attrs = {value: value.to_s}
-            option_attrs[:selected] = true if value.to_s == @selected.to_s
-
-            option(**option_attrs) { label.to_s }
-          end
+          safe_join(
+            @options.map do |option_data|
+              label, value = option_data
+              option_attrs = {value: value.to_s}
+              option_attrs[:selected] = true if value.to_s == @selected.to_s
+              content_tag(:option, label.to_s, **option_attrs)
+            end
+          )
         end
       end
     end

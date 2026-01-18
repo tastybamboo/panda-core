@@ -16,6 +16,14 @@ require "shoulda/matchers"
 require "capybara"
 require "capybara/rspec"
 require "puma"
+require "action_controller/test_case"
+require "view_component/test_helpers"
+require_relative "view_component_test_controller"
+
+# Configure ViewComponent to use our test controller
+if defined?(ViewComponent) && Rails.application
+  Rails.application.config.view_component.test_controller = "ViewComponentTestController"
+end
 
 # Configure fixtures
 ActiveRecord::FixtureSet.context_class.send :include, ActiveSupport::Testing::TimeHelpers
@@ -73,6 +81,12 @@ RSpec.configure do |config|
     config.include Rails::Controller::Testing::TestProcess, type: :controller
     config.include Rails::Controller::Testing::TemplateAssertions, type: :controller
     config.include Rails::Controller::Testing::Integration, type: :controller
+  end
+
+  # ViewComponent testing support (if view_component is available)
+  if defined?(ViewComponent::TestHelpers)
+    config.include ViewComponent::TestHelpers, type: :component
+    config.include Capybara::RSpecMatchers, type: :component
   end
 
   # Reset column information before suite

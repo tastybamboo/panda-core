@@ -4,17 +4,24 @@ module Panda
   module Core
     module Admin
       class ContainerComponent < Panda::Core::Base
-        prop :full_height, _Nilable(_Boolean), default: -> { false }
+    def initialize(full_height: false, **attrs)
+    @full_height = full_height
+      super(**attrs)
+    end
 
-        def view_template(&block)
+    attr_reader :full_height
+
+        def before_render
           # Capture block content differently based on context (ERB vs Phlex)
-          if block_given?
+          # The block yields self to allow DSL-style calls like container.heading(...)
+          if content.present?
             if defined?(view_context) && view_context
-              # Called from ERB - capture HTML output
-              @body_html = view_context.capture { yield(self) }
+              # Called from ERB - yield self to the block to allow DSL calls
+              # Capture the HTML output from the block execution
+              @body_html = view_context.capture(self, &content)
             else
               # Called from Phlex - execute block directly to set instance variables
-              yield(self)
+              content.call(self)
             end
           end
 
@@ -33,32 +40,6 @@ module Panda
                 view_context.capture(&@footer_block)
               end
             end
-          end
-
-          main(class: "overflow-auto flex-1 h-full min-h-full max-h-full") do
-            div(class: "overflow-auto px-2 pt-2 mx-auto sm:px-6 lg:px-6") do
-              @heading_content&.call
-              @tab_bar_content&.call
-
-              section(class: section_classes) do
-                div(class: "flex-1 mt-4 w-full h-full") do
-                  if @main_content
-                    @main_content.call
-                  elsif @body_html
-                    raw(@body_html)
-                  end
-                end
-              end
-            end
-          end
-        end
-
-        def content(&block)
-          @main_content = if defined?(view_context) && view_context
-            # Capture ERB content
-            -> { raw(view_context.capture(&block)) }
-          else
-            block
           end
         end
 

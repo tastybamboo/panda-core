@@ -1,0 +1,25 @@
+<div class="heading-wrapper">
+  <% if @level == 1 %>
+    <%= content_tag :h1, class: heading_classes(@meta.present?) do %>
+      <%= render_content %>
+    <% end %>
+  <% elsif @level == 2 %>
+    <%= content_tag :h2, class: heading_classes(@meta.present?) do %>
+      <%= render_content %>
+    <% end %>
+  <% elsif @level == 3 %>
+    <%= content_tag :h3, class: heading_classes(@meta.present?) do %>
+      <%= render_content %>
+    <% end %>
+  <% elsif @level == :panel %>
+    <%= content_tag :h3, @text, class: panel_heading_classes %>
+  <% else %>
+    <%= content_tag :h2, class: heading_classes(@meta.present?) do %>
+      <%= render_content %>
+    <% end %>
+  <% end %>
+
+  <% if @meta %>
+    <%= content_tag :p, raw(@meta), class: "text-sm text-black/60 -mt-1 mb-5" %>
+  <% end %>
+</div>

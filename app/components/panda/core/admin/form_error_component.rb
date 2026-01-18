@@ -4,20 +4,13 @@ module Panda
   module Core
     module Admin
       class FormErrorComponent < Panda::Core::Base
-        prop :errors, _Nilable(_Union(ActiveModel::Errors, Array)), default: -> {}
-        prop :model, _Nilable(Object), default: -> {}
+    def initialize(model:, **attrs)
+    @model = model
+      super(**attrs)
+    end
 
-        def view_template
-          return unless should_render?
+    attr_reader :model
 
-          div(**@attrs) do
-            div(class: "text-sm text-red-600") do
-              error_messages.each do |message|
-                p { message }
-              end
-            end
-          end
-        end
 
         def default_attrs
           {

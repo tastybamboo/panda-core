@@ -2,23 +2,25 @@
 
 module Panda
   module Core
-    # Base class for all Phlex components in the Panda ecosystem.
+    # Base class for all ViewComponent components in the Panda ecosystem.
     #
     # This base component provides:
-    # - Type-safe properties via Literal
-    # - Tailwind CSS class merging
+    # - Tailwind CSS class merging via TailwindMerge
     # - Attribute merging with sensible defaults
-    # - Rails helper integration
+    # - Rails helper integration (inherited from ViewComponent::Base)
     # - Development-mode debugging comments
     #
     # @example Basic usage
     #   class MyComponent < Panda::Core::Base
-    #     prop :title, String
-    #     prop :variant, Symbol, default: :primary
-    #
-    #     def view_template
-    #       div(**@attrs) { title }
+    #     def initialize(title:, variant: :primary, **attrs)
+    #       @title = title
+    #       @variant = variant
+    #       super(**attrs)
     #     end
+    #
+    #     attr_reader :title, :variant
+    #
+    #     private
     #
     #     def default_attrs
     #       { class: "my-component my-component--#{variant}" }
@@ -27,12 +29,15 @@ module Panda
     #
     # @example With attribute merging
     #   # Component definition
-    #   class Button < Panda::Core::Base
-    #     prop :text, String
-    #
-    #     def view_template
-    #       button(**@attrs) { text }
+    #   class ButtonComponent < Panda::Core::Base
+    #     def initialize(text:, **attrs)
+    #       @text = text
+    #       super(**attrs)
     #     end
+    #
+    #     attr_reader :text
+    #
+    #     private
     #
     #     def default_attrs
     #       { class: "btn btn-primary", type: "button" }
@@ -40,27 +45,25 @@ module Panda
     #   end
     #
     #   # Usage - user attrs merge with defaults
-    #   render Button.new(text: "Click me", class: "mt-4", type: "submit")
+    #   render ButtonComponent.new(text: "Click me", class: "mt-4", type: "submit")
     #   # => <button type="submit" class="btn btn-primary mt-4">Click me</button>
     #
-    class Base < Phlex::HTML
+    class Base < ViewComponent::Base
       # Frozen instance of TailwindMerge for efficient class merging
       TAILWIND_MERGER = ::TailwindMerge::Merger.new.freeze unless defined?(TAILWIND_MERGER)
 
-      # Enable type-safe properties via Literal
-      extend Literal::Properties
-
-      # Include Rails helpers for routes, etc.
-      include Phlex::Rails::Helpers::Routes
-
-      # Special handling for the attrs property - merges user attributes with defaults
-      # and intelligently handles Tailwind class merging
+      # Initialize the component with user-provided attributes.
+      # Subclasses should call super(**attrs) after setting their own instance variables.
       #
-      # @param value [Hash] User-provided attributes
-      # @return [Hash] Merged attributes with Tailwind classes properly combined
-      prop :attrs, Hash, :**, reader: :private do |value|
-        merge_attrs(value, default_attrs)
+      # @param attrs [Hash] User-provided HTML attributes
+      def initialize(**user_attrs)
+        super()
+        @attrs = merge_attrs(user_attrs, default_attrs)
       end
+
+      private
+
+      attr_reader :attrs
 
       # Merges user-provided attributes with default attributes.
       # Special handling for :class to merge Tailwind classes intelligently.
@@ -105,16 +108,12 @@ module Panda
       # In development mode, wrap components with HTML comments
       # showing their class name for easier debugging
       if Rails.env.development?
-        def before_template
-          class_name = self.class.name
-          comment { "Begin #{class_name}" }
-          super
+        def before_render
+          @__component_name = self.class.name
         end
 
-        def after_template
-          class_name = self.class.name
-          super
-          comment { "End #{class_name}" }
+        def call
+          "<!-- Begin #{@__component_name} -->#{super}<!-- End #{@__component_name} -->".html_safe
         end
       end
     end

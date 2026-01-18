@@ -35,10 +35,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "stimulus-rails"
   spec.add_dependency "turbo-rails"
 
-  # Phlex support for modern component architecture
-  spec.add_dependency "phlex", "~> 2.3"
-  spec.add_dependency "phlex-rails", "~> 2.3"
-  spec.add_dependency "literal", "~> 1.8"
+  # ViewComponent support for modern component architecture
+  spec.add_dependency "view_component", "~> 3.20"
   spec.add_dependency "tailwind_merge", "~> 1.3"
 
   # Database dependencies

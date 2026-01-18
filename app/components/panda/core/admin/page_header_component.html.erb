@@ -1,0 +1,28 @@
+<div>
+  <%# Breadcrumbs section %>
+  <% if @breadcrumbs %>
+    <%= render Panda::Core::Admin::BreadcrumbComponent.new(
+      items: @breadcrumbs,
+      show_back: @show_back
+    ) %>
+  <% end %>
+
+  <%# Title and actions section %>
+  <div class="mt-2 md:flex md:items-center md:justify-between">
+    <%# Title %>
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight dark:text-white">
+        <%= @title %>
+      </h2>
+    </div>
+
+    <%# Action buttons %>
+    <% if @buttons.any? %>
+      <div class="mt-4 flex shrink-0 md:mt-0 md:ml-4">
+        <% @buttons.each_with_index do |button_data, index| %>
+          <%= render create_button(button_data, index) %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

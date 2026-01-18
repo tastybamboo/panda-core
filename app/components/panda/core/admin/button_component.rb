@@ -4,25 +4,18 @@ module Panda
   module Core
     module Admin
       class ButtonComponent < Panda::Core::Base
-        prop :text, String, default: "Button"
-        prop :action, _Nilable(Symbol), default: -> {}
-        prop :href, _Nilable(String), default: -> { "#" }
-        prop :icon, _Nilable(String), default: -> {}
-        prop :size, Symbol, default: :regular
-        prop :id, _Nilable(String), default: -> {}
-        prop :as_button, _Boolean, default: -> { false }
+    def initialize(text: "Button", action: nil, href: "#", icon: nil, size: :regular, id: nil, as_button: false, **attrs)
+    @text = text
+    @action = action
+    @href = href
+    @icon = icon
+    @size = size
+    @id = id
+    @as_button = as_button
+      super(**attrs)
+    end
 
-        def view_template
-          if @as_button
-            button(**@attrs) do
-              render_content
-            end
-          else
-            a(**@attrs) do
-              render_content
-            end
-          end
-        end
+    attr_reader :text, :action, :href, :icon, :size, :id, :as_button
 
         def default_attrs
           base = {
@@ -40,10 +33,13 @@ module Panda
         private
 
         def render_content
-          if computed_icon
-            i(class: "fa-solid fa-#{computed_icon}")
+          icon_html = if computed_icon
+            content_tag(:i, "", class: "fa-solid fa-#{computed_icon}")
+          else
+            "".html_safe
           end
-          plain @text.titleize
+          text_html = @text.titleize
+          (icon_html + text_html).html_safe
         end
 
         def computed_icon

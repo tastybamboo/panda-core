@@ -1,0 +1,9 @@
+<% if @as_button %>
+  <%= content_tag :button, @attrs do %>
+    <%= render_content %>
+  <% end %>
+<% else %>
+  <%= content_tag :a, @attrs do %>
+    <%= render_content %>
+  <% end %>
+<% end %>

@@ -4,15 +4,15 @@ module Panda
   module Core
     module Admin
       class TagComponent < Panda::Core::Base
-        prop :status, Symbol, default: :active
-        prop :text, _Nilable(String), default: -> {}
-        prop :page_type, _Nilable(Symbol), default: -> {}
+    def initialize(status: :active, text:, page_type:, **attrs)
+    @status = status
+    @text = text
+    @page_type = page_type
+      super(**attrs)
+    end
 
-        def view_template
-          span(class: tag_classes) { computed_text }
-        end
+    attr_reader :status, :text, :page_type
 
-        private
 
         def computed_text
           if @page_type

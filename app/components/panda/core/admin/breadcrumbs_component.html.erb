@@ -1,0 +1,16 @@
+<nav aria-label="Breadcrumb" id="panda-breadcrumbs" <% if @attrs.any? %><%= tag.attributes(@attrs) %><% end %>>
+  <ol role="list">
+    <li class="inline-block">
+      <a href="<%= Panda::Core.config.admin_path %>" class="text-black/60 hover:text-black/80">
+        <i class="fa fa-solid fa-house fa-fw inline-block w-4 text-center"></i>
+        <span class="sr-only">Home</span>
+      </a>
+    </li>
+    <% @breadcrumbs.each do |crumb| %>
+      <li class="inline-block">
+        <i class="fa-solid fa-chevron-right fa-fw inline-block w-4 text-center font-light text-black/60 hover:text-black/80 px-2"></i>
+        <a href="<%= crumb.path %>" class="text-sm font-normal text-black/60 hover:text-black/80"><%= crumb.name %></a>
+      </li>
+    <% end %>
+  </ol>
+</nav>

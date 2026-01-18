@@ -26,63 +26,13 @@ module Panda
       #   )
       #
       class BreadcrumbComponent < Panda::Core::Base
-        prop :items, Array, default: -> { [] }
-        prop :show_back, _Boolean, default: true
+    def initialize(items: [], show_back: true, **attrs)
+    @items = items
+    @show_back = show_back
+      super(**attrs)
+    end
 
-        def view_template
-          div do
-            # Mobile back link
-            if @show_back && @items.any?
-              nav(
-                aria: {label: "Back"},
-                class: "sm:hidden"
-              ) do
-                a(
-                  href: back_link_href,
-                  class: "flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                ) do
-                  render_chevron_left_icon
-                  plain "Back"
-                end
-              end
-            end
-
-            # Desktop breadcrumb trail
-            nav(
-              aria: {label: "Breadcrumb"},
-              class: "hidden sm:flex"
-            ) do
-              ol(
-                role: "list",
-                class: "flex items-center space-x-4"
-              ) do
-                @items.each_with_index do |item, index|
-                  li do
-                    if index.zero?
-                      # First item (no separator)
-                      div(class: "flex") do
-                        a(
-                          href: item[:href],
-                          class: breadcrumb_link_classes(index)
-                        ) { item[:text] }
-                      end
-                    else
-                      # Subsequent items (with separator)
-                      div(class: "flex items-center") do
-                        render_chevron_right_icon
-                        a(
-                          href: item[:href],
-                          aria: ((index == @items.length - 1) ? {current: "page"} : nil),
-                          class: breadcrumb_link_classes(index)
-                        ) { item[:text] }
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
-        end
+    attr_reader :items, :show_back
 
         private
 
@@ -97,14 +47,14 @@ module Panda
         end
 
         def render_chevron_left_icon
-          svg(
+          content_tag(:svg,
             viewBox: "0 0 20 20",
             fill: "currentColor",
             data: {slot: "icon"},
             aria: {hidden: "true"},
             class: "mr-1 -ml-1 size-5 shrink-0 text-gray-400 dark:text-gray-500"
-          ) do |s|
-            s.path(
+          ) do
+            tag.path(
               d: "M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z",
               clip_rule: "evenodd",
               fill_rule: "evenodd"
@@ -113,14 +63,14 @@ module Panda
         end
 
         def render_chevron_right_icon
-          svg(
+          content_tag(:svg,
             viewBox: "0 0 20 20",
             fill: "currentColor",
             data: {slot: "icon"},
             aria: {hidden: "true"},
             class: "size-5 shrink-0 text-gray-400 dark:text-gray-500"
-          ) do |s|
-            s.path(
+          ) do
+            tag.path(
               d: "M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z",
               clip_rule: "evenodd",
               fill_rule: "evenodd"

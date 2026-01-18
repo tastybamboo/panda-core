@@ -4,29 +4,13 @@ module Panda
   module Core
     module Admin
       class PanelComponent < Panda::Core::Base
-        def view_template(&block)
-          # Capture block content differently based on context (ERB vs Phlex)
-          if block_given?
-            if defined?(view_context) && view_context
-              # Called from ERB - capture HTML output
-              @body_html = view_context.capture { yield(self) }
-            else
-              # Called from Phlex - execute block directly to set instance variables
-              yield(self)
-            end
-          end
+        def initialize(**attrs)
+          super(**attrs)
+        end
 
-          div(class: "col-span-3 mt-5 rounded-lg shadow-md bg-gray-800 shadow-inherit/20") do
-            @heading_content&.call
-
-            div(class: "p-4 text-black bg-white rounded-b-lg") do
-              if @body_content
-                @body_content.call
-              elsif @body_html
-                raw(@body_html)
-              end
-            end
-          end
+        def before_render
+          # Capture block content if provided
+          instance_eval(&content) if content.present?
         end
 
         def heading(**props)

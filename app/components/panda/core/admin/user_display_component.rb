@@ -4,20 +4,14 @@ module Panda
   module Core
     module Admin
       class UserDisplayComponent < Panda::Core::Base
-        prop :user_id, _Nilable(String), default: -> {}
-        prop :user, _Nilable(Object), default: -> {}
-        prop :metadata, String, default: ""
+    def initialize(user_id:, user:, metadata: "", **attrs)
+    @user_id = user_id
+    @user = user
+    @metadata = metadata
+      super(**attrs)
+    end
 
-        def view_template
-          return unless resolved_user
-
-          div(class: "block flex-shrink-0 group") do
-            div(class: "flex items-center") do
-              render_avatar
-              render_user_info
-            end
-          end
-        end
+    attr_reader :user_id, :user, :metadata
 
         private
 
@@ -34,8 +28,8 @@ module Panda
             resolved_user.avatar_url(size: :small).present?
 
           if has_image
-            div do
-              img(
+            content_tag(:div) do
+              tag.img(
                 class: "inline-block w-10 h-10 rounded-full object-cover",
                 src: resolved_user.avatar_url(size: :small),
                 alt: "",
@@ -43,8 +37,8 @@ module Panda
               )
             end
           else
-            div(class: "inline-block w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center") do
-              span(class: "text-sm font-medium text-gray-600") { user_initials }
+            content_tag(:div, class: "inline-block w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center") do
+              content_tag(:span, user_initials, class: "text-sm font-medium text-gray-600")
             end
           end
         end
@@ -63,13 +57,16 @@ module Panda
         end
 
         def render_user_info
-          div(class: "ml-3") do
-            p(class: "text-sm text-black") { resolved_user.name }
-            if @metadata.present?
-              p(class: "text-sm text-black/60") { @metadata }
+          content_tag(:div, class: "ml-3") do
+            name_html = content_tag(:p, resolved_user.name, class: "text-sm text-black")
+            meta_html = if @metadata.present?
+              content_tag(:p, @metadata, class: "text-sm text-black/60")
             elsif resolved_user.respond_to?(:email) && resolved_user.email.present?
-              p(class: "text-sm text-gray-500") { resolved_user.email }
+              content_tag(:p, resolved_user.email, class: "text-sm text-gray-500")
+            else
+              "".html_safe
             end
+            (name_html + meta_html).html_safe
           end
         end
       end
