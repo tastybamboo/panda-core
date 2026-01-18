@@ -12,18 +12,18 @@ module Panda
     attr_reader :full_height
 
         def before_render
-          # Capture block content differently based on context (ERB vs Phlex)
-          # The block yields self to allow DSL-style calls like container.heading(...)
-          if content.present?
-            if defined?(view_context) && view_context
-              # Called from ERB - yield self to the block to allow DSL calls
-              # Capture the HTML output from the block execution
-              @body_html = view_context.capture(self, &content)
-            else
-              # Called from Phlex - execute block directly to set instance variables
-              content.call(self)
-            end
-          end
+           # Capture block content differently based on context (ERB vs Phlex)
+           # The block yields self to allow DSL-style calls like container.heading(...)
+           if content.present?
+             if defined?(view_context) && view_context
+               # Called from ERB - capture the block content
+               # Don't pass self as an argument - just call the block
+               @body_html = view_context.capture(&content)
+             else
+               # Called from Phlex - execute block directly to set instance variables
+               content.call(self)
+             end
+           end
 
           # Set content_for :sidebar if slideover is present (enables breadcrumb toggle button)
           # This must happen before rendering so the layout can use it
@@ -57,12 +57,16 @@ module Panda
         end
 
         def footer(&block)
-          @footer_block = block
-        end
+           @footer_block = block
+         end
 
-        # Alias for ViewComponent-style API compatibility
-        alias_method :with_slideover, :slideover
-        alias_method :with_footer, :footer
+         def render_body_content
+           @body_html || content
+         end
+
+         # Alias for ViewComponent-style API compatibility
+         alias_method :with_slideover, :slideover
+         alias_method :with_footer, :footer
 
         private
 

@@ -105,16 +105,10 @@ module Panda
         {}
       end
 
-      # In development mode, wrap components with HTML comments
-      # showing their class name for easier debugging
-      if Rails.env.development?
-        def before_render
-          @__component_name = self.class.name
-        end
-
-        def call
-          "<!-- Begin #{@__component_name} -->#{super}<!-- End #{@__component_name} -->".html_safe
-        end
+      # ViewComponent automatically renders templates in the same directory
+      # We override call to make it public for testing
+      def call
+        super
       end
     end
   end

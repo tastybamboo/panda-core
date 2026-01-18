@@ -21,7 +21,7 @@ require "view_component/test_helpers"
 require_relative "view_component_test_controller"
 
 # Configure ViewComponent to use our test controller
-if defined?(ViewComponent) && Rails.application
+if defined?(ViewComponent) && Rails.application && Rails.application.config.respond_to?(:view_component)
   Rails.application.config.view_component.test_controller = "ViewComponentTestController"
 end
 
