@@ -15,7 +15,7 @@
       end
 
       # Find the most specific matching path by checking longest paths first
-      all_paths = collect_paths(nav_items)
+      all_paths = collect_paths(nav_items).compact
       active_path = all_paths
         .sort_by { |path| -path.length }
         .find { |path| request.path == path || request.path.starts_with?(path + "/") }
