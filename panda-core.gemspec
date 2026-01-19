@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "turbo-rails"
 
   # ViewComponent support for modern component architecture
-  spec.add_dependency "view_component", "~> 3.20"
+  spec.add_dependency "view_component", "~> 4.2"
   spec.add_dependency "tailwind_merge", "~> 1.3"
 
   # Database dependencies
@@ -55,7 +55,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "tailwindcss-rails", "~> 4"
 
   # Linting & Code Quality
-  spec.add_development_dependency "standard"
+  spec.add_development_dependency "standard", "~> 1.43"
   spec.add_development_dependency "brakeman"
   spec.add_development_dependency "bundler-audit"
 
