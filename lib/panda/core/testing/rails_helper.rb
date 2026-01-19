@@ -192,6 +192,27 @@ RSpec.configure do |config|
           content_security_policy?: false
         )
       )
+
+      # Stub panda_core routes with _with_routes support
+      panda_core_routes = double(
+        admin_logout_path: "/admin/logout",
+        admin_my_profile_path: "/admin/my_profile"
+      )
+      allow(panda_core_routes).to receive(:_with_routes).and_return(panda_core_routes)
+      allow_any_instance_of(ActionView::Base).to receive(:panda_core).and_return(panda_core_routes)
+
+      # Stub current_user
+      mock_user = double(
+        "User",
+        name: "Test User",
+        avatar: double(attached?: false),
+        image_url: ""
+      )
+      allow_any_instance_of(ActionView::Base).to receive(:current_user).and_return(mock_user)
+
+      # Stub main_app routes
+      main_app_routes = double(url_for: "/test")
+      allow_any_instance_of(ActionView::Base).to receive(:main_app).and_return(main_app_routes)
     end
   end
 
