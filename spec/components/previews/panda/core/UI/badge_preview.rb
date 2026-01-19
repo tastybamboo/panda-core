@@ -210,7 +210,7 @@ module Panda
             rounded: true
           )
           render_inline Panda::Core::UI::Badge.new(
-            text: "Phlex",
+            text: "ViewComponent",
             variant: :info,
             removable: true,
             rounded: true

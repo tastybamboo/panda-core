@@ -1,7 +1,7 @@
 # ViewComponent Migration Status
 
 ## Summary
-Migration from ViewComponent to ViewComponent is substantially complete across all three projects. The core infrastructure is in place, with gems and dependencies properly configured. Remaining work is primarily in finalizing component implementations and resolving test environment issues.
+Migration from Phlex to ViewComponent is substantially complete across all three projects. The core infrastructure is in place, with gems and dependencies properly configured. Remaining work is primarily in finalizing component implementations and resolving test environment issues.
 
 ## panda-core (95% complete)
 
@@ -70,14 +70,14 @@ Migration from ViewComponent to ViewComponent is substantially complete across a
 **Status:** ✅ Fully Complete
 
 ### Completed:
-- ✅ Removed ViewComponent gem dependency, added ViewComponent 3.20
-- ✅ Converted all 10 ViewComponent components to ViewComponent:
+- ✅ Removed Phlex gem dependency, added ViewComponent 3.20
+- ✅ Converted all 10 Phlex components to ViewComponent:
   - Heading, Alert, FormField, FormLabel, FormInput
   - FormIconInput, FormContainer, FormSubmit
   - PageContainer, FlashMessages, Base
-- ✅ Migrated Sessions::New ViewComponent view to standard ERB template
+- ✅ Migrated Sessions::New Phlex view to standard ERB template
 - ✅ Removed Views::Base class
-- ✅ Configuration updated (removed ViewComponent streaming fix)
+- ✅ Configuration updated (removed Phlex streaming fix)
 - ✅ Application runs successfully in development/production
 
 ### Files:
@@ -125,13 +125,13 @@ Migration from ViewComponent to ViewComponent is substantially complete across a
 
 ## Technical Notes
 
-### Key Differences: ViewComponent vs ViewComponent
+### Key Differences: Phlex vs ViewComponent
 
-**ViewComponent Pattern:**
+**Phlex Pattern:**
 ```ruby
-class MyComponent < Panda::Core::Base
+class MyComponent < Phlex::HTML
   prop :text, String
-  
+
   def view_template
     div(class: "my-class") { text }
   end
@@ -142,7 +142,7 @@ end
 ```ruby
 class MyComponent < ViewComponent::Base
   attr_reader :text
-  
+
   def initialize(text:, **attrs)
     @text = text
     super(**attrs)
@@ -157,17 +157,17 @@ end
    - Gem engines may need special configuration
    - Solution: Check ViewComponent::Engine docs or set explicit `view_path_pattern`
 
-2. **Helper Methods** - ViewComponent provides `div()`, `span()`, etc. as methods
+2. **Helper Methods** - Phlex provides `div()`, `span()`, etc. as methods
    - ViewComponent uses standard Rails helpers: `content_tag`, `tag`, etc.
    - ERB templates naturally support these
 
-3. **Props vs Initialize** - ViewComponent uses DSL-style props
+3. **Props vs Initialize** - Phlex uses DSL-style props
    - ViewComponent uses standard Ruby `initialize` parameters
    - Both support defaults, just different syntax
 
 ### Dependencies
-- ViewComponent 3.20 (panda-core, panda-cms)
-- Removed: ViewComponent ~> 2.3, Phlex-Rails ~> 2.3, Literal ~> 1.8
+- ViewComponent 3.20+ (panda-core, panda-cms)
+- Removed: Phlex ~> 2.3, Phlex-Rails ~> 2.3, Literal ~> 1.8
 - TailwindMerge still used for class merging in panda-core
 
 ---

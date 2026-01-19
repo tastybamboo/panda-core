@@ -18,7 +18,7 @@ module Panda
       # ## Performance
       # - Lightweight - no JavaScript required
       # - Leverages Tailwind for optimal CSS
-      # - Renders efficiently with Phlex
+      # - Renders efficiently with ViewComponent
       #
       # @label Card (ViewComponent)
       # @display bg_color "#f3f4f6"
