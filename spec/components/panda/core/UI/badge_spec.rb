@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::UI::Badge do
-  let(:output) { Capybara.string(component.call) }
+RSpec.describe Panda::Core::UI::Badge, type: :component do
+  let(:output) { Capybara.string(render_inline(component).to_html) }
 
   describe "initialization and property access" do
     it "accepts text property without NameError" do
@@ -35,7 +35,7 @@ RSpec.describe Panda::Core::UI::Badge do
   describe "rendering with different variants" do
     it "renders default variant" do
       component = described_class.new(text: "Badge")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-gray-50")
@@ -44,7 +44,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders primary variant" do
       component = described_class.new(text: "Primary", variant: :primary)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-blue-50")
@@ -53,7 +53,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders success variant" do
       component = described_class.new(text: "Success", variant: :success)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-green-50")
@@ -62,7 +62,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders warning variant" do
       component = described_class.new(text: "Warning", variant: :warning)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-yellow-50")
@@ -71,7 +71,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders danger variant" do
       component = described_class.new(text: "Error", variant: :danger)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-red-50")
@@ -80,7 +80,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders info variant" do
       component = described_class.new(text: "Info", variant: :info)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-sky-50")
@@ -91,7 +91,7 @@ RSpec.describe Panda::Core::UI::Badge do
   describe "rendering with different sizes" do
     it "renders default medium size" do
       component = described_class.new(text: "Badge")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("text-sm")
@@ -101,7 +101,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders small size" do
       component = described_class.new(text: "Small", size: :small)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("text-xs")
@@ -110,7 +110,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders large size" do
       component = described_class.new(text: "Large", size: :large)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("text-base")
@@ -121,7 +121,7 @@ RSpec.describe Panda::Core::UI::Badge do
   describe "rendering with border radius" do
     it "renders with default rounded corners" do
       component = described_class.new(text: "Badge")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("rounded")
@@ -129,7 +129,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "renders with full rounded when rounded: true" do
       component = described_class.new(text: "Pill", rounded: true)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("rounded-full")
@@ -139,7 +139,7 @@ RSpec.describe Panda::Core::UI::Badge do
   describe "rendering base classes" do
     it "always includes inline-flex" do
       component = described_class.new(text: "Badge")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("inline-flex")
@@ -147,7 +147,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "always includes items-center" do
       component = described_class.new(text: "Badge")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("items-center")
@@ -155,7 +155,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "always includes font-medium" do
       component = described_class.new(text: "Badge")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("font-medium")
@@ -163,7 +163,7 @@ RSpec.describe Panda::Core::UI::Badge do
 
     it "includes ring styling" do
       component = described_class.new(text: "Badge")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("ring")
@@ -173,7 +173,7 @@ RSpec.describe Panda::Core::UI::Badge do
   describe "text content" do
     it "renders the provided text" do
       component = described_class.new(text: "Custom Text")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("Custom Text")
     end

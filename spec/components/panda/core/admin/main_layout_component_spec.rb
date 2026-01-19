@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::MainLayoutComponent do
+RSpec.describe Panda::Core::Admin::MainLayoutComponent, type: :component do
   describe "initialization" do
     it "accepts user property" do
       user = instance_double("User")
@@ -28,7 +28,7 @@ RSpec.describe Panda::Core::Admin::MainLayoutComponent do
     it "renders container structure" do
       user = instance_double("User")
       component = described_class.new(user: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("panda-container")
@@ -40,7 +40,7 @@ RSpec.describe Panda::Core::Admin::MainLayoutComponent do
     it "includes sidebar controller" do
       user = instance_double("User")
       component = described_class.new(user: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-gradient-admin")
@@ -49,7 +49,7 @@ RSpec.describe Panda::Core::Admin::MainLayoutComponent do
     it "includes slideover panel structure" do
       user = instance_double("User")
       component = described_class.new(user: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("slideover")
@@ -59,7 +59,7 @@ RSpec.describe Panda::Core::Admin::MainLayoutComponent do
     it "includes escape key handler" do
       user = instance_double("User")
       component = described_class.new(user: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("e.key === 'Escape'")

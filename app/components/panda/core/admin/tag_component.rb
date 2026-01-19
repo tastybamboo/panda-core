@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       class TagComponent < Panda::Core::Base
-        def initialize(text:, page_type:, status: :active, **attrs)
+        def initialize(text: nil, page_type: nil, status: :active, **attrs)
           @status = status
           @text = text
           @page_type = page_type

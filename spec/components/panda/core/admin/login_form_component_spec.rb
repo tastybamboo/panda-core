@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::LoginFormComponent do
+RSpec.describe Panda::Core::Admin::LoginFormComponent, type: :component do
   describe "initialization" do
     it "accepts providers property without NameError" do
       component = described_class.new(providers: [])
@@ -18,7 +18,7 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
   describe "rendering structure" do
     it "renders main container" do
       component = described_class.new(providers: [])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("flex flex-col justify-center")
@@ -26,7 +26,7 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
 
     it "renders header with title" do
       component = described_class.new(providers: [])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("h2")
@@ -36,7 +36,7 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
   describe "rendering with no providers" do
     it "displays warning message when no providers configured" do
       component = described_class.new(providers: [])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("No authentication providers configured")
@@ -44,7 +44,7 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
 
     it "includes instruction text" do
       component = described_class.new(providers: [])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("Please configure at least one authentication provider")
@@ -54,7 +54,7 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
   describe "rendering with providers" do
     it "renders oauth buttons for each provider" do
       component = described_class.new(providers: ["github"])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("<button")
@@ -63,7 +63,7 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
 
     it "renders multiple provider buttons" do
       component = described_class.new(providers: ["github", "google"])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html.scan("<button").count).to be >= 2
@@ -71,7 +71,7 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
 
     it "includes provider icons" do
       component = described_class.new(providers: ["github"])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("fa-")

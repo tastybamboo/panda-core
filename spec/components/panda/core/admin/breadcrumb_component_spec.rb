@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
-  let(:output) { Capybara.string(component.call) }
+RSpec.describe Panda::Core::Admin::BreadcrumbComponent, type: :component do
+  let(:output) { Capybara.string(render_inline(component).to_html) }
 
   describe "rendering" do
     it "renders breadcrumb items" do
@@ -13,7 +13,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
           {text: "Pages", href: "/admin/pages"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_link("Home", href: "/admin")
       expect(output).to have_link("Pages", href: "/admin/pages")
@@ -26,7 +26,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
           {text: "Pages", href: "/admin/pages"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("nav.sm\\:hidden", text: "Back")
     end
@@ -38,7 +38,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
         ],
         show_back: false
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).not_to have_css("nav.sm\\:hidden")
     end
@@ -51,7 +51,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
           {text: "Edit", href: "/admin/pages/1/edit"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       # Should have 2 chevron icons (one less than number of items)
       expect(output.all("svg").count).to be >= 2
@@ -64,7 +64,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
           {text: "Current Page", href: "/admin/current"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css('a[aria-current="page"]', text: "Current Page")
     end
@@ -75,7 +75,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
           {text: "Home", href: "/admin"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("a.text-gray-500.hover\\:text-gray-700")
     end
@@ -86,7 +86,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
           {text: "Home", href: "/admin"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css('nav[aria-label="Breadcrumb"]')
     end
@@ -95,7 +95,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
   describe "edge cases" do
     it "handles empty items array" do
       component = described_class.new(items: [])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output.text.strip).to eq("")
     end
@@ -106,7 +106,7 @@ RSpec.describe Panda::Core::Admin::BreadcrumbComponent do
           {text: "Home", href: "/admin"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_link("Home", href: "/admin")
     end

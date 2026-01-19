@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::UI::Card do
-  let(:output) { Capybara.string(component.call) }
+RSpec.describe Panda::Core::UI::Card, type: :component do
+  let(:output) { Capybara.string(render_inline(component).to_html) }
 
   describe "initialization and property access" do
     it "accepts padding property without NameError" do
@@ -30,7 +30,7 @@ RSpec.describe Panda::Core::UI::Card do
   describe "rendering with different padding" do
     it "renders with default medium padding" do
       component = described_class.new { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("p-6")
@@ -38,7 +38,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "renders with small padding" do
       component = described_class.new(padding: :small) { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("p-4")
@@ -46,7 +46,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "renders with large padding" do
       component = described_class.new(padding: :large) { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("p-8")
@@ -54,7 +54,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "renders with no padding" do
       component = described_class.new(padding: :none) { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       html = output.native.to_html
       # Should not have p-* padding classes
@@ -65,7 +65,7 @@ RSpec.describe Panda::Core::UI::Card do
   describe "rendering with different elevation" do
     it "renders with default low elevation" do
       component = described_class.new { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("shadow-sm")
@@ -73,7 +73,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "renders with medium elevation" do
       component = described_class.new(elevation: :medium) { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("shadow-md")
@@ -81,7 +81,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "renders with high elevation" do
       component = described_class.new(elevation: :high) { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("shadow-lg")
@@ -89,7 +89,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "renders with no elevation" do
       component = described_class.new(elevation: :none) { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       html = output.native.to_html
       expect(html).not_to match(/shadow-(sm|md|lg)/)
@@ -99,7 +99,7 @@ RSpec.describe Panda::Core::UI::Card do
   describe "rendering with border" do
     it "renders with border by default" do
       component = described_class.new { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("border")
@@ -107,7 +107,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "renders without border when border: false" do
       component = described_class.new(border: false) { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       html = output.native.to_html
       expect(html).not_to match(/border\s+border-gray-200/)
@@ -117,7 +117,7 @@ RSpec.describe Panda::Core::UI::Card do
   describe "rendering base classes" do
     it "always includes bg-white" do
       component = described_class.new { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-white")
@@ -125,7 +125,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "always includes rounded-lg" do
       component = described_class.new { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("rounded-lg")
@@ -133,7 +133,7 @@ RSpec.describe Panda::Core::UI::Card do
 
     it "always includes overflow-hidden" do
       component = described_class.new { "Content" }
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("overflow-hidden")

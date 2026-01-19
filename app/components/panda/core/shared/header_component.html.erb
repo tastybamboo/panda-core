@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html data-theme="<%= Panda::Core::Current&.user&.current_theme || Panda::Core.config.default_theme %>" class="<%= @html_class %>">
   <head>
-    <title><%= content_for?(:title) ? yield(:title) : (Panda::Core.config.admin_title || "Panda Admin") %></title>
+    <title><%= content_for?(:title) ? content_for(:title) : (Panda::Core.config.admin_title || "Panda Admin") %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css">
@@ -17,6 +17,6 @@
       <%= render "panda/cms/shared/favicons" %>
     <% end %>
 
-    <%= yield :head %>
+    <%= content_for :head %>
   </head>
   <body class="overflow-hidden h-full <%= @body_class %>" data-environment="<%= Rails.env %>">

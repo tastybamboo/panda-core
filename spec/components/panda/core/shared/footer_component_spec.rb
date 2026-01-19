@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Shared::FooterComponent do
+RSpec.describe Panda::Core::Shared::FooterComponent, type: :component do
   describe "initialization" do
     it "initializes without arguments" do
       component = described_class.new
@@ -13,10 +13,12 @@ RSpec.describe Panda::Core::Shared::FooterComponent do
   describe "rendering" do
     it "renders closing HTML tags" do
       component = described_class.new
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
-      expect(html.strip).to eq("</body>\n</html>")
+      # Component renders closing tags (wrapped in test HTML document)
+      expect(html).to include("</body>")
+      expect(html).to include("</html>")
     end
   end
 end

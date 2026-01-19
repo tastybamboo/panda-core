@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::PanelComponent do
+RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
   describe "rendering" do
     it "renders a panel with heading and body" do
       render_inline(described_class.new) do |panel|

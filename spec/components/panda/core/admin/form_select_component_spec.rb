@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::FormSelectComponent do
+RSpec.describe Panda::Core::Admin::FormSelectComponent, type: :component do
   describe "initialization and property access" do
     it "accepts name property without NameError" do
       component = described_class.new(name: "status", options: [], prompt: "Select")
@@ -39,7 +39,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
   describe "rendering select element" do
     it "renders a select element" do
       component = described_class.new(name: "status", options: [], prompt: "Select")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("<select")
@@ -47,7 +47,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
 
     it "sets the select name" do
       component = described_class.new(name: "user_status", options: [], prompt: "Select")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include('name="user_status"')
@@ -55,7 +55,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
 
     it "generates ID from name" do
       component = described_class.new(name: "user_status", options: [], prompt: "Select")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include('id="user_status"')
@@ -63,7 +63,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
 
     it "sanitizes array notation in ID" do
       component = described_class.new(name: "user[status]", options: [], prompt: "Select")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       # Should convert brackets to underscores
@@ -74,7 +74,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
   describe "rendering with required attribute" do
     it "sets required attribute when required: true" do
       component = described_class.new(name: "status", options: [], prompt: "Select", required: true)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("required")
@@ -82,7 +82,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
 
     it "does not set required when required: false" do
       component = described_class.new(name: "status", options: [], prompt: "Select", required: false)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).not_to match(/\srequired\s/)
@@ -92,7 +92,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
   describe "rendering with disabled state" do
     it "sets disabled attribute when disabled: true" do
       component = described_class.new(name: "status", options: [], prompt: "Select", disabled: true)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("disabled")
@@ -100,7 +100,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
 
     it "applies disabled styling" do
       component = described_class.new(name: "status", options: [], prompt: "Select", disabled: true)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-gray-50")
@@ -109,7 +109,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
 
     it "applies enabled styling when not disabled" do
       component = described_class.new(name: "status", options: [], prompt: "Select", disabled: false)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("hover:cursor-pointer")
@@ -119,7 +119,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
   describe "select CSS classes" do
     it "includes base select classes" do
       component = described_class.new(name: "status", options: [], prompt: "Select")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("block")
@@ -129,7 +129,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
 
     it "includes focus ring classes" do
       component = described_class.new(name: "status", options: [], prompt: "Select")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("focus:ring")
