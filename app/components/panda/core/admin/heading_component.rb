@@ -4,7 +4,9 @@ module Panda
   module Core
     module Admin
       class HeadingComponent < Panda::Core::Base
-        renders_many :buttons, "Panda::Core::Admin::ButtonComponent"
+        renders_many :buttons, lambda { |text: "Button", action: nil, href: "#", icon: nil, size: :regular, id: nil, as_button: false, **attrs|
+          Panda::Core::Admin::ButtonComponent.new(text: text, action: action, href: href, icon: icon, size: size, id: id, as_button: as_button, **attrs)
+        }
 
         def initialize(text: "", icon: "", meta: nil, level: 2, **attrs)
           @text = text

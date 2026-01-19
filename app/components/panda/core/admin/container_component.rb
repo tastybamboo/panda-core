@@ -4,8 +4,12 @@ module Panda
   module Core
     module Admin
       class ContainerComponent < Panda::Core::Base
-        renders_one :heading, "Panda::Core::Admin::HeadingComponent"
-        renders_one :tab_bar, "Panda::Core::Admin::TabBarComponent"
+        renders_one :heading, lambda { |text: "", icon: "", meta: nil, level: 2, **attrs, &block|
+          Panda::Core::Admin::HeadingComponent.new(text: text, icon: icon, meta: meta, level: level, **attrs, &block)
+        }
+        renders_one :tab_bar, lambda { |tabs: [], **attrs|
+          Panda::Core::Admin::TabBarComponent.new(tabs: tabs, **attrs)
+        }
         renders_one :body
 
         def initialize(full_height: false, **attrs)
