@@ -87,6 +87,7 @@ RSpec.configure do |config|
   if defined?(ViewComponent::TestHelpers)
     config.include ViewComponent::TestHelpers, type: :component
     config.include Capybara::RSpecMatchers, type: :component
+    config.include Panda::Core::AssetHelper, type: :component
   end
 
   # Reset column information before suite
@@ -176,6 +177,23 @@ RSpec.configure do |config|
 
   # OmniAuth test mode
   OmniAuth.config.test_mode = true if defined?(OmniAuth)
+
+  # Stub Panda Core helpers for component tests
+  config.before(:each, type: :component) do
+    if defined?(ViewComponent::TestHelpers) && respond_to?(:vc_test_controller)
+      allow_any_instance_of(ActionView::Base).to receive(:panda_core_stylesheet).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:panda_core_javascript).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:csrf_meta_tags).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:csp_meta_tag).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:controller).and_return(
+        double(
+          class: double(name: "Test"),
+          protect_against_forgery?: false,
+          content_security_policy?: false
+        )
+      )
+    end
+  end
 
   # DatabaseCleaner configuration
   config.around(:each) do |example|

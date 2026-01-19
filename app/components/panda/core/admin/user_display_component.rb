@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       class UserDisplayComponent < Panda::Core::Base
-        def initialize(user_id:, user:, metadata: "", **attrs)
+        def initialize(user_id: nil, user: nil, metadata: "", **attrs)
           @user_id = user_id
           @user = user
           @metadata = metadata

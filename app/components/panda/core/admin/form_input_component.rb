@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       class FormInputComponent < Panda::Core::Base
-        def initialize(value:, placeholder:, autocomplete:, name: "", type: :text, required: false, disabled: false, **attrs)
+        def initialize(name: "", value: nil, placeholder: nil, autocomplete: nil, type: :text, required: false, disabled: false, **attrs)
           @name = name
           @value = value
           @type = type

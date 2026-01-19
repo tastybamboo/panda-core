@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       class UserActivityComponent < Panda::Core::Base
-        def initialize(model:, at:, user:, **attrs)
+        def initialize(model: nil, at: nil, user: nil, **attrs)
           @model = model
           @at = at
           @user = user
