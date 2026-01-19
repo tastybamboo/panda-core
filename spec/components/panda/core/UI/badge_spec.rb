@@ -195,8 +195,4 @@ RSpec.describe Panda::Core::UI::Badge do
       expect(component.removable?).to be false
     end
   end
-
-      expect(source).to include("@rounded")
-    end
-  end
 end

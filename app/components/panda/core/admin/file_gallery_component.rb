@@ -4,13 +4,13 @@ module Panda
   module Core
     module Admin
       class FileGalleryComponent < Panda::Core::Base
-    def initialize(files: [], selected_file:, **attrs)
-    @files = files
-    @selected_file = selected_file
-      super(**attrs)
-    end
+        def initialize(selected_file:, files: [], **attrs)
+          @files = files
+          @selected_file = selected_file
+          super(**attrs)
+        end
 
-    attr_reader :files, :selected_file
+        attr_reader :files, :selected_file
 
         private
 
@@ -19,7 +19,7 @@ module Panda
         end
 
         def render_file_item(file)
-          is_selected = @selected_file && @selected_file.id == file.id
+          @selected_file && @selected_file.id == file.id
           # Implemented in ERB template
         end
 

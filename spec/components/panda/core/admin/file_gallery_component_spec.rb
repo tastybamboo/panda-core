@@ -24,7 +24,7 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
   describe "file_container_classes" do
     it "renders base container classes when not selected" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       classes = component.send(:file_container_classes, false)
       expect(classes).to include("group")
       expect(classes).to include("overflow-hidden")
@@ -34,7 +34,7 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
 
     it "includes focus styling when not selected" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       classes = component.send(:file_container_classes, false)
       expect(classes).to include("focus-within:outline")
       expect(classes).to include("focus-within:outline-indigo-600")
@@ -42,7 +42,7 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
 
     it "includes selected outline when selected" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       classes = component.send(:file_container_classes, true)
       expect(classes).to include("outline")
       expect(classes).to include("outline-panda-dark")
@@ -52,7 +52,7 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
   describe "file_image_classes" do
     it "includes base image classes" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       classes = component.send(:file_image_classes, false)
       expect(classes).to include("pointer-events-none")
       expect(classes).to include("aspect-10/7")
@@ -61,14 +61,14 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
 
     it "includes hover opacity when not selected" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       classes = component.send(:file_image_classes, false)
       expect(classes).to include("group-hover:opacity-75")
     end
 
     it "excludes hover opacity when selected" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       classes = component.send(:file_image_classes, true)
       expect(classes).not_to include("group-hover:opacity-75")
     end
@@ -77,42 +77,42 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
   describe "number_to_human_size helper" do
     it "formats zero bytes" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       result = component.send(:number_to_human_size, 0)
       expect(result).to eq("0 Bytes")
     end
 
     it "formats bytes" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       result = component.send(:number_to_human_size, 512)
       expect(result).to match(/^\d+\.\d+\s+Bytes$/)
     end
 
     it "formats kilobytes" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       result = component.send(:number_to_human_size, 1024)
       expect(result).to match(/^\d+\.\d+\s+KB$/)
     end
 
     it "formats megabytes" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       result = component.send(:number_to_human_size, 1024 * 1024)
       expect(result).to match(/^\d+\.\d+\s+MB$/)
     end
 
     it "formats gigabytes" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       result = component.send(:number_to_human_size, 1024 * 1024 * 1024)
       expect(result).to match(/^\d+\.\d+\s+GB$/)
     end
 
     it "formats terabytes" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       result = component.send(:number_to_human_size, 1024 * 1024 * 1024 * 1024)
       expect(result).to match(/^\d+\.\d+\s+TB$/)
     end
@@ -121,12 +121,11 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
   describe "url_for helper" do
     it "returns hash symbol for non-existent file" do
       component = described_class.new(files: [], selected_file: nil)
-      
+
       result = component.send(:url_for, Object.new)
       expect(result).to eq("#")
     end
   end
-
 
   describe "initialization with various inputs" do
     it "accepts empty files list" do

@@ -4,18 +4,18 @@ module Panda
   module Core
     module Admin
       class ButtonComponent < Panda::Core::Base
-    def initialize(text: "Button", action: nil, href: "#", icon: nil, size: :regular, id: nil, as_button: false, **attrs)
-    @text = text
-    @action = action
-    @href = href
-    @icon = icon
-    @size = size
-    @id = id
-    @as_button = as_button
-      super(**attrs)
-    end
+        def initialize(text: "Button", action: nil, href: "#", icon: nil, size: :regular, id: nil, as_button: false, **attrs)
+          @text = text
+          @action = action
+          @href = href
+          @icon = icon
+          @size = size
+          @id = id
+          @as_button = as_button
+          super(**attrs)
+        end
 
-    attr_reader :text, :action, :href, :icon, :size, :id, :as_button
+        attr_reader :text, :action, :href, :icon, :size, :id, :as_button
 
         def default_attrs
           base = {

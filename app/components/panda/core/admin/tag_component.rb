@@ -4,15 +4,14 @@ module Panda
   module Core
     module Admin
       class TagComponent < Panda::Core::Base
-    def initialize(status: :active, text:, page_type:, **attrs)
-    @status = status
-    @text = text
-    @page_type = page_type
-      super(**attrs)
-    end
+        def initialize(text:, page_type:, status: :active, **attrs)
+          @status = status
+          @text = text
+          @page_type = page_type
+          super(**attrs)
+        end
 
-    attr_reader :status, :text, :page_type
-
+        attr_reader :status, :text, :page_type
 
         def computed_text
           if @page_type

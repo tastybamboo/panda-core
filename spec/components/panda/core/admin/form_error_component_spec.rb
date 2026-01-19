@@ -28,7 +28,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
     it "does not render when model has no errors" do
       user = instance_double("User", errors: double(full_messages: []))
       component = described_class.new(model: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output.native.to_html.strip).to be_empty
     end
@@ -39,7 +39,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
       errors = double(full_messages: ["Email can't be blank"])
       user = double("User", errors: errors)
       component = described_class.new(model: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("bg-red-50")
@@ -50,7 +50,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
       errors = double(full_messages: ["Email can't be blank", "Password too short"])
       user = double("User", errors: errors)
       component = described_class.new(model: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("Email can't be blank")
       expect(output).to have_text("Password too short")
@@ -60,7 +60,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
       errors = double(full_messages: ["Error message"])
       user = double("User", errors: errors)
       component = described_class.new(model: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
       expect(html).to include("mb-4")
@@ -72,7 +72,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
   describe "rendering with nil model" do
     it "does not render when model is nil" do
       component = described_class.new(model: nil)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output.native.to_html.strip).to be_empty
     end
@@ -93,7 +93,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
       errors = instance_double(full_messages: ["Error"])
       user = instance_double("User", errors: errors)
       component = described_class.new(model: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("div[class*='bg-red-50']")
       expect(output).to have_css("div[class*='border']")
@@ -111,10 +111,10 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
       )
       user = instance_double("User", errors: errors)
       component = described_class.new(model: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("User name can't be blank")
       expect(output).to have_text("User email is invalid")
     end
   end
-
+end

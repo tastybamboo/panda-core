@@ -4,26 +4,26 @@ module Panda
   module Core
     module Admin
       class SlideoverComponent < Panda::Core::Base
-    def initialize(title: "Settings", open: false, **attrs)
-    @title = title
-    @open = open
-      super(**attrs)
-    end
-
-    attr_reader :title, :open
-
-    def before_render
-      # Capture main content block if provided
-      if content.present?
-        if defined?(view_context) && view_context
-          @content_html = view_context.capture { content.call }
-        else
-          @content_block = content
+        def initialize(title: "Settings", open: false, **attrs)
+          @title = title
+          @open = open
+          super(**attrs)
         end
-      end
-    end
 
-    def footer(&block)
+        attr_reader :title, :open
+
+        def before_render
+          # Capture main content block if provided
+          if content.present?
+            if defined?(view_context) && view_context
+              @content_html = view_context.capture { content.call }
+            else
+              @content_block = content
+            end
+          end
+        end
+
+        def footer(&block)
           if defined?(view_context) && view_context
             @footer_html = view_context.capture(&block)
           else
@@ -55,8 +55,7 @@ module Panda
             stroke: "currentColor",
             stroke_width: "1.5",
             aria: {hidden: "true"},
-            class: "size-6"
-          ) do
+            class: "size-6") do
             tag.path(
               d: "M6 18 18 6M6 6l12 12",
               stroke_linecap: "round",

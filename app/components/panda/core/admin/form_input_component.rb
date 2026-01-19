@@ -4,18 +4,18 @@ module Panda
   module Core
     module Admin
       class FormInputComponent < Panda::Core::Base
-    def initialize(name: "", value:, type: :text, placeholder:, required: false, disabled: false, autocomplete:, **attrs)
-    @name = name
-    @value = value
-    @type = type
-    @placeholder = placeholder
-    @required = required
-    @disabled = disabled
-    @autocomplete = autocomplete
-      super(**attrs)
-    end
+        def initialize(value:, placeholder:, autocomplete:, name: "", type: :text, required: false, disabled: false, **attrs)
+          @name = name
+          @value = value
+          @type = type
+          @placeholder = placeholder
+          @required = required
+          @disabled = disabled
+          @autocomplete = autocomplete
+          super(**attrs)
+        end
 
-    attr_reader :name, :value, :type, :placeholder, :required, :disabled, :autocomplete
+        attr_reader :name, :value, :type, :placeholder, :required, :disabled, :autocomplete
 
         def default_attrs
           base_attrs = {

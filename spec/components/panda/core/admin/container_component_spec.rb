@@ -6,7 +6,7 @@ RSpec.describe Panda::Core::Admin::ContainerComponent, type: :component do
   describe "rendering" do
     it "renders a container with main content" do
       render_inline(described_class.new) { "Main content" }
-      
+
       expect(page).to have_css("main.overflow-auto.flex-1")
       expect(page).to have_text("Main content")
     end

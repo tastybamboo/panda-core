@@ -135,9 +135,4 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent do
       expect(html).to include("focus:ring")
     end
   end
-
-      expect(source).to include("@disabled")
-      expect(source).to include("@include_blank")
-    end
-  end
 end

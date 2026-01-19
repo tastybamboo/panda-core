@@ -4,16 +4,15 @@ module Panda
   module Core
     module Admin
       class FlashMessageComponent < Panda::Core::Base
-    def initialize(message: "", kind: :default, temporary: true, subtitle: nil, **attrs)
-    @message = message
-    @kind = kind
-    @temporary = temporary
-    @subtitle = subtitle
-      super(**attrs)
-    end
+        def initialize(message: "", kind: :default, temporary: true, subtitle: nil, **attrs)
+          @message = message
+          @kind = kind
+          @temporary = temporary
+          @subtitle = subtitle
+          super(**attrs)
+        end
 
-    attr_reader :message, :kind, :temporary, :subtitle
-
+        attr_reader :message, :kind, :temporary, :subtitle
 
         def notification_attrs
           {
@@ -48,16 +47,14 @@ module Panda
             content_tag(:button,
               type: "button",
               class: "inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 dark:hover:text-white dark:focus:outline-blue-500",
-              data: {action: "alert#close"}
-            ) do
+              data: {action: "alert#close"}) do
               sr_only = content_tag(:span, "Close", class: "sr-only")
               icon_svg = content_tag(:svg,
                 viewBox: "0 0 20 20",
                 fill: "currentColor",
                 data: {slot: "icon"},
                 aria: {hidden: "true"},
-                class: "size-5"
-              ) do
+                class: "size-5") do
                 tag.path(
                   d: "M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
                 )

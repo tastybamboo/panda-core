@@ -4,13 +4,12 @@ module Panda
   module Core
     module Admin
       class FormErrorComponent < Panda::Core::Base
-    def initialize(model:, **attrs)
-    @model = model
-      super(**attrs)
-    end
+        def initialize(model:, **attrs)
+          @model = model
+          super(**attrs)
+        end
 
-    attr_reader :model
-
+        attr_reader :model
 
         def default_attrs
           {

@@ -64,4 +64,4 @@ RSpec.describe Panda::Core::Shared::HeaderComponent do
       expect(html).to include("bg-gradient-admin")
     end
   end
-
+end

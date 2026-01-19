@@ -77,4 +77,4 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
       expect(html).to include("fa-")
     end
   end
-
+end

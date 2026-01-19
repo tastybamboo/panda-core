@@ -139,6 +139,4 @@ RSpec.describe Panda::Core::UI::Card do
       expect(html).to include("overflow-hidden")
     end
   end
-
-  end
 end

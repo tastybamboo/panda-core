@@ -65,4 +65,4 @@ RSpec.describe Panda::Core::Admin::MainLayoutComponent do
       expect(html).to include("e.key === 'Escape'")
     end
   end
-
+end

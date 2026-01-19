@@ -61,10 +61,10 @@ module Panda
             :all,
             {
               "Cache-Control" => if defined?(::Rails) && ::Rails.env.development?
-                "no-cache, no-store, must-revalidate"
-              else
-                "public, max-age=31536000"
-              end
+                                   "no-cache, no-store, must-revalidate"
+                                 else
+                                   "public, max-age=31536000"
+                                 end
             }
           ]
         ]

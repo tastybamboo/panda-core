@@ -26,13 +26,13 @@ module Panda
       #   )
       #
       class BreadcrumbComponent < Panda::Core::Base
-    def initialize(items: [], show_back: true, **attrs)
-    @items = items
-    @show_back = show_back
-      super(**attrs)
-    end
+        def initialize(items: [], show_back: true, **attrs)
+          @items = items
+          @show_back = show_back
+          super(**attrs)
+        end
 
-    attr_reader :items, :show_back
+        attr_reader :items, :show_back
 
         private
 
@@ -52,8 +52,7 @@ module Panda
             fill: "currentColor",
             data: {slot: "icon"},
             aria: {hidden: "true"},
-            class: "mr-1 -ml-1 size-5 shrink-0 text-gray-400 dark:text-gray-500"
-          ) do
+            class: "mr-1 -ml-1 size-5 shrink-0 text-gray-400 dark:text-gray-500") do
             tag.path(
               d: "M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z",
               clip_rule: "evenodd",
@@ -68,8 +67,7 @@ module Panda
             fill: "currentColor",
             data: {slot: "icon"},
             aria: {hidden: "true"},
-            class: "size-5 shrink-0 text-gray-400 dark:text-gray-500"
-          ) do
+            class: "size-5 shrink-0 text-gray-400 dark:text-gray-500") do
             tag.path(
               d: "M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z",
               clip_rule: "evenodd",

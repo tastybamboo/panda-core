@@ -96,14 +96,14 @@ RSpec.describe Panda::Core::Admin::FormInputComponent do
       component = described_class.new(name: "email", value: "", required: true, placeholder: "")
       output = Capybara.string(component.call)
 
-      expect(output).to have_css('input[required]')
+      expect(output).to have_css("input[required]")
     end
 
     it "does not set required when required: false" do
       component = described_class.new(name: "email", value: "", required: false, placeholder: "")
       output = Capybara.string(component.call)
 
-      expect(output).not_to have_css('input[required]')
+      expect(output).not_to have_css("input[required]")
     end
   end
 
@@ -112,7 +112,7 @@ RSpec.describe Panda::Core::Admin::FormInputComponent do
       component = described_class.new(name: "email", value: "", disabled: true, placeholder: "")
       output = Capybara.string(component.call)
 
-      expect(output).to have_css('input[disabled]')
+      expect(output).to have_css("input[disabled]")
     end
 
     it "applies disabled styling" do
@@ -182,12 +182,6 @@ RSpec.describe Panda::Core::Admin::FormInputComponent do
       output = Capybara.string(component.call)
 
       expect(output).to have_css("input[class*='focus:ring']")
-    end
-  end
-
-      expect(source).to include("@required")
-      expect(source).to include("@disabled")
-      expect(source).to include("@autocomplete")
     end
   end
 end

@@ -4,14 +4,14 @@ module Panda
   module Core
     module Admin
       class UserActivityComponent < Panda::Core::Base
-    def initialize(model:, at:, user:, **attrs)
-    @model = model
-    @at = at
-    @user = user
-      super(**attrs)
-    end
+        def initialize(model:, at:, user:, **attrs)
+          @model = model
+          @at = at
+          @user = user
+          super(**attrs)
+        end
 
-    attr_reader :model, :at, :user
+        attr_reader :model, :at, :user
 
         include ActionView::Helpers::DateHelper
 

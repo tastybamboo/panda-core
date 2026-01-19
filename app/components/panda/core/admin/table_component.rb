@@ -27,7 +27,7 @@ module Panda
         def render_cell_content(row, cell_block)
           # Call the block with the row and get the result
           result = cell_block.call(row)
-          
+
           # Handle different return types
           if result.is_a?(String)
             result
@@ -40,9 +40,7 @@ module Panda
 
         private
 
-        def columns
-          @columns
-        end
+        attr_reader :columns
 
         def pluralized_term
           @pluralized_term ||= ActiveSupport::Inflector.pluralize(term)

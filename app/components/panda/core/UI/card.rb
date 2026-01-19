@@ -29,14 +29,14 @@ module Panda
       #   end
       #
       class Card < Panda::Core::Base
-    def initialize(padding: :medium, elevation: :low, border: true, **attrs)
-    @padding = padding
-    @elevation = elevation
-    @border = border
-      super(**attrs)
-    end
+        def initialize(padding: :medium, elevation: :low, border: true, **attrs)
+          @padding = padding
+          @elevation = elevation
+          @border = border
+          super(**attrs)
+        end
 
-    attr_reader :padding, :elevation, :border
+        attr_reader :padding, :elevation, :border
 
         def default_attrs
           {

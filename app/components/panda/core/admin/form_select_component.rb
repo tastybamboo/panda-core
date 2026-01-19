@@ -4,17 +4,17 @@ module Panda
   module Core
     module Admin
       class FormSelectComponent < Panda::Core::Base
-    def initialize(name: "", options: [], prompt:, required: false, disabled: false, include_blank: false, **attrs)
-    @name = name
-    @options = options
-    @prompt = prompt
-    @required = required
-    @disabled = disabled
-    @include_blank = include_blank
-      super(**attrs)
-    end
+        def initialize(prompt:, name: "", options: [], required: false, disabled: false, include_blank: false, **attrs)
+          @name = name
+          @options = options
+          @prompt = prompt
+          @required = required
+          @disabled = disabled
+          @include_blank = include_blank
+          super(**attrs)
+        end
 
-    attr_reader :name, :options, :prompt, :required, :disabled, :include_blank
+        attr_reader :name, :options, :prompt, :required, :disabled, :include_blank
 
         def default_attrs
           base_attrs = {

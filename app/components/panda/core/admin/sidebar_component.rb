@@ -16,7 +16,7 @@ module Panda
         private
 
         def default_attrs
-          { class: "flex flex-col flex-1" }
+          {class: "flex flex-col flex-1"}
         end
       end
     end

@@ -16,7 +16,7 @@ module Panda
         private
 
         def default_attrs
-          { class: "mt-5" }
+          {class: "mt-5"}
         end
 
         def dashboard_cards
