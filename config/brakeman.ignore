@@ -24,28 +24,27 @@
       "note": "This does not use user input and is based on environment variables and the current folder"
     },
     {
-      "warning_type": "Command Injection",
-      "warning_code": 14,
-      "fingerprint": "d3c339f054cbd511956e04eaf8763bc722bd2e4559a1c1fec58749abef9792cd",
-      "check_name": "Execute",
-      "message": "Possible command injection",
-      "file": "lib/panda/core/testing/support/system/chrome_verification.rb",
-      "line": 43,
-      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
-      "code": "Process.spawn(*[BrowserPath.resolve, v.nil? ? (\"--#{k}\") : (\"--#{k}=#{v}\"), \"about:blank\"], :out => (File::NULL), :err => (File::NULL))",
+      "warning_type": "Cross-Site Request Forgery",
+      "warning_code": 86,
+      "fingerprint": "fdf51189b80e32937b18aea1d088b9de2397d9a958f4a961030b37ebeae4e53d",
+      "check_name": "ForgerySetting",
+      "message": "`protect_from_forgery` should be configured with `with: :exception`",
+      "file": "lib/panda/core/testing/view_component_test_controller.rb",
+      "line": 7,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
+      "code": "protect_from_forgery(:with => :null_session)",
       "render_path": null,
       "location": {
-        "type": "method",
-        "class": "Panda::Core::Testing::Support::System::ChromeVerification",
-        "method": "s(:self).verify!"
+        "type": "controller",
+        "controller": "ViewComponentTestController"
       },
-      "user_input": "k",
+      "user_input": null,
       "confidence": "Medium",
       "cwe_id": [
-        77
+        352
       ],
-      "note": "Chrome verification uses a fixed set of browser flags from CHROME_FLAGS constant; no user input is accepted"
+      "note": ""
     }
   ],
-  "brakeman_version": "7.1.1"
+  "brakeman_version": "7.1.2"
 }
