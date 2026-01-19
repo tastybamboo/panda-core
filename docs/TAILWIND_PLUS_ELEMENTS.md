@@ -68,7 +68,7 @@ For production environments, you may want to self-host:
 
 ## Usage with Phlex
 
-Tailwind Plus Elements work seamlessly with Phlex components. The custom elements handle all the JavaScript behavior automatically.
+Tailwind Plus Elements work seamlessly with ViewComponent components. The custom elements handle all the JavaScript behavior automatically.
 
 ### Example: Dropdown Menu
 
@@ -137,7 +137,7 @@ class MyDropdownComponent < Panda::Core::Base
   end
 
   def tag_name(name, **attrs, &block)
-    # Phlex doesn't have built-in support for custom elements
+    # ViewComponent doesn't have built-in support for custom elements
     # So we use the generic 'tag' method
     public_send(name.tr("-", "_").to_sym, **attrs, &block) rescue send(:tag, name, **attrs, &block)
   end

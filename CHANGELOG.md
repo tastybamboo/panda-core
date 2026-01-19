@@ -653,11 +653,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.0] - 2025-10-30
 
 ### Added
-- Complete Phlex component architecture for admin UI
+- Complete ViewComponent component architecture for admin UI
   - Base component class with Literal properties support
   - Tailwind CSS class merging with TailwindMerge
   - Development-mode debugging comments
-- New admin UI components (Phlex-based):
+- New admin UI components (ViewComponent-based):
   - ButtonComponent with action-based styling
   - ContainerComponent with slot support
   - FlashMessageComponent with auto-dismiss
@@ -689,7 +689,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Load Font Awesome 7.1.0 from CDN
 
 ### Changed
-- Migrated from ERB templates to Phlex components
+- Migrated from ERB templates to ViewComponent components
 - All admin controllers now inherit from BaseController
 - Unified configuration with consistent task naming
 - Disabled asset caching in development mode

@@ -3,7 +3,7 @@
 module Panda
   module Core
     module UI
-      # Modern Phlex-based button component with type-safe props.
+      # Modern ViewComponent-based button component with type-safe props.
       #
       # Supports both <button> and <a> elements based on whether an href is provided.
       # Follows Tailwind UI Plus styling patterns with dark mode support.
