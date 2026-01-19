@@ -4,7 +4,7 @@ module Panda
   module Core
     module Admin
       class FileGalleryComponent < Panda::Core::Base
-        def initialize(selected_file:, files: [], **attrs)
+        def initialize(selected_file: nil, files: [], **attrs)
           @files = files
           @selected_file = selected_file
           super(**attrs)
