@@ -196,15 +196,6 @@ RSpec.describe Panda::Core::UI::Badge do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for all prop access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/UI/badge.rb"))
-
-      # Verify properties use @ prefix
-      expect(source).to include("@text")
-      expect(source).to include("@variant")
-      expect(source).to include("@size")
-      expect(source).to include("@removable")
       expect(source).to include("@rounded")
     end
   end

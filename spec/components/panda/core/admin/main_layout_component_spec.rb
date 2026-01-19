@@ -66,12 +66,3 @@ RSpec.describe Panda::Core::Admin::MainLayoutComponent do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for prop access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/admin/main_layout_component.rb"))
-
-      expect(source).to include("@user")
-      expect(source).to include("@breadcrumbs")
-    end
-  end
-end

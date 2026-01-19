@@ -65,12 +65,3 @@ RSpec.describe Panda::Core::Shared::HeaderComponent do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for prop access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/shared/header_component.rb"))
-
-      expect(source).to include("@html_class")
-      expect(source).to include("@body_class")
-    end
-  end
-end

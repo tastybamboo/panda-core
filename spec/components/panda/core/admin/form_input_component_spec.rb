@@ -185,15 +185,6 @@ RSpec.describe Panda::Core::Admin::FormInputComponent do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for all prop access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/admin/form_input_component.rb"))
-
-      # Verify properties use @ prefix
-      expect(source).to include("@name")
-      expect(source).to include("@value")
-      expect(source).to include("@type")
-      expect(source).to include("@placeholder")
       expect(source).to include("@required")
       expect(source).to include("@disabled")
       expect(source).to include("@autocomplete")

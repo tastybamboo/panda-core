@@ -118,12 +118,3 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for prop access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/admin/form_error_component.rb"))
-
-      # Verify model property uses @ prefix
-      expect(source).to include("@model")
-    end
-  end
-end

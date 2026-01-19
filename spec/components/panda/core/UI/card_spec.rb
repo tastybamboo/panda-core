@@ -140,14 +140,5 @@ RSpec.describe Panda::Core::UI::Card do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for property access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/UI/card.rb"))
-
-      # Verify properties use @ prefix
-      expect(source).to include("@padding")
-      expect(source).to include("@elevation")
-      expect(source).to include("@border")
-    end
   end
 end

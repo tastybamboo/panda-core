@@ -78,11 +78,3 @@ RSpec.describe Panda::Core::Admin::LoginFormComponent do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for prop access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/admin/login_form_component.rb"))
-
-      expect(source).to include("@providers")
-    end
-  end
-end

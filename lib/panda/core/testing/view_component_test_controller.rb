@@ -2,6 +2,10 @@
 
 # Simple controller for ViewComponent testing
 class ViewComponentTestController < ActionController::Base
+  # Disable CSRF protection for test controller
+  # This is intentional as this controller is only used for component testing
+  protect_from_forgery with: :null_session
+
   # Include necessary helpers
   include Rails.application.routes.url_helpers if defined?(Rails.application)
 

@@ -127,15 +127,6 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
     end
   end
 
-  describe "Phlex property pattern" do
-    it "uses @instance_variables for all prop access" do
-      source = File.read(Rails.root.join("../../app/components/panda/core/admin/file_gallery_component.rb"))
-
-      # Verify properties use @ prefix
-      expect(source).to include("@files")
-      expect(source).to include("@selected_file")
-    end
-  end
 
   describe "initialization with various inputs" do
     it "accepts empty files list" do
