@@ -6,17 +6,14 @@ module Panda
       class TableComponent < Panda::Core::Base
         attr_reader :term, :rows, :icon
 
-        def initialize(term: "", rows: [], icon: "", **attrs)
+        def initialize(term: "", rows: [], icon: "", **attrs, &block)
           @term = term
           @rows = rows
           @icon = icon
           @columns = []
           super(**attrs)
-        end
-
-        def before_render
-          # Execute the block to populate columns using the DSL
-          instance_eval(&content) if content.present?
+          # Execute the block if provided to populate columns
+          yield self if block_given?
         end
 
         def column(label, width: nil, &cell_block)
@@ -38,9 +35,9 @@ module Panda
           end
         end
 
-        private
-
         attr_reader :columns
+
+        private
 
         def pluralized_term
           @pluralized_term ||= ActiveSupport::Inflector.pluralize(term)

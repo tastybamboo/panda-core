@@ -19,7 +19,7 @@
     <%# Rows %>
      <div class="table-row-group">
        <% rows.each do |row| %>
-         <div class="table-row relative bg-gray-500/5 hover:bg-gray-500/20" data-post_id="<%= row.id %>">
+         <div class="table-row relative bg-gray-500/5 hover:bg-gray-500/20" data-<%= term %>-id="<%= row.id %>">
            <% columns.each do |column| %>
             <div class="table-cell py-5 px-3 h-20 text-sm align-middle whitespace-nowrap border-b border-gray-700/20">
               <%= render_cell_content(row, column.cell) %>
