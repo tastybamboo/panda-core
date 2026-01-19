@@ -1,11 +1,11 @@
 <div class="col-span-3 mt-5 rounded-lg shadow-md bg-gray-800 shadow-inherit/20">
-  <% if heading? %>
-    <%= heading %>
+  <% if heading_slot? %>
+    <%= heading_slot %>
   <% end %>
 
   <div class="p-4 text-black bg-white rounded-b-lg">
-    <% if body? %>
-      <%= body %>
+    <% if body_slot? %>
+      <%= body_slot %>
     <% end %>
   </div>
 </div>

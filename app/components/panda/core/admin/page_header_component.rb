@@ -33,20 +33,17 @@ module Panda
       #   end
       #
       class PageHeaderComponent < Panda::Core::Base
-        def initialize(title: "", breadcrumbs: nil, show_back: true, **attrs)
+        def initialize(title: "", breadcrumbs: nil, show_back: true, **attrs, &block)
           @title = title
           @breadcrumbs = breadcrumbs
           @show_back = show_back
           @buttons = []
           super(**attrs)
+          # Execute the block to capture button definitions
+          yield self if block_given?
         end
 
         attr_reader :title, :breadcrumbs, :show_back
-
-        def before_render
-          # Allow buttons to be defined via block
-          instance_eval(&content) if content.present?
-        end
 
         # Define a button to be rendered in the header actions area
         #
