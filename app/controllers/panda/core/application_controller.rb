@@ -8,11 +8,23 @@ module Panda
       before_action :set_current_request_details
       before_action :initialize_breadcrumbs
 
+      # Prioritize markdown format for AI tools (Rails 8.1+)
+      # When Claude Code sends "Accept: text/markdown, text/html, */*", Rails would serve HTML by default.
+      # This reorders formats to prioritize markdown when it's the first accepted format.
+      before_action :prioritize_markdown_format
+
       helper_method :current_user, :user_signed_in?, :breadcrumbs
 
       add_flash_types :success, :error, :warning, :info
 
       private
+
+      # Prioritize markdown format when it's the first accepted format
+      # This ensures AI tools like Claude Code receive markdown responses instead of HTML
+      def prioritize_markdown_format
+        return unless request.accepts.first&.to_s == "text/markdown"
+        request.formats = [:md, :html]
+      end
 
       def set_current_request_details
         Current.request_id = request.uuid
