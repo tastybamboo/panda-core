@@ -180,7 +180,7 @@ RSpec.configure do |config|
 
   # Stub Panda Core helpers for component tests
   config.before(:each, type: :component) do
-    if defined?(ViewComponent::TestHelpers) && respond_to?(:vc_test_controller)
+    if defined?(ViewComponent::TestHelpers)
       allow_any_instance_of(ActionView::Base).to receive(:panda_core_stylesheet).and_return("")
       allow_any_instance_of(ActionView::Base).to receive(:panda_core_javascript).and_return("")
       allow_any_instance_of(ActionView::Base).to receive(:csrf_meta_tags).and_return("")
@@ -193,12 +193,28 @@ RSpec.configure do |config|
         )
       )
 
-      # Stub panda_core routes with _with_routes support
-      panda_core_routes = double(
-        admin_logout_path: "/admin/logout",
-        admin_my_profile_path: "/admin/my_profile"
-      )
-      allow(panda_core_routes).to receive(:_with_routes).and_return(panda_core_routes)
+      # Stub link_to and button_to to avoid routing complexity in component tests
+      allow_any_instance_of(ActionView::Base).to receive(:link_to) do |*args, &block|
+        href = args[0].is_a?(Hash) ? "#" : args[0]
+        options = args.find { |a| a.is_a?(Hash) } || {}
+        css_class = options[:class] || ""
+        content = block ? block.call : args[1] || href
+        "<a href=\"#{href}\" class=\"#{css_class}\">#{content}</a>".html_safe
+      end
+
+      allow_any_instance_of(ActionView::Base).to receive(:button_to) do |*args, &block|
+        url = args[0]
+        options = args[1] || {}
+        css_class = options[:class] || ""
+        content = block ? block.call : "Button"
+        id_attr = options[:id] ? " id=\"#{options[:id]}\"" : ""
+        "<button class=\"#{css_class}\"#{id_attr}>#{content}</button>".html_safe
+      end
+
+      # Stub panda_core routes to return simple paths
+      panda_core_routes = double("panda_core_routes")
+      allow(panda_core_routes).to receive(:admin_logout_path).and_return("/admin/logout")
+      allow(panda_core_routes).to receive(:admin_my_profile_path).and_return("/admin/my_profile")
       allow_any_instance_of(ActionView::Base).to receive(:panda_core).and_return(panda_core_routes)
 
       # Stub current_user
