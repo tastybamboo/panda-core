@@ -10,7 +10,7 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
     end
 
     it "accepts selected_file property without NameError" do
-      file = instance_double("File", id: 1)
+      file = double("FileAttachment", id: 1)
       component = described_class.new(files: [file], selected_file: file)
       expect(component).to be_a(described_class)
     end
@@ -135,8 +135,8 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
 
     it "accepts multiple files" do
       files = [
-        instance_double("File", id: 1),
-        instance_double("File", id: 2)
+        double("FileAttachment", id: 1),
+        double("FileAttachment", id: 2)
       ]
       component = described_class.new(files: files)
       expect(component.files).to eq(files)
@@ -148,7 +148,7 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
     end
 
     it "accepts file object as selected_file" do
-      file = instance_double("File", id: 1)
+      file = double("FileAttachment", id: 1)
       component = described_class.new(selected_file: file)
       expect(component.selected_file).to eq(file)
     end

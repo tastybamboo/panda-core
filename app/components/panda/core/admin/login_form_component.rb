@@ -6,6 +6,8 @@ module Panda
       # Login form component for OAuth provider authentication
       # Displays configured authentication providers for user login
       class LoginFormComponent < Panda::Core::Base
+        include Panda::Core::SessionsHelper
+
         def initialize(providers: [], **attrs)
           @providers = providers
           super(**attrs)

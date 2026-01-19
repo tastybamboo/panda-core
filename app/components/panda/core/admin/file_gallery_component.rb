@@ -54,6 +54,8 @@ module Panda
           else
             "#"
           end
+        rescue StandardError
+          "#"
         end
 
         # Helper method for human-readable file sizes

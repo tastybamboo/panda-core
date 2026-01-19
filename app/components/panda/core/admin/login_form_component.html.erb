@@ -1,4 +1,4 @@
-<div <% if @attrs.any? %><%= tag.attributes(@attrs) %><% end %>>
+<div <%= tag.attributes(**attrs) %>>
   <div class="text-center sm:mx-auto sm:w-full sm:max-w-sm">
     <% if Panda::Core.config.login_logo_path %>
       <img src="<%= Panda::Core.config.login_logo_path %>" class="py-2 mx-auto w-auto h-32">
@@ -13,7 +13,7 @@
       <% provider_config = Panda::Core.config.authentication_providers[provider] %>
       <% provider_path = provider_config&.dig(:path_name) || provider %>
       <div class="mt-4 text-center sm:mx-auto sm:w-full sm:max-w-sm">
-        <%= form_tag "#{Panda::Core.config.admin_path}/auth/#{provider_path}", method: "post", data: {turbo: false} do %>
+        <%= helpers.form_tag "#{Panda::Core.config.admin_path}/auth/#{provider_path}", method: "post", data: {turbo: false} do %>
           <button type="submit" id="button-sign-in-<%= provider_path %>" class="inline-flex gap-x-2 items-center py-2.5 px-3.5 mx-auto mb-4 bg-white text-gray-900 rounded-md border min-w-56 border-neutral-400 hover:bg-gray-50">
             <i class="<%= oauth_provider_non_brand?(provider) ? 'fa-solid' : 'fa-brands' %> fa-<%= oauth_provider_icon(provider) %> text-xl mr-1"></i>
             Sign in with <%= oauth_provider_name(provider, provider_config) %>
