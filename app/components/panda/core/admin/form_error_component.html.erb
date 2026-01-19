@@ -1,9 +1,7 @@
-<% if should_render? %>
-  <%= content_tag :div, @attrs do %>
-    <%= content_tag :div, class: "text-sm text-red-600" do %>
-      <% error_messages.each do |message| %>
-        <p><%= message %></p>
-      <% end %>
+<%= content_tag :div, **attrs do %>
+  <%= content_tag :div, class: "text-sm text-red-600" do %>
+    <% error_messages.each do |message| %>
+      <p><%= message %></p>
     <% end %>
   <% end %>
 <% end %>

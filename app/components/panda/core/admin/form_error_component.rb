@@ -17,11 +17,11 @@ module Panda
           }
         end
 
-        private
-
-        def should_render?
+        def render?
           error_messages.any?
         end
+
+        private
 
         def error_messages
           @error_messages ||= if @model&.respond_to?(:errors)

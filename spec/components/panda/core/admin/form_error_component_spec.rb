@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::FormErrorComponent do
+RSpec.describe Panda::Core::Admin::FormErrorComponent, type: :component do
   describe "initialization and property access" do
     it "accepts model property without NameError" do
       user = instance_double("User")
@@ -17,7 +17,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
     end
 
     it "accepts model with errors" do
-      errors = instance_double(full_messages: ["Email can't be blank"])
+      errors = double(full_messages: ["Email can't be blank"])
       user = instance_double("User", errors: errors)
       component = described_class.new(model: user)
       expect(component).to be_a(described_class)
@@ -28,9 +28,9 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
     it "does not render when model has no errors" do
       user = instance_double("User", errors: double(full_messages: []))
       component = described_class.new(model: user)
-      output = Capybara.string(render_inline(component).to_html)
+      render_inline(component)
 
-      expect(output.native.to_html.strip).to be_empty
+      expect(rendered_content.strip).to be_empty
     end
   end
 
@@ -72,9 +72,9 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
   describe "rendering with nil model" do
     it "does not render when model is nil" do
       component = described_class.new(model: nil)
-      output = Capybara.string(render_inline(component).to_html)
+      render_inline(component)
 
-      expect(output.native.to_html.strip).to be_empty
+      expect(rendered_content.strip).to be_empty
     end
   end
 
@@ -90,7 +90,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
 
   describe "default_attrs" do
     it "provides correct default attributes" do
-      errors = instance_double(full_messages: ["Error"])
+      errors = double(full_messages: ["Error"])
       user = instance_double("User", errors: errors)
       component = described_class.new(model: user)
       output = Capybara.string(render_inline(component).to_html)
@@ -103,7 +103,7 @@ RSpec.describe Panda::Core::Admin::FormErrorComponent do
 
   describe "error message formatting" do
     it "displays full error messages" do
-      errors = instance_double(
+      errors = double(
         full_messages: [
           "User name can't be blank",
           "User email is invalid"
