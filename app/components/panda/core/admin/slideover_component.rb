@@ -4,6 +4,8 @@ module Panda
   module Core
     module Admin
       class SlideoverComponent < Panda::Core::Base
+        renders_one :footer_slot
+
         def initialize(title: "Settings", open: false, **attrs)
           @title = title
           @open = open
@@ -20,6 +22,7 @@ module Panda
           end
         end
 
+        # Legacy method for backwards compatibility
         def footer(&block)
           if defined?(view_context) && view_context
             @footer_html = view_context.capture(&block)
