@@ -3,8 +3,8 @@
 module Panda
   module Core
     class Engine < ::Rails::Engine
-      # Phlex configuration
-      module PhlexConfig
+      # ViewComponent configuration
+      module ViewComponentConfig
         extend ActiveSupport::Concern
 
         included do
@@ -26,12 +26,10 @@ module Panda
             end
           end
 
-          # Load Phlex base component after Rails application is initialized
+          # Load ViewComponent base component after Rails application is initialized
           # This ensures Rails.application.routes is available
-          initializer "panda_core.phlex_base", after: :load_config_initializers do
-            require "phlex"
-            require "phlex-rails"
-            require "literal"
+          initializer "panda_core.view_component_base", after: :load_config_initializers do
+            require "view_component"
             require "tailwind_merge"
 
             # Load the base component

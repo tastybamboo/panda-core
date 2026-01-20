@@ -66,226 +66,169 @@ For production environments, you may want to self-host:
 
 **Note:** A commercial license is required to use Tailwind Plus Elements. Purchase [Tailwind Plus](https://tailwindui.com/plus) to obtain a license.
 
-## Usage with Phlex
+## Usage with ViewComponent
 
-Tailwind Plus Elements work seamlessly with Phlex components. The custom elements handle all the JavaScript behavior automatically.
+Tailwind Plus Elements work seamlessly with ViewComponent components. The custom elements handle all the JavaScript behavior automatically.
 
 ### Example: Dropdown Menu
 
 ```ruby
-class MyDropdownComponent < Panda::Core::Base
-  def view_template
-    div(class: "relative inline-block text-left") do
-      # Dropdown trigger button
-      button(
-        type: "button",
-        popovertarget: "my-dropdown",
-        class: "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-      ) do
-        plain "Options"
-        # Chevron icon
-        svg(class: "ml-2 -mr-1 h-5 w-5", viewBox: "0 0 20 20", fill: "currentColor") do |s|
-          s.path(
-            fill_rule: "evenodd",
-            d: "M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z",
-            clip_rule: "evenodd"
-          )
-        end
-      end
+class MyDropdownComponent < ViewComponent::Base
+  erb_template <<~ERB
+    <div class="relative inline-block text-left">
+      <!-- Dropdown trigger button -->
+      <button
+        type="button"
+        popovertarget="my-dropdown"
+        class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+        Options
+        <!-- Chevron icon -->
+        <svg class="ml-2 -mr-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
 
-      # Dropdown menu (custom element)
-      el_popover(
-        id: "my-dropdown",
-        popover: "auto",
-        class: "mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5"
-      ) do
-        el_menu(role: "menu", class: "py-1") do
-          el_menu_item(role: "menuitem") do
-            a(
-              href: "#",
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            ) { "Account settings" }
-          end
-          el_menu_item(role: "menuitem") do
-            a(
-              href: "#",
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            ) { "Support" }
-          end
-          el_menu_item(role: "menuitem") do
-            a(
-              href: "#",
-              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            ) { "Sign out" }
-          end
-        end
-      end
-    end
-  end
-
-  # Custom element helper methods
-  def el_popover(**attrs, &block)
-    tag_name("el-popover", **attrs, &block)
-  end
-
-  def el_menu(**attrs, &block)
-    tag_name("el-menu", **attrs, &block)
-  end
-
-  def el_menu_item(**attrs, &block)
-    tag_name("el-menu-item", **attrs, &block)
-  end
-
-  def tag_name(name, **attrs, &block)
-    # Phlex doesn't have built-in support for custom elements
-    # So we use the generic 'tag' method
-    public_send(name.tr("-", "_").to_sym, **attrs, &block) rescue send(:tag, name, **attrs, &block)
-  end
+      <!-- Dropdown menu (custom element) -->
+      <el-popover
+        id="my-dropdown"
+        popover="auto"
+        class="mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+        <el-menu role="menu" class="py-1">
+          <el-menu-item role="menuitem">
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Account settings
+            </a>
+          </el-menu-item>
+          <el-menu-item role="menuitem">
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Support
+            </a>
+          </el-menu-item>
+          <el-menu-item role="menuitem">
+            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Sign out
+            </a>
+          </el-menu-item>
+        </el-menu>
+      </el-popover>
+    </div>
+  ERB
 end
 ```
 
 ### Example: Dialog/Modal
 
 ```ruby
-class MyModalComponent < Panda::Core::Base
-  prop :id, String, default: "my-dialog"
-  prop :title, String
-  prop :trigger_text, String, default: "Open Dialog"
-
-  def view_template
-    # Trigger button
-    button(
-      type: "button",
-      popovertarget: @id,
-      class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500"
-    ) do
-      @trigger_text
-    end
-
-    # Dialog element
-    el_dialog(
-      id: @id,
-      class: "rounded-lg bg-white p-6 shadow-xl"
-    ) do
-      h3(class: "text-lg font-medium text-gray-900 mb-4") { @title }
-
-      # Dialog content
-      yield if block_given?
-
-      # Close button
-      div(class: "mt-6 flex justify-end gap-3") do
-        button(
-          type: "button",
-          popovertarget: @id,
-          popovertargetaction: "hide",
-          class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        ) { "Cancel" }
-        button(
-          type: "button",
-          class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500"
-        ) { "Confirm" }
-      end
-    end
+class MyModalComponent < ViewComponent::Base
+  def initialize(id: "my-dialog", title:, trigger_text: "Open Dialog")
+    @id = id
+    @title = title
+    @trigger_text = trigger_text
   end
 
-  def el_dialog(**attrs, &block)
-    tag("el-dialog", **attrs, &block)
-  end
+  erb_template <<~ERB
+    <!-- Trigger button -->
+    <button
+      type="button"
+      popovertarget="<%= @id %>"
+      class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500">
+      <%= @trigger_text %>
+    </button>
+
+    <!-- Dialog element -->
+    <el-dialog id="<%= @id %>" class="rounded-lg bg-white p-6 shadow-xl">
+      <h3 class="text-lg font-medium text-gray-900 mb-4"><%= @title %></h3>
+
+      <!-- Dialog content -->
+      <%= content %>
+
+      <!-- Close button -->
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          type="button"
+          popovertarget="<%= @id %>"
+          popovertargetaction="hide"
+          class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500">
+          Confirm
+        </button>
+      </div>
+    </el-dialog>
+  ERB
 end
 ```
 
 ### Example: Disclosure (Collapsible)
 
 ```ruby
-class MyDisclosureComponent < Panda::Core::Base
-  prop :title, String
-  prop :expanded, _Boolean, default: false
-
-  def view_template
-    el_disclosure(class: "border-b border-gray-200") do
-      el_disclosure_button(
-        class: "flex w-full items-center justify-between py-4 text-left"
-      ) do
-        span(class: "text-base font-semibold text-gray-900") { @title }
-        svg(
-          class: "h-5 w-5 text-gray-500 transition-transform duration-200",
-          viewBox: "0 0 20 20",
-          fill: "currentColor"
-        ) do |s|
-          s.path(
-            fill_rule: "evenodd",
-            d: "M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z",
-            clip_rule: "evenodd"
-          )
-        end
-      end
-
-      el_disclosure_panel(class: "pb-4 text-sm text-gray-600") do
-        yield if block_given?
-      end
-    end
+class MyDisclosureComponent < ViewComponent::Base
+  def initialize(title:, expanded: false)
+    @title = title
+    @expanded = expanded
   end
 
-  def el_disclosure(**attrs, &block)
-    tag("el-disclosure", **attrs, &block)
-  end
+  erb_template <<~ERB
+    <el-disclosure class="border-b border-gray-200">
+      <el-disclosure-button class="flex w-full items-center justify-between py-4 text-left">
+        <span class="text-base font-semibold text-gray-900"><%= @title %></span>
+        <svg
+          class="h-5 w-5 text-gray-500 transition-transform duration-200"
+          viewBox="0 0 20 20"
+          fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clip-rule="evenodd" />
+        </svg>
+      </el-disclosure-button>
 
-  def el_disclosure_button(**attrs, &block)
-    tag("el-disclosure-button", **attrs, &block)
-  end
-
-  def el_disclosure_panel(**attrs, &block)
-    tag("el-disclosure-panel", **attrs, &block)
-  end
+      <el-disclosure-panel class="pb-4 text-sm text-gray-600">
+        <%= content %>
+      </el-disclosure-panel>
+    </el-disclosure>
+  ERB
 end
 ```
 
 ### Example: Select
 
 ```ruby
-class MySelectComponent < Panda::Core::Base
-  prop :name, String
-  prop :options, Array
-  prop :selected, _Nilable(String), default: -> { nil }
-
-  def view_template
-    el_select(name: @name, class: "relative") do
-      el_select_button(
-        class: "relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300"
-      ) do
-        span(class: "block truncate") { @selected || "Select an option" }
-        span(class: "pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2") do
-          # Chevron icon
-        end
-      end
-
-      el_select_options(
-        class: "absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5"
-      ) do
-        @options.each do |option|
-          el_select_option(value: option[:value], class: "relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-blue-600 hover:text-white") do
-            span(class: "block truncate") { option[:label] }
-          end
-        end
-      end
-    end
+class MySelectComponent < ViewComponent::Base
+  def initialize(name:, options:, selected: nil)
+    @name = name
+    @options = options
+    @selected = selected
   end
 
-  def el_select(**attrs, &block)
-    tag("el-select", **attrs, &block)
-  end
+  erb_template <<~ERB
+    <el-select name="<%= @name %>" class="relative">
+      <el-select-button
+        class="relative w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300">
+        <span class="block truncate"><%= @selected || "Select an option" %></span>
+        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+          <!-- Chevron icon -->
+        </span>
+      </el-select-button>
 
-  def el_select_button(**attrs, &block)
-    tag("el-select-button", **attrs, &block)
-  end
-
-  def el_select_options(**attrs, &block)
-    tag("el-select-options", **attrs, &block)
-  end
-
-  def el_select_option(**attrs, &block)
-    tag("el-select-option", **attrs, &block)
-  end
+      <el-select-options
+        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+        <% @options.each do |option| %>
+          <el-select-option
+            value="<%= option[:value] %>"
+            class="relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-blue-600 hover:text-white">
+            <span class="block truncate"><%= option[:label] %></span>
+          </el-select-option>
+        <% end %>
+      </el-select-options>
+    </el-select>
+  ERB
 end
 ```
 

@@ -20,7 +20,7 @@ module Panda
       # - Includes proper ARIA labels for removable badges
       # - Sufficient color contrast for all variants
       #
-      # @label Badge (Phlex)
+      # @label Badge (ViewComponent)
       class BadgePreview < Lookbook::Preview
         # @!group Variants
 
@@ -210,7 +210,7 @@ module Panda
             rounded: true
           )
           render_inline Panda::Core::UI::Badge.new(
-            text: "Phlex",
+            text: "ViewComponent",
             variant: :info,
             removable: true,
             rounded: true

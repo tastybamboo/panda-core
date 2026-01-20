@@ -150,7 +150,6 @@ module Panda
             end
           end
         end
-
       end
     end
   end

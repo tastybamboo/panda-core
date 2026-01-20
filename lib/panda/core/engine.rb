@@ -14,7 +14,7 @@ require_relative "shared/generator_config"
 require_relative "engine/autoload_config"
 require_relative "engine/importmap_config"
 require_relative "engine/omniauth_config"
-require_relative "engine/phlex_config"
+require_relative "engine/view_component_config"
 require_relative "engine/admin_controller_config"
 require_relative "engine/route_config"
 
@@ -35,7 +35,7 @@ module Panda
       include AutoloadConfig
       include ImportmapConfig
       include OmniauthConfig
-      include PhlexConfig
+      include ViewComponentConfig
       include AdminControllerConfig
       include RouteConfig
 
@@ -61,10 +61,10 @@ module Panda
             :all,
             {
               "Cache-Control" => if defined?(::Rails) && ::Rails.env.development?
-                "no-cache, no-store, must-revalidate"
-              else
-                "public, max-age=31536000"
-              end
+                                   "no-cache, no-store, must-revalidate"
+                                 else
+                                   "public, max-age=31536000"
+                                 end
             }
           ]
         ]

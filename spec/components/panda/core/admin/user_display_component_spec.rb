@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::UserDisplayComponent do
+RSpec.describe Panda::Core::Admin::UserDisplayComponent, type: :component do
   let(:user_struct) do
     Struct.new(:name, :email, :_avatar_url) do
       def avatar_url(size: nil)
@@ -22,7 +22,7 @@ RSpec.describe Panda::Core::Admin::UserDisplayComponent do
   describe "rendering" do
     it "renders user name and email" do
       component = described_class.new(user: user_with_avatar)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("Alice Smith")
       expect(output).to have_text("alice@example.com")
@@ -30,28 +30,28 @@ RSpec.describe Panda::Core::Admin::UserDisplayComponent do
 
     it "renders avatar image when available" do
       component = described_class.new(user: user_with_avatar)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("img[src='https://example.com/avatar.jpg']")
     end
 
     it "renders initials when no avatar" do
       component = described_class.new(user: user_without_avatar)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("span", text: "BJ")
     end
 
     it "applies circular styling to avatar" do
       component = described_class.new(user: user_with_avatar)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("img.rounded-full")
     end
 
     it "renders email in muted color" do
       component = described_class.new(user: user_with_avatar)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css(".text-gray-500", text: "alice@example.com")
     end

@@ -3,7 +3,7 @@
 module Panda
   module Core
     module UI
-      # Modern Phlex-based button component with type-safe props.
+      # Modern ViewComponent-based button component with type-safe props.
       #
       # Supports both <button> and <a> elements based on whether an href is provided.
       # Follows Tailwind UI Plus styling patterns with dark mode support.
@@ -34,21 +34,17 @@ module Panda
       #   )
       #
       class Button < Panda::Core::Base
-        # Type-safe properties using Literal
-        prop :text, String
-        prop :variant, Symbol, default: :default
-        prop :size, Symbol, default: :medium
-        prop :disabled, _Boolean, default: false
-        prop :type, String, default: "button"
-        prop :href, _Nilable(String), default: -> {}
-
-        def view_template
-          if @href
-            a(**@attrs) { @text }
-          else
-            button(**@attrs) { @text }
-          end
+        def initialize(text: "", variant: :default, size: :medium, disabled: false, type: "button", href: nil, **attrs)
+          @text = text
+          @variant = variant
+          @size = size
+          @disabled = disabled
+          @type = type
+          @href = href
+          super(**attrs)
         end
+
+        attr_reader :text, :variant, :size, :disabled, :type, :href
 
         def default_attrs
           base = {

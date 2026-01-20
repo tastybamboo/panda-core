@@ -1,0 +1,54 @@
+<div id="slideover"
+     class="<%= slideover_classes %>"
+     data-toggle-target="toggleable"
+     data-transition-enter="transform transition ease-in-out duration-500 sm:duration-700"
+     data-transition-enter-from="translate-x-full"
+     data-transition-enter-to="translate-x-0"
+     data-transition-leave="transform transition ease-in-out duration-500 sm:duration-700"
+     data-transition-leave-from="translate-x-0"
+     data-transition-leave-to="translate-x-full">
+
+  <%# Main container %>
+  <div class="relative flex h-full flex-col bg-white shadow-xl dark:bg-gray-800">
+    <%# Header with title and close button %>
+    <div class="bg-gradient-admin px-4 py-6 sm:px-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-semibold text-white" id="slideover-title">
+          <%= @title %>
+        </h2>
+        <div class="ml-3 flex h-7 items-center">
+          <%= content_tag :button,
+              type: "button",
+              data: {
+                action: "click->toggle#toggle touch->toggle#toggle"
+              },
+              class: "relative rounded-md text-white/80 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" do %>
+            <span class="absolute -inset-2.5"></span>
+            <span class="sr-only">Close panel</span>
+            <%= close_icon %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# Scrollable content area %>
+    <div class="flex-1 overflow-y-auto">
+      <% if @content_html %>
+        <%= raw(@content_html) %>
+      <% elsif @content_block %>
+        <%= @content_block.call %>
+      <% end %>
+    </div>
+
+    <%# Sticky footer (if footer content exists) %>
+    <% if @footer_html || @footer_block %>
+      <div class="flex shrink-0 justify-end gap-x-3 border-t border-gray-200 px-4 py-4 dark:border-white/10">
+        <% if @footer_html %>
+          <%= raw(@footer_html) %>
+        <% elsif @footer_block %>
+          <%= @footer_block.call %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

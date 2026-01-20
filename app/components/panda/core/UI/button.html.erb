@@ -1,0 +1,5 @@
+<% if @href %>
+  <%= content_tag :a, @text, @attrs %>
+<% else %>
+  <%= content_tag :button, @text, @attrs %>
+<% end %>

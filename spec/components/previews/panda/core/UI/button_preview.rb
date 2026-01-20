@@ -3,9 +3,9 @@
 module Panda
   module Core
     module UI
-      # Modern Phlex Button Component
+      # Modern ViewComponent Button Component
       #
-      # This is an example of a modern Phlex-based component using the shared
+      # This is an example of a modern ViewComponent-based component using the shared
       # Panda::Core::Base foundation. It demonstrates type-safe props, Tailwind
       # class merging, and clean component architecture.
       #
@@ -25,7 +25,7 @@ module Panda
       # )
       # ```
       #
-      # @label Button (Phlex)
+      # @label Button (ViewComponent)
       # @display bg_color "#f9fafb"
       # @display viewport_width "400px"
       class ButtonPreview < Lookbook::Preview

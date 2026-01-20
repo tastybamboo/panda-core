@@ -1,18 +1,1 @@
-<% breadcrumb_styles = "text-black/60 hover:text-black/80" %>
-
-<nav aria-label="Breadcrumb" id="panda-breadcrumbs" class="px-4 w-full sm:px-6 py-2.5">
-  <ol role="list">
-    <li class="inline-block">
-      <a href="<%= Panda::Core.config.admin_path %>" class="<%= breadcrumb_styles %>">
-        <i class="fa fa-solid fa-house fa-fw inline-block w-4 text-center"></i>
-        <span class="sr-only">Home</span>
-      </a>
-    </li>
-    <% breadcrumbs.each do |crumb| %>
-      <li class="inline-block">
-        <i class="fa-solid fa-chevron-right fa-fw inline-block w-4 text-center font-light <%= breadcrumb_styles %> px-2"></i>
-        <a href="<%= crumb.path %>" class="text-sm font-normal <%= breadcrumb_styles %>"><%= crumb.name %></a>
-      </li>
-    <% end %>
-  </ol>
-</nav>
+<%= render Panda::Core::Admin::BreadcrumbsComponent.new(breadcrumbs: breadcrumbs) %>

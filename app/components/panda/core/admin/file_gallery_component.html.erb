@@ -1,0 +1,54 @@
+<% if @files.any? %>
+  <%# Gallery %>
+  <section>
+    <h2 id="gallery-heading" class="sr-only">Files</h2>
+    <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+      <% @files.each do |file| %>
+        <% is_selected = @selected_file && @selected_file.id == file.id %>
+        <li class="relative">
+          <div class="<%= file_container_classes(is_selected) %>" style="cursor: pointer;">
+            <% if file.image? %>
+              <%= tag.img src: url_for(file),
+                  alt: file.filename.to_s,
+                  class: file_image_classes(is_selected) %>
+            <% else %>
+              <%# File icon placeholder - implement based on file type %>
+              <div class="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700">
+                <i class="fa-solid fa-file text-4xl text-gray-400"></i>
+              </div>
+            <% end %>
+
+            <%= content_tag :button,
+                type: "button",
+                class: "absolute inset-0 focus:outline-hidden",
+                data: {
+                  action: "click->file-gallery#selectFile",
+                  file_id: file.id,
+                  file_url: url_for(file),
+                  file_name: file.filename.to_s,
+                  file_size: file.byte_size,
+                  file_type: file.content_type,
+                  file_created: file.created_at.to_s
+                } do %>
+              <span class="sr-only">View details for <%= file.filename %></span>
+            <% end %>
+          </div>
+
+          <p class="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900 dark:text-white">
+            <%= file.filename.to_s %>
+          </p>
+          <p class="pointer-events-none block text-sm font-medium text-gray-500 dark:text-gray-400">
+            <%= number_to_human_size(file.byte_size) %>
+          </p>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% else %>
+  <%# Empty state %>
+  <div class="text-center py-12">
+    <i class="fa-solid fa-images text-6xl text-gray-400 mb-4"></i>
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white">No files</h3>
+    <p class="text-sm text-gray-500 dark:text-gray-400">Upload files to see them here.</p>
+  </div>
+<% end %>

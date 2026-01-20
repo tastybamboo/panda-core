@@ -33,48 +33,17 @@ module Panda
       #   end
       #
       class PageHeaderComponent < Panda::Core::Base
-        prop :title, String
-        prop :breadcrumbs, _Nilable(Array), default: -> {}
-        prop :show_back, _Boolean, default: true
-
-        def initialize(**props)
-          super
+        def initialize(title: "", breadcrumbs: nil, show_back: true, **attrs, &block)
+          @title = title
+          @breadcrumbs = breadcrumbs
+          @show_back = show_back
           @buttons = []
+          super(**attrs)
+          # Execute the block to capture button definitions
+          yield self if block_given?
         end
 
-        def view_template(&block)
-          # Allow buttons to be defined via block
-          instance_eval(&block) if block_given?
-
-          div do
-            # Breadcrumbs section
-            if @breadcrumbs
-              render Panda::Core::Admin::BreadcrumbComponent.new(
-                items: @breadcrumbs,
-                show_back: @show_back
-              )
-            end
-
-            # Title and actions section
-            div(class: "mt-2 md:flex md:items-center md:justify-between") do
-              # Title
-              div(class: "min-w-0 flex-1") do
-                h2(class: "text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight dark:text-white") do
-                  @title
-                end
-              end
-
-              # Action buttons
-              if @buttons.any?
-                div(class: "mt-4 flex shrink-0 md:mt-0 md:ml-4") do
-                  @buttons.each_with_index do |button_data, index|
-                    render create_button(button_data, index)
-                  end
-                end
-              end
-            end
-          end
-        end
+        attr_reader :title, :breadcrumbs, :show_back
 
         # Define a button to be rendered in the header actions area
         #

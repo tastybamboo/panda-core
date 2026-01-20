@@ -16,6 +16,14 @@ require "shoulda/matchers"
 require "capybara"
 require "capybara/rspec"
 require "puma"
+require "action_controller/test_case"
+require "view_component/test_helpers"
+require_relative "view_component_test_controller"
+
+# Configure ViewComponent to use our test controller
+if defined?(ViewComponent) && Rails.application && Rails.application.config.respond_to?(:view_component)
+  Rails.application.config.view_component.test_controller = "ViewComponentTestController"
+end
 
 # Configure fixtures
 ActiveRecord::FixtureSet.context_class.send :include, ActiveSupport::Testing::TimeHelpers
@@ -73,6 +81,13 @@ RSpec.configure do |config|
     config.include Rails::Controller::Testing::TestProcess, type: :controller
     config.include Rails::Controller::Testing::TemplateAssertions, type: :controller
     config.include Rails::Controller::Testing::Integration, type: :controller
+  end
+
+  # ViewComponent testing support (if view_component is available)
+  if defined?(ViewComponent::TestHelpers)
+    config.include ViewComponent::TestHelpers, type: :component
+    config.include Capybara::RSpecMatchers, type: :component
+    config.include Panda::Core::AssetHelper, type: :component
   end
 
   # Reset column information before suite
@@ -162,6 +177,60 @@ RSpec.configure do |config|
 
   # OmniAuth test mode
   OmniAuth.config.test_mode = true if defined?(OmniAuth)
+
+  # Stub Panda Core helpers for component tests
+  config.before(:each, type: :component) do
+    if defined?(ViewComponent::TestHelpers)
+      allow_any_instance_of(ActionView::Base).to receive(:panda_core_stylesheet).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:panda_core_javascript).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:csrf_meta_tags).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:csp_meta_tag).and_return("")
+      allow_any_instance_of(ActionView::Base).to receive(:controller).and_return(
+        double(
+          class: double(name: "Test"),
+          protect_against_forgery?: false,
+          content_security_policy?: false
+        )
+      )
+
+      # Stub link_to and button_to to avoid routing complexity in component tests
+      allow_any_instance_of(ActionView::Base).to receive(:link_to) do |*args, &block|
+        href = args[0].is_a?(Hash) ? "#" : args[0]
+        options = args.find { |a| a.is_a?(Hash) } || {}
+        css_class = options[:class] || ""
+        content = block ? block.call : args[1] || href
+        "<a href=\"#{href}\" class=\"#{css_class}\">#{content}</a>".html_safe
+      end
+
+      allow_any_instance_of(ActionView::Base).to receive(:button_to) do |*args, &block|
+        args[0]
+        options = args[1] || {}
+        css_class = options[:class] || ""
+        content = block ? block.call : "Button"
+        id_attr = options[:id] ? " id=\"#{options[:id]}\"" : ""
+        "<button class=\"#{css_class}\"#{id_attr}>#{content}</button>".html_safe
+      end
+
+      # Stub panda_core routes to return simple paths
+      panda_core_routes = double("panda_core_routes")
+      allow(panda_core_routes).to receive(:admin_logout_path).and_return("/admin/logout")
+      allow(panda_core_routes).to receive(:admin_my_profile_path).and_return("/admin/my_profile")
+      allow_any_instance_of(ActionView::Base).to receive(:panda_core).and_return(panda_core_routes)
+
+      # Stub current_user
+      mock_user = double(
+        "User",
+        name: "Test User",
+        avatar: double(attached?: false),
+        image_url: ""
+      )
+      allow_any_instance_of(ActionView::Base).to receive(:current_user).and_return(mock_user)
+
+      # Stub main_app routes
+      main_app_routes = double(url_for: "/test")
+      allow_any_instance_of(ActionView::Base).to receive(:main_app).and_return(main_app_routes)
+    end
+  end
 
   # DatabaseCleaner configuration
   config.around(:each) do |example|

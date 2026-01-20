@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::TabBarComponent do
+RSpec.describe Panda::Core::Admin::TabBarComponent, type: :component do
   let(:tabs) do
     [
       {name: "All Posts", url: "/posts", current: true},
@@ -14,7 +14,7 @@ RSpec.describe Panda::Core::Admin::TabBarComponent do
   describe "rendering" do
     it "renders tabs with navigation" do
       component = described_class.new(tabs: tabs)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_link("All Posts", href: "/posts")
       expect(output).to have_link("Published", href: "/posts?status=published")
@@ -23,14 +23,14 @@ RSpec.describe Panda::Core::Admin::TabBarComponent do
 
     it "highlights current tab" do
       component = described_class.new(tabs: tabs)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("a.border-primary-600.text-primary-600", text: "All Posts")
     end
 
     it "renders mobile select" do
       component = described_class.new(tabs: tabs)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("select#tabs")
       expect(output).to have_css("option", text: "All Posts")
@@ -38,14 +38,14 @@ RSpec.describe Panda::Core::Admin::TabBarComponent do
 
     it "renders desktop tabs" do
       component = described_class.new(tabs: tabs)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("nav[aria-label='Tabs']")
     end
 
     it "handles empty tabs array" do
       component = described_class.new(tabs: [])
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("div.mt-3")
     end

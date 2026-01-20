@@ -4,37 +4,31 @@ module Panda
   module Core
     module Admin
       class PanelComponent < Panda::Core::Base
-        def view_template(&block)
-          # Capture block content differently based on context (ERB vs Phlex)
-          if block_given?
-            if defined?(view_context) && view_context
-              # Called from ERB - capture HTML output
-              @body_html = view_context.capture { yield(self) }
-            else
-              # Called from Phlex - execute block directly to set instance variables
-              yield(self)
-            end
-          end
+        renders_one :heading_slot, lambda { |**props|
+          Panda::Core::Admin::HeadingComponent.new(**props.merge(level: :panel))
+        }
 
-          div(class: "col-span-3 mt-5 rounded-lg shadow-md bg-gray-800 shadow-inherit/20") do
-            @heading_content&.call
+        # Alias for DSL-style usage
+        alias_method :heading, :with_heading_slot
 
-            div(class: "p-4 text-black bg-white rounded-b-lg") do
-              if @body_content
-                @body_content.call
-              elsif @body_html
-                raw(@body_html)
-              end
-            end
-          end
-        end
-
-        def heading(**props)
-          @heading_content = -> { render(Panda::Core::Admin::HeadingComponent.new(**props.merge(level: :panel))) }
+        def initialize(**attrs, &block)
+          super(**attrs)
+          @body_content = nil
+          # Execute the block to capture DSL calls
+          yield self if block_given?
         end
 
         def body(&block)
-          @body_content = block
+          @body_content = block if block_given?
+          @body_content
+        end
+
+        def body_slot?
+          @body_content.present?
+        end
+
+        def body_slot
+          @body_content&.call
         end
       end
     end

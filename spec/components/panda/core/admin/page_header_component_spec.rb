@@ -2,27 +2,27 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::PageHeaderComponent do
-  let(:output) { Capybara.string(component.call) }
+RSpec.describe Panda::Core::Admin::PageHeaderComponent, type: :component do
+  let(:output) { Capybara.string(render_inline(component).to_html) }
 
   describe "rendering" do
     it "renders title" do
       component = described_class.new(title: "Back End Developer")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("h2", text: "Back End Developer")
     end
 
     it "applies correct title styling" do
       component = described_class.new(title: "Test Title")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("h2.text-2xl\\/7.font-bold.text-gray-900")
     end
 
     it "renders without breadcrumbs when not provided" do
       component = described_class.new(title: "Test Title")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).not_to have_css("nav")
     end
@@ -35,7 +35,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
           {text: "Pages", href: "/admin/pages"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_link("Home", href: "/admin")
       expect(output).to have_link("Pages", href: "/admin/pages")
@@ -45,7 +45,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
   describe "action buttons" do
     it "renders without buttons by default" do
       component = described_class.new(title: "Test Title")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).not_to have_css("button")
       expect(output).not_to have_css("a.inline-flex.items-center")
@@ -55,7 +55,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
       component = described_class.new(title: "Test Title") do |header|
         header.button(text: "Edit", variant: :secondary, href: "/edit")
       end
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_link("Edit", href: "/edit")
     end
@@ -65,7 +65,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
         header.button(text: "Edit", variant: :secondary, href: "/edit")
         header.button(text: "Publish", variant: :primary, href: "/publish")
       end
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_link("Edit", href: "/edit")
       expect(output).to have_link("Publish", href: "/publish")
@@ -76,7 +76,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
         header.button(text: "First", variant: :secondary, href: "/first")
         header.button(text: "Second", variant: :primary, href: "/second")
       end
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       # Second button should have ml-3 class
       expect(output).to have_css("a.ml-3", text: "Second")
@@ -87,7 +87,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
         header.button(text: "Primary", variant: :primary, href: "/primary")
         header.button(text: "Secondary", variant: :secondary, href: "/secondary")
       end
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       # Check that buttons render with correct hrefs and text
       expect(output).to have_link("Primary", href: "/primary")
@@ -100,7 +100,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
       component = described_class.new(title: "Test Title") do |header|
         header.button(text: "Edit", variant: :secondary, href: "/edit")
       end
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("div.md\\:flex.md\\:items-center.md\\:justify-between")
     end
@@ -109,7 +109,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
       component = described_class.new(title: "Test Title") do |header|
         header.button(text: "Edit", variant: :secondary, href: "/edit")
       end
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("div.mt-4.flex.shrink-0.md\\:mt-0.md\\:ml-4")
     end
@@ -124,7 +124,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
         ],
         show_back: false
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).not_to have_css("nav.sm\\:hidden")
     end
@@ -137,7 +137,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
           {text: "Pages", href: "/admin/pages"}
         ]
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("nav.sm\\:hidden", text: "Back")
     end
@@ -146,7 +146,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
   describe "edge cases" do
     it "handles empty title gracefully" do
       component = described_class.new(title: "")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("h2")
     end
@@ -155,7 +155,7 @@ RSpec.describe Panda::Core::Admin::PageHeaderComponent do
       component = described_class.new(
         title: "This is a very long title that should truncate"
       )
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("h2.sm\\:truncate")
     end

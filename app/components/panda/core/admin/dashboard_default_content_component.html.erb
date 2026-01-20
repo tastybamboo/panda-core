@@ -1,0 +1,70 @@
+<div <% if @attrs.any? %><%= tag.attributes(@attrs) %><% end %>>
+  <div class="p-6 bg-white shadow rounded-lg">
+    <h2 class="text-lg font-medium text-gray-900">Welcome to Panda Admin</h2>
+    <p class="mt-1 text-sm text-gray-500">Manage your application from this central dashboard.</p>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <% if defined?(Panda::CMS) %>
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <i class="fa-solid fa-file-lines text-3xl text-gray-400"></i>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dt class="text-sm font-medium text-gray-500 truncate">Content Management</dt>
+              <dd class="mt-1 text-lg font-semibold text-gray-900">
+                <%= helpers.link_to "Manage CMS", helpers.panda_cms.admin_cms_dashboard_path, class: "text-primary-600 hover:text-primary-800" %>
+              </dd>
+            </div>
+          </div>
+          <div class="mt-3">
+            <p class="text-sm text-gray-500">Pages, posts, menus, and content blocks</p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="fa-regular fa-user text-3xl text-gray-400"></i>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dt class="text-sm font-medium text-gray-500 truncate">My Profile</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">
+              <%= helpers.link_to "Edit Profile", helpers.edit_admin_my_profile_path, class: "text-primary-600 hover:text-primary-800" %>
+            </dd>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-sm text-gray-500">Update your personal information</p>
+        </div>
+      </div>
+    </div>
+
+    <%# Hook for additional dashboard cards %>
+    <% dashboard_cards.each do |card| %>
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <i class="<%= card[:icon] %> text-3xl text-gray-400"></i>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dt class="text-sm font-medium text-gray-500 truncate"><%= card[:title] %></dt>
+              <dd class="mt-1 text-lg font-semibold text-gray-900">
+                <%= helpers.link_to card[:link_text], card[:path], class: "text-primary-600 hover:text-primary-800" %>
+              </dd>
+            </div>
+          </div>
+          <div class="mt-3">
+            <p class="text-sm text-gray-500"><%= card[:description] %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

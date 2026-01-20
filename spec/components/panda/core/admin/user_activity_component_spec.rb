@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Panda::Core::Admin::UserActivityComponent do
+RSpec.describe Panda::Core::Admin::UserActivityComponent, type: :component do
   let(:user_class) do
     Class.new do
       def self.name
@@ -37,7 +37,7 @@ RSpec.describe Panda::Core::Admin::UserActivityComponent do
   describe "rendering" do
     it "renders user and time when both present" do
       component = described_class.new(user: user, at: time)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("Alice Smith")
       expect(output).to have_text("ago")
@@ -45,7 +45,7 @@ RSpec.describe Panda::Core::Admin::UserActivityComponent do
 
     it "renders user without time" do
       component = described_class.new(user: user)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("Alice Smith")
       expect(output).to have_text("Not published")
@@ -53,7 +53,7 @@ RSpec.describe Panda::Core::Admin::UserActivityComponent do
 
     it "renders only time without user" do
       component = described_class.new(at: time)
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("ago")
       expect(output).to have_css("div.text-black\\/60")
@@ -61,14 +61,14 @@ RSpec.describe Panda::Core::Admin::UserActivityComponent do
 
     it "does not render when neither user nor time present" do
       component = described_class.new
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output.text.strip).to be_empty
     end
 
     it "handles invalid time value" do
       component = described_class.new(user: user, at: "invalid")
-      output = Capybara.string(component.call)
+      output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_text("Not published")
     end
