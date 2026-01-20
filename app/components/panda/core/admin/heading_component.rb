@@ -17,9 +17,14 @@ module Panda
           @meta = meta
           @level = level
           @additional_styles = additional_styles
+          @block_executed = false
+          # Call super WITHOUT passing the block to prevent ViewComponent from capturing it as content
           super(**attrs)
-          # Execute the block to allow DSL-style button definitions
-          yield self if block_given?
+          # Execute the block once to register buttons via DSL
+          if block_given?
+            yield self
+            @block_executed = true
+          end
         end
 
         attr_reader :text, :icon, :meta, :level
