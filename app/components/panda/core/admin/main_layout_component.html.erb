@@ -11,7 +11,7 @@
       <div class="flex-1 h-full" id="panda-primary-content">
         <%= render Panda::Core::Admin::BreadcrumbsComponent.new(breadcrumbs: @breadcrumbs) %>
         <%= render "panda/core/admin/shared/flash" %>
-        <%= yield %>
+        <%= content %>
       </div>
       <% if content_for :sidebar %>
         <!-- Backdrop overlay -->
