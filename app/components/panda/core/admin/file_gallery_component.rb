@@ -54,7 +54,7 @@ module Panda
           else
             "#"
           end
-        rescue StandardError
+        rescue
           "#"
         end
 

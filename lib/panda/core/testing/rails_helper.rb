@@ -203,7 +203,7 @@ RSpec.configure do |config|
       end
 
       allow_any_instance_of(ActionView::Base).to receive(:button_to) do |*args, &block|
-        url = args[0]
+        args[0]
         options = args[1] || {}
         css_class = options[:class] || ""
         content = block ? block.call : "Button"

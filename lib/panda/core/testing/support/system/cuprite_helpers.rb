@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pathname"
-
 # Helper methods for Cuprite-based system tests
 #
 # This module provides utility methods for working with Cuprite in system tests:

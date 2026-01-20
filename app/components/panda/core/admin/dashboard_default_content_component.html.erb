@@ -15,7 +15,7 @@
             <div class="ml-5 w-0 flex-1">
               <dt class="text-sm font-medium text-gray-500 truncate">Content Management</dt>
               <dd class="mt-1 text-lg font-semibold text-gray-900">
-                <%= link_to "Manage CMS", panda_cms.admin_cms_dashboard_path, class: "text-primary-600 hover:text-primary-800" %>
+                <%= helpers.link_to "Manage CMS", helpers.panda_cms.admin_cms_dashboard_path, class: "text-primary-600 hover:text-primary-800" %>
               </dd>
             </div>
           </div>
@@ -35,7 +35,7 @@
           <div class="ml-5 w-0 flex-1">
             <dt class="text-sm font-medium text-gray-500 truncate">My Profile</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">
-              <%= link_to "Edit Profile", edit_admin_my_profile_path, class: "text-primary-600 hover:text-primary-800" %>
+              <%= helpers.link_to "Edit Profile", helpers.edit_admin_my_profile_path, class: "text-primary-600 hover:text-primary-800" %>
             </dd>
           </div>
         </div>
@@ -56,7 +56,7 @@
             <div class="ml-5 w-0 flex-1">
               <dt class="text-sm font-medium text-gray-500 truncate"><%= card[:title] %></dt>
               <dd class="mt-1 text-lg font-semibold text-gray-900">
-                <%= link_to card[:link_text], card[:path], class: "text-primary-600 hover:text-primary-800" %>
+                <%= helpers.link_to card[:link_text], card[:path], class: "text-primary-600 hover:text-primary-800" %>
               </dd>
             </div>
           </div>

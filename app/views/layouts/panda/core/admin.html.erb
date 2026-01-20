@@ -1,4 +1,6 @@
 <%= render Panda::Core::Admin::MainLayoutComponent.new(
   user: current_user,
   breadcrumbs: breadcrumbs
-) %>
+) do %>
+  <%= yield %>
+<% end %>

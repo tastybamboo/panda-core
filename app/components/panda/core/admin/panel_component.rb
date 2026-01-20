@@ -28,7 +28,7 @@ module Panda
         end
 
         def body_slot
-          @body_content&.call if @body_content
+          @body_content&.call
         end
       end
     end
