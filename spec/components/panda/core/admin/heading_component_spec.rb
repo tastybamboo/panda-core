@@ -44,7 +44,7 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
 
     it "renders with button slot" do
       component = described_class.new(text: "Pages") do |heading|
-        heading.button(text: "Add Page", href: "/pages/new", action: :add)
+        heading.with_button(text: "Add Page", href: "/pages/new", action: :add)
       end
       output = Capybara.string(render_inline(component).to_html)
 
@@ -55,8 +55,8 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
 
     it "renders with multiple buttons" do
       component = described_class.new(text: "Posts") do |heading|
-        heading.button(text: "New Post", href: "/posts/new")
-        heading.button(text: "Import", href: "/posts/import")
+        heading.with_button(text: "New Post", href: "/posts/new")
+        heading.with_button(text: "Import", href: "/posts/import")
       end
       output = Capybara.string(render_inline(component).to_html)
 

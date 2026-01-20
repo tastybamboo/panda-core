@@ -4,6 +4,8 @@ module Panda
   module Core
     module Admin
       class SlideoverComponent < Panda::Core::Base
+        renders_one :footer_slot
+
         def initialize(title: "Settings", open: false, **attrs)
           @title = title
           @open = open
@@ -13,16 +15,14 @@ module Panda
         attr_reader :title, :open
 
         def before_render
-          # Capture main content block if provided
+          # Store main content if provided
+          # In ViewComponent, content is already rendered HTML (SafeBuffer), not a block
           if content.present?
-            if defined?(view_context) && view_context
-              @content_html = view_context.capture { content.call }
-            else
-              @content_block = content
-            end
+            @content_html = content
           end
         end
 
+        # Legacy method for backwards compatibility
         def footer(&block)
           if defined?(view_context) && view_context
             @footer_html = view_context.capture(&block)
@@ -31,7 +31,6 @@ module Panda
           end
         end
 
-        alias_method :with_footer, :footer
 
         private
 

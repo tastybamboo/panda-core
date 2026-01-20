@@ -6,7 +6,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
   describe "rendering" do
     it "renders a panel with heading and body" do
       render_inline(described_class.new) do |panel|
-        panel.heading(text: "Recent Activity")
+        panel.with_heading_slot(text: "Recent Activity")
         panel.body { "Activity content goes here" }
       end
       output = Capybara.string(rendered_content)
@@ -28,7 +28,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
 
     it "renders panel without body" do
       render_inline(described_class.new) do |panel|
-        panel.heading(text: "Empty Panel")
+        panel.with_heading_slot(text: "Empty Panel")
       end
       output = Capybara.string(rendered_content)
 
@@ -38,7 +38,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
 
     it "applies panel styling to heading" do
       render_inline(described_class.new) do |panel|
-        panel.heading(text: "Statistics")
+        panel.with_heading_slot(text: "Statistics")
       end
       output = Capybara.string(rendered_content)
 

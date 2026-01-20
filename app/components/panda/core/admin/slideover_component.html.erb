@@ -41,9 +41,11 @@
     </div>
 
     <%# Sticky footer (if footer content exists) %>
-    <% if @footer_html || @footer_block %>
+    <% if footer_slot? || @footer_html || @footer_block %>
       <div class="flex shrink-0 justify-end gap-x-3 border-t border-gray-200 px-4 py-4 dark:border-white/10">
-        <% if @footer_html %>
+        <% if footer_slot? %>
+          <%= footer_slot %>
+        <% elsif @footer_html %>
           <%= raw(@footer_html) %>
         <% elsif @footer_block %>
           <%= @footer_block.call %>
