@@ -11,6 +11,10 @@ module Panda
           Panda::Core::Admin::TabBarComponent.new(tabs: tabs, **attrs)
         }
         renders_one :body
+        renders_one :slideover, lambda { |title: "", **attrs, &block|
+          Panda::Core::Admin::SlideoverComponent.new(title: title, **attrs, &block)
+        }
+        renders_one :footer
 
         def initialize(full_height: false, **attrs)
           @full_height = full_height
@@ -18,6 +22,13 @@ module Panda
         end
 
         attr_reader :full_height
+
+        def before_render
+          # Pass footer content to slideover if both exist
+          if slideover? && footer?
+            slideover.instance_variable_set(:@footer_html, footer)
+          end
+        end
 
         private
 

@@ -1,21 +1,27 @@
-<main class="overflow-auto flex-1 h-full min-h-full max-h-full">
-  <div class="overflow-auto px-2 pt-2 mx-auto sm:px-6 lg:px-6">
-    <% if heading %>
-      <%= heading %>
-    <% end %>
+<div class="relative">
+  <main class="overflow-auto flex-1 h-full min-h-full max-h-full">
+    <div class="overflow-auto px-2 pt-2 mx-auto sm:px-6 lg:px-6">
+      <% if heading %>
+        <%= heading %>
+      <% end %>
 
-    <% if tab_bar %>
-      <%= tab_bar %>
-    <% end %>
+      <% if tab_bar %>
+        <%= tab_bar %>
+      <% end %>
 
-    <section class="<%= section_classes %>">
-      <div class="flex-1 mt-4 w-full h-full">
-        <% if body %>
-          <%= body %>
-        <% elsif content.present? %>
-          <%= content %>
-        <% end %>
-      </div>
-    </section>
-  </div>
-</main>
+      <section class="<%= section_classes %>">
+        <div class="flex-1 mt-4 w-full h-full">
+          <% if body %>
+            <%= body %>
+          <% elsif content.present? %>
+            <%= content %>
+          <% end %>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <% if slideover? %>
+    <%= slideover %>
+  <% end %>
+</div>
