@@ -8,8 +8,6 @@ module Panda
           Panda::Core::Admin::HeadingComponent.new(**props.merge(level: :panel))
         }
 
-        # Alias for DSL-style usage
-        alias_method :heading, :with_heading_slot
 
         def initialize(**attrs, &block)
           super(**attrs)

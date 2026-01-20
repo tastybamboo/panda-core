@@ -8,9 +8,6 @@ module Panda
           Panda::Core::Admin::ButtonComponent.new(text: text, action: action, href: href, icon: icon, size: size, id: id, as_button: as_button, **attrs)
         }
 
-        # Alias with_button to button for singular DSL-style usage
-        alias_method :button, :with_button
-
         def initialize(text: "", icon: "", meta: nil, level: 2, additional_styles: nil, **attrs, &block)
           @text = text
           @icon = icon

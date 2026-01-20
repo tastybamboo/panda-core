@@ -28,7 +28,6 @@ module Panda
           end
         end
 
-        alias_method :with_footer, :footer
 
         private
 
