@@ -26,7 +26,9 @@ module Panda
         def before_render
           # Pass footer content to slideover if both exist
           if slideover? && footer?
-            slideover.instance_variable_set(:@footer_html, footer)
+            # Convert footer slot to HTML string before passing to slideover
+            footer_html = footer.render_in(view_context)
+            slideover.instance_variable_set(:@footer_html, footer_html)
           end
         end
 
