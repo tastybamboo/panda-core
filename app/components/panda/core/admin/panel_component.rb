@@ -8,7 +8,6 @@ module Panda
           Panda::Core::Admin::HeadingComponent.new(**props.merge(level: :panel))
         }
 
-
         def initialize(**attrs, &block)
           super(**attrs)
           @body_content = nil
