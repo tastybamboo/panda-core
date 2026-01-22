@@ -22,17 +22,10 @@ module Panda
         end
 
         def render_cell_content(row, cell_block)
-          # Call the block with the row and get the result
-          result = cell_block.call(row)
-
-          # Handle different return types
-          if result.is_a?(String)
-            result
-          elsif result.respond_to?(:render_in)
-            render(result)
-          else
-            result.to_s
-          end
+          # Use capture to properly handle ERB blocks that output to the template buffer.
+          # Directly calling cell_block.call(row) causes double-rendering because ERB blocks
+          # both output to the buffer AND return their last expression.
+          helpers.capture(row, &cell_block)
         end
 
         attr_reader :columns
