@@ -8,24 +8,16 @@ module Panda
           Panda::Core::Admin::HeadingComponent.new(**props.merge(level: :panel))
         }
 
-        def initialize(**attrs, &block)
+        renders_one :body
+
+        def initialize(**attrs)
           super(**attrs)
-          @body_content = nil
-          # Execute the block to capture DSL calls
-          yield self if block_given?
         end
 
-        def body(&block)
-          @body_content = block if block_given?
-          @body_content
-        end
-
-        def body_slot?
-          @body_content.present?
-        end
-
-        def body_slot
-          @body_content&.call
+        # Aliases for backward compatibility
+        # Supports: panel.heading(text: "Title") as alias for panel.with_heading_slot(text: "Title")
+        def heading(**props)
+          with_heading_slot(**props)
         end
       end
     end
