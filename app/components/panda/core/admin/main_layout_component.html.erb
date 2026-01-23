@@ -8,7 +8,7 @@
   </div>
   <div class="flex flex-col flex-1 mt-16 ml-0 lg:mt-0 lg:ml-72" id="panda-inner-container" <% if content_for :sidebar %> data-controller="toggle" data-action="keydown.esc@window->toggle#hide keydown.escape@window->toggle#hide" tabindex="-1"<% end %>>
     <section id="panda-main" class="flex flex-row h-full">
-      <div class="flex-1 h-full" id="panda-primary-content">
+      <div class="flex-1 h-full overflow-y-auto" id="panda-primary-content">
         <%= render Panda::Core::Admin::BreadcrumbsComponent.new(breadcrumbs: @breadcrumbs) %>
         <%= render "panda/core/admin/shared/flash" %>
         <%= content %>
