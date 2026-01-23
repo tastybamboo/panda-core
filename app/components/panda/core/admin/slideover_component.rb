@@ -42,7 +42,8 @@ module Panda
         end
 
         def slideover_classes
-          base = "ml-auto block size-full max-w-md transform absolute right-0 h-full z-50"
+          # Use fixed positioning to escape parent overflow clipping
+          base = "ml-auto block size-full max-w-md transform fixed right-0 top-0 h-full z-50"
           visibility = @open ? "" : "hidden"
           [base, visibility].compact.join(" ")
         end

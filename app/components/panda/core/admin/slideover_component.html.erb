@@ -1,3 +1,15 @@
+<%# Backdrop overlay - clicks close the slideover %>
+<div class="hidden fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out dark:bg-gray-900/50 z-40"
+     data-toggle-target="toggleable"
+     data-action="click->toggle#toggle"
+     data-transition-enter="transition-opacity duration-500 ease-in-out"
+     data-transition-enter-from="opacity-0"
+     data-transition-enter-to="opacity-100"
+     data-transition-leave="transition-opacity duration-500 ease-in-out"
+     data-transition-leave-from="opacity-100"
+     data-transition-leave-to="opacity-0"></div>
+
+<%# Slideover panel %>
 <div id="slideover"
      class="<%= slideover_classes %>"
      data-toggle-target="toggleable"
