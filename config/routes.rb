@@ -17,7 +17,9 @@ Panda::Core::Engine.routes.draw do
     get "/", to: "admin/dashboard#show", as: :root
 
     # Profile management
-    resource :my_profile, only: %i[show edit update], controller: "admin/my_profile", path: "my_profile"
+    resource :my_profile, only: %i[show edit update], controller: "admin/my_profile", path: "my_profile" do
+      resource :logins, only: [:show], controller: "admin/my_profile/logins"
+    end
 
     # Settings
     resource :settings, only: [:show], controller: "admin/settings"

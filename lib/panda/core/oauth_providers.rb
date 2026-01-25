@@ -1,6 +1,25 @@
 module Panda
   module Core
     module OAuthProviders
+      # Provider metadata for display purposes
+      PROVIDER_INFO = {
+        microsoft_graph: {
+          name: "Microsoft",
+          icon: "fa-brands fa-microsoft",
+          color: "#00a4ef"
+        },
+        google_oauth2: {
+          name: "Google",
+          icon: "fa-brands fa-google",
+          color: "#4285f4"
+        },
+        github: {
+          name: "GitHub",
+          icon: "fa-brands fa-github",
+          color: "#333"
+        }
+      }.freeze
+
       def self.setup
         providers = []
 
@@ -26,6 +45,14 @@ module Panda
         end
 
         providers
+      end
+
+      def self.info(provider)
+        PROVIDER_INFO[provider.to_sym] || {
+          name: provider.to_s.titleize,
+          icon: "fa-solid fa-circle-user",
+          color: "#6b7280"
+        }
       end
     end
   end
