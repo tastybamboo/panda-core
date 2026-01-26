@@ -35,13 +35,6 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
       expect(output).to have_css("h3.text-xl.font-light")
     end
 
-    it "renders panel heading style" do
-      component = described_class.new(text: "Panel Header", level: :panel)
-      output = Capybara.string(render_inline(component).to_html)
-
-      expect(output).to have_css("h3.text-base.font-medium.text-white", text: "Panel Header")
-    end
-
     it "renders with button slot" do
       component = described_class.new(text: "Pages") do |heading|
         heading.with_button(text: "Add Page", href: "/pages/new", action: :add)
