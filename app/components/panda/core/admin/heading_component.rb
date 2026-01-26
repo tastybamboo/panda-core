@@ -14,14 +14,11 @@ module Panda
           @meta = meta
           @level = level
           @additional_styles = additional_styles
-          @block_executed = false
-          # Call super WITHOUT passing the block to prevent ViewComponent from capturing it as content
           super(**attrs)
-          # Execute the block once to register buttons via DSL
-          if block_given?
-            yield self
-            @block_executed = true
-          end
+          # Execute the block to register buttons via DSL (for direct usage)
+          # Note: When used via ContainerComponent's heading_slot, the block is NOT passed here
+          # to prevent double execution (ViewComponent also yields to the block)
+          yield self if block_given?
         end
 
         attr_reader :text, :icon, :meta, :level
