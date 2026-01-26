@@ -13,8 +13,8 @@ RSpec.describe Panda::Core::Admin::ContainerComponent, type: :component do
 
     it "renders with heading slot" do
       component = described_class.new
-      component.with_heading(text: "Dashboard")
-      component.with_body { "Page content" }
+      component.with_heading_slot(text: "Dashboard")
+      component.with_body_slot { "Page content" }
       render_inline(component)
 
       expect(page).to have_css("h2", text: "Dashboard")
@@ -23,11 +23,11 @@ RSpec.describe Panda::Core::Admin::ContainerComponent, type: :component do
 
     it "renders with tab bar slot" do
       component = described_class.new
-      component.with_tab_bar(tabs: [
+      component.with_tab_bar_slot(tabs: [
         {name: "All", url: "/posts", current: true},
         {name: "Published", url: "/posts?status=published"}
       ])
-      component.with_body { "Tab content" }
+      component.with_body_slot { "Tab content" }
       render_inline(component)
 
       expect(page).to have_text("Tab content")

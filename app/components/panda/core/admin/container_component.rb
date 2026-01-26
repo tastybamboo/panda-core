@@ -4,14 +4,14 @@ module Panda
   module Core
     module Admin
       class ContainerComponent < Panda::Core::Base
-        renders_one :heading, lambda { |text: "", icon: "", meta: nil, level: 2, **attrs, &block|
+        renders_one :heading_slot, lambda { |text: "", icon: "", meta: nil, level: 2, **attrs, &block|
           Panda::Core::Admin::HeadingComponent.new(text: text, icon: icon, meta: meta, level: level, **attrs, &block)
         }
-        renders_one :tab_bar, lambda { |tabs: [], **attrs|
+        renders_one :tab_bar_slot, lambda { |tabs: [], **attrs|
           Panda::Core::Admin::TabBarComponent.new(tabs: tabs, **attrs)
         }
-        renders_one :body
-        renders_one :slideover, lambda { |title: "", **attrs|
+        renders_one :body_slot
+        renders_one :slideover_slot, lambda { |title: "", **attrs|
           Panda::Core::Admin::SlideoverComponent.new(title: title, **attrs)
         }
         renders_one :footer_slot
@@ -22,6 +22,23 @@ module Panda
         end
 
         attr_reader :full_height
+
+        # Alias methods for backward compatibility with slot setters
+        def heading(**props, &block)
+          with_heading_slot(**props, &block)
+        end
+
+        def tab_bar(**props, &block)
+          with_tab_bar_slot(**props, &block)
+        end
+
+        def body(&block)
+          with_body_slot(&block)
+        end
+
+        def slideover(**props, &block)
+          with_slideover_slot(**props, &block)
+        end
 
         private
 
