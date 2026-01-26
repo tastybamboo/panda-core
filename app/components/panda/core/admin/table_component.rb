@@ -11,9 +11,8 @@ module Panda
           @rows = rows
           @icon = icon
           @columns = []
+          @setup_block = block
           super(**attrs)
-          # Execute the block if provided to populate columns
-          yield self if block_given?
         end
 
         def column(label, width: nil, &cell_block)
@@ -28,7 +27,23 @@ module Panda
           helpers.capture(row, &cell_block)
         end
 
-        attr_reader :columns
+        # Lazy accessor that ensures columns are registered before returning them.
+        # Supports two patterns:
+        # 1. Block passed to new() - executed here (for tests)
+        # 2. Block passed to render() - executed via content (for ERB templates)
+        def columns
+          unless @columns_registered
+            if @setup_block
+              # Block was passed to new() - execute it
+              @setup_block.call(self)
+            else
+              # Block was passed to render() - execute via content
+              content
+            end
+            @columns_registered = true
+          end
+          @columns
+        end
 
         private
 

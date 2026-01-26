@@ -1,6 +1,6 @@
 <div class="heading-wrapper">
   <% heading_tag = case level when 1 then :h1 when 2 then :h2 when 3 then :h3 when :panel then :h3 else :h2 end %>
-  
+
   <%= tag.send(heading_tag, class: heading_classes) do %>
     <div class="grow flex items-center gap-x-2">
       <% if icon.present? %>

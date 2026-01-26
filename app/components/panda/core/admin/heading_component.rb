@@ -13,9 +13,9 @@ module Panda
           @level = level
           @additional_styles = additional_styles
           super(**attrs)
-          # Execute the block to register buttons via DSL (for direct usage)
-          # Note: When used via ContainerComponent's heading_slot, the block is NOT passed here
-          # to prevent double execution (ViewComponent also yields to the block)
+          # Execute block if passed to new() directly (for tests/direct instantiation)
+          # This allows: HeadingComponent.new(text: "Pages") { |h| h.with_button(...) }
+          # Note: When used via render() with a block, ViewComponent handles the block separately
           yield self if block_given?
         end
 

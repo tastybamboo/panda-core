@@ -17,9 +17,9 @@
     </div>
 
     <%# Action buttons %>
-    <% if @buttons.any? %>
+    <% if buttons.any? %>
       <div class="mt-4 flex shrink-0 md:mt-0 md:ml-4">
-        <% @buttons.each_with_index do |button_data, index| %>
+        <% buttons.each_with_index do |button_data, index| %>
           <%= render create_button(button_data, index) %>
         <% end %>
       </div>
