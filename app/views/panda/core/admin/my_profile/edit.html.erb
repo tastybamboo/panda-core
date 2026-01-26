@@ -1,5 +1,5 @@
 <%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
-  <% component.with_heading(text: "My Profile", level: 1) %>
+  <% component.with_heading_slot(text: "My Profile", level: 1) %>
 
   <%= form_with model: user,
               url: admin_my_profile_path,

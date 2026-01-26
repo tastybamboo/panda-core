@@ -1,7 +1,7 @@
 <div class="" data-controller="dashboard">
   <% container = Panda::Core::Admin::ContainerComponent.new %>
-  <% container.with_heading(text: "Dashboard", level: 1) %>
-  <% container.with_body do %>
+  <% container.with_heading_slot(text: "Dashboard", level: 1) %>
+  <% container.with_body_slot do %>
     <%# Hook for dashboard widgets %>
     <% if Panda::Core.config.admin_dashboard_widgets %>
       <% widgets = Panda::Core.config.admin_dashboard_widgets.call(current_user) %>
