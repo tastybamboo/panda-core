@@ -26,6 +26,11 @@ module Panda
 
         attr_reader :text, :icon, :meta, :level
 
+        # Alias for backward compatibility - allows heading.button(...) syntax
+        def button(**props, &block)
+          with_button(**props, &block)
+        end
+
         private
 
         def heading_classes
