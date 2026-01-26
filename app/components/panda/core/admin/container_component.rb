@@ -23,23 +23,6 @@ module Panda
 
         attr_reader :full_height
 
-        # Alias methods for backward compatibility with slot setters
-        def heading(**props, &block)
-          with_heading_slot(**props, &block)
-        end
-
-        def tab_bar(**props, &block)
-          with_tab_bar_slot(**props, &block)
-        end
-
-        def body(&block)
-          with_body_slot(&block)
-        end
-
-        def slideover(**props, &block)
-          with_slideover_slot(**props, &block)
-        end
-
         private
 
         def section_classes
