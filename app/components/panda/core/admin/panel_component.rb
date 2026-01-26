@@ -4,8 +4,8 @@ module Panda
   module Core
     module Admin
       class PanelComponent < Panda::Core::Base
-        renders_one :heading_slot, lambda { |**props|
-          Panda::Core::Admin::HeadingComponent.new(**props.merge(level: :panel))
+        renders_one :heading_slot, lambda { |**props, &block|
+          Panda::Core::Admin::HeadingComponent.new(**props.merge(level: :panel), &block)
         }
 
         renders_one :body
@@ -16,8 +16,8 @@ module Panda
 
         # Aliases for backward compatibility
         # Supports: panel.heading(text: "Title") as alias for panel.with_heading_slot(text: "Title")
-        def heading(**props)
-          with_heading_slot(**props)
+        def heading(**props, &block)
+          with_heading_slot(**props, &block)
         end
       end
     end
