@@ -3,7 +3,7 @@
 
   <!-- Connected Accounts -->
   <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
-    <% panel.heading(text: "Connected Accounts", description: "Manage your OAuth authentication providers") %>
+    <% panel.heading(text: "Connected Accounts", meta: "Manage your OAuth authentication providers") %>
     <% panel.body do %>
       <div class="space-y-4">
         <% enabled_providers = Panda::Core.config.authentication_providers %>
@@ -23,7 +23,7 @@
 
   <!-- Login History -->
   <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
-    <% panel.heading(text: "Login History", description: "Recent login activity for your account") %>
+    <% panel.heading(text: "Login History", meta: "Recent login activity for your account") %>
     <% panel.body do %>
       <div class="space-y-4">
         <p class="text-sm text-gray-500">Login history tracking will be implemented in a future release.</p>
@@ -38,7 +38,7 @@
 
   <!-- Two-Factor Authentication (Future) -->
   <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
-    <% panel.heading(text: "Two-Factor Authentication", description: "Add an extra layer of security to your account") %>
+    <% panel.heading(text: "Two-Factor Authentication", meta: "Add an extra layer of security to your account") %>
     <% panel.body do %>
       <div class="space-y-4">
         <p class="text-sm text-gray-500">
