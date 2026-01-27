@@ -1,0 +1,16 @@
+<div <%= tag.attributes(**attrs) %>>
+  <h3 class="<%= heading_classes %>">
+    <% if icon %>
+      <i class="fa-solid <%= icon %>"></i>
+    <% end %>
+    <%= title %>
+  </h3>
+
+  <% if description %>
+    <p class="<%= description_classes %>"><%= description %></p>
+  <% end %>
+
+  <div class="<%= content_classes %>">
+    <%= content %>
+  </div>
+</div>

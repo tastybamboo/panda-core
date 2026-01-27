@@ -1,0 +1,16 @@
+<div <%= tag.attributes(**attrs) %>>
+  <% if content? %>
+    <%= content %>
+  <% end %>
+
+  <% if cancel_path %>
+    <%= link_to "Cancel", cancel_path, class: cancel_link_classes %>
+  <% end %>
+
+  <%= tag.button type: "submit", class: submit_button_classes, data: submit_data_attrs do %>
+    <% if computed_icon %>
+      <i class="fa-solid <%= computed_icon %>"></i>
+    <% end %>
+    <%= submit_text %>
+  <% end %>
+</div>
