@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Custom spacing for page tree indentation */
+  --spacing-18: 4.5rem;
+
   /* Legacy colors - DEPRECATED: Use primary-* scale instead */
   /* Fallback values ensure UI is visible even without data-theme attribute */
   --color-white: #f9f9f9;
@@ -455,5 +458,30 @@
         @apply w-full border-none;
       }
     }
+  }
+}
+
+/* Page tree indentation utilities - must be explicitly defined because
+   they're used in panda-cms views which aren't scanned by this build */
+@layer utilities {
+  .ml-18 {
+    margin-left: var(--spacing-18, 4.5rem);
+  }
+
+  /* ButtonComponent action classes - generated dynamically in Ruby, so must be explicitly defined */
+  .bg-primary-500 {
+    background-color: var(--color-primary-500);
+  }
+
+  .bg-primary-600 {
+    background-color: var(--color-primary-600);
+  }
+
+  .hover\:bg-primary-600:hover {
+    background-color: var(--color-primary-600);
+  }
+
+  .focus-visible\:outline-primary-600:focus-visible {
+    outline-color: var(--color-primary-600);
   }
 }

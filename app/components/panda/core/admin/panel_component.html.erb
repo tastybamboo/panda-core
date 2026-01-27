@@ -8,6 +8,8 @@
   <div class="p-4 text-black bg-white rounded-b-lg">
     <% if body_slot? %>
       <%= body_slot %>
+    <% else %>
+      <%= content %>
     <% end %>
   </div>
 </div>
