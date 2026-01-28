@@ -22,98 +22,47 @@
         .find { |path| current_path == path || current_path.starts_with?(path + "/") }
     %>
     <% nav_items.each_with_index do |item, index| %>
-      <li>
-        <%
-          has_children = item[:children].present?
-
-          # For items with children, check if any child is active
-          if has_children
-            is_active = item[:children].any? do |child|
-              child[:path] && (current_path == child[:path] || current_path.starts_with?(child[:path] + "/"))
-            end
-          else
-            is_active = item[:path] == active_path
-          end
-        %>
-
-        <% if has_children %>
-          <div class="mb-3" data-controller="navigation-toggle">
-            <button type="button"
-                    data-navigation-toggle-target="button"
-                    data-action="click->navigation-toggle#toggle"
-                    aria-controls="sub-menu-<%= index %>"
-                    aria-expanded="false"
-                    class="<%= is_active ? 'bg-primary-500 text-white shadow-sm ring-1 ring-primary-400/50' : 'text-white hover:bg-primary-500/60' %> transition-all group flex items-center w-full gap-x-3 py-3 px-2 rounded-md text-base leading-6 font-normal">
-              <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
-              <span class="flex-1 text-left"><%= item[:label] %></span>
-              <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
-                 data-navigation-toggle-target="icon"></i>
-            </button>
-            <div id="sub-menu-<%= index %>"
-                 class="mt-1 ml-2 pl-2 border-l border-white/20 space-y-0.5 hidden"
-                 style="display: none;"
-                 data-navigation-toggle-target="menu">
-              <% item[:children].each do |child| %>
-                <%
-                  child_is_active = child[:path] && (current_path == child[:path] || current_path.starts_with?(child[:path] + "/"))
-                %>
-                <%= helpers.link_to child[:path], class: "#{child_is_active ? 'bg-primary-500 text-white shadow-sm' : 'text-white/90 hover:bg-primary-500/40 hover:text-white'} group flex items-center w-full py-2 pr-2 pl-8 rounded-md text-sm font-normal transition-all" do %>
-                  <%= child[:label] %>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-        <% else %>
-          <%= helpers.link_to item[:path], class: "#{is_active ? "bg-primary-500 text-white shadow-sm ring-1 ring-primary-400/50 relative flex items-center transition-all py-3 px-2 mb-3 rounded-md group gap-x-3 text-base leading-6 font-normal" : "text-white hover:bg-primary-500/60 transition-all group flex items-center gap-x-3 py-3 px-2 mb-3 rounded-md text-base leading-6 font-normal"}" do %>
-            <span class="text-center w-6"><i class="<%= item[:icon] %> text-xl fa-fw"></i></span>
-            <span><%= item[:label] %></span>
-          <% end %>
-        <% end %>
-      </li>
-    <% end %>
-    <li class="mt-auto pt-3 border-t border-white/10">
       <%
-        # Check if we're in the my_profile section
-        is_my_profile_active = current_path.starts_with?("#{Panda::Core.config.admin_path}/my_profile")
+        has_children = item[:children].present?
+
+        # For items with children, check if any child is active
+        if has_children
+          is_active = item[:children].any? do |child|
+            child[:path] && (current_path == child[:path] || current_path.starts_with?(child[:path] + "/"))
+          end
+        else
+          is_active = item[:path] == active_path
+        end
       %>
-      <div data-controller="navigation-toggle">
-        <button type="button"
-                data-navigation-toggle-target="button"
-                data-action="click->navigation-toggle#toggle"
-                aria-controls="user-menu"
-                aria-expanded="false"
-                class="<%= is_my_profile_active ? 'bg-primary-500 text-white shadow-sm ring-1 ring-primary-400/50' : 'text-white hover:bg-primary-500/60' %> transition-all group flex items-center w-full gap-x-3 py-3 px-2 rounded-md text-base leading-6 font-normal">
-          <% if helpers.current_user.avatar.attached? %>
-            <span class="text-center w-6"><%= helpers.image_tag helpers.main_app.url_for(helpers.current_user.avatar), alt: helpers.current_user.name, class: "w-auto h-7 rounded-full object-cover" %></span>
-          <% elsif !helpers.current_user.image_url.to_s.empty? %>
-            <span class="text-center w-6"><img src="<%= helpers.current_user.image_url %>" class="w-auto h-7 rounded-full"></span>
-          <% else %>
-            <span class="text-center w-6"><i class="text-xl fa-solid fa-circle-user fa-fw"></i></span>
-          <% end %>
-          <span class="flex-1 text-left"><%= helpers.current_user.name %></span>
-          <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
-             data-navigation-toggle-target="icon"></i>
-        </button>
-        <div id="user-menu"
-             class="mt-1 ml-2 pl-2 border-l border-white/20 space-y-0.5 hidden"
-             style="display: none;"
-             data-navigation-toggle-target="menu">
-          <%
-            is_edit_profile_active = current_path == helpers.panda_core.edit_admin_my_profile_path
-            is_logins_active = current_path.starts_with?(helpers.panda_core.admin_my_profile_logins_path)
-          %>
-          <%= helpers.link_to helpers.panda_core.edit_admin_my_profile_path, class: "#{is_edit_profile_active ? 'bg-primary-500 text-white shadow-sm' : 'text-white/90 hover:bg-primary-500/40 hover:text-white'} group flex items-center w-full py-2 pr-2 pl-8 rounded-md text-sm font-normal transition-all" do %>
-            My Profile
-          <% end %>
-          <%= helpers.link_to helpers.panda_core.admin_my_profile_logins_path, class: "#{is_logins_active ? 'bg-primary-500 text-white shadow-sm' : 'text-white/90 hover:bg-primary-500/40 hover:text-white'} group flex items-center w-full py-2 pr-2 pl-8 rounded-md text-sm font-normal transition-all" do %>
-            Login & Security
-          <% end %>
-          <%= helpers.button_to helpers.panda_core.admin_logout_path, method: :delete, id: "logout-link", data: { turbo: false }, class: "text-white/90 hover:bg-primary-500/40 hover:text-white group flex items-center w-full py-2 pr-2 pl-8 rounded-md text-sm font-normal transition-all text-left" do %>
-            Logout
-          <% end %>
-        </div>
-      </div>
-    </li>
+
+      <%= render Panda::Core::Admin::Navigation::ItemComponent.new(
+        label: item[:label],
+        icon: item[:icon],
+        path: item[:path],
+        active: is_active,
+        menu_id: "sub-menu-#{index}"
+      ) do |nav_item|
+        if has_children
+          item[:children].each do |child|
+            child_is_active = child[:path] && (current_path == child[:path] || current_path.starts_with?(child[:path] + "/"))
+            nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active)
+          end
+        end
+      end %>
+    <% end %>
+
+    <%
+      # Check if we're in the my_profile section
+      is_my_profile_active = current_path.starts_with?("#{Panda::Core.config.admin_path}/my_profile")
+      is_edit_profile_active = current_path == helpers.panda_core.edit_admin_my_profile_path
+      is_logins_active = current_path.starts_with?(helpers.panda_core.admin_my_profile_logins_path)
+    %>
+    <%= render Panda::Core::Admin::Navigation::UserMenuComponent.new(user: helpers.current_user, active: is_my_profile_active) do |user_menu|
+      user_menu.with_sub_item(label: "My Profile", path: helpers.panda_core.edit_admin_my_profile_path, active: is_edit_profile_active)
+      user_menu.with_sub_item(label: "Login & Security", path: helpers.panda_core.admin_my_profile_logins_path, active: is_logins_active)
+      user_menu.with_sub_item(label: "Logout", path: helpers.panda_core.admin_logout_path, method: :delete, button_options: { id: "logout-link", data: { turbo: false } })
+    end %>
+
     <li class="px-2 py-3">
       <span class="text-xs text-white">Panda Core v<%= Panda::Core::VERSION %></span>
     </li>

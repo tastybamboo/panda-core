@@ -1,0 +1,9 @@
+<% if button? %>
+  <%= helpers.button_to path, method: method, **button_options, class: "#{item_classes} text-left" do %>
+    <%= label %>
+  <% end %>
+<% else %>
+  <%= helpers.link_to path, class: item_classes do %>
+    <%= label %>
+  <% end %>
+<% end %>
