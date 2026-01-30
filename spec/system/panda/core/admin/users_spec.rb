@@ -66,7 +66,7 @@ RSpec.describe "Admin Users Management", type: :system do
       visit "/admin/users/#{regular_user.id}/edit"
 
       fill_in "user[name]", with: "Updated Name"
-      click_button "Save"
+      click_button "Update User"
 
       expect(page).to have_content("User has been updated successfully")
       expect(regular_user.reload.name).to eq("Updated Name")
@@ -76,7 +76,7 @@ RSpec.describe "Admin Users Management", type: :system do
       visit "/admin/users/#{regular_user.id}/edit"
 
       fill_in "user[email]", with: "updated@example.com"
-      click_button "Save"
+      click_button "Update User"
 
       expect(page).to have_content("User has been updated successfully")
       expect(regular_user.reload.email).to eq("updated@example.com")
@@ -86,7 +86,7 @@ RSpec.describe "Admin Users Management", type: :system do
       visit "/admin/users/#{regular_user.id}/edit"
 
       check "user[admin]"
-      click_button "Save"
+      click_button "Update User"
 
       expect(page).to have_content("User has been updated successfully")
       expect(regular_user.reload.admin?).to be true
@@ -102,7 +102,7 @@ RSpec.describe "Admin Users Management", type: :system do
       visit "/admin/users/#{other_admin.id}/edit"
 
       uncheck "user[admin]"
-      click_button "Save"
+      click_button "Update User"
 
       expect(page).to have_content("User has been updated successfully")
       expect(other_admin.reload.admin?).to be false
