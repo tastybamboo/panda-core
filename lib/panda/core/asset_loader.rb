@@ -161,8 +161,11 @@ module Panda
             css_files = Dir[assets_dir.join("panda-core-*.css")].reject { |f| File.symlink?(f) }
 
             if css_files.any?
-              # Return the most recently created file
-              latest = css_files.max_by { |f| File.basename(f)[/\d+/].to_i }
+              # Return the file with the highest semantic version
+              latest = css_files.max_by { |f|
+                version_str = File.basename(f).match(/panda-core-(.+)\.css/)&.captures&.first || "0"
+                Gem::Version.new(version_str)
+              }
               return "/panda-core-assets/#{File.basename(latest)}"
             end
           else
