@@ -10,6 +10,8 @@ module Panda
 
         protect_from_forgery with: :exception
 
+        default_form_builder Panda::Core::FormBuilder
+
         # Add flash types for improved alert support with Tailwind
         add_flash_types :success, :warning, :error, :info
 

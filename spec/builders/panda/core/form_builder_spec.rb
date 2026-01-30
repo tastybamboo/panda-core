@@ -178,6 +178,35 @@ RSpec.describe Panda::Core::FormBuilder, type: :helper do
     end
   end
 
+  describe "#number_field with custom label" do
+    it "renders the custom label text when label option is provided" do
+      result = builder.number_field(:id, label: "User ID")
+
+      expect(result).to include("User ID")
+      expect(result).to include('name="user[id]"')
+    end
+
+    it "uses the default label when no custom label is provided" do
+      result = builder.number_field(:id)
+
+      expect(result).to include("Id")
+      expect(result).to include('name="user[id]"')
+    end
+
+    it "removes the label option from the input attributes" do
+      result = builder.number_field(:id, label: "User ID", min: 1)
+
+      expect(result).not_to include('label="User ID"')
+      expect(result).to include('min="1"')
+    end
+
+    it "wraps in a container with proper styling" do
+      result = builder.number_field(:id)
+
+      expect(result).to include("panda-core-field-container")
+    end
+  end
+
   describe "integration: multiple fields with custom labels" do
     it "handles different field types with custom labels in the same form" do
       text_result = builder.text_field(:name, label: "Full Name")

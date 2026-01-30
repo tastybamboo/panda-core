@@ -94,6 +94,46 @@ RSpec.describe Panda::Core::AssetLoader do
     end
   end
 
+  describe ".css_url version selection" do
+    before do
+      allow(described_class).to receive(:use_github_assets?).and_return(false)
+      allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new("development"))
+    end
+
+    it "selects the highest semantic version CSS file" do
+      assets_dir = Panda::Core::Engine.root.join("public", "panda-core-assets")
+
+      css_files = %w[
+        panda-core-0.11.0.css
+        panda-core-0.12.2.css
+        panda-core-0.12.3.css
+        panda-core-0.12.5.css
+        panda-core-0.13.0.css
+      ].map { |f| assets_dir.join(f).to_s }
+
+      allow(Dir).to receive(:[]).and_return(css_files)
+      allow(File).to receive(:symlink?).and_return(false)
+
+      result = described_class.css_url
+      expect(result).to eq("/panda-core-assets/panda-core-0.13.0.css")
+    end
+
+    it "handles single-digit vs multi-digit version components correctly" do
+      assets_dir = Panda::Core::Engine.root.join("public", "panda-core-assets")
+
+      css_files = %w[
+        panda-core-0.9.0.css
+        panda-core-0.10.0.css
+      ].map { |f| assets_dir.join(f).to_s }
+
+      allow(Dir).to receive(:[]).and_return(css_files)
+      allow(File).to receive(:symlink?).and_return(false)
+
+      result = described_class.css_url
+      expect(result).to eq("/panda-core-assets/panda-core-0.10.0.css")
+    end
+  end
+
   describe ".asset_tags" do
     context "when using local assets" do
       before do

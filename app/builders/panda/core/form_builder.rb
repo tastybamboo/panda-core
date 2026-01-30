@@ -75,6 +75,15 @@ module Panda
         end
       end
 
+      def number_field(method, options = {})
+        # Extract custom label if provided
+        custom_label = options.delete(:label)
+
+        content_tag :div, class: container_styles do
+          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: input_styles)) + error_message(method)
+        end
+      end
+
       def select(method, choices = nil, options = {}, html_options = {})
         # Extract custom label if provided
         custom_label = options.delete(:label)
