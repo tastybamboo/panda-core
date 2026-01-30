@@ -11,6 +11,10 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.1].define(version: 2025_12_03_100000) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
+
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "message_checksum", null: false
@@ -58,9 +62,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_100000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-# Could not dump table "panda_core_users" because of following StandardError
-#   Unknown type 'uuid' for column 'id'
-
+  create_table "panda_core_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "admin", default: false, null: false
+    t.datetime "created_at", null: false
+    t.string "current_theme"
+    t.string "email", null: false
+    t.string "image_url"
+    t.string "name"
+    t.string "oauth_avatar_url"
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_panda_core_users_on_email", unique: true
+  end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"

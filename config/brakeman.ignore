@@ -44,6 +44,29 @@
         352
       ],
       "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "3922b601ed6a13edb741983d20520c7835ce372f237d7d9387afdbf88ea86092",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/panda/core/admin/users_controller.rb",
+      "line": 60,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:user).permit(:name, :email, :admin)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Panda::Core::Admin::UsersController",
+        "method": "user_params"
+      },
+      "user_input": ":admin",
+      "confidence": "High",
+      "cwe_id": [
+        915
+      ],
+      "note": "Admin-only controller behind authenticate_admin_user! - only admins can modify user roles"
     }
   ],
   "brakeman_version": "7.1.2"
