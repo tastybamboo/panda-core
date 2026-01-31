@@ -10,6 +10,12 @@ module Panda
         super(attribute, text, options.reverse_merge(class: label_styles))
       end
 
+      # Override field_id to match FormBuilder's signature, since the included
+      # FormTagHelper defines a field_id with a different arity that shadows it.
+      def field_id(method, *suffixes, namespace: @options[:namespace], index: @options[:index])
+        @template.field_id(@object_name, method, *suffixes, namespace: namespace, index: index)
+      end
+
       def text_field(attribute, options = {})
         # Extract custom label if provided
         custom_label = options.delete(:label)
