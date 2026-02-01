@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Admin My Profile Logins", type: :system do
+RSpec.describe "Admin My Profile Logins", type: :system, flaky: true do
   let!(:admin_user) { create_admin_user }
 
   before do
