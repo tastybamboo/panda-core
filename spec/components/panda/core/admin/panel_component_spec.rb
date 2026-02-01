@@ -11,8 +11,8 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.rounded-lg.shadow-md")
-      expect(output).to have_css("div.text-white", text: "Recent Activity")
+      expect(output).to have_css("div.rounded-2xl.shadow-sm")
+      expect(output).to have_css("div.text-slate-700", text: "Recent Activity")
       expect(output).to have_text("Activity content goes here")
     end
 
@@ -22,7 +22,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.bg-white.rounded-b-lg")
+      expect(output).to have_css("div.p-4.text-black")
       expect(output).to have_text("Just body content")
     end
 
@@ -33,7 +33,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       output = Capybara.string(rendered_content)
 
       expect(output).to have_text("Empty Panel")
-      expect(output).to have_css("div.bg-white.rounded-b-lg")
+      expect(output).to have_css("div.bg-white.rounded-2xl")
     end
 
     it "applies panel styling to heading" do
@@ -42,7 +42,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.text-base.font-medium.px-4.py-3.text-white")
+      expect(output).to have_css("div.text-sm.font-medium.px-4.py-3.text-slate-700")
     end
   end
 end

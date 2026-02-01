@@ -20,7 +20,7 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end)
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.table.overflow-x-auto")
+      expect(output).to have_css("div.overflow-x-auto")
       expect(output).to have_css("div.table-header-group")
       expect(output).to have_text("Name")
       expect(output).to have_text("Email")
@@ -45,7 +45,7 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end)
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.table-row.hover\\:bg-gray-500\\/20")
+      expect(output).to have_css("div.table-row.hover\\:bg-gray-100")
     end
 
     it "includes data attributes on rows" do
@@ -116,8 +116,8 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end)
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.table-cell.rounded-tl-md")
-      expect(output).to have_css("div.table-cell.rounded-tr-md")
+      expect(output).to have_css("div.table-cell.rounded-tl-2xl")
+      expect(output).to have_css("div.table-cell.rounded-tr-2xl")
     end
 
     it "applies header background color" do
@@ -126,7 +126,7 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end)
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.table-row.bg-gray-800")
+      expect(output).to have_css("div.table-row.bg-slate-900")
     end
   end
 end

@@ -36,8 +36,8 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
       component = described_class.new(files: [], selected_file: nil)
 
       classes = component.send(:file_container_classes, false)
-      expect(classes).to include("focus-within:outline")
-      expect(classes).to include("focus-within:outline-indigo-600")
+      expect(classes).to include("focus-within:outline-2")
+      expect(classes).to include("focus-within:outline-primary-600")
     end
 
     it "includes selected outline when selected" do
