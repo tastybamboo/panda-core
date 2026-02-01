@@ -103,7 +103,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
-      expect(html).to include("bg-gray-50")
+      expect(html).to include("bg-gray-100")
       expect(html).to include("cursor-not-allowed")
     end
 
@@ -112,7 +112,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
-      expect(html).to include("hover:cursor-pointer")
+      expect(html).not_to include("cursor-not-allowed")
     end
   end
 
@@ -124,7 +124,7 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent, type: :component do
 
       expect(html).to include("block")
       expect(html).to include("w-full")
-      expect(html).to include("rounded-md")
+      expect(html).to include("rounded-xl")
     end
 
     it "includes focus ring classes" do

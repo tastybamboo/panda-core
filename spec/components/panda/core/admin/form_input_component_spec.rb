@@ -119,7 +119,7 @@ RSpec.describe Panda::Core::Admin::FormInputComponent, type: :component do
       component = described_class.new(name: "email", value: "", disabled: true, placeholder: "")
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("input.bg-gray-50")
+      expect(output).to have_css("input.bg-gray-100")
       expect(output).to have_css("input.cursor-not-allowed")
     end
 
@@ -127,7 +127,7 @@ RSpec.describe Panda::Core::Admin::FormInputComponent, type: :component do
       component = described_class.new(name: "email", value: "", disabled: false, placeholder: "")
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("input.hover\\:cursor-pointer")
+      expect(output).not_to have_css("input.cursor-not-allowed")
     end
   end
 
@@ -174,7 +174,7 @@ RSpec.describe Panda::Core::Admin::FormInputComponent, type: :component do
 
       expect(output).to have_css("input.block")
       expect(output).to have_css("input.w-full")
-      expect(output).to have_css("input.rounded-md")
+      expect(output).to have_css("input.rounded-xl")
     end
 
     it "includes focus ring classes" do

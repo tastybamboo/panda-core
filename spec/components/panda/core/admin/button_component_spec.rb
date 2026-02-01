@@ -46,7 +46,7 @@ RSpec.describe Panda::Core::Admin::ButtonComponent, type: :component do
       component = described_class.new(text: "Small", size: :small)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("a.text-sm")
+      expect(output).to have_css("a.text-xs")
     end
   end
 end

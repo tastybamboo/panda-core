@@ -57,7 +57,7 @@ RSpec.describe Panda::Core::Admin::FormSectionComponent, type: :component do
   describe "#heading_classes" do
     it "returns appropriate heading classes" do
       component = described_class.new(title: "Test")
-      expect(component.heading_classes).to include("text-base")
+      expect(component.heading_classes).to include("text-sm")
       expect(component.heading_classes).to include("font-semibold")
     end
   end
@@ -65,8 +65,8 @@ RSpec.describe Panda::Core::Admin::FormSectionComponent, type: :component do
   describe "#description_classes" do
     it "returns appropriate description classes" do
       component = described_class.new(title: "Test")
-      expect(component.description_classes).to include("text-sm")
-      expect(component.description_classes).to include("text-gray-500")
+      expect(component.description_classes).to include("text-xs")
+      expect(component.description_classes).to include("text-slate-500")
     end
   end
 

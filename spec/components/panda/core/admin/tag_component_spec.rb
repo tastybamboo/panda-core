@@ -8,15 +8,15 @@ RSpec.describe Panda::Core::Admin::TagComponent, type: :component do
       component = described_class.new(status: :active)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("span.bg-green-600")
+      expect(output).to have_css("span.bg-emerald-50")
       expect(output).to have_text("Active")
     end
 
-    it "renders a draft tag with yellow styling" do
+    it "renders a draft tag with amber styling" do
       component = described_class.new(status: :draft)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("span.bg-yellow-400")
+      expect(output).to have_css("span.bg-amber-50")
       expect(output).to have_text("Draft")
     end
 
@@ -31,7 +31,7 @@ RSpec.describe Panda::Core::Admin::TagComponent, type: :component do
       component = described_class.new(status: :inactive)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("span.bg-white")
+      expect(output).to have_css("span.bg-slate-100")
       expect(output).to have_text("Inactive")
     end
   end

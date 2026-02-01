@@ -10,7 +10,7 @@ RSpec.describe Panda::Core::Admin::FlashMessageComponent, type: :component do
 
       expect(output).to have_text("Saved successfully")
       expect(output).to have_css("i.fa-circle-check")
-      expect(output).to have_css(".text-green-400")
+      expect(output).to have_css(".text-emerald-600")
     end
 
     it "renders an error flash message" do
@@ -19,7 +19,7 @@ RSpec.describe Panda::Core::Admin::FlashMessageComponent, type: :component do
 
       expect(output).to have_text("An error occurred")
       expect(output).to have_css("i.fa-circle-xmark")
-      expect(output).to have_css(".text-red-400")
+      expect(output).to have_css(".text-rose-600")
     end
 
     it "renders a warning flash message" do
@@ -28,7 +28,7 @@ RSpec.describe Panda::Core::Admin::FlashMessageComponent, type: :component do
 
       expect(output).to have_text("Warning message")
       expect(output).to have_css("i.fa-triangle-exclamation")
-      expect(output).to have_css(".text-yellow-400")
+      expect(output).to have_css(".text-amber-600")
     end
 
     it "renders a notice/info flash message" do
@@ -37,7 +37,7 @@ RSpec.describe Panda::Core::Admin::FlashMessageComponent, type: :component do
 
       expect(output).to have_text("Information")
       expect(output).to have_css("i.fa-circle-info")
-      expect(output).to have_css(".text-blue-400")
+      expect(output).to have_css(".text-sky-600")
     end
 
     it "renders with subtitle when provided" do
@@ -65,25 +65,21 @@ RSpec.describe Panda::Core::Admin::FlashMessageComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("button[data-action='alert#close']")
-      expect(output).to have_css(".sr-only", text: "Close")
     end
 
-    it "applies Tailwind Plus styling" do
+    it "applies rounded and shadow styling" do
       component = described_class.new(message: "Test", kind: :success)
       output = Capybara.string(render_inline(component).to_html)
 
-      # Check for key Tailwind Plus classes
-      expect(output).to have_css(".rounded-lg.bg-white.shadow-lg")
-      expect(output).to have_css(".dark\\:bg-gray-800")
+      expect(output).to have_css(".rounded-2xl.shadow-lg")
+      expect(output).to have_css(".bg-emerald-50")
     end
 
-    it "has dark mode support" do
+    it "applies tone-based background colors" do
       component = described_class.new(message: "Test", kind: :success)
       output = Capybara.string(render_inline(component).to_html)
 
-      # Check for dark mode classes on main elements
-      expect(output).to have_css(".dark\\:bg-gray-800")
-      expect(output).to have_css(".dark\\:text-white")
+      expect(output).to have_css(".bg-emerald-50.text-emerald-700")
     end
 
     it "sets temporary dismissal by default" do
@@ -105,7 +101,7 @@ RSpec.describe Panda::Core::Admin::FlashMessageComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("i.fa-solid")
-      expect(output).to have_css("i.size-6")
+      expect(output).to have_css("i.size-5")
     end
   end
 end

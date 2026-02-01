@@ -16,7 +16,7 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("h1", text: "Main Title")
-      expect(output).to have_css("h1.text-2xl.font-medium")
+      expect(output).to have_css("h1.text-2xl.font-semibold")
     end
 
     it "renders level 2 heading by default" do
@@ -24,7 +24,7 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("h2", text: "Subtitle")
-      expect(output).to have_css("h2.text-xl.font-medium")
+      expect(output).to have_css("h2.text-xl.font-semibold")
     end
 
     it "renders level 3 heading" do
@@ -32,7 +32,7 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("h3", text: "Section Title")
-      expect(output).to have_css("h3.text-xl.font-light")
+      expect(output).to have_css("h3.text-lg.font-medium")
     end
 
     it "renders with button slot" do
