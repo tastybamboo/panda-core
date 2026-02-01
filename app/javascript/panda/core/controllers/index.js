@@ -10,6 +10,9 @@ application.register("image-cropper", ImageCropperController)
 import NavigationToggleController from "./navigation_toggle_controller.js"
 application.register("navigation-toggle", NavigationToggleController)
 
+import RowLinkController from "./row_link_controller.js"
+application.register("row-link", RowLinkController)
+
 // Import and register TailwindCSS Stimulus Components
 // These are needed for UI components like slideover, modals, alerts, etc.
 import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components.js"

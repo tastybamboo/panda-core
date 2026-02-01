@@ -1,6 +1,6 @@
 <% if rows.any? %>
   <%# Table with rows %>
-  <div class="mb-12 w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white">
+  <div class="mb-12 w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white" data-controller="row-link" data-action="click->row-link#click">
     <%# Header %>
     <div class="table w-full" style="table-layout: fixed;">
       <div class="table-header-group">
@@ -20,7 +20,7 @@
       <%# Rows %>
        <div class="table-row-group">
          <% rows.each do |row| %>
-           <div class="table-row relative odd:bg-white even:bg-gray-50/60 hover:bg-gray-100" data-<%= term %>-id="<%= row.id %>">
+           <div class="table-row odd:bg-white even:bg-gray-50/60 hover:bg-gray-100" data-<%= term %>-id="<%= row.id %>">
              <% columns.each do |column| %>
               <div class="table-cell px-4 py-3 text-sm align-middle whitespace-nowrap border-b border-gray-200/70 text-gray-600">
                 <%= render_cell_content(row, column.cell) %>

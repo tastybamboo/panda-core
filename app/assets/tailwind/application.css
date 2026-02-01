@@ -240,16 +240,15 @@
     --color-gray-950: rgb(3, 7, 18);
   }
 
-  a.block-link:after {
-    position: absolute;
-    content: '';
-    inset: 0;
-  }
-
   /* Admin gradient backgrounds - neutral gray for chrome */
   .bg-gradient-admin {
     background: linear-gradient(to bottom right, rgb(17, 24, 39), rgb(55, 65, 81));
     border-bottom-left-radius: 0;
+  }
+
+  /* Clickable table rows containing a block-link */
+  .table-row:has(a.block-link) {
+    cursor: pointer;
   }
 }
 
@@ -346,11 +345,6 @@
     @apply border border-success-200 bg-success-50 text-success-600 hover:bg-success-100 focus-visible:outline-success-300;
   }
 
-  a.block-link:after {
-    position: absolute;
-    content: '';
-    inset: 0;
-  }
 }
 
 /* EditorJS content styles */
