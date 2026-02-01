@@ -83,7 +83,7 @@ Panda::Core::ModuleRegistry.register(
   engine: "Panda::Core::Engine",
   paths: {
     builders: "app/builders/panda/core/**/*.rb",
-    components: "app/components/panda/core/**/*.rb",
+    components: "app/components/panda/core/**/*.{rb,erb,js}",
     helpers: "app/helpers/panda/core/**/*.rb",
     views: "app/views/panda/core/**/*.erb",
     layouts: "app/views/layouts/panda/core/**/*.erb",
