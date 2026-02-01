@@ -28,7 +28,7 @@ module Panda
           focus = if selected
             "outline-2 outline-offset-2 outline-panda-dark dark:outline-panda-light outline"
           else
-            "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-indigo-600 dark:focus-within:outline-indigo-500"
+            "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary-600 dark:focus-within:outline-primary-500"
           end
           "#{base} #{focus}"
         end
