@@ -170,7 +170,7 @@ RSpec.describe "Nested navigation", type: :system do
       end
     end
 
-    it "expands parent menu automatically when child is active", :flaky, js: true do
+    it "expands parent menu automatically when child is active", js: true do
       visit "/admin/settings"
 
       # The Settings menu should be automatically expanded
