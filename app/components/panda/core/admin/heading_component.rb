@@ -25,16 +25,16 @@ module Panda
 
         def heading_classes
           margin_bottom = @meta.present? ? "mb-0.5" : "mb-5"
-          base = "flex text-black #{margin_bottom} -mt-2"
+          base = "flex items-center gap-2 text-slate-900 #{margin_bottom}"
           styles = case @level
           when 1
-            "text-2xl font-medium"
+            "text-2xl font-semibold"
           when 2
-            "text-xl font-medium"
+            "text-xl font-semibold"
           when 3
-            "text-xl font-light"
+            "text-lg font-medium"
           else
-            "text-xl font-medium"
+            "text-xl font-semibold"
           end
 
           [base, styles, @additional_styles].compact.join(" ")

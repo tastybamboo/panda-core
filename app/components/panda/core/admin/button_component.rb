@@ -47,20 +47,20 @@ module Panda
         end
 
         def button_classes
-          base = "inline-flex items-center rounded-md font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer "
+          base = "inline-flex items-center rounded-xl font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer transition-colors "
           base + size_classes + action_classes
         end
 
         def size_classes
           case @size
           when :small, :sm
-            "gap-x-1.5 px-2.5 py-1.5 text-sm "
+            "gap-x-1.5 px-3 py-1.5 text-xs "
           when :medium, :regular, :md
-            "gap-x-1.5 px-3 py-2 text-base "
+            "gap-x-2 px-4 py-2 text-sm "
           when :large, :lg
-            "gap-x-2 px-3.5 py-2.5 text-lg "
+            "gap-x-2 px-5 py-2.5 text-base "
           else
-            "gap-x-1.5 px-3 py-2 text-base "
+            "gap-x-2 px-4 py-2 text-sm "
           end
         end
 
@@ -69,13 +69,13 @@ module Panda
           when :save, :create
             "text-white bg-primary-500 hover:bg-primary-600 focus-visible:outline-primary-600"
           when :save_inactive
-            "text-white bg-gray-400"
+            "text-white bg-gray-300 cursor-not-allowed"
           when :secondary
-            "text-gray-700 border-2 border-gray-500 bg-white hover:bg-gray-100 active:bg-gray-200 transition-colors"
+            "text-gray-700 border border-gray-200 bg-white hover:bg-gray-50"
           when :delete, :destroy, :danger
-            "text-error-600 border border-error-600 bg-error-100 hover:bg-error-200 hover:text-error-700 focus-visible:outline-error-300"
+            "text-error-600 border border-error-200 bg-error-50 hover:bg-error-100 focus-visible:outline-error-300"
           else
-            "text-gray-700 border-2 border-gray-500 bg-white hover:bg-gray-100 active:bg-gray-200 transition-colors"
+            "text-gray-700 border border-gray-200 bg-white hover:bg-gray-50"
           end
         end
 

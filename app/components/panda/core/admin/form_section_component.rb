@@ -48,11 +48,11 @@ module Panda
         end
 
         def heading_classes
-          "text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2"
+          "text-sm font-semibold text-slate-700 flex items-center gap-2"
         end
 
         def description_classes
-          "mt-1 text-sm text-gray-500 dark:text-gray-400"
+          "mt-1 text-xs text-slate-500"
         end
 
         def content_classes

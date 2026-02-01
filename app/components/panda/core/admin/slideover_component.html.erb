@@ -28,16 +28,15 @@
         <h2 class="text-base font-semibold text-white" id="slideover-title">
           <%= @title %>
         </h2>
-        <div class="ml-3 flex h-7 items-center">
+        <div class="ml-3 flex items-center">
           <%= content_tag :button,
               type: "button",
               data: {
                 action: "click->toggle#toggle touch->toggle#toggle"
               },
-              class: "relative rounded-md text-white/80 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" do %>
-            <span class="absolute -inset-2.5"></span>
-            <span class="sr-only">Close panel</span>
-            <%= close_icon %>
+              class: "inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-1 text-xs text-white/80 hover:text-white" do %>
+            <span>Close</span>
+            <i class="fa-solid fa-xmark"></i>
           <% end %>
         </div>
       </div>

@@ -1,0 +1,9 @@
+<%= content_tag :pre, **attrs do %>
+  <code>
+    <% if content? %>
+      <%= content %>
+    <% else %>
+      <%= code %>
+    <% end %>
+  </code>
+<% end %>

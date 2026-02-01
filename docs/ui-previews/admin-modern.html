@@ -1,0 +1,1913 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panda Admin UI Preview (Modern)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Sora"', 'ui-sans-serif', 'system-ui'],
+              display: ['"Sora"', 'ui-sans-serif', 'system-ui'],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: "Sora", ui-sans-serif, system-ui;
+        background:
+          radial-gradient(1200px 600px at 20% -10%, rgba(56, 189, 248, 0.18), transparent 70%),
+          radial-gradient(900px 600px at 80% -20%, rgba(16, 185, 129, 0.14), transparent 70%),
+          #f8fafc;
+      }
+      .screen-frame {
+        box-shadow:
+          0 25px 50px -12px rgba(15, 23, 42, 0.25),
+          0 8px 16px -8px rgba(15, 23, 42, 0.2);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-slate-900">
+    <div class="max-w-7xl mx-auto px-6 py-10 lg:px-10 space-y-16">
+      <header class="flex flex-col gap-3">
+        <span class="text-sm font-medium text-slate-500">Panda Admin UI Preview</span>
+        <h1 class="text-3xl sm:text-4xl font-semibold text-slate-900">Modernized layouts inspired by Tailwind Plus</h1>
+        <p class="max-w-3xl text-slate-600">
+          These are static HTML previews meant for visual iteration before translating into ViewComponents.
+          All spacing, typography, and navigation treatments are tuned for consistency.
+        </p>
+      </header>
+
+      <!-- Dashboard -->
+      <section id="dashboard" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Dashboard</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[620px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <div class="text-xs font-semibold text-slate-400 px-3">Manage</div>
+                <a class="flex items-center gap-3 rounded-xl bg-sky-500/20 px-3 py-2.5 text-white ring-1 ring-inset ring-sky-400/30" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/15 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Content
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Forms &amp; Files
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Menus
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Tools
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Settings
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Helpdesk
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div>
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Panda Core v0.13.0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div>
+                  <div class="text-xs text-slate-400">Home / Dashboard</div>
+                  <h3 class="mt-1 text-lg font-semibold">Overview</h3>
+                </div>
+                <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
+                  <span class="text-lg">+</span>
+                  Add Page
+                </button>
+              </div>
+
+              <div class="px-6 py-6 space-y-6">
+                <div class="grid gap-4 md:grid-cols-3">
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="text-sm text-slate-500">Views Today</div>
+                    <div class="mt-3 text-3xl font-semibold">5</div>
+                    <div class="mt-2 text-xs text-slate-400">+12% vs yesterday</div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="text-sm text-slate-500">Views Last Week</div>
+                    <div class="mt-3 text-3xl font-semibold">134</div>
+                    <div class="mt-2 text-xs text-slate-400">Steady over 7 days</div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="text-sm text-slate-500">Views Last Month</div>
+                    <div class="mt-3 text-3xl font-semibold">1,991</div>
+                    <div class="mt-2 text-xs text-slate-400">Last 30 days</div>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-6">
+                  <div class="flex items-center justify-between">
+                    <div class="font-semibold">Analytics</div>
+                    <span class="text-xs text-slate-400">Last 30 days</span>
+                  </div>
+                  <div class="mt-5 grid gap-6 md:grid-cols-2">
+                    <div>
+                      <div class="text-xs font-semibold text-slate-400">Page Views</div>
+                      <div class="mt-2 text-3xl font-semibold">1,991</div>
+                      <div class="mt-2 text-sm text-slate-500">Across 18 pages</div>
+                    </div>
+                    <div>
+                      <div class="text-xs font-semibold text-slate-400">Unique Visitors</div>
+                      <div class="mt-2 text-3xl font-semibold">96</div>
+                      <div class="mt-2 text-sm text-slate-500">Avg. 2.6 pages / visit</div>
+                    </div>
+                  </div>
+
+                  <div class="mt-6 border-t border-slate-200/70 pt-4">
+                    <div class="text-sm font-medium">Top Pages</div>
+                    <div class="mt-3 space-y-2 text-sm text-slate-600">
+                      <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                        <span>Page Not Found</span>
+                        <span class="text-slate-500">592 views</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-slate-50">
+                        <span>Home</span>
+                        <span class="text-slate-500">360 views</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-slate-50">
+                        <span>Local Services</span>
+                        <span class="text-slate-500">239 views</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-slate-50">
+                        <span>About Us</span>
+                        <span class="text-slate-500">161 views</span>
+                      </div>
+                      <div class="flex items-center justify-between rounded-xl px-3 py-2 hover:bg-slate-50">
+                        <span>Advice Hub</span>
+                        <span class="text-slate-500">79 views</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- My Profile -->
+      <section id="my-profile" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">My Profile</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[560px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Content
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Forms &amp; Files
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Menus
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Tools
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Settings
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div class="flex-1">
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Account</div>
+                    </div>
+                  </div>
+                  <div class="mt-3 space-y-1 text-xs text-slate-300/90">
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">My Profile</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Login &amp; Security</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Logout</div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Account / My Profile</div>
+                <h3 class="mt-1 text-lg font-semibold">My Profile</h3>
+              </div>
+              <div class="px-6 py-6 space-y-6">
+                <div class="grid gap-6 lg:grid-cols-2">
+                  <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                    <div class="text-sm font-medium text-slate-600">Profile Picture</div>
+                    <div class="mt-4 flex items-center gap-4">
+                      <div class="h-20 w-20 rounded-full bg-slate-100 flex items-center justify-center">
+                        <svg class="h-10 w-10 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                          <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" />
+                          <path d="M4 20a8 8 0 0 1 16 0" />
+                        </svg>
+                      </div>
+                      <div>
+                        <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Change</button>
+                        <div class="mt-2 text-xs text-slate-400">PNG, JPG up to 10MB</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                    <div class="text-sm font-medium text-slate-600">Avatar</div>
+                    <div class="mt-4 flex h-28 items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 text-sm text-slate-500">
+                      Upload a file or drag and drop
+                    </div>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Name</label>
+                      <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" value="James Inman" />
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Email</label>
+                      <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" value="james@neurobetter.org" />
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="text-xs font-semibold text-slate-400">Theme</label>
+                      <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                        <option>Default</option>
+                        <option>High Contrast</option>
+                        <option>Low Distraction</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mt-4 flex justify-end">
+                    <button class="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600">Update Profile</button>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Login & Security -->
+      <section id="login-security" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Login &amp; Security</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[540px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Content
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Forms &amp; Files
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Menus
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Tools
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Settings
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div class="flex-1">
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Account</div>
+                    </div>
+                  </div>
+                  <div class="mt-3 space-y-1 text-xs text-slate-300/90">
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">My Profile</div>
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Login &amp; Security</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Logout</div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Account / Login &amp; Security</div>
+                <h3 class="mt-1 text-lg font-semibold">Login &amp; Security</h3>
+              </div>
+              <div class="px-6 py-6 space-y-5">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-medium text-slate-700">Connected Accounts</div>
+                      <div class="text-xs text-slate-500">Manage OAuth providers</div>
+                    </div>
+                    <button class="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">Connect</button>
+                  </div>
+                  <div class="mt-4 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm">
+                    <div class="h-9 w-9 rounded-full bg-white border border-slate-200 flex items-center justify-center font-semibold text-slate-500">G</div>
+                    <div>
+                      <div class="font-medium">Google</div>
+                      <div class="text-xs text-slate-500">Not connected</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Login History</div>
+                  <div class="mt-2 text-xs text-slate-500">Recent login activity for your account</div>
+                  <div class="mt-4 rounded-xl bg-slate-50 px-3 py-3 text-xs text-slate-500">
+                    Login history tracking will be available in a future release.
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Two-Factor Authentication</div>
+                  <div class="mt-2 text-xs text-slate-500">Add an extra layer of security to your account</div>
+                  <div class="mt-4 rounded-xl bg-slate-50 px-3 py-3 text-xs text-slate-500">
+                    Two-factor authentication will be available in a future release.
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Files -->
+      <section id="files" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Files</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[560px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Content
+                </a>
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Forms &amp; Files</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Forms</div>
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Files</div>
+                  </div>
+                </div>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Menus
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Tools
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div>
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Panda Core v0.13.0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Content / Files</div>
+                <h3 class="mt-1 text-lg font-semibold">Files</h3>
+              </div>
+              <div class="px-6 py-6">
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="h-28 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                      <svg class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                      </svg>
+                    </div>
+                    <div class="mt-3 text-sm font-medium">steve.png</div>
+                    <div class="text-xs text-slate-500">2.4 MB</div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="h-28 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                      <svg class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                      </svg>
+                    </div>
+                    <div class="mt-3 text-sm font-medium">lucy.png</div>
+                    <div class="text-xs text-slate-500">1.3 MB</div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="h-28 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                      <svg class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                      </svg>
+                    </div>
+                    <div class="mt-3 text-sm font-medium">nicole.png</div>
+                    <div class="text-xs text-slate-500">3.9 MB</div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="h-28 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                      <svg class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                      </svg>
+                    </div>
+                    <div class="mt-3 text-sm font-medium">avatar_16b9.png</div>
+                    <div class="text-xs text-slate-500">16.6 KB</div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="h-28 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                      <svg class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                      </svg>
+                    </div>
+                    <div class="mt-3 text-sm font-medium">square-zoom.jpg</div>
+                    <div class="text-xs text-slate-500">1.2 MB</div>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div class="h-28 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                      <svg class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
+                      </svg>
+                    </div>
+                    <div class="mt-3 text-sm font-medium">avatar_f3f4.png</div>
+                    <div class="text-xs text-slate-500">34.6 KB</div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Settings -->
+      <section id="analytics-settings" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Analytics Settings</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[580px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Content
+                </a>
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Settings</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">General</div>
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Analytics</div>
+                  </div>
+                </div>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Helpdesk
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div>
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Panda Core v0.13.0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Settings / Analytics</div>
+                <h3 class="mt-1 text-lg font-semibold">Analytics Settings</h3>
+              </div>
+              <div class="px-6 py-6 space-y-6">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Frontend Tracking (gtag.js)</div>
+                  <label class="mt-3 flex items-center gap-3 text-sm text-slate-600">
+                    <input type="checkbox" class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                    <span>Enable tracking on public pages</span>
+                  </label>
+                  <div class="mt-4">
+                    <label class="text-xs font-semibold text-slate-400">Measurement ID</label>
+                    <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" placeholder="G-XXXXXXXXXX" />
+                  </div>
+                  <label class="mt-4 flex items-center gap-3 text-sm text-slate-600">
+                    <input type="checkbox" checked class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                    <span>Skip tracking for logged-in admin users</span>
+                  </label>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Data API (Dashboard Analytics)</div>
+                  <label class="mt-3 flex items-center gap-3 text-sm text-slate-600">
+                    <input type="checkbox" class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                    <span>Enable Data API for admin dashboard analytics</span>
+                  </label>
+                  <div class="mt-4 grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Property ID</label>
+                      <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" placeholder="properties/123456789" />
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Cache TTL (minutes)</label>
+                      <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" value="5" />
+                    </div>
+                  </div>
+                  <div class="mt-4">
+                    <label class="text-xs font-semibold text-slate-400">Service Account Credentials JSON</label>
+                    <pre class="mt-2 rounded-xl border border-slate-200 bg-slate-900/95 px-3 py-3 text-xs text-emerald-200 whitespace-pre-wrap font-mono">{
+  "type": "service_account",
+  "project_id": "neurobetter",
+  "client_email": "analytics@neurobetter.iam.gserviceaccount.com"
+}</pre>
+                    <p class="mt-2 text-xs text-slate-400">Credentials are encrypted at rest.</p>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Import / Export -->
+      <section id="import-export" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Import / Export</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[560px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Content
+                </a>
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Tools</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Import/Export</div>
+                  </div>
+                </div>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Settings
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div>
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Panda Core v0.13.0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Tools / Import &amp; Export</div>
+                <h3 class="mt-1 text-lg font-semibold">Import &amp; Export</h3>
+              </div>
+              <div class="px-6 py-6 space-y-6">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Export Content</div>
+                  <div class="mt-4 space-y-2 text-sm text-slate-600">
+                    <label class="flex items-center gap-3">
+                      <input type="checkbox" checked class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                      <span>All Content</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                      <input type="checkbox" class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                      <span>Pages</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                      <input type="checkbox" class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                      <span>Posts</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                      <input type="checkbox" class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                      <span>Menus</span>
+                    </label>
+                  </div>
+                  <div class="mt-4">
+                    <label class="text-xs font-semibold text-slate-400">Filter by Status</label>
+                    <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                      <option>All statuses</option>
+                      <option>Published</option>
+                      <option>Draft</option>
+                      <option>Hidden</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Import Content</div>
+                  <div class="mt-4">
+                    <label class="text-xs font-semibold text-slate-400">Upload YAML File</label>
+                    <div class="mt-2 flex h-11 items-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 text-sm text-slate-500">
+                      Choose file...
+                    </div>
+                  </div>
+                  <div class="mt-4 text-sm text-slate-600">
+                    <div class="font-medium text-slate-700">Conflict Resolution</div>
+                    <label class="mt-2 flex items-center gap-2">
+                      <input type="radio" name="conflict" checked class="h-4 w-4 text-sky-500 focus:ring-sky-500" />
+                      <span>Skip existing items</span>
+                    </label>
+                    <label class="mt-2 flex items-center gap-2">
+                      <input type="radio" name="conflict" class="h-4 w-4 text-sky-500 focus:ring-sky-500" />
+                      <span>Overwrite existing items</span>
+                    </label>
+                    <label class="mt-2 flex items-center gap-2">
+                      <input type="radio" name="conflict" class="h-4 w-4 text-sky-500 focus:ring-sky-500" />
+                      <span>Fail on conflicts</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collections -->
+      <section id="collections" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Collections</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[540px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Content</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Pages</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Posts</div>
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Collections</div>
+                  </div>
+                </div>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Menus
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Tools
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div>
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Panda Core v0.13.0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div>
+                  <div class="text-xs text-slate-400">Content / Collections</div>
+                  <h3 class="mt-1 text-lg font-semibold">Collections</h3>
+                </div>
+                <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
+                  <span class="text-lg">+</span>
+                  Add Collection
+                </button>
+              </div>
+              <div class="px-6 py-6">
+                <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                  <div class="grid grid-cols-12 items-center gap-4 bg-slate-900 px-4 py-3 text-sm font-medium text-slate-100">
+                    <div class="col-span-6">Name</div>
+                    <div class="col-span-3">Items</div>
+                    <div class="col-span-3 text-right">Last Updated</div>
+                  </div>
+                  <div class="divide-y divide-slate-200 text-sm">
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-6">
+                        <div class="font-medium">Homepage Features</div>
+                        <div class="text-xs text-slate-500">Slug: homepage-features</div>
+                      </div>
+                      <div class="col-span-3 text-slate-500">6 items</div>
+                      <div class="col-span-3 text-right text-slate-500">February 1, 2026 11:15</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-6">
+                        <div class="font-medium">Homepage Statistics</div>
+                        <div class="text-xs text-slate-500">Slug: homepage-statistics</div>
+                      </div>
+                      <div class="col-span-3 text-slate-500">4 items</div>
+                      <div class="col-span-3 text-right text-slate-500">February 1, 2026 11:15</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-6">
+                        <div class="font-medium">Our People</div>
+                        <div class="text-xs text-slate-500">Slug: trustees</div>
+                      </div>
+                      <div class="col-span-3 text-slate-500">10 items</div>
+                      <div class="col-span-3 text-right text-slate-500">January 21, 2026 16:46</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pages List -->
+      <section id="pages-list" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Pages List</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[600px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Content</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Pages</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Posts</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Collections</div>
+                  </div>
+                </div>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div>
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Panda Core v0.13.0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div>
+                  <div class="text-xs text-slate-400">Content / Pages</div>
+                  <h3 class="mt-1 text-lg font-semibold">Pages</h3>
+                </div>
+                <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
+                  <span class="text-lg">+</span>
+                  Add Page
+                </button>
+              </div>
+              <div class="px-6 py-6">
+                <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                  <div class="grid grid-cols-12 items-center gap-4 bg-slate-900 px-4 py-3 text-sm font-medium text-slate-100">
+                    <div class="col-span-7">Name</div>
+                    <div class="col-span-2">Type</div>
+                    <div class="col-span-3 text-right">Last Updated</div>
+                  </div>
+                  <div class="divide-y divide-slate-200 text-sm">
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-7">
+                        <div class="flex items-center gap-2">
+                          <span class="text-slate-400">▾</span>
+                          <span class="font-medium">Home</span>
+                        </div>
+                        <div class="pl-6 text-xs text-slate-500">/</div>
+                      </div>
+                      <div class="col-span-2">
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                      </div>
+                      <div class="col-span-3 text-right text-slate-500">34 minutes ago</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-7">
+                        <div class="flex items-center gap-2 pl-6">
+                          <span class="text-slate-400">▸</span>
+                          <span class="font-medium">Advice Hub</span>
+                        </div>
+                        <div class="pl-12 text-xs text-slate-500">/advice-hub</div>
+                      </div>
+                      <div class="col-span-2">
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                      </div>
+                      <div class="col-span-3 text-right text-slate-500">5 days ago</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-7">
+                        <div class="flex items-center gap-2 pl-12">
+                          <span class="text-slate-400">-</span>
+                          <span class="font-medium">Neurodiversity</span>
+                        </div>
+                        <div class="pl-16 text-xs text-slate-500">/advice-hub/neurodiversity</div>
+                      </div>
+                      <div class="col-span-2">
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                      </div>
+                      <div class="col-span-3 text-right text-slate-500">5 days ago</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-7">
+                        <div class="flex items-center gap-2 pl-12">
+                          <span class="text-slate-400">-</span>
+                          <span class="font-medium">Mental Health Conditions</span>
+                        </div>
+                        <div class="pl-16 text-xs text-slate-500">/advice-hub/mental-health-conditions</div>
+                      </div>
+                      <div class="col-span-2">
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                      </div>
+                      <div class="col-span-3 text-right text-slate-500">5 days ago</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-7">
+                        <div class="flex items-center gap-2 pl-12">
+                          <span class="text-slate-400">-</span>
+                          <span class="font-medium">Ask A Counsellor</span>
+                        </div>
+                        <div class="pl-16 text-xs text-slate-500">/advice-hub/ask-a-counsellor</div>
+                      </div>
+                      <div class="col-span-2">
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                      </div>
+                      <div class="col-span-3 text-right text-slate-500">2 days ago</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-7">
+                        <div class="flex items-center gap-2 pl-6">
+                          <span class="text-slate-400">▸</span>
+                          <span class="font-medium">What We Do</span>
+                        </div>
+                        <div class="pl-12 text-xs text-slate-500">/what-we-do</div>
+                      </div>
+                      <div class="col-span-2">
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                      </div>
+                      <div class="col-span-3 text-right text-slate-500">5 days ago</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-7">
+                        <div class="flex items-center gap-2 pl-12">
+                          <span class="text-slate-400">-</span>
+                          <span class="font-medium">Online Community</span>
+                        </div>
+                        <div class="pl-16 text-xs text-slate-500">/what-we-do/online-community</div>
+                      </div>
+                      <div class="col-span-2">
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                      </div>
+                      <div class="col-span-3 text-right text-slate-500">5 days ago</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Posts Empty State -->
+      <section id="posts" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Posts Empty State</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[520px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <div class="text-xs font-semibold text-slate-400 px-3">Content</div>
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Content</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Posts</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Pages</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Collections</div>
+                  </div>
+                </div>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Forms &amp; Files
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Menus
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Tools
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Settings
+                </a>
+              </nav>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div>
+                  <div class="text-xs text-slate-400">Content / Posts</div>
+                  <h3 class="mt-1 text-lg font-semibold">Posts</h3>
+                </div>
+                <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
+                  <span class="text-lg">+</span>
+                  Add Post
+                </button>
+              </div>
+              <div class="px-6 py-10">
+                <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-10 text-center">
+                  <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                    <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                      <path d="M14 2v6h6" />
+                      <path d="M9 13h6" />
+                      <path d="M9 17h6" />
+                    </svg>
+                  </div>
+                  <h4 class="mt-4 text-lg font-semibold">No posts yet</h4>
+                  <p class="mt-2 text-sm text-slate-500">Create your first post to get started. Drafts will stay private until published.</p>
+                  <button class="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+                    Create a post
+                  </button>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Menus Table -->
+      <section id="menus" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Menus Table</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[540px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Content
+                </a>
+                <a class="flex items-center gap-3 rounded-xl bg-sky-500/20 px-3 py-2.5 text-white ring-1 ring-inset ring-sky-400/30" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/15 bg-white/5"></span>
+                  Menus
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Tools
+                </a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Settings
+                </a>
+              </nav>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div>
+                  <div class="text-xs text-slate-400">Navigation / Menus</div>
+                  <h3 class="mt-1 text-lg font-semibold">Menus</h3>
+                </div>
+                <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
+                  <span class="text-lg">+</span>
+                  New Menu
+                </button>
+              </div>
+              <div class="px-6 py-6">
+                <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                  <div class="grid grid-cols-12 gap-4 bg-slate-900 px-4 py-3 text-sm font-medium text-slate-100">
+                    <div class="col-span-7">Name</div>
+                    <div class="col-span-3">Kind</div>
+                    <div class="col-span-2 text-right">Status</div>
+                  </div>
+                  <div class="divide-y divide-slate-200 text-sm">
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3">
+                      <div class="col-span-7">About Page</div>
+                      <div class="col-span-3"><span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Auto</span></div>
+                      <div class="col-span-2 text-right text-slate-400">Active</div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-7">Advice Hub Page</div>
+                      <div class="col-span-3"><span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Auto</span></div>
+                      <div class="col-span-2 text-right text-slate-400">Active</div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3">
+                      <div class="col-span-7">Footer Menu</div>
+                      <div class="col-span-3"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">Static</span></div>
+                      <div class="col-span-2 text-right text-slate-400">Active</div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-7">Legal Page</div>
+                      <div class="col-span-3"><span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Auto</span></div>
+                      <div class="col-span-2 text-right text-slate-400">Active</div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3">
+                      <div class="col-span-7">Local Services Page</div>
+                      <div class="col-span-3"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">Static</span></div>
+                      <div class="col-span-2 text-right text-slate-400">Active</div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-7">Main Menu</div>
+                      <div class="col-span-3"><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">Static</span></div>
+                      <div class="col-span-2 text-right text-slate-400">Active</div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-4 px-4 py-3">
+                      <div class="col-span-7">Support Us Page</div>
+                      <div class="col-span-3"><span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Auto</span></div>
+                      <div class="col-span-2 text-right text-slate-400">Active</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page Details Drawer -->
+      <section id="page-drawer" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Page Details Drawer</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="relative flex min-h-[620px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Dashboard
+                </a>
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Content</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Pages</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Posts</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Collections</div>
+                  </div>
+                </div>
+              </nav>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Content / Pages / Advice Hub</div>
+                <h3 class="mt-1 text-lg font-semibold">Advice Hub</h3>
+              </div>
+              <div class="px-6 py-6 space-y-4">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-600">Page Overview</div>
+                  <div class="mt-3 h-40 rounded-2xl bg-gradient-to-r from-slate-100 via-slate-50 to-slate-100"></div>
+                  <div class="mt-4 grid gap-3 md:grid-cols-3 text-sm">
+                    <div class="rounded-xl bg-slate-50 px-3 py-2">Last updated: 2 hours ago</div>
+                    <div class="rounded-xl bg-slate-50 px-3 py-2">Status: Hidden</div>
+                    <div class="rounded-xl bg-slate-50 px-3 py-2">Template: Advice Hub</div>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-600">SEO Summary</div>
+                  <div class="mt-3 text-sm text-slate-500">Title and description are inherited from parent page.</div>
+                </div>
+              </div>
+            </main>
+
+            <div class="absolute inset-0 bg-slate-900/20"></div>
+            <aside class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl ring-1 ring-slate-200">
+              <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+                <div class="text-sm font-semibold text-slate-400">Page Details</div>
+                <button class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500">
+                  <span>Close</span>
+                  <span class="text-sm">x</span>
+                </button>
+              </div>
+              <div class="px-6 py-5 space-y-5 text-sm">
+                <div>
+                  <label class="text-xs font-semibold text-slate-400">Title</label>
+                  <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" value="Advice Hub" />
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-400">Template</label>
+                  <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" value="Advice Hub" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400">Status</label>
+                    <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                      <option>Hidden</option>
+                      <option>Published</option>
+                      <option>Draft</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400">Page Type</label>
+                    <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                      <option>Standard</option>
+                      <option>Landing</option>
+                      <option>Archive</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-semibold text-slate-700">SEO Settings</div>
+                      <div class="mt-1 text-sm text-slate-500">Generate with AI</div>
+                    </div>
+                    <button class="rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-medium text-white">Generate</button>
+                  </div>
+                  <label class="mt-3 flex items-center gap-3 text-xs text-slate-500">
+                    <input id="seo-inherit" type="checkbox" checked class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                    <span>Inherit SEO from parent page</span>
+                  </label>
+                  <p class="mt-2 text-xs text-slate-400">Disable inheritance to customize title and description.</p>
+                </div>
+                <div id="seo-fields" class="space-y-4">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400">SEO Title</label>
+                    <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" value="Advice Hub" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400">SEO Description</label>
+                    <textarea class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" rows="4">Resources supporting neurodivergent communities with trusted information.</textarea>
+                  </div>
+                </div>
+                <button class="w-full rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600">Save Changes</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page Editor -->
+      <section id="page-editor" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Page Editor</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[600px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Content</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Pages</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Posts</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Collections</div>
+                  </div>
+                </div>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-200/80 hover:bg-white/5" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/10 bg-white/5"></span>
+                  Menus
+                </a>
+              </nav>
+              <div class="px-4 pb-6">
+                <div class="rounded-2xl bg-white/5 px-3 py-3 text-sm">
+                  <div class="text-slate-400">Signed in</div>
+                  <div class="mt-2 flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-sky-400/30"></div>
+                    <div>
+                      <div class="font-medium">James Inman</div>
+                      <div class="text-xs text-slate-400">Panda Core v0.13.0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div>
+                  <div class="text-xs text-slate-400">Pages / Home</div>
+                  <h3 class="mt-1 text-lg font-semibold">Home</h3>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
+                    <span class="h-4 w-4 rounded border border-slate-300"></span>
+                    Page Details
+                  </button>
+                  <button class="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600">
+                    <span class="h-4 w-4 rounded border border-white/70"></span>
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+              <div class="px-6 py-6">
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div class="text-sm font-medium text-slate-600">Page Preview</div>
+                  <div class="mt-3 h-80 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700"></div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Edit Menu -->
+      <section id="edit-menu" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Edit Menu</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[600px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl bg-sky-500/20 px-3 py-2.5 text-white ring-1 ring-inset ring-sky-400/30" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/15 bg-white/5"></span>
+                  Menus
+                </a>
+              </nav>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Menus / Legal Page</div>
+                <h3 class="mt-1 text-lg font-semibold">Edit Menu: Legal Page</h3>
+              </div>
+              <div class="px-6 py-6 space-y-6">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Menu Name</label>
+                      <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" value="Legal Page" />
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Kind</label>
+                      <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                        <option>Auto</option>
+                        <option>Static</option>
+                      </select>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="text-xs font-semibold text-slate-400">Start Page</label>
+                      <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                        <option>Legal</option>
+                        <option>Privacy Policy</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                  <div class="flex items-center justify-between bg-slate-900 px-4 py-3 text-sm font-medium text-slate-100">
+                    <span>Auto-Generated Menu Items</span>
+                    <button class="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1 text-xs">Refresh</button>
+                  </div>
+                  <div class="divide-y divide-slate-200 text-sm">
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-5 font-medium">Privacy Policy</div>
+                      <div class="col-span-4 text-slate-500">Privacy Policy</div>
+                      <div class="col-span-3 text-right text-slate-500">/legal/privacy-policy</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3 bg-slate-50/60">
+                      <div class="col-span-5 font-medium">Cookie Policy</div>
+                      <div class="col-span-4 text-slate-500">Cookie Policy</div>
+                      <div class="col-span-3 text-right text-slate-500">/legal/cookie-policy</div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-4 px-4 py-3">
+                      <div class="col-span-5 font-medium">Member Terms</div>
+                      <div class="col-span-4 text-slate-500">Member Terms</div>
+                      <div class="col-span-3 text-right text-slate-500">/legal/member-terms</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <button class="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600">
+                    <span class="h-4 w-4 rounded border border-white/70"></span>
+                    Save Menu
+                  </button>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Menu Item Management -->
+      <section id="menu-items" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Menu Item Management</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[620px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <a class="flex items-center gap-3 rounded-xl bg-sky-500/20 px-3 py-2.5 text-white ring-1 ring-inset ring-sky-400/30" href="#">
+                  <span class="h-6 w-6 rounded-lg border border-white/15 bg-white/5"></span>
+                  Menus
+                </a>
+              </nav>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Menus / Footer Menu</div>
+                <h3 class="mt-1 text-lg font-semibold">Edit Menu: Footer Menu</h3>
+              </div>
+              <div class="px-6 py-6 space-y-6">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-medium text-slate-700">Menu Items</div>
+                      <div class="text-xs text-slate-500">Drag to reorder items</div>
+                    </div>
+                    <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">Add Menu Item +</button>
+                  </div>
+                  <div class="mt-4 space-y-3">
+                    <div class="grid grid-cols-12 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                      <div class="col-span-1 text-slate-400">::</div>
+                      <div class="col-span-4">
+                        <input class="h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm" value="About Us" />
+                      </div>
+                      <div class="col-span-4">
+                        <select class="h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm">
+                          <option>About Us</option>
+                          <option>Support Us</option>
+                        </select>
+                      </div>
+                      <div class="col-span-2">
+                        <input class="h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm" placeholder="External URL" />
+                      </div>
+                      <div class="col-span-1 text-right">
+                        <button class="inline-flex items-center gap-1 text-xs text-slate-500">Remove x</button>
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-3">
+                      <div class="col-span-1 text-slate-400">::</div>
+                      <div class="col-span-4">
+                        <input class="h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm" value="Community" />
+                      </div>
+                      <div class="col-span-4">
+                        <select class="h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm">
+                          <option>Community</option>
+                          <option>News</option>
+                        </select>
+                      </div>
+                      <div class="col-span-2">
+                        <input class="h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm" placeholder="External URL" />
+                      </div>
+                      <div class="col-span-1 text-right">
+                        <button class="inline-flex items-center gap-1 text-xs text-slate-500">Remove x</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <button class="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600">
+                    <span class="h-4 w-4 rounded border border-white/70"></span>
+                    Save Menu
+                  </button>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collection Settings -->
+      <section id="collection-settings" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Collection Settings</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[620px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Content</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Pages</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Posts</div>
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Collections</div>
+                  </div>
+                </div>
+              </nav>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Collections / Homepage Features</div>
+                <h3 class="mt-1 text-lg font-semibold">Collection Settings</h3>
+              </div>
+              <div class="px-6 py-6 space-y-6">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-medium text-slate-700">Fields</div>
+                      <div class="text-xs text-slate-500">Drag to reorder fields</div>
+                    </div>
+                    <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700">Add Field +</button>
+                  </div>
+                  <div class="mt-4 space-y-3">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                      <div class="flex items-center gap-3 text-sm text-slate-400">
+                        <span>::</span>
+                        <span class="font-medium text-slate-600">Title</span>
+                      </div>
+                      <div class="mt-3 grid gap-3 md:grid-cols-2">
+                        <div>
+                          <label class="text-xs font-semibold text-slate-400">Field Label</label>
+                          <input class="mt-2 h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm" value="Title" />
+                        </div>
+                        <div>
+                          <label class="text-xs font-semibold text-slate-400">Field Type</label>
+                          <select class="mt-2 h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm">
+                            <option>Single line text</option>
+                            <option>Multi-line text</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="text-xs font-semibold text-slate-400">API Key</label>
+                          <input class="mt-2 h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm" value="title" />
+                        </div>
+                        <div>
+                          <label class="text-xs font-semibold text-slate-400">Display Order</label>
+                          <input class="mt-2 h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm" value="1" />
+                        </div>
+                      </div>
+                      <div class="mt-3 flex items-center gap-3 text-xs text-slate-500">
+                        <input type="checkbox" checked class="h-5 w-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+                        <span>Required</span>
+                      </div>
+                      <div class="mt-3">
+                        <label class="text-xs font-semibold text-slate-400">Instructions (optional)</label>
+                        <textarea class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm" rows="2"></textarea>
+                      </div>
+                      <button class="mt-3 inline-flex items-center gap-1 text-xs text-rose-600">Delete Field x</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <button class="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600">
+                    <span class="h-4 w-4 rounded border border-white/70"></span>
+                    Save Collection
+                  </button>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- Add Page Form -->
+      <section id="add-page" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Add Page Form</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="screen-frame overflow-hidden rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur">
+          <div class="flex min-h-[620px]">
+            <aside class="hidden lg:flex w-64 flex-col bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-slate-100">
+              <div class="px-6 py-6 flex items-center gap-2">
+                <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <span class="text-lg font-semibold">n</span>
+                </div>
+                <div class="font-semibold">neurobetter</div>
+              </div>
+              <nav class="flex-1 px-4 space-y-2 text-sm">
+                <div class="rounded-xl bg-white/5 px-3 py-2 text-sm text-slate-200">
+                  <div class="flex items-center justify-between">
+                    <span class="font-medium">Content</span>
+                    <span class="text-xs text-slate-400">▾</span>
+                  </div>
+                  <div class="mt-3 space-y-1 -mx-3 text-slate-300/90">
+                    <div class="rounded-lg bg-sky-500/20 px-3 py-2 text-white">Pages</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Posts</div>
+                    <div class="rounded-lg px-3 py-2 hover:bg-white/5">Collections</div>
+                  </div>
+                </div>
+              </nav>
+            </aside>
+
+            <main class="flex-1 bg-slate-50/70">
+              <div class="px-6 py-5 border-b border-slate-200/70 bg-white/80">
+                <div class="text-xs text-slate-400">Pages / Add Page</div>
+                <h3 class="mt-1 text-lg font-semibold">Add Page</h3>
+              </div>
+              <div class="px-6 py-6 space-y-6">
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Page Settings</div>
+                  <div class="mt-4 space-y-4">
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Parent</label>
+                      <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                        <option>Home (/)</option>
+                        <option>Advice Hub</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Title</label>
+                      <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" placeholder="Page title" />
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">URL</label>
+                      <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" placeholder="/new-page" />
+                      <p class="mt-2 text-xs text-slate-400">Should be unique. Leave blank to auto-generate.</p>
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400">Template</label>
+                      <select class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                        <option>Page</option>
+                        <option>Landing</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                  <div class="text-sm font-medium text-slate-700">Page Type</div>
+                  <div class="mt-4 grid gap-3 md:grid-cols-3">
+                    <button class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm">
+                      <div class="font-semibold text-slate-700">Standard</div>
+                      <div class="mt-1 text-xs text-slate-500">Visible in navigation</div>
+                    </button>
+                    <button class="rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left text-sm">
+                      <div class="font-semibold text-slate-700">Hidden</div>
+                      <div class="mt-1 text-xs text-slate-500">Accessible but not in menus</div>
+                    </button>
+                    <button class="rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left text-sm">
+                      <div class="font-semibold text-slate-700">Code</div>
+                      <div class="mt-1 text-xs text-slate-500">Custom code-rendered page</div>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <button class="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600">
+                    <span class="text-lg">+</span>
+                    Create Page
+                  </button>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <!-- UI Elements -->
+      <section id="ui-elements" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">UI Elements</h2>
+          <span class="text-sm text-slate-500">Preview</span>
+        </div>
+        <div class="rounded-3xl border border-slate-200/70 bg-white/80 p-6">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="space-y-4">
+              <div class="text-sm font-medium text-slate-700">Buttons</div>
+              <div class="flex flex-wrap gap-3">
+                <button class="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600">Primary</button>
+                <button class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Secondary</button>
+                <button class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Dark</button>
+                <button class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-600 hover:bg-rose-100">Destructive</button>
+                <button class="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">Ghost</button>
+              </div>
+
+              <div class="text-sm font-medium text-slate-700">Badges &amp; Breadcrumbs</div>
+              <div class="space-y-3 text-sm">
+                <div class="flex flex-wrap gap-2">
+                  <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">Draft</span>
+                  <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-600">Active</span>
+                  <span class="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-600">Pending</span>
+                  <span class="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-600">Error</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                  <span>Content</span>
+                  <span class="text-slate-300">/</span>
+                  <span>Pages</span>
+                  <span class="text-slate-300">/</span>
+                  <span class="text-slate-700">Advice Hub</span>
+                </div>
+              </div>
+
+              <div class="text-sm font-medium text-slate-700">Flash Messages</div>
+              <div class="space-y-3 text-sm">
+                <div class="flex items-center justify-between rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sky-700">
+                  <span>Info: Analytics changes will apply on next refresh.</span>
+                  <button class="inline-flex items-center gap-1 text-xs">Close x</button>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
+                  <span>Success: Profile updated.</span>
+                  <button class="inline-flex items-center gap-1 text-xs">Close x</button>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-700">
+                  <span>Warning: Check required fields.</span>
+                  <button class="inline-flex items-center gap-1 text-xs">Close x</button>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-700">
+                  <span>Error: Unable to save changes.</span>
+                  <button class="inline-flex items-center gap-1 text-xs">Close x</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="text-sm font-medium text-slate-700">Form States</div>
+              <div class="space-y-3">
+                <div>
+                  <label class="text-xs font-semibold text-slate-400">Normal Input</label>
+                  <input class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 py-2" placeholder="Enter text" />
+                  <p class="mt-2 text-xs text-slate-400">Helper text for guidance.</p>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between text-xs font-semibold text-slate-400">
+                    <span>Description (optional)</span>
+                    <span class="text-slate-300">0 / 160</span>
+                  </div>
+                  <textarea class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2" rows="3" placeholder="Add context for editors..."></textarea>
+                  <p class="mt-2 text-xs text-slate-400">Used as a short meta description.</p>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-400">Error Input</label>
+                  <input class="mt-2 h-11 w-full rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-rose-700" value="Invalid value" />
+                  <p class="mt-2 text-xs text-rose-600">This field is required.</p>
+                </div>
+              </div>
+
+              <div class="text-sm font-medium text-slate-700">Tabs &amp; Pagination</div>
+              <div class="space-y-3">
+                <div class="flex items-center gap-2 text-sm">
+                  <button class="rounded-full bg-slate-900 px-3 py-1.5 text-xs font-medium text-white">Overview</button>
+                  <button class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600">SEO</button>
+                  <button class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600">History</button>
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                  <span>Showing 1–10 of 42</span>
+                  <div class="flex items-center gap-2">
+                    <button class="rounded-lg border border-slate-200 bg-white px-2 py-1">Prev</button>
+                    <button class="rounded-lg border border-slate-200 bg-white px-2 py-1">Next</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-sm font-medium text-slate-700">Toast Messages</div>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm">
+                  <div>
+                    <div class="font-medium text-emerald-700">Saved</div>
+                    <div class="text-xs text-emerald-600">Your changes are live.</div>
+                  </div>
+                  <button class="inline-flex items-center gap-1 text-xs text-emerald-700">Close x</button>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm">
+                  <div>
+                    <div class="font-medium text-amber-700">Export queued</div>
+                    <div class="text-xs text-amber-600">Large exports can take a few minutes.</div>
+                  </div>
+                  <button class="inline-flex items-center gap-1 text-xs text-amber-700">Close x</button>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm">
+                  <div>
+                    <div class="font-medium text-rose-700">Error saving</div>
+                    <div class="text-xs text-rose-600">Please try again in a moment.</div>
+                  </div>
+                  <button class="inline-flex items-center gap-1 text-xs text-rose-700">Close x</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      const seoInherit = document.getElementById('seo-inherit');
+      const seoFields = document.getElementById('seo-fields');
+
+      function syncSeoFields() {
+        if (!seoInherit || !seoFields) return;
+        const isInherited = seoInherit.checked;
+        seoFields.classList.toggle('hidden', isInherited);
+      }
+
+      if (seoInherit) {
+        seoInherit.addEventListener('change', syncSeoFields);
+        syncSeoFields();
+      }
+    </script>
+  </body>
+</html>

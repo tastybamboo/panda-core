@@ -1,0 +1,17 @@
+<%= content_tag :div, **attrs do %>
+  <div class="flex items-start gap-3">
+    <i class="fa-solid <%= icon_class %> mt-0.5"></i>
+    <div>
+      <% if title.present? %>
+        <div class="text-sm font-medium"><%= title %></div>
+      <% end %>
+      <div class="text-sm">
+        <% if content? %>
+          <%= content %>
+        <% else %>
+          <%= text %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

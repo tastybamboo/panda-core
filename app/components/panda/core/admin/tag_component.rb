@@ -33,41 +33,43 @@ module Panda
         end
 
         def tag_classes
-          base = "inline-flex items-center py-1 px-2 text-xs font-medium rounded-md ring-1 ring-inset "
+          base = "inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full "
           base + (@page_type ? type_classes : status_classes)
         end
 
         def type_classes
           case @page_type
           when :system
-            "text-red-700 bg-red-100 ring-red-600/20 dark:bg-red-400/10 dark:text-red-400"
+            "text-rose-600 bg-rose-50"
           when :posts
-            "text-purple-700 bg-purple-100 ring-purple-600/20 dark:bg-purple-400/10 dark:text-purple-400"
+            "text-sky-600 bg-sky-50"
           when :code
-            "text-blue-700 bg-blue-100 ring-blue-600/20 dark:bg-blue-400/10 dark:text-blue-400"
+            "text-sky-600 bg-sky-50"
           when :standard
-            "text-green-700 bg-green-100 ring-green-600/20 dark:bg-green-400/10 dark:text-green-400"
+            "text-emerald-600 bg-emerald-50"
           when :hidden_type
-            "text-gray-700 bg-gray-100 ring-gray-600/20 dark:bg-gray-400/10 dark:text-gray-400"
+            "text-slate-600 bg-slate-100"
           else
-            "text-gray-700 bg-gray-100 ring-gray-600/20 dark:bg-gray-400/10 dark:text-gray-400"
+            "text-slate-600 bg-slate-100"
           end
         end
 
         def status_classes
           case @status
           when :active
-            "text-white ring-black/30 bg-green-600 border-0"
+            "text-emerald-600 bg-emerald-50"
+          when :live
+            "text-emerald-600 bg-emerald-50"
           when :draft
-            "text-black ring-black/30 bg-yellow-400"
+            "text-amber-600 bg-amber-50"
           when :inactive, :hidden
-            "text-black ring-black/30 bg-black/5 bg-white"
+            "text-slate-600 bg-slate-100"
           when :auto
-            "text-blue-700 bg-blue-100 ring-blue-600/20 dark:bg-blue-400/10 dark:text-blue-400"
+            "text-sky-600 bg-sky-50"
           when :static
-            "text-gray-700 bg-gray-100 ring-gray-600/20 dark:bg-gray-400/10 dark:text-gray-400"
+            "text-slate-600 bg-slate-100"
           else
-            "text-black bg-white"
+            "text-slate-600 bg-slate-100"
           end
         end
       end

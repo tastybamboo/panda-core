@@ -32,12 +32,13 @@ module Panda
         private
 
         def select_classes
-          classes = "block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:leading-6"
+          classes = "block w-full h-11 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 " \
+                    "focus:border-transparent focus:ring-2 focus:ring-primary-500"
 
           if @disabled
-            classes + " ring-gray-300 focus:ring-gray-300 bg-gray-50 cursor-not-allowed"
+            classes + " border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
           else
-            classes + " ring-primary-400 focus:ring-primary-600 hover:cursor-pointer"
+            classes
           end
         end
 

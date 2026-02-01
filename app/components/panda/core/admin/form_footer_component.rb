@@ -43,11 +43,11 @@ module Panda
         end
 
         def submit_button_classes
-          "inline-flex items-center gap-x-1.5 justify-center rounded-md bg-mid px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-mid/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mid cursor-pointer dark:shadow-none"
+          "inline-flex items-center gap-x-2 justify-center rounded-xl bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 cursor-pointer"
         end
 
         def cancel_link_classes
-          "inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+          "inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
         end
 
         def computed_icon

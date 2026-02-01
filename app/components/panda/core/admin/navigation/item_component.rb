@@ -7,10 +7,10 @@ module Panda
         # A top-level navigation item
         # Can be a simple link or an expandable menu with children
         class ItemComponent < Panda::Core::Base
-          BASE_CLASSES = 'transition-all group flex items-center gap-x-3 py-3 px-2 ' \
-                         'rounded-md text-base leading-6 font-normal'
-          ACTIVE_CLASSES = 'bg-primary-500 text-white shadow-sm ring-1 ring-primary-400/50'
-          INACTIVE_CLASSES = 'text-white hover:bg-primary-500/60'
+          BASE_CLASSES = 'transition-colors group flex items-center gap-x-3 px-3 py-2.5 ' \
+                         'rounded-xl text-sm font-medium'
+          ACTIVE_CLASSES = 'bg-primary-500/20 text-white ring-1 ring-primary-400/30'
+          INACTIVE_CLASSES = 'text-white/80 hover:bg-white/5'
 
           renders_many :sub_items, SubItemComponent
 
@@ -38,7 +38,7 @@ module Panda
           end
 
           def link_classes
-            base = "#{BASE_CLASSES} mb-3"
+            base = "#{BASE_CLASSES} mb-2"
             "#{base} #{active? ? "#{ACTIVE_CLASSES} relative" : INACTIVE_CLASSES}"
           end
         end
