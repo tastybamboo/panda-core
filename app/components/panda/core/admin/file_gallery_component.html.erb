@@ -10,7 +10,11 @@
             <% if file.image? %>
               <%= tag.img src: url_for(file),
                   alt: file.filename.to_s,
-                  class: file_image_classes(is_selected) %>
+                  class: file_image_classes(is_selected),
+                  onerror: "this.onerror=null;this.style.display='none';this.nextElementSibling.classList.remove('hidden')" %>
+              <div class="hidden flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700" role="img" aria-label="Image preview not available">
+                <i class="fa-solid fa-file-image text-4xl text-gray-400"></i>
+              </div>
             <% else %>
               <%# File icon placeholder - implement based on file type %>
               <div class="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700">
