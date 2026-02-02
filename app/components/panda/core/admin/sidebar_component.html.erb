@@ -25,11 +25,9 @@
       <%
         has_children = item[:children].present?
 
-        # For items with children, check if any child is active
+        # For items with children, check if the active path belongs to one of its children
         if has_children
-          is_active = item[:children].any? do |child|
-            child[:path] && (current_path == child[:path] || current_path.starts_with?(child[:path] + "/"))
-          end
+          is_active = item[:children].any? { |child| child[:path] == active_path }
         else
           is_active = item[:path] == active_path
         end
@@ -44,7 +42,7 @@
       ) do |nav_item|
         if has_children
           item[:children].each do |child|
-            child_is_active = child[:path] && (current_path == child[:path] || current_path.starts_with?(child[:path] + "/"))
+            child_is_active = child[:path] == active_path
             nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active)
           end
         end

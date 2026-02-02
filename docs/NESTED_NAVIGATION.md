@@ -252,6 +252,96 @@ config.admin_navigation_items = ->(user) {
 }
 ```
 
+## Extending Navigation from Gems
+
+Panda gems can extend the admin navigation by wrapping the existing `admin_navigation_items` lambda in an engine initializer. This allows multiple gems to contribute navigation items independently.
+
+### Adding a New Section
+
+Wrap the existing lambda and insert your items at the desired position:
+
+```ruby
+# In your engine's core_config.rb or engine.rb
+initializer "panda_helpdesk.configure_core", before: :load_config_initializers do |app|
+  Panda::Core.configure do |config|
+    original_nav = config.admin_navigation_items
+
+    config.admin_navigation_items = ->(user) {
+      items = original_nav.respond_to?(:call) ? original_nav.call(user) : []
+      admin_path = config.admin_path
+
+      # Insert before a specific item by label
+      settings_index = items.index { |i| i[:label] == "Settings" }
+      items.insert(settings_index || items.length, {
+        label: "Helpdesk",
+        icon: "fa-solid fa-headset",
+        children: [
+          {label: "Tickets", path: "#{admin_path}/helpdesk/tickets"},
+          {label: "Reports", path: "#{admin_path}/helpdesk/reports"}
+        ]
+      })
+
+      items
+    }
+  end
+end
+```
+
+### Adding Children to an Existing Group
+
+Multiple gems can add children to the same group (e.g. Settings). Use the merge pattern — expand the item from flat to group if it hasn't been expanded yet, then append your children:
+
+```ruby
+config.admin_navigation_items = ->(user) {
+  items = original_nav.respond_to?(:call) ? original_nav.call(user) : []
+  admin_path = config.admin_path
+
+  settings_item = items.find { |i| i[:label] == "Settings" }
+  if settings_item
+    # Expand from flat link to group if this gem is first to add children
+    unless settings_item.key?(:children)
+      original_path = settings_item.delete(:path)
+      settings_item[:children] = [
+        {label: "General", path: original_path}
+      ]
+    end
+
+    # Append your children — safe regardless of ordering
+    settings_item[:children] << {label: "Helpdesk", path: "#{admin_path}/helpdesk/settings"}
+  end
+
+  items
+}
+```
+
+**Important:** Always use `find` + merge rather than replacing the item entirely. This ensures multiple gems can independently add children to the same group without overwriting each other, regardless of initializer execution order.
+
+### Positioning with `insert`
+
+Use Ruby's `Array#insert` with a label-based index lookup to control where items appear:
+
+```ruby
+# Insert before Settings
+idx = items.index { |i| i[:label] == "Settings" }
+items.insert(idx || items.length, new_item)
+
+# Insert after Tools
+idx = items.index { |i| i[:label] == "Tools" }
+items.insert((idx || items.length - 1) + 1, new_item)
+
+# Append to the end (simplest)
+items << new_item
+```
+
+### Initializer Ordering
+
+Gems wrap each other's lambdas, so execution order is **innermost first** (first registered = first executed). For most use cases this doesn't matter because:
+
+- Inserting by label works regardless of order
+- The merge pattern for adding children is order-independent
+- Use `before: :load_config_initializers` for standard engine configuration
+- Use `after: "panda.cms.configure_core"` if you need CMS items to exist first
+
 ## Best Practices
 
 1. **Limit nesting depth**: Only one level of nesting is supported (parent → children). Do not nest children within children.
@@ -270,7 +360,7 @@ config.admin_navigation_items = ->(user) {
 
 ### File Locations
 
-- **Sidebar view**: `app/views/panda/core/admin/shared/_sidebar.html.erb`
+- **Sidebar component**: `app/components/panda/core/admin/sidebar_component.html.erb`
 - **Stimulus controller**: `app/javascript/panda/core/controllers/navigation_toggle_controller.js`
 - **Tests**: `spec/system/panda/core/admin/nested_navigation_spec.rb`
 
@@ -289,8 +379,9 @@ Nested navigation uses Tailwind CSS classes:
 
 - Parent buttons: Same styling as regular navigation items
 - Child links: Indented with `pl-11` (44px left padding)
-- Active states: `bg-mid text-white` for both parent and child
-- Transitions: Smooth animations for expand/collapse
+- Active states: `bg-primary-500/20 text-white` for both parent and child
+- Expanded section: `bg-white/10` wrapper with `bg-white/15` header
+- Transitions: CSS `max-h` + opacity transitions for smooth expand/collapse
 
 ## Troubleshooting
 
