@@ -1,0 +1,5 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
+  <% component.with_heading_slot(text: "Edit File Category: #{@file_category.name}", level: 1) %>
+
+  <%= render partial: "form", locals: { file_category: @file_category } %>
+<% end %>

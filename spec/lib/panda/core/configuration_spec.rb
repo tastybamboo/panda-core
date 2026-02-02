@@ -3,13 +3,14 @@ require "rails_helper"
 RSpec.describe Panda::Core do
   describe "configuration" do
     before do
-      # Reset configuration to defaults before each test
+      # Save original configuration before resetting to defaults
+      @original_config = described_class.config
       described_class.reset_configuration!
     end
 
     after do
-      # Reset configuration after each test
-      described_class.reset_configuration!
+      # Restore original configuration (set by dummy app initializers)
+      described_class.config = @original_config
     end
 
     it "has default values" do

@@ -82,6 +82,8 @@ RSpec.describe "Admin Sessions", type: :request do
   # ============================================================================
 
   describe "POST /admin/auth/:provider/callback" do
+    let!(:original_providers) { Panda::Core.config.authentication_providers.dup }
+
     before do
       OmniAuth.config.test_mode = true
       # Enable the provider in config
@@ -95,6 +97,7 @@ RSpec.describe "Admin Sessions", type: :request do
 
     after do
       clear_omniauth_config
+      Panda::Core.config.authentication_providers = original_providers
     end
 
     context "when user is not an admin" do

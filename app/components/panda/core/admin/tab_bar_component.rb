@@ -13,9 +13,17 @@ module Panda
 
         private
 
-        def tab_classes(tab, is_current = false)
+        def any_tab_current?
+          @any_tab_current ||= @tabs.any? { |tab| tab[:current] }
+        end
+
+        def tab_current?(tab, index)
+          tab[:current] || (!any_tab_current? && index.zero?)
+        end
+
+        def tab_classes(tab, index)
           classes = "py-4 px-1 text-sm font-medium whitespace-nowrap border-b-2 "
-          classes += if is_current || tab[:current]
+          classes += if tab_current?(tab, index)
             "border-primary-600 text-primary-600"
           else
             "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
