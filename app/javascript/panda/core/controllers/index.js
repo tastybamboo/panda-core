@@ -13,6 +13,12 @@ application.register("navigation-toggle", NavigationToggleController)
 import RowLinkController from "./row_link_controller.js"
 application.register("row-link", RowLinkController)
 
+import CollapsibleItemController from "./collapsible_item_controller.js"
+application.register("collapsible-item", CollapsibleItemController)
+
+import CustomSelectController from "./custom_select_controller.js"
+application.register("custom-select", CustomSelectController)
+
 // Import and register TailwindCSS Stimulus Components
 // These are needed for UI components like slideover, modals, alerts, etc.
 import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components.js"

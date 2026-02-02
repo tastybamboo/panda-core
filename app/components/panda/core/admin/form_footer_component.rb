@@ -38,7 +38,7 @@ module Panda
 
         def default_attrs
           {
-            class: "flex justify-end gap-x-3 border-t border-gray-200 mt-6 pt-4 dark:border-white/10"
+            class: "flex justify-end gap-x-3 mt-6 pt-4"
           }
         end
 

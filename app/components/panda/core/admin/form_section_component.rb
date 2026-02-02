@@ -42,7 +42,7 @@ module Panda
 
         def default_attrs
           base_classes = "mt-6 pt-4"
-          base_classes += " border-t border-gray-200 dark:border-white/10" if border_top
+          base_classes += " border-t border-gray-200" if border_top
 
           { class: base_classes }
         end

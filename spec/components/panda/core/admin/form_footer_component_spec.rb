@@ -39,13 +39,13 @@ RSpec.describe Panda::Core::Admin::FormFooterComponent, type: :component do
       expect(output).not_to have_link("Cancel")
     end
 
-    it "applies border and spacing classes" do
+    it "applies spacing classes" do
       component = described_class.new
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("div.border-t")
       expect(output).to have_css("div.mt-6")
       expect(output).to have_css("div.pt-4")
+      expect(output).not_to have_css("div.border-t")
     end
   end
 

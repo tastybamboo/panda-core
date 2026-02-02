@@ -301,6 +301,11 @@
     @apply rounded-full;
   }
 
+  /* Ensure form controls use primary brand color */
+  input, select, textarea {
+    accent-color: var(--color-primary-500);
+  }
+
   /* Label styling */
   label {
     @apply block text-xs font-semibold text-gray-500 mb-1;
@@ -343,6 +348,11 @@
 
   .btn-success {
     @apply border border-success-200 bg-success-50 text-success-600 hover:bg-success-100 focus-visible:outline-success-300;
+  }
+
+  /* Custom select dropdown */
+  [data-controller="custom-select"] {
+    position: relative;
   }
 
 }

@@ -94,8 +94,11 @@ module Panda
         # Extract custom label if provided
         custom_label = options.delete(:label)
 
-        content_tag :div, class: container_styles do
-          label(method, custom_label) + meta_text(options) + super(method, choices, options, html_options.reverse_merge(class: select_styles)) + select_svg + error_message(method)
+        html_options = html_options.reverse_merge(class: select_styles)
+        html_options[:data] = (html_options[:data] || {}).merge("custom-select-target": "select")
+
+        content_tag :div, class: container_styles, data: { controller: "custom-select" } do
+          label(method, custom_label) + meta_text(options) + super(method, choices, options, html_options) + select_svg + error_message(method)
         end
       end
 
@@ -103,19 +106,25 @@ module Panda
         # Extract custom label if provided
         custom_label = options.delete(:label)
 
-        content_tag :div, class: container_styles do
-          label(method, custom_label) + meta_text(options) + super(method, collection, value_method, text_method, options, html_options.reverse_merge(class: input_styles)) + error_message(method)
+        html_options = html_options.reverse_merge(class: input_styles)
+        html_options[:data] = (html_options[:data] || {}).merge("custom-select-target": "select")
+
+        content_tag :div, class: container_styles, data: { controller: "custom-select" } do
+          label(method, custom_label) + meta_text(options) + super(method, collection, value_method, text_method, options, html_options) + error_message(method)
         end
       end
 
       def time_zone_select(method, priority_zones = nil, options = {}, html_options = {})
-        wrap_field(method, options) do
-          super(
+        html_options = html_options.reverse_merge(class: select_styles)
+        html_options[:data] = (html_options[:data] || {}).merge("custom-select-target": "select")
+
+        content_tag :div, class: container_styles, data: { controller: "custom-select" } do
+          label(method) + meta_text(options) + super(
             method,
             priority_zones,
             options,
-            html_options.reverse_merge(class: select_styles)
-          )
+            html_options
+          ) + error_message(method)
         end
       end
 
