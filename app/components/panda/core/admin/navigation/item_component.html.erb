@@ -1,7 +1,8 @@
 <li>
   <% if expandable? %>
     <div class="mb-2" data-controller="navigation-toggle">
-      <div data-navigation-toggle-target="wrapper">
+      <div data-navigation-toggle-target="wrapper"
+           class="<%= 'rounded-xl bg-white/10 overflow-hidden' if active? %>">
         <button type="button"
                 data-navigation-toggle-target="button"
                 data-action="click->navigation-toggle#toggle"
@@ -14,7 +15,7 @@
              data-navigation-toggle-target="icon"></i>
         </button>
         <div id="<%= menu_id %>"
-             class="mt-3 -mx-3 space-y-1 hidden"
+             class="mt-1 hidden"
              style="display: none;"
              data-navigation-toggle-target="menu">
           <% sub_items.each do |sub_item| %>

@@ -16,7 +16,7 @@ module Panda
 
         def notification_attrs
           {
-            class: "pointer-events-auto w-full max-w-sm translate-y-0 transform rounded-2xl border px-4 py-3 shadow-lg transition duration-300 ease-out sm:translate-x-0 starting:translate-y-2 starting:opacity-0 starting:sm:translate-x-2 starting:sm:translate-y-0 #{tone_classes}",
+            class: "pointer-events-auto w-full max-w-md translate-y-0 transform rounded-2xl border px-4 py-3 shadow-lg transition duration-300 ease-out sm:translate-x-0 starting:translate-y-2 starting:opacity-0 starting:sm:translate-x-2 starting:sm:translate-y-0 #{tone_classes}",
             data: {
               controller: "alert",
               alert_dismiss_after_value: (@temporary ? "5000" : nil)

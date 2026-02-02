@@ -50,7 +50,7 @@ export default class extends Controller {
     this.buttonTarget.setAttribute("aria-expanded", "true")
 
     if (this.hasWrapperTarget) {
-      this.wrapperTarget.classList.add("rounded-xl", "bg-white/5", "px-3", "py-2")
+      this.wrapperTarget.classList.add("rounded-xl", "bg-white/10", "overflow-hidden")
     }
 
     if (this.hasIconTarget) {
@@ -64,7 +64,7 @@ export default class extends Controller {
     this.buttonTarget.setAttribute("aria-expanded", "false")
 
     if (this.hasWrapperTarget) {
-      this.wrapperTarget.classList.remove("rounded-xl", "bg-white/5", "px-3", "py-2")
+      this.wrapperTarget.classList.remove("rounded-xl", "bg-white/10", "overflow-hidden")
     }
 
     if (this.hasIconTarget) {
