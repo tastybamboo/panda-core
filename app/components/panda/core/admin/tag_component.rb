@@ -48,9 +48,9 @@ module Panda
           when :standard
             "text-emerald-600 bg-emerald-50"
           when :hidden_type
-            "text-slate-600 bg-slate-100"
+            "text-gray-600 bg-gray-100"
           else
-            "text-slate-600 bg-slate-100"
+            "text-gray-600 bg-gray-100"
           end
         end
 
@@ -63,13 +63,13 @@ module Panda
           when :draft
             "text-amber-600 bg-amber-50"
           when :inactive, :hidden
-            "text-slate-600 bg-slate-100"
+            "text-gray-600 bg-gray-100"
           when :auto
             "text-sky-600 bg-sky-50"
           when :static
-            "text-slate-600 bg-slate-100"
+            "text-gray-600 bg-gray-100"
           else
-            "text-slate-600 bg-slate-100"
+            "text-gray-600 bg-gray-100"
           end
         end
       end

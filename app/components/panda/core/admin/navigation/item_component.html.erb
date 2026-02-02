@@ -1,24 +1,26 @@
 <li>
   <% if expandable? %>
     <div class="mb-2" data-controller="navigation-toggle">
-      <button type="button"
-              data-navigation-toggle-target="button"
-              data-action="click->navigation-toggle#toggle"
-              aria-controls="<%= menu_id %>"
-              aria-expanded="false"
-              class="<%= parent_classes %>">
-        <span class="text-center w-6"><i class="<%= icon %> text-xl fa-fw"></i></span>
-        <span class="flex-1 text-left"><%= label %></span>
-        <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
-           data-navigation-toggle-target="icon"></i>
-      </button>
-      <div id="<%= menu_id %>"
-           class="mt-3 space-y-1 hidden"
-           style="display: none;"
-           data-navigation-toggle-target="menu">
-        <% sub_items.each do |sub_item| %>
-          <%= sub_item %>
-        <% end %>
+      <div data-navigation-toggle-target="wrapper">
+        <button type="button"
+                data-navigation-toggle-target="button"
+                data-action="click->navigation-toggle#toggle"
+                aria-controls="<%= menu_id %>"
+                aria-expanded="false"
+                class="<%= parent_classes %>">
+          <span class="text-center w-6"><i class="<%= icon %> text-xl fa-fw"></i></span>
+          <span class="flex-1 text-left"><%= label %></span>
+          <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
+             data-navigation-toggle-target="icon"></i>
+        </button>
+        <div id="<%= menu_id %>"
+             class="mt-3 -mx-3 space-y-1 hidden"
+             style="display: none;"
+             data-navigation-toggle-target="menu">
+          <% sub_items.each do |sub_item| %>
+            <%= sub_item %>
+          <% end %>
+        </div>
       </div>
     </div>
   <% else %>

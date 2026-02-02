@@ -16,12 +16,12 @@ import { Controller } from "@hotwired/stimulus"
 //     </div>
 //   </div>
 export default class extends Controller {
-  static targets = ["button", "menu", "icon"]
+  static targets = ["button", "menu", "icon", "wrapper"]
 
   connect() {
     // Ensure menu starts in correct state
     // Check if this menu should be expanded by default (if a child is active)
-    const hasActiveChild = this.menuTarget.querySelector(".bg-primary-500")
+    const hasActiveChild = this.menuTarget.querySelector('[class*="bg-primary-500"]')
     if (hasActiveChild) {
       this.expand()
     } else {
@@ -49,6 +49,10 @@ export default class extends Controller {
     this.menuTarget.style.display = ""
     this.buttonTarget.setAttribute("aria-expanded", "true")
 
+    if (this.hasWrapperTarget) {
+      this.wrapperTarget.classList.add("rounded-xl", "bg-white/5", "px-3", "py-2")
+    }
+
     if (this.hasIconTarget) {
       this.iconTarget.classList.add("rotate-90")
     }
@@ -58,6 +62,10 @@ export default class extends Controller {
     this.menuTarget.classList.add("hidden")
     this.menuTarget.style.display = "none"
     this.buttonTarget.setAttribute("aria-expanded", "false")
+
+    if (this.hasWrapperTarget) {
+      this.wrapperTarget.classList.remove("rounded-xl", "bg-white/5", "px-3", "py-2")
+    }
 
     if (this.hasIconTarget) {
       this.iconTarget.classList.remove("rotate-90")

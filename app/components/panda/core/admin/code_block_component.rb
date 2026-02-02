@@ -14,7 +14,7 @@ module Panda
 
         def default_attrs
           {
-            class: "rounded-xl bg-slate-900/95 p-3 text-xs text-emerald-200 font-mono overflow-x-auto"
+            class: "rounded-xl bg-gray-900/95 p-3 text-xs text-emerald-200 font-mono overflow-x-auto"
           }
         end
       end

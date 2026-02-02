@@ -9,7 +9,8 @@ module Panda
         class ItemComponent < Panda::Core::Base
           BASE_CLASSES = 'transition-colors group flex items-center gap-x-3 px-3 py-2.5 ' \
                          'rounded-xl text-sm font-medium'
-          ACTIVE_CLASSES = 'bg-primary-500/20 text-white ring-1 ring-primary-400/30'
+          ACTIVE_CLASSES = 'bg-primary-500/20 text-white'
+          EXPANDED_CLASSES = 'bg-white/5 text-white'
           INACTIVE_CLASSES = 'text-white/80 hover:bg-white/5'
 
           renders_many :sub_items, SubItemComponent
@@ -34,7 +35,7 @@ module Panda
           end
 
           def parent_classes
-            "#{BASE_CLASSES} w-full #{active? ? ACTIVE_CLASSES : INACTIVE_CLASSES}"
+            "#{BASE_CLASSES} w-full #{active? ? EXPANDED_CLASSES : INACTIVE_CLASSES}"
           end
 
           def link_classes

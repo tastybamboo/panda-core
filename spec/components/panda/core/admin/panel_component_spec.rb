@@ -12,7 +12,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       output = Capybara.string(rendered_content)
 
       expect(output).to have_css("div.rounded-2xl.shadow-sm")
-      expect(output).to have_css("div.text-slate-700", text: "Recent Activity")
+      expect(output).to have_css("div.text-gray-700", text: "Recent Activity")
       expect(output).to have_text("Activity content goes here")
     end
 
@@ -42,7 +42,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.text-sm.font-medium.px-4.py-3.text-slate-700")
+      expect(output).to have_css("div.text-sm.font-medium.px-4.py-3.text-gray-700")
     end
   end
 end

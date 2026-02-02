@@ -66,7 +66,7 @@ RSpec.describe Panda::Core::Admin::FormSectionComponent, type: :component do
     it "returns appropriate description classes" do
       component = described_class.new(title: "Test")
       expect(component.description_classes).to include("text-xs")
-      expect(component.description_classes).to include("text-slate-500")
+      expect(component.description_classes).to include("text-gray-500")
     end
   end
 

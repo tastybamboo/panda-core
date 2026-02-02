@@ -48,7 +48,7 @@ module Panda
           when :error, :alert
             "bg-rose-50 text-rose-700 border-rose-200"
           else
-            "bg-slate-50 text-slate-700 border-slate-200"
+            "bg-gray-50 text-gray-700 border-gray-200"
           end
         end
       end

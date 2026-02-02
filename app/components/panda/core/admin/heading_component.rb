@@ -25,7 +25,7 @@ module Panda
 
         def heading_classes
           margin_bottom = @meta.present? ? "mb-0.5" : "mb-5"
-          base = "flex items-center gap-2 text-slate-900 #{margin_bottom}"
+          base = "flex items-center gap-2 text-gray-900 #{margin_bottom}"
           styles = case @level
           when 1
             "text-2xl font-semibold"

@@ -31,7 +31,7 @@ RSpec.describe Panda::Core::Admin::TagComponent, type: :component do
       component = described_class.new(status: :inactive)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("span.bg-slate-100")
+      expect(output).to have_css("span.bg-gray-100")
       expect(output).to have_text("Inactive")
     end
   end

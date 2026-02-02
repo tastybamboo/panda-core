@@ -66,7 +66,7 @@ module Panda
           when :info, :notice
             "text-sky-600"
           else
-            "text-slate-500"
+            "text-gray-500"
           end
         end
 
@@ -81,7 +81,7 @@ module Panda
           when :info, :notice
             "bg-sky-50 text-sky-700 border-sky-200"
           else
-            "bg-white text-slate-700 border-slate-200"
+            "bg-white text-gray-700 border-gray-200"
           end
         end
 
