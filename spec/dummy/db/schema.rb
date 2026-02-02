@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_03_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_02_171614) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -62,6 +62,30 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_100000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "panda_core_file_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "icon"
+    t.string "name", null: false
+    t.uuid "parent_id"
+    t.integer "position", default: 0, null: false
+    t.string "slug", null: false
+    t.boolean "system", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_panda_core_file_categories_on_parent_id"
+    t.index ["position"], name: "index_panda_core_file_categories_on_position"
+    t.index ["slug"], name: "index_panda_core_file_categories_on_slug", unique: true
+  end
+
+  create_table "panda_core_file_categorizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.uuid "file_category_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blob_id"], name: "index_panda_core_file_categorizations_on_blob_id"
+    t.index ["file_category_id", "blob_id"], name: "idx_file_categorizations_on_category_and_blob", unique: true
+    t.index ["file_category_id"], name: "index_panda_core_file_categorizations_on_file_category_id"
+  end
+
   create_table "panda_core_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
@@ -76,4 +100,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_100000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "panda_core_file_categories", "panda_core_file_categories", column: "parent_id"
+  add_foreign_key "panda_core_file_categorizations", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "panda_core_file_categorizations", "panda_core_file_categories", column: "file_category_id"
 end

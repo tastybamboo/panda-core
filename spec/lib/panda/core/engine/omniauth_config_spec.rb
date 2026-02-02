@@ -76,6 +76,7 @@ RSpec.describe Panda::Core::Engine::OmniauthConfig do
 
   describe "#load_yaml_provider_overrides!" do
     let(:yaml_path) { Panda::Core::Engine.root.join("config/providers.yml") }
+    let!(:original_providers) { Panda::Core.config.authentication_providers.dup }
 
     before do
       allow(File).to receive(:exist?).and_return(true)
@@ -84,6 +85,10 @@ RSpec.describe Panda::Core::Engine::OmniauthConfig do
           "google" => {"client_id" => "X", "client_secret" => "Y"}
         }
       })
+    end
+
+    after do
+      Panda::Core.config.authentication_providers = original_providers
     end
 
     it "merges YAML provider overrides" do

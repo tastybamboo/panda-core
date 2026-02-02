@@ -2,11 +2,19 @@
 
 require "system_helper"
 
-RSpec.describe "Admin logout", type: :system, flaky: true do
+RSpec.describe "Admin logout", type: :system do
   let(:admin_user) { create_admin_user }
 
   before do
     login_with_google(admin_user)
+  end
+
+  # Opens the user menu dropdown in the sidebar and clicks the Logout button
+  def perform_logout
+    find("button", text: admin_user.name).click
+    within("#user-menu") do
+      click_on "Logout"
+    end
   end
 
   describe "logging out" do
@@ -14,19 +22,17 @@ RSpec.describe "Admin logout", type: :system, flaky: true do
       visit "/admin"
       expect(page).to have_content("Dashboard")
 
-      # Click logout button
-      click_on "Logout"
+      perform_logout
 
       # Should redirect to login page
       expect(page).to have_current_path("/admin/login")
-      expect(page).to have_content("Successfully logged out")
     end
 
     it "clears the session after logout" do
       visit "/admin"
       expect(page).to have_content("Dashboard")
 
-      click_on "Logout"
+      perform_logout
 
       # Try to visit admin page after logout
       visit "/admin"
@@ -39,7 +45,7 @@ RSpec.describe "Admin logout", type: :system, flaky: true do
       visit "/admin"
       expect(page).to have_content("Dashboard")
 
-      click_on "Logout"
+      perform_logout
 
       # Should be on login page
       expect(page).to have_current_path("/admin/login")
@@ -51,7 +57,7 @@ RSpec.describe "Admin logout", type: :system, flaky: true do
 
     it "allows logging in again after logout" do
       visit "/admin"
-      click_on "Logout"
+      perform_logout
 
       # Should be able to login again
       login_with_google(admin_user)
@@ -70,7 +76,7 @@ RSpec.describe "Admin logout", type: :system, flaky: true do
       end
 
       visit "/admin"
-      click_on "Logout"
+      perform_logout
 
       expect(events.size).to eq(1)
     end

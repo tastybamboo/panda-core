@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Admin My Profile Logins", type: :system, flaky: true do
+RSpec.describe "Admin My Profile Logins", type: :system do
   let!(:admin_user) { create_admin_user }
 
   before do
@@ -35,9 +35,8 @@ RSpec.describe "Admin My Profile Logins", type: :system, flaky: true do
     it "highlights Login & Security as active when on that page", js: true do
       visit "/admin/my_profile/logins"
 
-      # Open user menu
-      find("button", text: admin_user.name).click
-
+      # The user menu is already open when one of its items is active,
+      # so we don't need to click the button to open it
       within("#user-menu") do
         logins_link = find("a", text: "Login & Security")
         expect(logins_link[:class]).to include("bg-primary-500")
@@ -80,12 +79,22 @@ RSpec.describe "Admin My Profile Logins", type: :system, flaky: true do
   end
 
   describe "Connected Accounts" do
-    # Note: The dummy app already has authentication providers configured in
-    # spec/dummy/config/initializers/panda_core.rb, so we test against those.
-    # Mocking doesn't work in system tests with JS since the server runs in a separate process.
+    # Explicitly set providers to protect against config pollution from other tests.
+    # The Puma server runs in a separate thread (same process), so config changes
+    # made here are visible to the server immediately.
+    let!(:original_providers) { Panda::Core.config.authentication_providers.dup }
 
     before do
+      Panda::Core.config.authentication_providers = {
+        google_oauth2: {client_id: "test", client_secret: "test"},
+        github: {client_id: "test", client_secret: "test"},
+        microsoft_graph: {client_id: "test", client_secret: "test"}
+      }
       visit "/admin/my_profile/logins"
+    end
+
+    after do
+      Panda::Core.config.authentication_providers = original_providers
     end
 
     it "displays all enabled providers", js: true do
@@ -95,9 +104,10 @@ RSpec.describe "Admin My Profile Logins", type: :system, flaky: true do
     end
 
     it "displays provider icons", js: true do
-      expect(page).to have_css("i.fa-brands.fa-microsoft")
-      expect(page).to have_css("i.fa-brands.fa-google")
-      expect(page).to have_css("i.fa-brands.fa-github")
+      # FontAwesome JS replaces <i> tags with <svg> elements
+      expect(page).to have_css("svg[data-prefix='fab'][data-icon='microsoft']")
+      expect(page).to have_css("svg[data-prefix='fab'][data-icon='google']")
+      expect(page).to have_css("svg[data-prefix='fab'][data-icon='github']")
     end
 
     it "shows not connected status for all providers", js: true do
@@ -106,7 +116,7 @@ RSpec.describe "Admin My Profile Logins", type: :system, flaky: true do
       google_section = find("h3", text: "Google").ancestor("div.flex.items-center.justify-between")
       within(google_section) do
         expect(page).to have_content("Not connected")
-        expect(page).not_to have_css("i.fa-check-circle")
+        expect(page).not_to have_css("svg[data-icon='check-circle']")
       end
     end
 

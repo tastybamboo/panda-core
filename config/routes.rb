@@ -27,6 +27,9 @@ Panda::Core::Engine.routes.draw do
     # User management
     resources :users, only: %i[index show edit update], controller: "admin/users"
 
+    # File category management
+    resources :file_categories, only: %i[index new create edit update destroy], controller: "admin/file_categories"
+
     # Test-only authentication endpoint (available in development and test environments)
     # This bypasses OAuth for faster, more reliable test execution
     # Development: Used by Capybara system tests which run Rails server in development mode
