@@ -15,8 +15,7 @@
              data-navigation-toggle-target="icon"></i>
         </button>
         <div id="<%= menu_id %>"
-             class="mt-1 hidden"
-             style="display: none;"
+             class="overflow-hidden transition-all duration-200 ease-out <%= active? ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0' %>"
              data-navigation-toggle-target="menu">
           <% sub_items.each do |sub_item| %>
             <%= sub_item %>

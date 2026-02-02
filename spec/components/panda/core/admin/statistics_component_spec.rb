@@ -36,18 +36,18 @@ RSpec.describe Panda::Core::Admin::StatisticsComponent, type: :component do
       expect(output).to have_css("dd")
     end
 
-    it "applies gradient background styling" do
+    it "applies card styling" do
       component = described_class.new(metric: "Total", value: 100)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("div.bg-gradient-to-br.from-primary-50\\/20.to-primary-50")
+      expect(output).to have_css("div.bg-white.rounded-2xl")
     end
 
     it "applies border and padding" do
       component = described_class.new(metric: "Count", value: 5)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("div.border-2.border-primary-400.p-4.rounded-lg")
+      expect(output).to have_css("div.border.border-gray-200.p-4.rounded-2xl")
     end
 
     it "truncates long metric names" do
@@ -64,7 +64,7 @@ RSpec.describe Panda::Core::Admin::StatisticsComponent, type: :component do
       component = described_class.new(metric: "Total", value: 100)
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("dd.text-3xl.font-medium.tracking-tight")
+      expect(output).to have_css("dd.text-2xl.font-semibold.tracking-tight")
     end
   end
 end

@@ -347,8 +347,8 @@ module Panda
       end
 
       def section_heading(text, options = {})
-        @template.content_tag(:div, class: "-mx-4 sm:-mx-6 px-4 sm:px-6 py-4 bg-gray-200 dark:bg-gray-700 mb-6") do
-          @template.content_tag(:h3, text, class: "text-base font-semibold text-gray-900 dark:text-white")
+        @template.content_tag(:div, class: "mt-6 pt-4 border-t border-gray-200 mb-4") do
+          @template.content_tag(:h3, text, class: "text-sm font-semibold text-gray-700")
         end
       end
 

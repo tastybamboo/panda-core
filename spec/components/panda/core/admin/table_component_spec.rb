@@ -108,7 +108,7 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
   end
 
   describe "header styling" do
-    it "applies rounded corners to first and last header cells" do
+    it "applies header styling" do
       render_inline(described_class.new(term: "user", rows: users) do |table|
         table.column("First") { |u| u.name }
         table.column("Middle") { |u| u.email }
@@ -116,17 +116,9 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end)
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.table-cell.rounded-tl-2xl")
-      expect(output).to have_css("div.table-cell.rounded-tr-2xl")
-    end
-
-    it "applies header background color" do
-      render_inline(described_class.new(term: "user", rows: users) do |table|
-        table.column("Name") { |u| u.name }
-      end)
-      output = Capybara.string(rendered_content)
-
-      expect(output).to have_css("div.table-row.bg-gray-900")
+      expect(output).to have_css("div.table-row.bg-gray-50")
+      expect(output).to have_css("div.table-row.text-gray-500")
+      expect(output).to have_css("div.table-row.uppercase")
     end
   end
 end

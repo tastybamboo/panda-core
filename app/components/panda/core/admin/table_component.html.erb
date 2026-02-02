@@ -4,13 +4,10 @@
     <%# Header %>
     <div class="table w-full" style="table-layout: fixed;">
       <div class="table-header-group">
-        <div class="table-row text-sm font-medium text-white bg-gray-900">
-        <% columns.each_with_index do |column, i| %>
-          <% header_classes = "table-cell sticky top-0 z-10 px-4 py-3 align-middle" %>
-          <% header_classes += " rounded-tl-2xl" if i.zero? %>
-          <% header_classes += " rounded-tr-2xl" if i == columns.size - 1 %>
+        <div class="table-row text-xs font-semibold uppercase tracking-wider text-gray-500 bg-gray-50 border-b border-gray-200">
+        <% columns.each do |column| %>
           <% header_style = column.width ? "width: #{column.width};" : nil %>
-          <div class="<%= header_classes %>" style="<%= header_style %>">
+          <div class="table-cell sticky top-0 z-10 px-4 py-3 align-middle" style="<%= header_style %>">
             <%= column.label %>
           </div>
         <% end %>
@@ -20,7 +17,7 @@
       <%# Rows %>
        <div class="table-row-group">
          <% rows.each do |row| %>
-           <div class="table-row odd:bg-white even:bg-gray-50/60 hover:bg-gray-100" data-<%= term %>-id="<%= row.id %>">
+           <div class="table-row odd:bg-white even:bg-gray-50/60 hover:bg-gray-100 cursor-pointer" data-<%= term %>-id="<%= row.id %>">
              <% columns.each do |column| %>
               <div class="table-cell px-4 py-3 text-sm align-middle whitespace-nowrap border-b border-gray-200/70 text-gray-600">
                 <%= render_cell_content(row, column.cell) %>

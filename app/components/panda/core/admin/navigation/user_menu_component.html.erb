@@ -1,29 +1,31 @@
-<li class="mt-auto pt-3 border-t border-white/10">
-  <div data-controller="navigation-toggle">
-    <button type="button"
-            data-navigation-toggle-target="button"
-            data-action="click->navigation-toggle#toggle"
-            aria-controls="user-menu"
-            aria-expanded="false"
-            class="<%= button_classes %>">
-      <% if user.avatar.attached? %>
-        <span class="text-center w-6"><%= helpers.image_tag helpers.main_app.url_for(user.avatar), alt: user.name, class: "w-auto h-7 rounded-full object-cover" %></span>
-      <% elsif !user.image_url.to_s.empty? %>
-        <span class="text-center w-6"><img src="<%= user.image_url %>" class="w-auto h-7 rounded-full"></span>
-      <% else %>
-        <span class="text-center w-6"><i class="text-xl fa-solid fa-circle-user fa-fw"></i></span>
-      <% end %>
-      <span class="flex-1 text-left"><%= user.name %></span>
-      <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
-         data-navigation-toggle-target="icon"></i>
-    </button>
-    <div id="user-menu"
-         class="mt-3 space-y-1 hidden"
-         style="display: none;"
-         data-navigation-toggle-target="menu">
-      <% sub_items.each do |sub_item| %>
-        <%= sub_item %>
-      <% end %>
+<li class="mt-auto">
+  <div class="mb-2" data-controller="navigation-toggle">
+    <div data-navigation-toggle-target="wrapper"
+         class="<%= 'rounded-xl bg-white/10 overflow-hidden' if active? %>">
+      <button type="button"
+              data-navigation-toggle-target="button"
+              data-action="click->navigation-toggle#toggle"
+              aria-controls="user-menu"
+              aria-expanded="false"
+              class="<%= button_classes %>">
+        <% if user.avatar.attached? %>
+          <span class="text-center w-6"><%= helpers.image_tag helpers.main_app.url_for(user.avatar), alt: user.name, class: "w-auto h-7 rounded-full object-cover" %></span>
+        <% elsif !user.image_url.to_s.empty? %>
+          <span class="text-center w-6"><img src="<%= user.image_url %>" class="w-auto h-7 rounded-full"></span>
+        <% else %>
+          <span class="text-center w-6"><i class="text-xl fa-solid fa-circle-user fa-fw"></i></span>
+        <% end %>
+        <span class="flex-1 text-left"><%= user.name %></span>
+        <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
+           data-navigation-toggle-target="icon"></i>
+      </button>
+      <div id="user-menu"
+           class="overflow-hidden transition-all duration-200 ease-out <%= active? ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0' %>"
+           data-navigation-toggle-target="menu">
+        <% sub_items.each do |sub_item| %>
+          <%= sub_item %>
+        <% end %>
+      </div>
     </div>
   </div>
 </li>

@@ -31,7 +31,7 @@ module Panda
         end
 
         def render_content
-          content_tag(:div, class: "ml-3 w-0 flex-1") do
+          content_tag(:div, class: "ml-2 w-0 flex-1") do
             message_html = content_tag(:p, @message, class: "text-sm font-medium flash-message-title")
             subtitle_html = if @subtitle
               content_tag(:p, @subtitle, class: "mt-1 text-xs opacity-80 flash-message-subtitle")
@@ -46,11 +46,9 @@ module Panda
           content_tag(:div, class: "ml-4 flex shrink-0") do
             content_tag(:button,
               type: "button",
-              class: "inline-flex items-center gap-1 text-xs font-medium opacity-80 hover:opacity-100",
+              class: "inline-flex items-center cursor-pointer opacity-60 hover:opacity-100",
               data: {action: "alert#close"}) do
-              close_text = content_tag(:span, "Close")
-              icon = content_tag(:i, "", class: "fa-solid fa-xmark")
-              (close_text + icon).html_safe
+              content_tag(:i, "", class: "fa-solid fa-xmark")
             end
           end
         end
