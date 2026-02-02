@@ -63,5 +63,13 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
 
       expect(output).to have_css("h2.border-b.pb-4")
     end
+
+    it "does not render an icon by default" do
+      component = described_class.new(text: "Pages", level: 1)
+      output = Capybara.string(render_inline(component).to_html)
+
+      expect(output).to have_css("h1", text: "Pages")
+      expect(output).to have_no_css("h1 i")
+    end
   end
 end
