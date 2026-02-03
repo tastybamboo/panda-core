@@ -16,6 +16,10 @@ end
 
 module Panda
   module Core
+    # Session key for storing authenticated Panda Core admin user ID
+    # Namespaced to avoid conflicts with host application user sessions
+    ADMIN_SESSION_KEY = :panda_core_user_id
+
     def self.root
       File.expand_path("../..", __FILE__)
     end

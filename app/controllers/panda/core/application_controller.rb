@@ -31,7 +31,7 @@ module Panda
         Current.user_agent = request.user_agent
         Current.ip_address = request.ip
         Current.root = "#{request.protocol}#{request.host_with_port}"
-        Current.user = User.find_by(id: session[:user_id]) if session[:user_id]
+        Current.user = User.find_by(id: session[Panda::Core::ADMIN_SESSION_KEY]) if session[Panda::Core::ADMIN_SESSION_KEY]
       end
 
       def authenticate_user!

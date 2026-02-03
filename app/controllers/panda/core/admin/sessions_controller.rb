@@ -39,7 +39,7 @@ module Panda
               return
             end
 
-            session[:user_id] = user.id
+            session[Panda::Core::ADMIN_SESSION_KEY] = user.id
             Panda::Core::Current.user = user
 
             ActiveSupport::Notifications.instrument("panda.core.user_login",
@@ -69,7 +69,7 @@ module Panda
         end
 
         def destroy
-          session.delete(:user_id)
+          session.delete(Panda::Core::ADMIN_SESSION_KEY)
           Panda::Core::Current.user = nil
 
           ActiveSupport::Notifications.instrument("panda.core.user_logout")

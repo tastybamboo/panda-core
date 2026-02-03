@@ -30,7 +30,7 @@ module Panda
           end
 
           # Set session (mimics real OAuth callback)
-          session[:user_id] = user.id
+          session[Panda::Core::ADMIN_SESSION_KEY] = user.id
           Panda::Core::Current.user = user
 
           # Support custom redirect path for test flexibility

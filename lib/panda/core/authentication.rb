@@ -11,7 +11,7 @@ module Panda
 
       def current_user
         return @current_user if defined?(@current_user)
-        @current_user = User.find_by(id: session[:user_id]) if session[:user_id]
+        @current_user = User.find_by(id: session[Panda::Core::ADMIN_SESSION_KEY]) if session[Panda::Core::ADMIN_SESSION_KEY]
       end
 
       def require_authentication
@@ -23,12 +23,12 @@ module Panda
       end
 
       def sign_in(user)
-        session[:user_id] = user.id
+        session[Panda::Core::ADMIN_SESSION_KEY] = user.id
         @current_user = user
       end
 
       def sign_out
-        session.delete(:user_id)
+        session.delete(Panda::Core::ADMIN_SESSION_KEY)
         @current_user = nil
       end
     end
