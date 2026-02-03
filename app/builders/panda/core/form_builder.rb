@@ -286,7 +286,7 @@ module Panda
         value ||= submit_default_value
 
         # Use the primary color for save/create actions
-        action = object.persisted? ? :save : :create
+        action = object&.persisted? ? :save : :create
         button_classes = case action
         when :save, :create
           "text-white bg-primary-500 hover:bg-primary-600"
@@ -407,7 +407,13 @@ module Panda
       end
 
       def submit_default_value
-        object.persisted? ? "Update #{object.class.name.demodulize}" : "Create #{object.class.name.demodulize}"
+        if object.nil?
+          "Submit"
+        elsif object.persisted?
+          "Update #{object.class.name.demodulize}"
+        else
+          "Create #{object.class.name.demodulize}"
+        end
       end
 
       def wrap_field(method, options = {}, &block)
