@@ -18,7 +18,7 @@ RSpec.describe "Admin Sessions", type: :request do
         # Test flash directly - this works in request specs!
         expect(flash[:alert]).to eq("You do not have permission to access the admin area.")
         expect(response).to redirect_to("/admin/login")
-        expect(session[:user_id]).to be_nil
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_nil
       end
     end
 
@@ -26,7 +26,7 @@ RSpec.describe "Admin Sessions", type: :request do
       it "creates session and redirects to admin area" do
         post "/admin/test_sessions", params: {user_id: admin_user.id}
 
-        expect(session[:user_id]).to eq(admin_user.id)
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
         expect(response).to redirect_to("/admin")
         expect(flash[:alert]).to be_nil
       end
@@ -34,7 +34,7 @@ RSpec.describe "Admin Sessions", type: :request do
       it "supports custom redirect path via return_to parameter" do
         post "/admin/test_sessions", params: {user_id: admin_user.id, return_to: "/admin/custom"}
 
-        expect(session[:user_id]).to eq(admin_user.id)
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
         expect(response).to redirect_to("/admin/custom")
       end
     end
@@ -54,14 +54,14 @@ RSpec.describe "Admin Sessions", type: :request do
       it "creates session and redirects to admin area" do
         get "/admin/test_login/#{admin_user.id}"
 
-        expect(session[:user_id]).to eq(admin_user.id)
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
         expect(response).to redirect_to("/admin")
       end
 
       it "respects return_to query parameter" do
         get "/admin/test_login/#{admin_user.id}?return_to=/admin/custom"
 
-        expect(session[:user_id]).to eq(admin_user.id)
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
         expect(response).to redirect_to("/admin/custom")
       end
     end
@@ -72,7 +72,7 @@ RSpec.describe "Admin Sessions", type: :request do
 
         expect(flash[:alert]).to eq("You do not have permission to access the admin area.")
         expect(response).to redirect_to("/admin/login")
-        expect(session[:user_id]).to be_nil
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_nil
       end
     end
   end
@@ -110,7 +110,7 @@ RSpec.describe "Admin Sessions", type: :request do
         # Test flash directly - works in request specs!
         expect(flash[:error]).to eq("You do not have permission to access the admin area")
         expect(response).to redirect_to(panda_core.admin_login_path)
-        expect(session[:user_id]).to be_nil
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_nil
       end
     end
 
@@ -121,7 +121,7 @@ RSpec.describe "Admin Sessions", type: :request do
         post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
 
         expect(flash[:success]).to eq("Successfully logged in as #{admin_user.name}")
-        expect(session[:user_id]).to eq(admin_user.id)
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
         expect(response).to redirect_to(panda_core.admin_root_path)
       end
 
@@ -143,7 +143,7 @@ RSpec.describe "Admin Sessions", type: :request do
 
         new_user = Panda::Core::User.find_by(email: "newadmin@example.com")
         expect(new_user).to be_present
-        expect(session[:user_id]).to eq(new_user.id)
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(new_user.id)
       end
     end
 

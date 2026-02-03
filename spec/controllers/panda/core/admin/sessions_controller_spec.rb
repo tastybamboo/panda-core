@@ -32,7 +32,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
         get :create, params: {provider: "google_oauth2"}
       }.to change(Panda::Core::User, :count).by(1)
 
-      expect(session[:user_id]).to be_present
+      expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_present
       expect(response).to redirect_to("/admin")
     end
 
@@ -41,7 +41,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
 
       get :create, params: {provider: "google_oauth2"}
 
-      expect(session[:user_id]).to eq(user.id)
+      expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(user.id)
       expect(response).to redirect_to("/admin")
     end
   end
@@ -56,7 +56,7 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
     it "signs out the user" do
       delete :destroy
 
-      expect(session[:user_id]).to be_nil
+      expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_nil
       expect(response).to redirect_to("/admin/login")
     end
   end

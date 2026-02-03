@@ -8,7 +8,7 @@ RSpec.describe Panda::Core::Admin::MyProfileController, type: :controller do
   let(:user) { Panda::Core::User.create!(email: "test@example.com", name: "Test User", admin: true) }
 
   before do
-    session[:user_id] = user.id
+    session[Panda::Core::ADMIN_SESSION_KEY] = user.id
   end
 
   describe "GET #edit" do
