@@ -4,7 +4,7 @@
     <%# Header %>
     <div class="table w-full" style="table-layout: fixed;">
       <div class="table-header-group">
-        <div class="table-row text-xs font-semibold uppercase tracking-wider text-gray-500 bg-gray-50 border-b border-gray-200">
+        <div class="table-row text-xs font-semibold tracking-wider text-gray-500 bg-gray-50 border-b border-gray-200">
         <% columns.each do |column| %>
           <% header_style = column.width ? "width: #{column.width};" : nil %>
           <div class="table-cell sticky top-0 z-10 px-4 py-3 align-middle" style="<%= header_style %>">
