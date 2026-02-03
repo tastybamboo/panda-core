@@ -50,7 +50,7 @@ RSpec.describe "Core admin pages smoke tests", type: :system do
 
   describe "Users management" do
     context "with a regular user" do
-      let!(:regular_user) { create_user }
+      let!(:regular_user) { create_regular_user }
 
       it "loads users index without errors" do
         visit "/admin/users"

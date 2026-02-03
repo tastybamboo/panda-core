@@ -6,6 +6,8 @@ module Panda
       # Base controller for all admin interfaces across Panda gems
       # Provides authentication, helpers, and hooks for extending functionality
       class BaseController < ::ActionController::Base
+        include Panda::Core::Authorizable
+
         layout "panda/core/admin"
 
         protect_from_forgery with: :exception
@@ -50,10 +52,16 @@ module Panda
         end
 
         def authenticate_admin_user!
-          return if user_signed_in? && current_user.admin?
+          unless user_signed_in?
+            redirect_to panda_core.admin_login_path,
+              flash: {error: "Please login to view this!"}
+            return
+          end
+
+          return if authorized_for_admin_access?
 
           redirect_to panda_core.admin_login_path,
-            flash: {error: "Please login to view this!"}
+            flash: {error: "You are not authorized to access the admin area."}
         end
 
         # Required for paper_trail and seems as good as convention these days
