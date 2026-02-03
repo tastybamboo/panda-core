@@ -31,8 +31,12 @@ module Panda
           user = User.find_or_create_from_auth_hash(auth)
 
           if user.persisted?
-            # Check if user is admin before allowing access
-            unless user.admin?
+            # Check if user is authorized to access the admin area.
+            # Admin users always have access. Non-admin users are checked
+            # via the configurable authorization_policy (e.g. role-based access
+            # from panda-cms-pro).
+            policy = Panda::Core.config.authorization_policy
+            unless user.admin? || policy.call(user, :access_admin, nil)
               flash[:error] = "You do not have permission to access the admin area"
               flash.keep(:error) if Rails.env.test?
               redirect_to admin_login_path
