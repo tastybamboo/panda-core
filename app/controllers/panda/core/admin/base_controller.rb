@@ -45,6 +45,8 @@ module Panda
           Panda::Core::Current.ip_address = request.ip
           Panda::Core::Current.root = request.base_url
           Panda::Core::Current.user ||= Panda::Core::User.find_by(id: session[Panda::Core::ADMIN_SESSION_KEY]) if session[Panda::Core::ADMIN_SESSION_KEY]
+
+          track_session_activity if Panda::Core::Current.user
         end
 
         def authenticate_user!
@@ -71,6 +73,28 @@ module Panda
 
         def user_signed_in?
           !!Panda::Core::Current.user
+        end
+
+        private
+
+        def track_session_activity
+          return unless session.id.present?
+
+          last_tracked = session[:_session_tracked_at]
+          return if last_tracked && Time.current.to_i - last_tracked < 300
+
+          user_session = Panda::Core::UserSession.find_or_initialize_by(
+            session_id: session.id.to_s,
+            user: Panda::Core::Current.user
+          )
+          user_session.ip_address = request.remote_ip
+          user_session.user_agent = request.user_agent
+          user_session.last_active_at = Time.current
+          user_session.active = true
+          user_session.save
+          session[:_session_tracked_at] = Time.current.to_i
+        rescue => e
+          Rails.logger.debug("Session tracking skipped: #{e.message}")
         end
       end
     end

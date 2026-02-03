@@ -25,7 +25,19 @@ Panda::Core::Engine.routes.draw do
     resource :settings, only: [:show], controller: "admin/settings"
 
     # User management
-    resources :users, only: %i[index show edit update], controller: "admin/users"
+    resources :users, only: %i[index show edit update], controller: "admin/users" do
+      member do
+        patch :enable
+        patch :disable
+        get :activity
+        get :sessions
+        delete "sessions/:session_id", action: :revoke_session, as: :revoke_session
+      end
+      collection do
+        post :invite
+        post :bulk_action
+      end
+    end
 
     # File category management
     resources :file_categories, only: %i[index new create edit update destroy], controller: "admin/file_categories"

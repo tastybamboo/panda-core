@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_02_171614) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_03_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -86,16 +86,59 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_02_171614) do
     t.index ["file_category_id"], name: "index_panda_core_file_categorizations_on_file_category_id"
   end
 
+  create_table "panda_core_user_activities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "action", null: false
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.jsonb "metadata", default: {}
+    t.uuid "resource_id"
+    t.string "resource_type"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.uuid "user_id", null: false
+    t.index ["action"], name: "index_panda_core_user_activities_on_action"
+    t.index ["created_at"], name: "index_panda_core_user_activities_on_created_at"
+    t.index ["resource_type", "resource_id"], name: "idx_on_resource_type_resource_id_fe067c2837"
+    t.index ["user_id"], name: "index_panda_core_user_activities_on_user_id"
+  end
+
+  create_table "panda_core_user_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.datetime "last_active_at"
+    t.datetime "revoked_at"
+    t.uuid "revoked_by_id"
+    t.string "session_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.uuid "user_id", null: false
+    t.index ["active"], name: "index_panda_core_user_sessions_on_active"
+    t.index ["session_id"], name: "index_panda_core_user_sessions_on_session_id", unique: true
+    t.index ["user_id"], name: "index_panda_core_user_sessions_on_user_id"
+  end
+
   create_table "panda_core_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.string "current_theme"
     t.string "email", null: false
+    t.boolean "enabled", default: true, null: false
     t.string "image_url"
+    t.datetime "invitation_accepted_at"
+    t.datetime "invitation_sent_at"
+    t.string "invitation_token"
+    t.uuid "invited_by_id"
+    t.datetime "last_login_at"
+    t.string "last_login_ip"
+    t.integer "login_count", default: 0, null: false
     t.string "name"
     t.string "oauth_avatar_url"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_panda_core_users_on_email", unique: true
+    t.index ["enabled"], name: "index_panda_core_users_on_enabled"
+    t.index ["invitation_token"], name: "index_panda_core_users_on_invitation_token", unique: true
+    t.index ["invited_by_id"], name: "index_panda_core_users_on_invited_by_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -103,4 +146,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_02_171614) do
   add_foreign_key "panda_core_file_categories", "panda_core_file_categories", column: "parent_id"
   add_foreign_key "panda_core_file_categorizations", "active_storage_blobs", column: "blob_id"
   add_foreign_key "panda_core_file_categorizations", "panda_core_file_categories", column: "file_category_id"
+  add_foreign_key "panda_core_user_activities", "panda_core_users", column: "user_id"
+  add_foreign_key "panda_core_user_sessions", "panda_core_users", column: "revoked_by_id"
+  add_foreign_key "panda_core_user_sessions", "panda_core_users", column: "user_id"
+  add_foreign_key "panda_core_users", "panda_core_users", column: "invited_by_id"
 end
