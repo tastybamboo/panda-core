@@ -97,16 +97,18 @@ module Panda
         end
 
         def bulk_action
-          user_ids = params[:user_ids] || []
-          users = User.where(id: user_ids)
+          user_ids = Array(params[:user_ids]).map(&:to_s)
+          user_ids = user_ids.select { |id| id.match?(/\A[0-9a-f-]{36}\z/i) }
+
+          return redirect_to admin_users_path, alert: "No valid users selected." if user_ids.blank?
 
           case params[:bulk_action]
           when "enable"
-            users.each(&:enable!)
-            flash[:success] = "#{users.count} user(s) enabled."
+            enabled_count = User.where(id: user_ids).update_all(enabled: true)
+            flash[:success] = "#{enabled_count} user(s) enabled."
           when "disable"
-            users.where.not(id: current_user.id).each(&:disable!)
-            flash[:success] = "Selected user(s) disabled (excluding yourself)."
+            disabled_count = User.where(id: user_ids).where.not(id: current_user.id).update_all(enabled: false)
+            flash[:success] = "#{disabled_count} user(s) disabled (excluding yourself)."
           else
             flash[:error] = "Unknown action."
           end
@@ -119,7 +121,9 @@ module Panda
           @activities = @user.user_activities.recent
           @page = [params.fetch(:page, 1).to_i, 1].max
           @per_page = 25
-          @total_count = @activities.count
+          @total_count = Rails.cache.fetch(["user_activities_count", @user.id], expires_in: 5.minutes) do
+            @activities.count
+          end
           @total_pages = (@total_count.to_f / @per_page).ceil
           @activities = @activities.offset((@page - 1) * @per_page).limit(@per_page)
         end
@@ -128,6 +132,13 @@ module Panda
           add_breadcrumb @user.name, admin_user_path(@user)
           add_breadcrumb "Sessions", sessions_admin_user_path(@user)
           @sessions = @user.user_sessions.recent
+          @page = [params.fetch(:page, 1).to_i, 1].max
+          @per_page = 25
+          @total_count = @sessions.count
+          @total_pages = (@total_count.to_f / @per_page).ceil
+          @sessions = @sessions.offset((@page - 1) * @per_page).limit(@per_page)
+          @active_sessions = @user.user_sessions.active_sessions.recent
+          @revoked_sessions = @user.user_sessions.revoked_sessions.recent
         end
 
         def revoke_session

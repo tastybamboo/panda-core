@@ -3,8 +3,8 @@
     <% heading.with_button(text: "Back to User", href: admin_user_path(@user), icon: "fa-solid fa-arrow-left") %>
   <% end %>
 
-  <% active_sessions = @sessions.select(&:active?) %>
-  <% revoked_sessions = @sessions.reject(&:active?) %>
+  <% active_sessions = @active_sessions %>
+  <% revoked_sessions = @revoked_sessions %>
 
   <!-- Active Sessions -->
   <div class="mb-8">

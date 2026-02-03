@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreatePandaCoreUserActivities < ActiveRecord::Migration[8.0]
+class CreatePandaCoreUserActivities < ActiveRecord::Migration[8.1]
   def change
     create_table :panda_core_user_activities, id: :uuid do |t|
       t.uuid :user_id, null: false

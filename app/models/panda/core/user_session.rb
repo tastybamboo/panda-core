@@ -13,6 +13,7 @@ module Panda
       validates :session_id, presence: true, uniqueness: true
 
       scope :active_sessions, -> { where(active: true, revoked_at: nil) }
+      scope :revoked_sessions, -> { where(active: false) }
       scope :for_user, ->(user) { where(user: user) }
       scope :recent, -> { order(last_active_at: :desc) }
 

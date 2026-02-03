@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddUserManagementFieldsToPandaCoreUsers < ActiveRecord::Migration[8.0]
+class AddUserManagementFieldsToPandaCoreUsers < ActiveRecord::Migration[8.1]
   def change
     change_table :panda_core_users, bulk: true do |t|
       t.boolean :enabled, default: true, null: false

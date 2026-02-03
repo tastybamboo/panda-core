@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreatePandaCoreUserSessions < ActiveRecord::Migration[8.0]
+class CreatePandaCoreUserSessions < ActiveRecord::Migration[8.1]
   def change
     create_table :panda_core_user_sessions, id: :uuid do |t|
       t.uuid :user_id, null: false
@@ -20,6 +20,6 @@ class CreatePandaCoreUserSessions < ActiveRecord::Migration[8.0]
     end
 
     add_foreign_key :panda_core_user_sessions, :panda_core_users, column: :user_id
-    add_foreign_key :panda_core_user_sessions, :panda_core_users, column: :revoked_by_id
+    add_foreign_key :panda_core_user_sessions, :panda_core_users, column: :revoked_by_id, on_delete: :nullify
   end
 end
