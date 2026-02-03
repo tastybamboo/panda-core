@@ -224,6 +224,50 @@ RSpec.describe Panda::Core::FormBuilder, type: :helper do
     end
   end
 
+  describe "#submit" do
+    context "with a model object" do
+      it "renders a submit button with create text for new records" do
+        result = builder.submit
+        expect(result).to include("Create User")
+      end
+
+      it "renders a submit button with the given value" do
+        result = builder.submit("Save Changes")
+        expect(result).to include("Save Changes")
+      end
+    end
+
+    context "without a model object (form_with url:)" do
+      let(:nil_builder) { described_class.new(nil, nil, template, {}) }
+
+      it "renders a submit button without raising an error" do
+        result = nil_builder.submit("Create Token")
+        expect(result).to include("Create Token")
+      end
+
+      it "uses 'Submit' as the default value when no value is given" do
+        result = nil_builder.submit
+        expect(result).to include("Submit")
+      end
+    end
+  end
+
+  describe "#button" do
+    context "without a model object (form_with url:)" do
+      let(:nil_builder) { described_class.new(nil, nil, template, {}) }
+
+      it "renders a button without raising an error" do
+        result = nil_builder.button("Create Token")
+        expect(result).to include("Create Token")
+      end
+
+      it "uses 'Submit' as the default value when no value is given" do
+        result = nil_builder.button
+        expect(result).to include("Submit")
+      end
+    end
+  end
+
   describe "backward compatibility" do
     it "does not break existing forms without custom labels" do
       text_result = builder.text_field(:name)
