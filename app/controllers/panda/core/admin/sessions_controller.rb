@@ -46,6 +46,9 @@ module Panda
             session[Panda::Core::ADMIN_SESSION_KEY] = user.id
             Panda::Core::Current.user = user
 
+            user.track_login!(request) if user.respond_to?(:track_login!)
+            Panda::Core::UserActivity.log!(user: user, action: "login", request: request) if defined?(Panda::Core::UserActivity)
+
             ActiveSupport::Notifications.instrument("panda.core.user_login",
               user: user,
               provider: provider)

@@ -1,0 +1,103 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
+  <% component.with_heading_slot(text: "Sessions: #{@user.name}", level: 1) do |heading| %>
+    <% heading.with_button(text: "Back to User", href: admin_user_path(@user), icon: "fa-solid fa-arrow-left") %>
+  <% end %>
+
+  <% active_sessions = @active_sessions %>
+  <% revoked_sessions = @revoked_sessions %>
+
+  <!-- Active Sessions -->
+  <div class="mb-8">
+    <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+      Active Sessions
+      <% if active_sessions.any? %>
+        <span class="ml-2 inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400"><%= active_sessions.count %></span>
+      <% end %>
+    </h2>
+
+    <% if active_sessions.any? %>
+      <div class="space-y-3">
+        <% active_sessions.each do |user_session| %>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0">
+                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-500/10">
+                  <i class="fa-solid fa-desktop text-green-600 dark:text-green-400"></i>
+                </span>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                  <% if user_session.user_agent.present? %>
+                    <%= truncate(user_session.user_agent, length: 80) %>
+                  <% else %>
+                    Unknown browser
+                  <% end %>
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  <% if user_session.ip_address.present? %>
+                    IP: <%= user_session.ip_address %> &middot;
+                  <% end %>
+                  Last active: <%= user_session.last_active_at ? "#{time_ago_in_words(user_session.last_active_at)} ago" : "Unknown" %>
+                </div>
+              </div>
+            </div>
+            <% if @user != current_user %>
+              <%= button_to "Revoke",
+                revoke_session_admin_user_path(@user, session_id: user_session.id),
+                method: :delete,
+                class: "rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500",
+                data: { confirm: "Revoke this session? The user will be logged out." } %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">No active sessions.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Revoked Sessions -->
+  <% if revoked_sessions.any? %>
+    <div>
+      <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+        Revoked Sessions
+        <span class="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-400"><%= revoked_sessions.count %></span>
+      </h2>
+
+      <div class="space-y-3">
+        <% revoked_sessions.each do |user_session| %>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 opacity-60">
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0">
+                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                  <i class="fa-solid fa-desktop text-gray-400 dark:text-gray-500"></i>
+                </span>
+              </div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                  <% if user_session.user_agent.present? %>
+                    <%= truncate(user_session.user_agent, length: 80) %>
+                  <% else %>
+                    Unknown browser
+                  <% end %>
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  <% if user_session.ip_address.present? %>
+                    IP: <%= user_session.ip_address %> &middot;
+                  <% end %>
+                  Revoked: <%= user_session.revoked_at ? "#{time_ago_in_words(user_session.revoked_at)} ago" : "Unknown" %>
+                  <% if user_session.revoked_by.present? %>
+                    by <%= user_session.revoked_by.name %>
+                  <% end %>
+                </div>
+              </div>
+              <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-500/10 dark:text-red-400">Revoked</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

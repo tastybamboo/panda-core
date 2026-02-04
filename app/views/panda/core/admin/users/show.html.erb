@@ -5,7 +5,7 @@
 
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
     <!-- User Info Card -->
-    <div class="lg:col-span-1">
+    <div class="lg:col-span-1 space-y-6">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         <div class="flex flex-col items-center">
           <% if @user.avatar.attached? %>
@@ -19,23 +19,72 @@
           <% end %>
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white"><%= @user.name %></h2>
           <p class="text-gray-500 dark:text-gray-400"><%= @user.email %></p>
-          <div class="mt-3">
+          <div class="mt-3 flex items-center gap-2">
             <% if @user.admin? %>
-              <span class="inline-flex items-center rounded-md bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700 ring-1 ring-inset ring-primary-600/20 dark:bg-primary-500/10 dark:text-primary-400 dark:ring-primary-500/20">
-                <i class="fa-solid fa-shield mr-1"></i> Administrator
-              </span>
+              <%= render Panda::Core::Admin::TagComponent.new(text: "Administrator", status: :active) %>
             <% else %>
-              <span class="inline-flex items-center rounded-md bg-gray-50 px-3 py-1 text-sm font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20">
-                Standard User
-              </span>
+              <%= render Panda::Core::Admin::TagComponent.new(text: "Standard User", status: :inactive) %>
+            <% end %>
+            <% if !@user.enabled? %>
+              <%= render Panda::Core::Admin::TagComponent.new(text: "Disabled", status: :inactive) %>
+            <% elsif @user.invitation_token.present? %>
+              <%= render Panda::Core::Admin::TagComponent.new(text: "Invited", status: :draft) %>
             <% end %>
           </div>
         </div>
+
+        <!-- Enable/Disable Actions -->
+        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <% if @user == current_user %>
+            <p class="text-sm text-gray-500 dark:text-gray-400 text-center">This is your account.</p>
+          <% elsif @user.enabled? %>
+            <%= button_to "Disable User", disable_admin_user_path(@user), method: :patch,
+              class: "w-full rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500",
+              data: { confirm: "Are you sure you want to disable #{@user.name}?" } %>
+          <% else %>
+            <%= button_to "Enable User", enable_admin_user_path(@user), method: :patch,
+              class: "w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Quick Stats</h3>
+        <dl class="space-y-3">
+          <div class="flex justify-between">
+            <dt class="text-sm text-gray-600 dark:text-gray-400">Login Count</dt>
+            <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= @user.login_count || 0 %></dd>
+          </div>
+          <div class="flex justify-between">
+            <dt class="text-sm text-gray-600 dark:text-gray-400">Active Sessions</dt>
+            <dd class="text-sm font-medium text-gray-900 dark:text-white"><%= @active_sessions_count %></dd>
+          </div>
+          <div class="flex justify-between">
+            <dt class="text-sm text-gray-600 dark:text-gray-400">Last Login</dt>
+            <dd class="text-sm font-medium text-gray-900 dark:text-white">
+              <% if @user.last_login_at.present? %>
+                <%= time_ago_in_words(@user.last_login_at) %> ago
+              <% else %>
+                Never
+              <% end %>
+            </dd>
+          </div>
+          <% if @user.invited_by.present? %>
+            <div class="flex justify-between">
+              <dt class="text-sm text-gray-600 dark:text-gray-400">Invited By</dt>
+              <dd class="text-sm font-medium text-gray-900 dark:text-white">
+                <%= link_to @user.invited_by.name, admin_user_path(@user.invited_by), class: "text-primary-600 hover:text-primary-700 dark:text-primary-400" %>
+              </dd>
+            </div>
+          <% end %>
+        </dl>
       </div>
     </div>
 
     <!-- User Details -->
     <div class="lg:col-span-2 space-y-6">
+      <!-- Account Information -->
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-medium text-gray-900 dark:text-white">Account Information</h3>
@@ -53,6 +102,12 @@
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Last updated</dt>
             <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0"><%= l(@user.updated_at, format: :long) %></dd>
           </div>
+          <% if @user.last_login_ip.present? %>
+            <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Last login IP</dt>
+              <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:col-span-2 sm:mt-0"><%= @user.last_login_ip %></dd>
+            </div>
+          <% end %>
           <% if @user.current_theme.present? %>
             <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
               <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Theme preference</dt>
@@ -60,6 +115,72 @@
             </div>
           <% end %>
         </dl>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white">Recent Activity</h3>
+          <%= link_to "View All", activity_admin_user_path(@user), class: "text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400" %>
+        </div>
+        <% if @recent_activity.any? %>
+          <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+            <% @recent_activity.each do |activity| %>
+              <li class="px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0">
+                    <% icon = case activity.action
+                       when "login" then "fa-solid fa-right-to-bracket text-green-500"
+                       when "logout" then "fa-solid fa-right-from-bracket text-gray-400"
+                       when "updated_user" then "fa-solid fa-user-pen text-blue-500"
+                       when "enabled_user" then "fa-solid fa-user-check text-green-500"
+                       when "disabled_user" then "fa-solid fa-user-slash text-red-500"
+                       when "invited_user" then "fa-solid fa-envelope text-purple-500"
+                       when "revoked_session" then "fa-solid fa-ban text-red-500"
+                       else "fa-solid fa-circle-info text-gray-400"
+                       end %>
+                    <i class="<%= icon %>"></i>
+                  </div>
+                  <div>
+                    <span class="text-sm text-gray-900 dark:text-white"><%= activity.action.humanize %></span>
+                    <% if activity.resource_type.present? %>
+                      <span class="text-sm text-gray-500 dark:text-gray-400">
+                        &mdash; <%= activity.resource_type.demodulize %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+                <span class="text-xs text-gray-400 dark:text-gray-500"><%= time_ago_in_words(activity.created_at) %> ago</span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="px-6 py-8 text-center">
+            <p class="text-sm text-gray-500 dark:text-gray-400">No activity recorded yet.</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Sessions Summary -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+            Active Sessions
+            <% if @active_sessions_count > 0 %>
+              <span class="ml-2 inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400"><%= @active_sessions_count %></span>
+            <% end %>
+          </h3>
+          <%= link_to "Manage", sessions_admin_user_path(@user), class: "text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400" %>
+        </div>
+        <div class="px-6 py-4">
+          <% if @active_sessions_count > 0 %>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              This user has <strong><%= @active_sessions_count %></strong> active session<%= @active_sessions_count == 1 ? "" : "s" %>.
+            </p>
+          <% else %>
+            <p class="text-sm text-gray-500 dark:text-gray-400">No active sessions.</p>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
