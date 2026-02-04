@@ -13,10 +13,12 @@ module Panda
         attr_reader :value, :masked
 
         def display_value
-          if masked && value.present? && value.length > 4
+          return value unless masked && value.present?
+
+          if value.length > 4
             "\u2022" * 12 + value[-4..]
           else
-            value
+            "\u2022" * value.length
           end
         end
 

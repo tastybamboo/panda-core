@@ -33,7 +33,15 @@ export default class extends Controller {
   ]
 
   connect() {
+    this._feedbackTimeout = null
     this.updateDisplay()
+  }
+
+  disconnect() {
+    if (this._feedbackTimeout) {
+      clearTimeout(this._feedbackTimeout)
+      this._feedbackTimeout = null
+    }
   }
 
   toggleReveal() {
@@ -68,8 +76,15 @@ export default class extends Controller {
   showCopiedFeedback() {
     if (!this.hasCopyButtonTarget) return
 
+    // Clear any pending feedback timeout from a previous copy
+    if (this._feedbackTimeout) {
+      clearTimeout(this._feedbackTimeout)
+    }
+
     const button = this.copyButtonTarget
-    const originalClasses = button.className
+    if (!this._originalClasses) {
+      this._originalClasses = button.className
+    }
 
     // Update icon and text
     if (this.hasCopyIconTarget) {
@@ -83,8 +98,9 @@ export default class extends Controller {
     button.className = "shrink-0 btn btn-success transition"
 
     // Restore after 2 seconds
-    setTimeout(() => {
-      button.className = originalClasses
+    this._feedbackTimeout = setTimeout(() => {
+      this._feedbackTimeout = null
+      button.className = this._originalClasses
       if (this.hasCopyIconTarget) {
         this.copyIconTarget.className = "fa-solid fa-copy"
       }
@@ -96,7 +112,8 @@ export default class extends Controller {
 
   get maskedSecret() {
     const secret = this.secretValue
-    if (secret.length <= 4) return secret
+    if (!secret || secret.length === 0) return ""
+    if (secret.length <= 4) return "\u2022".repeat(secret.length)
     return "\u2022".repeat(12) + secret.slice(-4)
   }
 }
