@@ -32,7 +32,8 @@ module Panda
         :avatar_max_file_size,
         :avatar_max_dimension,
         :avatar_optimization_quality,
-        :avatar_image_processor
+        :avatar_image_processor,
+        :admin_user_menu_items
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -101,6 +102,9 @@ module Panda
         @avatar_max_dimension = 800
         @avatar_optimization_quality = 85
         @avatar_image_processor = :vips # or :mini_magick
+
+        # Extensible user menu items (for engines to add items like "API Tokens")
+        @admin_user_menu_items = []
       end
     end
 

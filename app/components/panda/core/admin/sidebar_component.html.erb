@@ -58,6 +58,14 @@
     <%= render Panda::Core::Admin::Navigation::UserMenuComponent.new(user: helpers.current_user, active: is_my_profile_active) do |user_menu|
       user_menu.with_sub_item(label: "My Profile", path: helpers.panda_core.edit_admin_my_profile_path, active: is_edit_profile_active)
       user_menu.with_sub_item(label: "Login & Security", path: helpers.panda_core.admin_my_profile_logins_path, active: is_logins_active)
+
+      (Panda::Core.config.admin_user_menu_items || []).each do |menu_item|
+        menu_item_path = menu_item[:path]
+        next if menu_item_path.blank?
+        item_active = current_path.starts_with?(menu_item_path)
+        user_menu.with_sub_item(label: menu_item[:label], path: menu_item_path, active: item_active)
+      end
+
       user_menu.with_sub_item(label: "Logout", path: helpers.panda_core.admin_logout_path, method: :delete, button_options: { id: "logout-link", data: { turbo: false } })
     end %>
 

@@ -19,6 +19,9 @@ application.register("collapsible-item", CollapsibleItemController)
 import CustomSelectController from "./custom_select_controller.js"
 application.register("custom-select", CustomSelectController)
 
+import ClipboardController from "./clipboard_controller.js"
+application.register("clipboard", ClipboardController)
+
 // Import and register TailwindCSS Stimulus Components
 // These are needed for UI components like slideover, modals, alerts, etc.
 import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components.js"
