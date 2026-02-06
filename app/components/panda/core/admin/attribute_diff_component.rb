@@ -15,6 +15,14 @@ module Panda
         def render?
           changes.any?
         end
+
+        def display_value(value)
+          if value.is_a?(FalseClass) || value.is_a?(TrueClass)
+            value.to_s
+          else
+            value.presence || "(empty)"
+          end
+        end
       end
     end
   end
