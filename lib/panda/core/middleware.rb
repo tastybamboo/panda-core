@@ -142,5 +142,40 @@ module Panda
       end
       private_class_method :normalize_stack
     end
+
+    # Serves Chartkick vendor JS files (Chart.bundle.js, chartkick.js) from the
+    # chartkick gem's vendor directory at /panda-core-assets/chartkick/*.
+    class ChartkickAssetMiddleware
+      CHARTKICK_PATH_PREFIX = "/panda-core-assets/chartkick/"
+      ALLOWED_FILES = %w[Chart.bundle.js chartkick.js].freeze
+
+      def initialize(app)
+        @app = app
+        @vendor_root = Chartkick::Engine.root.join("vendor/assets/javascripts")
+      end
+
+      def call(env)
+        path = Rack::Utils.unescape_path(env[Rack::PATH_INFO])
+
+        if path.start_with?(CHARTKICK_PATH_PREFIX)
+          filename = path.delete_prefix(CHARTKICK_PATH_PREFIX)
+          return @app.call(env) unless ALLOWED_FILES.include?(filename)
+
+          file_path = @vendor_root.join(filename)
+          return @app.call(env) unless file_path.file?
+
+          content = File.binread(file_path)
+          cache = Rails.env.local? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"
+
+          [200, {
+            "Content-Type" => "application/javascript; charset=utf-8",
+            "Content-Length" => content.bytesize.to_s,
+            "Cache-Control" => cache
+          }, [content]]
+        else
+          @app.call(env)
+        end
+      end
+    end
   end
 end

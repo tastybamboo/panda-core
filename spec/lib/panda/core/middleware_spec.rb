@@ -170,6 +170,84 @@ RSpec.describe Panda::Core::Middleware do
     end
   end
 
+  describe Panda::Core::ChartkickAssetMiddleware do
+    let(:downstream_app) { ->(env) { [404, {"Content-Type" => "text/plain"}, ["Not Found"]] } }
+    let(:vendor_dir) { Rails.root.join("tmp/chartkick_test_vendor") }
+
+    before do
+      FileUtils.mkdir_p(vendor_dir)
+      File.write(vendor_dir.join("chartkick.js"), "// chartkick stub")
+      File.write(vendor_dir.join("Chart.bundle.js"), "// chart bundle stub")
+
+      engine_root = double("engine_root")
+      allow(engine_root).to receive(:join).with("vendor/assets/javascripts").and_return(vendor_dir)
+      stub_const("Chartkick::Engine", double("Chartkick::Engine", root: engine_root))
+    end
+
+    after do
+      FileUtils.rm_rf(vendor_dir)
+    end
+
+    subject(:middleware) { described_class.new(downstream_app) }
+
+    it "serves chartkick.js with 200 and JS content type" do
+      env = Rack::MockRequest.env_for("/panda-core-assets/chartkick/chartkick.js")
+      status, headers, body = middleware.call(env)
+
+      expect(status).to eq(200)
+      expect(headers["Content-Type"]).to eq("application/javascript; charset=utf-8")
+      expect(body.first).to include("chartkick stub")
+    end
+
+    it "serves Chart.bundle.js with 200" do
+      env = Rack::MockRequest.env_for("/panda-core-assets/chartkick/Chart.bundle.js")
+      status, _headers, body = middleware.call(env)
+
+      expect(status).to eq(200)
+      expect(body.first).to include("chart bundle stub")
+    end
+
+    it "passes through non-allowed filenames to downstream app" do
+      env = Rack::MockRequest.env_for("/panda-core-assets/chartkick/evil.js")
+      status, _headers, body = middleware.call(env)
+
+      expect(status).to eq(404)
+      expect(body.first).to eq("Not Found")
+    end
+
+    it "passes through unrelated paths to downstream app" do
+      env = Rack::MockRequest.env_for("/some/other/path")
+      status, _headers, _body = middleware.call(env)
+
+      expect(status).to eq(404)
+    end
+
+    it "returns no-cache headers in local environments" do
+      allow(Rails.env).to receive(:local?).and_return(true)
+      env = Rack::MockRequest.env_for("/panda-core-assets/chartkick/chartkick.js")
+      _status, headers, _body = middleware.call(env)
+
+      expect(headers["Cache-Control"]).to eq("no-cache, no-store, must-revalidate")
+    end
+
+    it "returns long-lived cache headers in production" do
+      allow(Rails.env).to receive(:local?).and_return(false)
+      env = Rack::MockRequest.env_for("/panda-core-assets/chartkick/chartkick.js")
+      _status, headers, _body = middleware.call(env)
+
+      expect(headers["Cache-Control"]).to eq("public, max-age=31536000")
+    end
+
+    it "handles missing files gracefully" do
+      FileUtils.rm(vendor_dir.join("chartkick.js"))
+      env = Rack::MockRequest.env_for("/panda-core-assets/chartkick/chartkick.js")
+      status, _headers, body = middleware.call(env)
+
+      expect(status).to eq(404)
+      expect(body.first).to eq("Not Found")
+    end
+  end
+
   describe "fallback insertion" do
     before do
       stack.use MW1

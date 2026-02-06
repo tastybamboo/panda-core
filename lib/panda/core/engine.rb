@@ -71,6 +71,14 @@ module Panda
       )
 
       config.app_middleware.use(Panda::Core::ModuleRegistry::JavaScriptMiddleware)
+
+      #
+      # Serve Chartkick vendor assets when the chartkick gem is available
+      # Adds a simple middleware that maps chartkick JS requests to the gem's vendor dir
+      #
+      if defined?(Chartkick::Engine)
+        config.app_middleware.use(Panda::Core::ChartkickAssetMiddleware)
+      end
     end
   end
 end
