@@ -165,7 +165,7 @@ module Panda
           return @app.call(env) unless file_path.file?
 
           content = File.binread(file_path)
-          cache = Rails.env.development? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"
+          cache = Rails.env.local? ? "no-cache, no-store, must-revalidate" : "public, max-age=31536000"
 
           [200, {
             "Content-Type" => "application/javascript; charset=utf-8",

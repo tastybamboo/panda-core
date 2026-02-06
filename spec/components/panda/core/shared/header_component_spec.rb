@@ -60,5 +60,31 @@ RSpec.describe Panda::Core::Shared::HeaderComponent, type: :component do
 
       expect(html).to include("bg-gradient-admin")
     end
+
+    context "when Chartkick::Engine is defined" do
+      before do
+        stub_const("Chartkick::Engine", Class.new)
+      end
+
+      it "includes Chartkick script tags" do
+        html = render_inline(described_class.new).to_html
+
+        expect(html).to include("Chart.bundle.js")
+        expect(html).to include("chartkick.js")
+      end
+    end
+
+    context "when Chartkick::Engine is not defined" do
+      before do
+        hide_const("Chartkick::Engine") if defined?(Chartkick::Engine)
+      end
+
+      it "does not include Chartkick script tags" do
+        html = render_inline(described_class.new).to_html
+
+        expect(html).not_to include("Chart.bundle.js")
+        expect(html).not_to include("chartkick.js")
+      end
+    end
   end
 end
