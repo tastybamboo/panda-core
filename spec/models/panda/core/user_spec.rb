@@ -40,8 +40,11 @@ RSpec.describe Panda::Core::User, type: :model do
 
       it "updates user attributes from auth hash" do
         user = described_class.find_or_create_from_auth_hash(auth_hash)
+        user.reload
         expect(user.name).to eq("Test User")
-        expect(user.image_url).to eq("https://example.com/image.jpg")
+        # image_url is cleared after avatar is successfully downloaded and stored
+        expect(user.image_url).to be_nil
+        expect(user.oauth_avatar_url).to eq("https://example.com/image.jpg")
       end
 
       it "calls AttachAvatarService for new users with avatar" do
@@ -78,6 +81,22 @@ RSpec.describe Panda::Core::User, type: :model do
         expect(Panda::Core::AttachAvatarService).not_to receive(:call)
 
         described_class.find_or_create_from_auth_hash(auth_hash)
+      end
+
+      it "does not update image_url for existing users with a stored avatar" do
+        user = described_class.create!(email: "test@example.com", name: "Existing User", image_url: nil)
+        allow_any_instance_of(described_class).to receive_message_chain(:avatar, :attached?).and_return(true)
+
+        described_class.find_or_create_from_auth_hash(auth_hash)
+        expect(user.reload.image_url).to be_nil
+      end
+
+      it "updates image_url for existing users without a stored avatar" do
+        user = described_class.create!(email: "test@example.com", name: "Existing User", image_url: "https://old.com/pic.jpg")
+        allow(Panda::Core::AttachAvatarService).to receive(:call)
+
+        described_class.find_or_create_from_auth_hash(auth_hash)
+        expect(user.reload.image_url).to eq("https://example.com/image.jpg")
       end
     end
   end

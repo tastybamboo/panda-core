@@ -8,7 +8,7 @@ module Panda
         before_action :set_user, only: %i[show edit update enable disable activity sessions revoke_session]
 
         def index
-          @users = User.all
+          @users = User.with_attached_avatar
           @users = @users.search(params[:search]) if params[:search].present?
 
           case params[:status]

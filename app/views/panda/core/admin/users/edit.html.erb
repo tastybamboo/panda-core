@@ -10,10 +10,9 @@
     <div class="space-y-6 max-w-2xl">
       <!-- User Info Display (Read-only) -->
       <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-        <% if @user.avatar.attached? %>
-          <%= image_tag main_app.url_for(@user.avatar.variant(:medium)), alt: @user.name, class: "h-16 w-16 rounded-full object-cover" %>
-        <% elsif @user.image_url.present? %>
-          <img src="<%= @user.image_url %>" alt="<%= @user.name %>" class="h-16 w-16 rounded-full object-cover">
+        <% url = @user.avatar_url(size: :medium) %>
+        <% if url.present? %>
+          <img src="<%= url %>" alt="<%= @user.name %>" class="h-16 w-16 rounded-full object-cover">
         <% else %>
           <div class="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
             <i class="fa-solid fa-user text-xl text-gray-400 dark:text-gray-300"></i>

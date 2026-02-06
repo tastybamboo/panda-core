@@ -82,6 +82,12 @@ RSpec.describe Panda::Core::AttachAvatarService, type: :service do
         service.call
         expect(user.reload.oauth_avatar_url).to eq(avatar_url)
       end
+
+      it "clears image_url after successful attachment" do
+        user.update_column(:image_url, "https://example.com/old-image.jpg")
+        service.call
+        expect(user.reload.image_url).to be_nil
+      end
     end
 
     context "when file size exceeds limit" do
