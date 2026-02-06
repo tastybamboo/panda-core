@@ -56,6 +56,22 @@ RSpec.describe Panda::Core::Admin::AttributeDiffComponent, type: :component do
       expect(output).to have_text("My SEO Title")
     end
 
+    it "renders boolean false values correctly" do
+      changes = {
+        "published" => {old: true, new: false},
+        "enabled" => {old: false, new: true}
+      }
+
+      render_inline(described_class.new(changes: changes))
+      output = Capybara.string(rendered_content)
+
+      expect(output).to have_text("Published")
+      expect(output).to have_text("true")
+      expect(output).to have_text("false")
+      expect(output).to have_text("Enabled")
+      expect(output).not_to have_text("(empty)")
+    end
+
     it "does not render when changes are empty" do
       render_inline(described_class.new(changes: {}))
 
