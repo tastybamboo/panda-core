@@ -28,9 +28,10 @@
               accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp",
               class: "sr-only" %>
         </div>
-        <% if (user.avatar.attached? rescue false) %>
+        <% if user.avatar.respond_to?(:blob) && user.avatar.blob.present? %>
+          <% blob = user.avatar.blob %>
           <p class="mt-2 text-xs text-gray-600 dark:text-gray-400">
-            Current: <%= user.avatar.filename %> (<%= number_to_human_size(user.avatar.byte_size) %>)
+            Current: <%= blob.filename %> (<%= number_to_human_size(blob.byte_size) %>)
           </p>
         <% end %>
       </div>
