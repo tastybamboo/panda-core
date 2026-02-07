@@ -151,7 +151,7 @@ module Panda
 
       def initialize(app)
         @app = app
-        @vendor_root = Chartkick::Engine.root.join("vendor/assets/javascripts")
+        @vendor_root = Pathname.new(Gem.loaded_specs["chartkick"].gem_dir).join("vendor/assets/javascripts")
       end
 
       def call(env)

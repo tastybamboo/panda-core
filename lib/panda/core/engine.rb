@@ -74,10 +74,11 @@ module Panda
 
       #
       # Serve Chartkick vendor assets when the chartkick gem is available
-      # Adds a simple middleware that maps chartkick JS requests to the gem's vendor dir
+      # Must be inserted BEFORE Rack::Static so it handles chartkick requests
+      # before Rack::Static catches all /panda-core-assets/* paths and returns 404
       #
-      if defined?(Chartkick::Engine)
-        config.app_middleware.use(Panda::Core::ChartkickAssetMiddleware)
+      if Gem.loaded_specs["chartkick"]
+        config.app_middleware.insert_before(Rack::Static, Panda::Core::ChartkickAssetMiddleware)
       end
     end
   end

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css">
     <%= helpers.panda_core_stylesheet %>
 
-    <% if defined?(Chartkick::Engine) %>
+    <% if Gem.loaded_specs["chartkick"] %>
       <script src="/panda-core-assets/chartkick/Chart.bundle.js"></script>
       <script src="/panda-core-assets/chartkick/chartkick.js"></script>
     <% end %>

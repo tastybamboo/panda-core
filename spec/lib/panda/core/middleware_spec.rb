@@ -172,20 +172,20 @@ RSpec.describe Panda::Core::Middleware do
 
   describe Panda::Core::ChartkickAssetMiddleware do
     let(:downstream_app) { ->(env) { [404, {"Content-Type" => "text/plain"}, ["Not Found"]] } }
-    let(:vendor_dir) { Rails.root.join("tmp/chartkick_test_vendor") }
+    let(:fake_gem_dir) { Rails.root.join("tmp/chartkick_test_gem") }
+    let(:vendor_dir) { fake_gem_dir.join("vendor/assets/javascripts") }
 
     before do
       FileUtils.mkdir_p(vendor_dir)
       File.write(vendor_dir.join("chartkick.js"), "// chartkick stub")
       File.write(vendor_dir.join("Chart.bundle.js"), "// chart bundle stub")
 
-      engine_root = double("engine_root")
-      allow(engine_root).to receive(:join).with("vendor/assets/javascripts").and_return(vendor_dir)
-      stub_const("Chartkick::Engine", double("Chartkick::Engine", root: engine_root))
+      gem_spec = double("gem_spec", gem_dir: fake_gem_dir.to_s)
+      allow(Gem).to receive(:loaded_specs).and_return({"chartkick" => gem_spec})
     end
 
     after do
-      FileUtils.rm_rf(vendor_dir)
+      FileUtils.rm_rf(fake_gem_dir)
     end
 
     subject(:middleware) { described_class.new(downstream_app) }
