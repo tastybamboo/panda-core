@@ -5,58 +5,68 @@
               url: admin_my_profile_path,
               method: :patch,
               local: true,
+              html: { multipart: true },
               data: { controller: "theme-form" } do |f| %>
     <%= render Panda::Core::Admin::FormErrorComponent.new(model: user) %>
 
-    <div class="space-y-6">
-      <!-- Avatar Section -->
-      <div class="col-span-full">
-        <%= f.label :avatar, "Profile Picture", class: "block text-sm/6 font-medium text-gray-900 dark:text-white" %>
-        <div class="mt-2 flex items-center gap-x-3">
-          <% avatar = user.avatar_url %>
-          <% if avatar.present? %>
-            <img src="<%= avatar %>" alt="<%= user.name %>" class="w-48 h-48 max-w-48 rounded-full object-cover">
-          <% else %>
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-48 h-48 text-gray-300 dark:text-gray-500">
+    <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
+      <% panel.with_heading_slot { "Profile Settings" } %>
+      <div class="space-y-4">
+        <!-- Avatar Section -->
+        <div class="col-span-full" data-controller="avatar-upload">
+          <span id="avatar-label" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Profile Picture</span>
+          <div class="mt-2 flex items-center gap-x-3">
+            <% avatar = user.avatar_url %>
+            <img src="<%= avatar.presence || 'about:blank' %>"
+                 alt="<%= user.name %>"
+                 class="w-48 h-48 max-w-48 rounded-full object-cover<%= ' hidden' unless avatar.present? %>"
+                 data-avatar-upload-target="preview">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+                 class="w-48 h-48 text-gray-300 dark:text-gray-500<%= ' hidden' if avatar.present? %>"
+                 data-avatar-upload-target="placeholder">
               <path d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" fill-rule="evenodd" />
             </svg>
-          <% end %>
-          <label for="<%= f.field_id(:avatar) %>" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 cursor-pointer dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
-            Change
-          </label>
-          <%= f.file_field :avatar,
-              accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp",
-              class: "sr-only" %>
+            <div>
+              <label for="user_avatar" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 cursor-pointer dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+                Change
+              </label>
+              <% if user.avatar.respond_to?(:blob) && user.avatar.blob.present? %>
+                <% blob = user.avatar.blob %>
+                <p class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                  Current: <%= blob.filename %> (<%= number_to_human_size(blob.byte_size) %>)
+                </p>
+              <% end %>
+            </div>
+            <input type="file"
+                   id="user_avatar"
+                   name="user[avatar]"
+                   accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                   class="sr-only"
+                   aria-labelledby="avatar-label"
+                   data-avatar-upload-target="input"
+                   data-action="change->avatar-upload#handleFileSelect">
+          </div>
+          <!-- File info (shown when a new file is selected) -->
+          <div class="hidden mt-3 flex items-center gap-x-3 text-sm text-gray-600 dark:text-gray-400" data-avatar-upload-target="fileInfo">
+            <span data-avatar-upload-target="fileName"></span>
+            <span data-avatar-upload-target="fileSize"></span>
+            <button type="button"
+                    class="text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 font-medium"
+                    data-action="avatar-upload#remove">
+              Remove
+            </button>
+          </div>
         </div>
-        <% if user.avatar.respond_to?(:blob) && user.avatar.blob.present? %>
-          <% blob = user.avatar.blob %>
-          <p class="mt-2 text-xs text-gray-600 dark:text-gray-400">
-            Current: <%= blob.filename %> (<%= number_to_human_size(blob.byte_size) %>)
-          </p>
-        <% end %>
-      </div>
 
-      <div class="field">
-        <%= f.label :name %>
         <%= f.text_field :name %>
-      </div>
-
-      <div class="field">
-        <%= f.label :email %>
         <%= f.email_field :email %>
-      </div>
-
-      <div class="field">
-        <%= f.label :current_theme, "Theme" %>
         <%= f.select :current_theme,
                      options_for_select(Panda::Core.config.available_themes || [["Default", "default"], ["Sky", "sky"]], user.current_theme),
-                     {},
+                     { label: "Theme" },
                      data: { action: "change->theme-form#updateTheme" } %>
       </div>
-    </div>
 
-    <%= f.submit "Update Profile",
-        class: "btn btn-primary mt-4",
-        data: { disable_with: "Saving..." } %>
+      <%= render Panda::Core::Admin::FormFooterComponent.new(submit_text: "Update Profile") %>
+    <% end %>
   <% end %>
 <% end %>
