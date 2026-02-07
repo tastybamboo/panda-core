@@ -3,16 +3,21 @@
 module Panda
   module Core
     class PresenceService
-      PRESENCE_TTL = 30.seconds
-
       def self.record_presence(resource, user_id)
-        presence = Presence.find_or_initialize_by(
+        attrs = {
           presenceable_type: resource.class.name,
           presenceable_id: resource.id,
           user_id: user_id
+        }
+
+        result = Presence.upsert(
+          attrs.merge(last_seen_at: Time.current),
+          unique_by: %i[presenceable_type presenceable_id user_id],
+          returning: %w[id]
         )
-        presence.update!(last_seen_at: Time.current)
-        presence
+
+        record_id = result.first&.fetch("id") { raise "Upsert did not return an ID" }
+        Presence.find(record_id)
       end
 
       def self.remove_presence(resource, user_id)
@@ -26,7 +31,7 @@ module Panda
       def self.current_editors(resource)
         Presence
           .for_resource(resource)
-          .active(PRESENCE_TTL)
+          .active(Presence::PRESENCE_TTL)
           .includes(:user)
           .map do |presence|
             {
@@ -37,7 +42,7 @@ module Panda
       end
 
       def self.cleanup_stale!
-        Presence.stale(PRESENCE_TTL).delete_all
+        Presence.stale(Presence::PRESENCE_TTL).delete_all
       end
     end
   end
