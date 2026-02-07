@@ -47,6 +47,25 @@ module Panda
       end
 
       #
+      # Auto-categorize files when ActiveStorage attachments are created.
+      # Maps known attachment types (user avatars, page images, etc.) to
+      # their corresponding file categories via FileCategorizer.
+      #
+      initializer "panda_core.active_storage_categorization" do
+        ActiveSupport.on_load(:active_storage_attachment) do
+          after_create_commit :auto_categorize_blob
+
+          private
+
+          def auto_categorize_blob
+            Panda::Core::FileCategorizer.new.categorize_attachment(self)
+          rescue => e
+            Rails.logger.warn("[Panda::Core] Auto-categorization failed for blob #{blob_id}: #{e.message}")
+          end
+        end
+      end
+
+      #
       # Static asset handling for:
       #   /panda-core-assets
       #

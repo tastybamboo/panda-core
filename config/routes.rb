@@ -46,7 +46,7 @@ Panda::Core::Engine.routes.draw do
     # This bypasses OAuth for faster, more reliable test execution
     # Development: Used by Capybara system tests which run Rails server in development mode
     # Test: Used by controller/request tests
-    unless Rails.env.production?
+    if Rails.env.development? || Rails.env.test?
       get "/test_login/:user_id", to: "admin/test_sessions#create", as: :test_login
       post "/test_sessions", to: "admin/test_sessions#create", as: :test_sessions
     end

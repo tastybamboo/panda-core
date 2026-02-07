@@ -38,7 +38,7 @@ module Panda
 
         def default_attrs
           {
-            class: "flex justify-end gap-x-3 mt-6 pt-4"
+            class: "flex justify-end gap-x-3 mt-2"
           }
         end
 
@@ -51,16 +51,7 @@ module Panda
         end
 
         def computed_icon
-          return @icon if @icon
-
-          case submit_text.to_s.downcase
-          when /create|add|new/
-            "fa-plus"
-          when /update|save|edit/
-            "fa-check"
-          when /delete|remove|destroy/
-            "fa-trash"
-          end
+          @icon
         end
 
         def submit_data_attrs

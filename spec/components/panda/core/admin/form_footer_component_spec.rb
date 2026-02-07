@@ -43,36 +43,15 @@ RSpec.describe Panda::Core::Admin::FormFooterComponent, type: :component do
       component = described_class.new
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("div.mt-6")
-      expect(output).to have_css("div.pt-4")
+      expect(output).to have_css("div.mt-2")
       expect(output).not_to have_css("div.border-t")
     end
   end
 
   describe "#computed_icon" do
-    it "returns fa-plus for create actions" do
+    it "returns nil when no icon provided" do
       component = described_class.new(submit_text: "Create Page")
-      expect(component.computed_icon).to eq("fa-plus")
-    end
-
-    it "returns fa-plus for add actions" do
-      component = described_class.new(submit_text: "Add Item")
-      expect(component.computed_icon).to eq("fa-plus")
-    end
-
-    it "returns fa-check for update actions" do
-      component = described_class.new(submit_text: "Update")
-      expect(component.computed_icon).to eq("fa-check")
-    end
-
-    it "returns fa-check for save actions" do
-      component = described_class.new(submit_text: "Save Changes")
-      expect(component.computed_icon).to eq("fa-check")
-    end
-
-    it "returns fa-trash for delete actions" do
-      component = described_class.new(submit_text: "Delete")
-      expect(component.computed_icon).to eq("fa-trash")
+      expect(component.computed_icon).to be_nil
     end
 
     it "returns explicit icon when provided" do

@@ -5,6 +5,7 @@ export default class extends Controller {
   static values = { open: { type: Boolean, default: false }, index: { type: Number, default: -1 } }
 
   connect() {
+    this.element.classList.add("relative")
     this.selectTarget.classList.add("sr-only")
     this.options = Array.from(this.selectTarget.options)
     this.buildUI()
@@ -27,7 +28,7 @@ export default class extends Controller {
     this.trigger.setAttribute("role", "combobox")
     this.trigger.setAttribute("aria-expanded", "false")
     this.trigger.setAttribute("aria-haspopup", "listbox")
-    this.trigger.className = "flex items-center justify-between w-full h-11 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-left focus:border-transparent focus:ring-2 focus:ring-primary-500 cursor-pointer"
+    this.trigger.className = "flex items-center justify-between w-full h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-left focus:border-transparent focus:ring-2 focus:ring-primary-500 cursor-pointer"
     this.trigger.innerHTML = `
       <span class="truncate ${isPlaceholder ? "text-gray-400" : "text-gray-900"}">${this.escapeHtml(selectedOption ? selectedOption.text : "")}</span>
       <svg class="w-4 h-4 text-gray-400 shrink-0 ml-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
