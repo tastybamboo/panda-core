@@ -118,4 +118,42 @@ RSpec.describe Panda::Core::Admin::PaginationComponent, type: :component do
       end
     end
   end
+
+  describe "accessibility" do
+    it "adds aria-label to nav element" do
+      with_request_url "/admin/users" do
+        component = described_class.new(**default_params)
+        output = Capybara.string(render_inline(component).to_html)
+
+        expect(output).to have_css("nav[aria-label='Pagination']")
+      end
+    end
+
+    it "adds aria-current to current page" do
+      with_request_url "/admin/users" do
+        component = described_class.new(**default_params)
+        output = Capybara.string(render_inline(component).to_html)
+
+        expect(output).to have_css("span[aria-current='page']", text: "2")
+      end
+    end
+
+    it "adds aria-label to previous page link" do
+      with_request_url "/admin/users" do
+        component = described_class.new(**default_params)
+        output = Capybara.string(render_inline(component).to_html)
+
+        expect(output).to have_css("a[aria-label='Previous page']")
+      end
+    end
+
+    it "adds aria-label to next page link" do
+      with_request_url "/admin/users" do
+        component = described_class.new(**default_params)
+        output = Capybara.string(render_inline(component).to_html)
+
+        expect(output).to have_css("a[aria-label='Next page']")
+      end
+    end
+  end
 end
