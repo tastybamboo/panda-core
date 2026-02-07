@@ -8,10 +8,9 @@
               aria-controls="user-menu"
               aria-expanded="false"
               class="<%= button_classes %>">
-        <% if user.avatar.attached? %>
-          <span class="text-center w-6"><%= helpers.image_tag helpers.main_app.url_for(user.avatar), alt: user.name, class: "w-auto h-7 rounded-full object-cover" %></span>
-        <% elsif !user.image_url.to_s.empty? %>
-          <span class="text-center w-6"><img src="<%= user.image_url %>" class="w-auto h-7 rounded-full"></span>
+        <% avatar = user.avatar_url %>
+        <% if avatar.present? %>
+          <span class="text-center w-6"><img src="<%= avatar %>" alt="<%= user.name %>" class="w-auto h-7 rounded-full object-cover"></span>
         <% else %>
           <span class="text-center w-6"><i class="text-xl fa-solid fa-circle-user fa-fw"></i></span>
         <% end %>

@@ -8,10 +8,9 @@
     <div class="lg:col-span-1 space-y-6">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
         <div class="flex flex-col items-center">
-          <% if @user.avatar.attached? %>
-            <%= image_tag main_app.url_for(@user.avatar.variant(:large)), alt: @user.name, class: "h-32 w-32 rounded-full object-cover mb-4" %>
-          <% elsif @user.image_url.present? %>
-            <img src="<%= @user.image_url %>" alt="<%= @user.name %>" class="h-32 w-32 rounded-full object-cover mb-4">
+          <% url = @user.avatar_url(size: :large) %>
+          <% if url.present? %>
+            <img src="<%= url %>" alt="<%= @user.name %>" class="h-32 w-32 rounded-full object-cover mb-4">
           <% else %>
             <div class="h-32 w-32 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mb-4">
               <i class="fa-solid fa-user text-4xl text-gray-400 dark:text-gray-300"></i>

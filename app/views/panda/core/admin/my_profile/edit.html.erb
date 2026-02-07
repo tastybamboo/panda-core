@@ -13,8 +13,9 @@
       <div class="col-span-full">
         <%= f.label :avatar, "Profile Picture", class: "block text-sm/6 font-medium text-gray-900 dark:text-white" %>
         <div class="mt-2 flex items-center gap-x-3">
-          <% if user.avatar.attached? %>
-            <%= image_tag main_app.url_for(user.avatar), alt: user.name, class: "w-48 h-48 max-w-48 rounded-full object-cover" %>
+          <% avatar = user.avatar_url %>
+          <% if avatar.present? %>
+            <img src="<%= avatar %>" alt="<%= user.name %>" class="w-48 h-48 max-w-48 rounded-full object-cover">
           <% else %>
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-48 h-48 text-gray-300 dark:text-gray-500">
               <path d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" fill-rule="evenodd" />
@@ -27,9 +28,10 @@
               accept: "image/png,image/jpeg,image/jpg,image/gif,image/webp",
               class: "sr-only" %>
         </div>
-        <% if user.avatar.attached? %>
+        <% if user.avatar.respond_to?(:blob) && user.avatar.blob.present? %>
+          <% blob = user.avatar.blob %>
           <p class="mt-2 text-xs text-gray-600 dark:text-gray-400">
-            Current: <%= user.avatar.filename %> (<%= number_to_human_size(user.avatar.byte_size) %>)
+            Current: <%= blob.filename %> (<%= number_to_human_size(blob.byte_size) %>)
           </p>
         <% end %>
       </div>

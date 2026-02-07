@@ -46,12 +46,22 @@ module Panda
       def self.find_or_create_from_auth_hash(auth_hash)
         user = find_by(email: auth_hash.info.email.downcase)
 
-        # Handle avatar for both new and existing users
         avatar_url = auth_hash.info.image
         if user
-          # Update avatar if URL has changed or no avatar is attached
-          if avatar_url.present? && (avatar_url != user.oauth_avatar_url || !user.avatar.attached?)
-            AttachAvatarService.call(user: user, avatar_url: avatar_url)
+          has_stored_avatar = begin
+            user.avatar.attached?
+          rescue
+            false
+          end
+
+          if avatar_url.present?
+            # Update image_url with latest OAuth URL only if no local avatar is stored
+            user.update_column(:image_url, avatar_url) unless has_stored_avatar
+
+            # Try to download and store avatar if URL changed or no avatar attached
+            if avatar_url != user.oauth_avatar_url || !has_stored_avatar
+              AttachAvatarService.call(user: user, avatar_url: avatar_url)
+            end
           end
           return user
         end
@@ -59,13 +69,13 @@ module Panda
         attributes = {
           :email => auth_hash.info.email.downcase,
           :name => auth_hash.info.name || "Unknown User",
-          :image_url => auth_hash.info.image,
+          :image_url => avatar_url,
           admin_column => User.count.zero? # First user is admin
         }
 
         user = create!(attributes)
 
-        # Attach avatar for new user
+        # Attach avatar for new user (will clear image_url on success)
         if avatar_url.present?
           AttachAvatarService.call(user: user, avatar_url: avatar_url)
         end
@@ -140,9 +150,11 @@ module Panda
             Rails.application.routes.url_helpers.rails_blob_path(avatar, only_path: true)
           end
         elsif self[:image_url].present?
-          # Fallback to OAuth provider URL if no avatar is attached yet
           self[:image_url]
         end
+      rescue => e
+        Rails.logger.error("Error generating avatar URL for user #{id}: #{e.message}")
+        self[:image_url].presence
       end
 
       private

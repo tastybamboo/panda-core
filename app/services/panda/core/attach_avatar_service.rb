@@ -15,11 +15,19 @@ module Panda
 
       def call
         return success if @avatar_url.blank?
-        return success if @avatar_url == @user.oauth_avatar_url && @user.avatar.attached?
+
+        avatar_attached = begin
+          @user.avatar.attached?
+        rescue
+          false
+        end
+        return success if @avatar_url == @user.oauth_avatar_url && avatar_attached
 
         begin
           download_and_attach_avatar
-          @user.update_column(:oauth_avatar_url, @avatar_url)
+          # Record which OAuth URL was downloaded and clear image_url since
+          # we now have a local ActiveStorage copy
+          @user.update_columns(oauth_avatar_url: @avatar_url, image_url: nil)
           success(avatar_attached: true)
         rescue => e
           Rails.logger.error("Failed to attach avatar for user #{@user.id}: #{e.message}")
@@ -48,7 +56,11 @@ module Panda
 
           filename = "avatar_#{@user.id}_#{Time.current.to_i}.webp"
 
-          # Attach the optimized avatar
+          # Purge any existing avatar first to prevent duplicate attachment records.
+          # has_one_attached should auto-purge, but explicit purge guards against
+          # race conditions and failed async purge jobs leaving orphaned records.
+          @user.avatar.purge if @user.avatar.attached?
+
           @user.avatar.attach(
             io: optimized_file,
             filename: filename,
