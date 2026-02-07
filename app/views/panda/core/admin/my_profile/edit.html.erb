@@ -5,6 +5,7 @@
               url: admin_my_profile_path,
               method: :patch,
               local: true,
+              html: { multipart: true },
               data: { controller: "theme-form" } do |f| %>
     <%= render Panda::Core::Admin::FormErrorComponent.new(model: user) %>
 
@@ -13,10 +14,10 @@
       <div class="space-y-4">
         <!-- Avatar Section -->
         <div class="col-span-full" data-controller="avatar-upload">
-          <span class="block text-sm/6 font-medium text-gray-900 dark:text-white">Profile Picture</span>
+          <span id="avatar-label" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Profile Picture</span>
           <div class="mt-2 flex items-center gap-x-3">
             <% avatar = user.avatar_url %>
-            <img src="<%= avatar %>"
+            <img src="<%= avatar.presence || 'about:blank' %>"
                  alt="<%= user.name %>"
                  class="w-48 h-48 max-w-48 rounded-full object-cover<%= ' hidden' unless avatar.present? %>"
                  data-avatar-upload-target="preview">
@@ -41,6 +42,7 @@
                    name="user[avatar]"
                    accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
                    class="sr-only"
+                   aria-labelledby="avatar-label"
                    data-avatar-upload-target="input"
                    data-action="change->avatar-upload#handleFileSelect">
           </div>

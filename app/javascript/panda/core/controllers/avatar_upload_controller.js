@@ -39,9 +39,8 @@ export default class extends Controller {
   }
 
   remove() {
-    // Clear file input using DataTransfer pattern
-    const dataTransfer = new DataTransfer()
-    this.inputTarget.files = dataTransfer.files
+    // Clear file input
+    this.inputTarget.value = ""
 
     // Restore original state
     if (this.hadOriginalAvatar && this.hasPreviewTarget) {
