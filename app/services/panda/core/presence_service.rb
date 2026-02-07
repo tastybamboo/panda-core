@@ -16,7 +16,8 @@ module Panda
           returning: %w[id]
         )
 
-        Presence.find(result.first["id"])
+        record_id = result.first&.fetch("id") { raise "Upsert did not return an ID" }
+        Presence.find(record_id)
       end
 
       def self.remove_presence(resource, user_id)
