@@ -1,0 +1,31 @@
+<nav class="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+  <div class="text-sm text-gray-500 dark:text-gray-400">
+    Showing <%= first_item %> to <%= last_item %> of <%= total_count %> <%= item_name %>
+  </div>
+  <div class="flex gap-1">
+    <% if previous_page? %>
+      <%= link_to page_url(page - 1),
+        class: "rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800" do %>
+        <i class="fa-solid fa-chevron-left"></i>
+      <% end %>
+    <% end %>
+
+    <% (1..total_pages).each do |page_num| %>
+      <% if page_num == page %>
+        <span class="rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white"><%= page_num %></span>
+      <% elsif show_page?(page_num) %>
+        <%= link_to page_num, page_url(page_num),
+          class: "rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800" %>
+      <% elsif show_ellipsis?(page_num) %>
+        <span class="px-2 py-2 text-sm text-gray-400">&hellip;</span>
+      <% end %>
+    <% end %>
+
+    <% if next_page? %>
+      <%= link_to page_url(page + 1),
+        class: "rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800" do %>
+        <i class="fa-solid fa-chevron-right"></i>
+      <% end %>
+    <% end %>
+  </div>
+</nav>
