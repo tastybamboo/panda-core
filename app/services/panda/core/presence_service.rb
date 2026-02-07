@@ -10,12 +10,13 @@ module Panda
           user_id: user_id
         }
 
-        Presence.upsert(
+        result = Presence.upsert(
           attrs.merge(last_seen_at: Time.current),
-          unique_by: %i[presenceable_type presenceable_id user_id]
+          unique_by: %i[presenceable_type presenceable_id user_id],
+          returning: %w[id]
         )
 
-        Presence.find_by!(attrs)
+        Presence.find(result.first["id"])
       end
 
       def self.remove_presence(resource, user_id)
