@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_03_000003) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_07_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -86,6 +86,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_000003) do
     t.index ["file_category_id"], name: "index_panda_core_file_categorizations_on_file_category_id"
   end
 
+  create_table "panda_core_presences", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_seen_at", null: false
+    t.uuid "presenceable_id", null: false
+    t.string "presenceable_type", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "user_id", null: false
+    t.index ["last_seen_at"], name: "index_panda_core_presences_on_last_seen_at"
+    t.index ["presenceable_type", "presenceable_id", "user_id"], name: "index_unique_presence", unique: true
+    t.index ["presenceable_type", "presenceable_id"], name: "index_presences_on_presenceable"
+  end
+
   create_table "panda_core_user_activities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "action", null: false
     t.datetime "created_at", null: false
@@ -146,6 +158,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_000003) do
   add_foreign_key "panda_core_file_categories", "panda_core_file_categories", column: "parent_id"
   add_foreign_key "panda_core_file_categorizations", "active_storage_blobs", column: "blob_id"
   add_foreign_key "panda_core_file_categorizations", "panda_core_file_categories", column: "file_category_id"
+  add_foreign_key "panda_core_presences", "panda_core_users", column: "user_id"
   add_foreign_key "panda_core_user_activities", "panda_core_users", column: "user_id"
   add_foreign_key "panda_core_user_sessions", "panda_core_users", column: "revoked_by_id"
   add_foreign_key "panda_core_user_sessions", "panda_core_users", column: "user_id"
