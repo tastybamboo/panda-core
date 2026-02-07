@@ -35,11 +35,13 @@ RSpec.describe "Admin Users Management", type: :system do
       expect(page).to have_content("User")
     end
 
-    it "has edit links for users" do
+    it "links to user show page where edit is available" do
       admin_user
 
       visit "/admin/users"
 
+      click_link admin_user.name
+      expect(page).to have_current_path("/admin/users/#{admin_user.id}")
       expect(page).to have_link("Edit", href: "/admin/users/#{admin_user.id}/edit")
     end
   end

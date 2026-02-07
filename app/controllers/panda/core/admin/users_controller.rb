@@ -40,7 +40,8 @@ module Panda
         def show
           add_breadcrumb @user.name, admin_user_path(@user)
           @recent_activity = @user.user_activities.recent.limit(5)
-          @active_sessions_count = @user.user_sessions.active_sessions.count
+          @active_sessions = @user.user_sessions.active_sessions.recent
+          @active_sessions_count = @active_sessions.size
         end
 
         def edit
@@ -149,7 +150,7 @@ module Panda
             request: request, metadata: {session_id: session_record.id}
           )
           flash[:success] = "Session revoked."
-          redirect_to sessions_admin_user_path(@user)
+          redirect_back fallback_location: admin_user_path(@user)
         end
 
         private

@@ -8,7 +8,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   click(event) {
     // Don't interfere with actual links (except block-link) or buttons
-    if (event.target.closest("a:not(.block-link), button")) return
+    if (event.target.closest("a:not(.block-link), button, input")) return
 
     const row = event.target.closest(".table-row")
     if (!row) return

@@ -118,7 +118,7 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
 
       expect(output).to have_css("div.table-row.bg-gray-50")
       expect(output).to have_css("div.table-row.text-gray-500")
-      expect(output).to have_css("div.table-row.font-semibold")
+      expect(output).to have_css("div.table-row.font-medium")
     end
   end
 end

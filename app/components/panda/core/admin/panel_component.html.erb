@@ -1,11 +1,11 @@
-<div class="col-span-3 mt-5 rounded-2xl border border-gray-200 bg-white shadow-sm">
+<div class="col-span-3 mt-4 rounded-2xl border border-gray-200 bg-white shadow-sm">
   <% if heading_slot? %>
-    <div class="flex items-center text-sm font-medium px-4 py-3 text-gray-700 border-b border-gray-200">
+    <div class="flex items-center text-sm font-medium px-4 py-3 text-gray-500 truncate border-b border-gray-200">
       <%= heading_slot %>
     </div>
   <% end %>
 
-  <div class="p-4 text-black">
+  <div class="p-4 text-black bg-gray-50">
     <% if body_slot? %>
       <%= body_slot %>
     <% else %>
