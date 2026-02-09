@@ -9,13 +9,9 @@ module Panda
         extend ActiveSupport::Concern
 
         included do
-          # Load inflections early to ensure proper constant resolution
           initializer "panda.inflections", before: :load_config_initializers do
             ActiveSupport::Inflector.inflections(:en) do |inflect|
-              inflect.acronym "CMS"
-              inflect.acronym "SEO"
-              inflect.acronym "AI"
-              inflect.acronym "UUID"
+              Panda::Core::ACRONYMS.each { |acronym| inflect.acronym acronym }
             end
           end
         end

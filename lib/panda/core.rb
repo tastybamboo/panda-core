@@ -4,18 +4,15 @@ require "rails"
 # require "active_support/core_ext/module/attribute_accessors"
 
 # Load inflections early so they're available for generators
-# This must happen before any code tries to camelize/classify strings
-# containing "cms", "seo", "ai", or "uuid"
 require "active_support/inflector"
-ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.acronym "CMS"
-  inflect.acronym "SEO"
-  inflect.acronym "AI"
-  inflect.acronym "UUID"
-end
 
 module Panda
   module Core
+    # Single source of truth for acronyms used across all Panda gems.
+    # Referenced by Shared::InflectionsConfig (engine initializer) and
+    # applied eagerly below for generator/CLI contexts.
+    ACRONYMS = %w[CMS SEO AI URL UUID].freeze
+
     # Session key for storing authenticated Panda Core admin user ID
     # Namespaced to avoid conflicts with host application user sessions
     ADMIN_SESSION_KEY = :panda_core_user_id
@@ -27,6 +24,11 @@ module Panda
     # Store the engine's importmap separately from the app's
     mattr_accessor :importmap
   end
+end
+
+# Apply acronyms eagerly for generators and CLI contexts
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  Panda::Core::ACRONYMS.each { |acronym| inflect.acronym acronym }
 end
 
 require_relative "core/version"
