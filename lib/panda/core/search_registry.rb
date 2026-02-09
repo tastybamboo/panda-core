@@ -8,10 +8,11 @@ module Panda
       class << self
         attr_reader :providers
 
-        # Register a search provider
+        # Register a search provider (idempotent — overwrites any existing provider with the same name)
         # @param name [String] Provider name (e.g., "pages", "posts")
         # @param search_class [Class] Class that responds to .editor_search(query, limit:)
         def register(name:, search_class:)
+          @providers.reject! { |p| p[:name] == name }
           @providers << {name: name, search_class: search_class}
         end
 
@@ -25,7 +26,7 @@ module Panda
           @providers.flat_map do |provider|
             provider[:search_class].editor_search(query, limit: limit)
           rescue => e
-            Rails.logger.warn("[Panda Core] Search provider #{provider[:name]} failed: #{e.message}")
+            Rails.logger.warn("[panda-core] Search provider #{provider[:name]} failed: #{e.message}") if defined?(Rails.logger)
             []
           end
         end
