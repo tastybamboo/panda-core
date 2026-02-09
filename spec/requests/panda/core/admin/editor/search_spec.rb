@@ -5,16 +5,17 @@ require "rails_helper"
 RSpec.describe "Admin Editor Search", type: :request do
   let(:admin_user) { create_admin_user }
 
-  before do
+  around do |example|
     Panda::Core::SearchRegistry.reset!
-    sign_in_as(admin_user)
-  end
-
-  after do
+    example.run
     Panda::Core::SearchRegistry.reset!
   end
 
   describe "GET /admin/editor/search" do
+    before do
+      post "/admin/test_sessions", params: {user_id: admin_user.id}
+    end
+
     it "returns JSON results from registered providers" do
       provider_class = Class.new do
         def self.editor_search(query, limit:)
@@ -77,7 +78,6 @@ RSpec.describe "Admin Editor Search", type: :request do
 
   context "when not authenticated" do
     it "redirects to login" do
-      Panda::Core::Current.reset
       get "/admin/editor/search", params: {search: "test"}
 
       expect(response).to redirect_to(panda_core.admin_login_path)
