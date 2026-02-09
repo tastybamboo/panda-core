@@ -16,6 +16,11 @@ Panda::Core::Engine.routes.draw do
     # Dashboard and admin routes - authentication handled by AdminController
     get "/", to: "admin/dashboard#show", as: :root
 
+    # Editor search endpoint for link-autocomplete
+    namespace :editor, module: "admin/editor" do
+      get :search, to: "search#index", as: :search
+    end
+
     # Profile management
     resource :my_profile, only: %i[show edit update], controller: "admin/my_profile", path: "my_profile" do
       resource :logins, only: [:show], controller: "admin/my_profile/logins"
