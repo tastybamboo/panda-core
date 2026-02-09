@@ -61,7 +61,7 @@ RSpec.describe Panda::Core::FormBuilder, type: :helper do
     it "uses the default label when no custom label is provided" do
       result = builder.text_area(:oauth_avatar_url)
 
-      expect(result).to include("Oauth avatar url")
+      expect(result).to include("Oauth avatar URL")
       expect(result).to include('name="user[oauth_avatar_url]"')
     end
 
@@ -281,7 +281,7 @@ RSpec.describe Panda::Core::FormBuilder, type: :helper do
 
       # Should use humanized attribute names
       expect(text_result).to include("Name")
-      expect(textarea_result).to include("Oauth avatar url")
+      expect(textarea_result).to include("Oauth avatar URL")
       expect(select_result).to include("Email")
     end
   end
