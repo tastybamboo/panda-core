@@ -66,7 +66,7 @@ module Panda
 
         def action_classes
           case @action
-          when :save, :create
+          when :save, :create, :add, :new
             "text-white bg-primary-500 hover:bg-primary-600 focus-visible:outline-primary-600"
           when :save_inactive
             "text-white bg-gray-300 cursor-not-allowed"

@@ -311,7 +311,7 @@ module Panda
         custom_label = options.delete(:label)
 
         content_tag :div, class: container_styles do
-          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: "border-gray-300 ml-2"), checked_value, unchecked_value)
+          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: "border-gray-300 text-primary-600 focus:ring-primary-500 ml-2"), checked_value, unchecked_value)
         end
       end
 

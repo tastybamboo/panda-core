@@ -1,34 +1,20 @@
-<%= form_with model: file_category,
+<%= panda_form_with model: file_category,
             url: file_category.persisted? ? admin_file_category_path(file_category) : admin_file_categories_path,
             method: file_category.persisted? ? :patch : :post,
             local: true do |f| %>
   <%= render Panda::Core::Admin::FormErrorComponent.new(model: file_category) %>
 
-  <div class="space-y-6 max-w-2xl">
-    <div class="field">
-      <%= f.label :name %>
-      <%= f.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm", placeholder: "e.g. Project Assets" %>
+  <%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
+    <% panel.with_heading_slot { "Category Settings" } %>
+    <div class="space-y-4">
+      <%= f.text_field :name, placeholder: "e.g. Project Assets" %>
+      <%= f.text_field :icon, label: "Icon (FontAwesome class)", placeholder: "e.g. fa-solid fa-folder", meta: "Use fa-solid or fab icon classes only." %>
+      <%= f.number_field :position, label: "Display Order", value: file_category.position || 100 %>
+      <%= f.collection_select :parent_id, Panda::Core::FileCategory.roots.ordered.where.not(id: file_category.id), :id, :name, { include_blank: "None (top-level)", label: "Parent Category" } %>
     </div>
-
-    <div class="field">
-      <%= f.label :icon, "Icon (FontAwesome class)" %>
-      <%= f.text_field :icon, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm", placeholder: "e.g. fa-solid fa-folder" %>
-      <p class="mt-1 text-sm text-gray-500">Use fa-solid or fab icon classes only.</p>
-    </div>
-
-    <div class="field">
-      <%= f.label :position, "Display Order" %>
-      <%= f.number_field :position, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm", value: file_category.position || 100 %>
-    </div>
-
-    <div class="field">
-      <%= f.label :parent_id, "Parent Category" %>
-      <%= f.collection_select :parent_id, Panda::Core::FileCategory.roots.ordered.where.not(id: file_category.id), :id, :name, { include_blank: "None (top-level)" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" %>
-    </div>
-  </div>
+  <% end %>
 
   <%= render Panda::Core::Admin::FormFooterComponent.new(
-    submit_text: file_category.persisted? ? "Update Category" : "Create Category",
-    cancel_path: admin_file_categories_path
+    submit_text: file_category.persisted? ? "Update Category" : "Create Category"
   ) %>
 <% end %>
