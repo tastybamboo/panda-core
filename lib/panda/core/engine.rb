@@ -5,6 +5,7 @@ require "omniauth"
 
 require "panda/core/middleware"
 require "panda/core/module_registry"
+require "panda/core/search_registry"
 
 # Shared engine mixins
 require_relative "shared/inflections_config"
