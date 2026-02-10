@@ -1,0 +1,6 @@
+<div class="flex flex-wrap gap-2 mb-4">
+  <%= link_to @all_label, @url_helper.call(nil), class: pill_classes(@active_value.blank?) %>
+  <% @items.each do |item| %>
+    <%= link_to item[:label], @url_helper.call(item[:value]), class: pill_classes(@active_value == item[:value]) %>
+  <% end %>
+</div>

@@ -18,14 +18,14 @@ RSpec.describe "ActiveStorage::Blob purge with FileCategorizations", type: :mode
 
     expect(Panda::Core::FileCategorization.where(blob_id: blob.id).count).to eq(1)
 
-    blob.destroy!
+    blob.purge
 
     expect(ActiveStorage::Blob.exists?(blob.id)).to be false
     expect(Panda::Core::FileCategorization.where(blob_id: blob.id).count).to eq(0)
   end
 
   it "purges the blob when no file categorizations exist" do
-    blob.destroy!
+    blob.purge
 
     expect(ActiveStorage::Blob.exists?(blob.id)).to be false
   end

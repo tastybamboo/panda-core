@@ -96,7 +96,7 @@ module Panda
             require "panda/core/seeds/file_categories"
             Panda::Core::Seeds::FileCategories.seed!
           end
-        rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished, PG::ConnectionBad
+        rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished
           # Skip when DB isn't available (asset precompilation, etc.)
         end
       end
