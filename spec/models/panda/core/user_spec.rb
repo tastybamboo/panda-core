@@ -98,6 +98,29 @@ RSpec.describe Panda::Core::User, type: :model do
         described_class.find_or_create_from_auth_hash(auth_hash)
         expect(user.reload.image_url).to eq("https://example.com/image.jpg")
       end
+
+      it "does not call AttachAvatarService when user has a manually uploaded avatar" do
+        # Manual upload scenario: avatar attached but oauth_avatar_url is nil
+        described_class.create!(email: "test@example.com", name: "Existing User", oauth_avatar_url: nil)
+        allow_any_instance_of(described_class).to receive_message_chain(:avatar, :attached?).and_return(true)
+
+        expect(Panda::Core::AttachAvatarService).not_to receive(:call)
+
+        described_class.find_or_create_from_auth_hash(auth_hash)
+      end
+
+      it "calls AttachAvatarService when oauth_avatar_url differs from auth hash URL" do
+        # OAuth avatar update scenario: oauth_avatar_url is set but differs from new URL
+        described_class.create!(email: "test@example.com", name: "Existing User", oauth_avatar_url: "https://old-oauth.com/avatar.jpg")
+        allow_any_instance_of(described_class).to receive_message_chain(:avatar, :attached?).and_return(true)
+
+        expect(Panda::Core::AttachAvatarService).to receive(:call).with(
+          user: an_instance_of(described_class),
+          avatar_url: "https://example.com/image.jpg"
+        )
+
+        described_class.find_or_create_from_auth_hash(auth_hash)
+      end
     end
   end
 

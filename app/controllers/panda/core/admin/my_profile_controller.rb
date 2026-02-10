@@ -27,6 +27,7 @@ module Panda
           purge_old_avatar_if_replacing
 
           if current_user.update(user_params)
+            clear_oauth_avatar_url_after_manual_upload
             flash[:success] = "Your profile has been updated successfully."
             redirect_to edit_admin_my_profile_path
           else
@@ -46,6 +47,14 @@ module Panda
         def purge_old_avatar_if_replacing
           return unless params.dig(:user, :avatar).present? && current_user.avatar.attached?
           current_user.avatar.purge
+        end
+
+        # Clear oauth_avatar_url when user manually uploads an avatar.
+        # This signals to find_or_create_from_auth_hash that the avatar
+        # was manually uploaded and should not be overwritten on OAuth re-login.
+        def clear_oauth_avatar_url_after_manual_upload
+          return unless params.dig(:user, :avatar).present?
+          current_user.update_column(:oauth_avatar_url, nil)
         end
 
         # Only allow a list of trusted parameters through
