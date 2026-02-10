@@ -14,6 +14,10 @@ Panda::Core.configure do |config|
   # Add the corresponding OmniAuth gem for each provider you enable
   # (e.g. omniauth-google-oauth2, omniauth-github, omniauth-microsoft_graph).
   #
+  # In development, GitHub OAuth works out of the box with shared dev credentials
+  # (restricted to localhost:3000). For production, add your own credentials via
+  # `rails credentials:edit`.
+  #
   # The "developer" provider is built into OmniAuth and only active in
   # development — it shows a simple form to enter a name and email.
   #
@@ -21,8 +25,16 @@ Panda::Core.configure do |config|
   #   github: {
   #     enabled: true,
   #     name: "GitHub",
-  #     client_id: Rails.application.credentials.dig(:github, :client_id),
-  #     client_secret: Rails.application.credentials.dig(:github, :client_secret)
+  #     client_id: if Rails.env.development?
+  #                  "Ov23liFMGyVvRrpuvyTT" # Shared Panda dev app (localhost:3000 only)
+  #                else
+  #                  Rails.application.credentials.dig(:github, :client_id)
+  #                end,
+  #     client_secret: if Rails.env.development?
+  #                      "394a7024d7dd9c0ee0c8540768331d59d9e22477"
+  #                    else
+  #                      Rails.application.credentials.dig(:github, :client_secret)
+  #                    end
   #   },
   #   developer: {
   #     enabled: true,
