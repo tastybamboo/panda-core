@@ -24,6 +24,8 @@ module Panda
         # @type PATCH/PUT
         # @return void
         def update
+          purge_old_avatar_if_replacing
+
           if current_user.update(user_params)
             flash[:success] = "Your profile has been updated successfully."
             redirect_to edit_admin_my_profile_path
@@ -36,6 +38,14 @@ module Panda
 
         def set_initial_breadcrumb
           add_breadcrumb "My Profile", edit_admin_my_profile_path
+        end
+
+        # Purge the existing avatar synchronously when a replacement is being uploaded.
+        # This ensures the old blob is fully removed (DB + storage) before the new
+        # one is attached, preventing orphaned blobs that show as "in use".
+        def purge_old_avatar_if_replacing
+          return unless params.dig(:user, :avatar).present? && current_user.avatar.attached?
+          current_user.avatar.purge
         end
 
         # Only allow a list of trusted parameters through

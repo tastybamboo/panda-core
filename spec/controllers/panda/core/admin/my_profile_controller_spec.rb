@@ -90,6 +90,28 @@ RSpec.describe Panda::Core::Admin::MyProfileController, type: :controller do
       end
     end
 
+    context "when replacing avatar" do
+      let(:fixture_path) { Panda::Core::Engine.root.join("spec", "fixtures", "files", "test_image.jpg") }
+
+      before do
+        user.avatar.attach(io: File.open(fixture_path), filename: "old_avatar.jpg", content_type: "image/jpeg")
+      end
+
+      it "purges the old avatar blob before attaching the new one" do
+        old_blob_id = user.avatar.blob.id
+
+        patch :update, params: {
+          user: {
+            name: user.name,
+            email: user.email,
+            avatar: fixture_file_upload(fixture_path, "image/jpeg")
+          }
+        }
+
+        expect(ActiveStorage::Blob.exists?(old_blob_id)).to be false
+      end
+    end
+
     context "with additional configured parameters" do
       before do
         allow(Panda::Core.config).to receive(:additional_user_params).and_return([:custom_field])
