@@ -5,8 +5,8 @@
     <ul role="list" class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
       <% @files.each do |file| %>
         <% is_selected = @selected_file && @selected_file.id == file.id %>
-        <li class="relative">
-          <div class="<%= file_container_classes(is_selected) %>" style="cursor: pointer;">
+        <li class="relative cursor-pointer">
+          <div class="<%= file_container_classes(is_selected) %> aspect-square">
             <% if file.image? %>
               <%= tag.img src: url_for(file),
                   alt: file.filename.to_s,
@@ -42,7 +42,7 @@
             <%= file.filename.to_s %>
           </p>
           <p class="pointer-events-none block text-sm font-medium text-gray-500 dark:text-gray-400">
-            <%= number_to_human_size(file.byte_size) %>
+            <%= file_metadata(file) %>
           </p>
         </li>
       <% end %>

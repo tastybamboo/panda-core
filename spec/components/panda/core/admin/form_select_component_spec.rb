@@ -127,12 +127,12 @@ RSpec.describe Panda::Core::Admin::FormSelectComponent, type: :component do
       expect(html).to include("rounded-xl")
     end
 
-    it "includes focus ring classes" do
+    it "includes focus outline classes" do
       component = described_class.new(name: "status", options: [], prompt: "Select")
       output = Capybara.string(render_inline(component).to_html)
       html = output.native.to_html
 
-      expect(html).to include("focus:ring")
+      expect(html).to include("focus:outline")
     end
   end
 end

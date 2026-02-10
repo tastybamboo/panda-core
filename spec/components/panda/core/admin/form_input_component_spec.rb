@@ -177,11 +177,11 @@ RSpec.describe Panda::Core::Admin::FormInputComponent, type: :component do
       expect(output).to have_css("input.rounded-xl")
     end
 
-    it "includes focus ring classes" do
+    it "includes focus outline classes" do
       component = described_class.new(name: "test", value: "", placeholder: "")
       output = Capybara.string(render_inline(component).to_html)
 
-      expect(output).to have_css("input[class*='focus:ring']")
+      expect(output).to have_css("input[class*='focus:outline']")
     end
   end
 end

@@ -55,8 +55,8 @@ RSpec.describe Panda::Core::Admin::FileGalleryComponent do
 
       classes = component.send(:file_image_classes, false)
       expect(classes).to include("pointer-events-none")
-      expect(classes).to include("aspect-10/7")
-      expect(classes).to include("object-cover")
+      expect(classes).to include("aspect-square")
+      expect(classes).to include("object-contain")
     end
 
     it "includes hover opacity when not selected" do
