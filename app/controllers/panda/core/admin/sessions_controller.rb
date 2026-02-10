@@ -10,9 +10,13 @@ module Panda
         skip_before_action :authenticate_admin_user!, only: [:new, :create, :destroy, :failure]
 
         def new
-          # Only show providers that have valid credentials configured
-          @providers = Core.config.authentication_providers.select do |_key, config|
-            config[:client_id].present? && config[:client_secret].present?
+          @providers = Core.config.authentication_providers.select do |key, config|
+            # Developer provider doesn't need credentials, only shown in development
+            if key.to_sym == :developer
+              Rails.env.development?
+            else
+              config[:client_id].present? && config[:client_secret].present?
+            end
           end.keys
         end
 
