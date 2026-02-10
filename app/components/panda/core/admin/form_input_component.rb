@@ -37,8 +37,9 @@ module Panda
         private
 
         def input_classes
-          classes = "block w-full h-11 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 " \
-                    "placeholder:text-gray-400 focus:border-transparent focus:ring-2 focus:ring-primary-500"
+          classes = "block w-full h-11 rounded-xl border border-gray-300 bg-white px-3 py-2 text-gray-900 " \
+                    "placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary-500 " \
+                    "dark:bg-white/5 dark:text-white dark:border-white/10 dark:placeholder:text-gray-500"
 
           if @disabled
             classes + " border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"

@@ -48,6 +48,24 @@ module Panda
       end
 
       #
+      # Clean up FileCategorization records before blob destruction.
+      # Without this, ActiveStorage::Blob#purge silently fails because
+      # panda_core_file_categorizations has a FK to active_storage_blobs,
+      # and Rails rescues the resulting InvalidForeignKey error.
+      #
+      initializer "panda_core.active_storage_blob_cleanup" do
+        ActiveSupport.on_load(:active_storage_blob) do
+          before_destroy :cleanup_file_categorizations
+
+          private
+
+          def cleanup_file_categorizations
+            Panda::Core::FileCategorization.where(blob_id: id).delete_all
+          end
+        end
+      end
+
+      #
       # Auto-categorize files when ActiveStorage attachments are created.
       # Maps known attachment types (user avatars, page images, etc.) to
       # their corresponding file categories via FileCategorizer.
@@ -63,6 +81,23 @@ module Panda
           rescue => e
             Rails.logger.warn("[Panda::Core] Auto-categorization failed for blob #{blob_id}: #{e.message}")
           end
+        end
+      end
+
+      #
+      # Ensure system file categories exist on every boot.
+      # Skipped in test env to avoid interfering with fixtures.
+      # Uses find_or_create_by! so it's idempotent.
+      #
+      initializer "panda_core.ensure_file_categories", after: "panda_core.active_storage_categorization" do
+        config.after_initialize do
+          next if Rails.env.test?
+          if ActiveRecord::Base.connection.table_exists?("panda_core_file_categories")
+            require "panda/core/seeds/file_categories"
+            Panda::Core::Seeds::FileCategories.seed!
+          end
+        rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished, PG::ConnectionBad
+          # Skip when DB isn't available (asset precompilation, etc.)
         end
       end
 

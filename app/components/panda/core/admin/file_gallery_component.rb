@@ -4,13 +4,14 @@ module Panda
   module Core
     module Admin
       class FileGalleryComponent < Panda::Core::Base
-        def initialize(selected_file: nil, files: [], **attrs)
+        def initialize(selected_file: nil, files: [], blob_categories: {}, **attrs)
           @files = files
           @selected_file = selected_file
+          @blob_categories = blob_categories
           super(**attrs)
         end
 
-        attr_reader :files, :selected_file
+        attr_reader :files, :selected_file, :blob_categories
 
         private
 
@@ -34,7 +35,7 @@ module Panda
         end
 
         def file_image_classes(selected)
-          base = "pointer-events-none aspect-10/7 rounded-lg object-cover outline -outline-offset-1 outline-black/5 dark:outline-white/10"
+          base = "pointer-events-none aspect-square object-contain p-1 outline -outline-offset-1 outline-black/5 dark:outline-white/10"
           hover = selected ? "" : "group-hover:opacity-75"
           "#{base} #{hover}"
         end
@@ -45,6 +46,16 @@ module Panda
 
         def render_empty_state
           # Implemented in ERB template
+        end
+
+        # Build the metadata subtitle for a file in the gallery grid
+        def file_metadata(file)
+          parts = []
+          variant_count = file.variant_records.size
+          parts << "#{variant_count} #{"variant".pluralize(variant_count)}" if variant_count > 0
+          category = @blob_categories[file.id]
+          parts << category.name if category
+          parts.any? ? parts.join(" \u00B7 ") : number_to_human_size(file.byte_size)
         end
 
         # Helper method to generate URL for ActiveStorage attachment
