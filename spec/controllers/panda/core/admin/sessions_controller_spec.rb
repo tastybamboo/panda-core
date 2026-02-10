@@ -8,6 +8,28 @@ RSpec.describe Panda::Core::Admin::SessionsController, type: :controller do
       get :new
       expect(response).to have_http_status(:success)
     end
+
+    it "includes developer provider in development mode" do
+      allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new("development"))
+      Panda::Core.config.authentication_providers[:developer] = {options: {}}
+
+      get :new
+
+      expect(assigns(:providers)).to include(:developer)
+    ensure
+      Panda::Core.config.authentication_providers.delete(:developer)
+    end
+
+    it "excludes developer provider in production mode" do
+      allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new("production"))
+      Panda::Core.config.authentication_providers[:developer] = {options: {}}
+
+      get :new
+
+      expect(assigns(:providers)).not_to include(:developer)
+    ensure
+      Panda::Core.config.authentication_providers.delete(:developer)
+    end
   end
 
   describe "GET #create" do
