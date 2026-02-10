@@ -143,17 +143,16 @@ module Panda
       # @param size [Symbol] The variant size (:thumb, :small, :medium, :large, or nil for original)
       # @return [String, nil] The avatar URL or nil if no avatar available
       def avatar_url(size: nil)
-        if avatar.attached?
-          if size && [:thumb, :small, :medium, :large].include?(size)
-            Rails.application.routes.url_helpers.rails_blob_path(avatar.variant(size), only_path: true)
-          else
-            Rails.application.routes.url_helpers.rails_blob_path(avatar, only_path: true)
-          end
-        elsif self[:image_url].present?
-          self[:image_url]
+        return self[:image_url].presence unless avatar.attached?
+
+        helpers = Rails.application.routes.url_helpers
+        if size && [:thumb, :small, :medium, :large].include?(size)
+          helpers.rails_representation_path(avatar.variant(size), only_path: true)
+        else
+          helpers.rails_blob_path(avatar.blob, only_path: true)
         end
       rescue => e
-        Rails.logger.error("Error generating avatar URL for user #{id}: #{e.message}")
+        Rails.logger.error("Error generating avatar URL for user #{id}: #{e.message}\n#{e.backtrace&.first(3)&.join("\n")}")
         self[:image_url].presence
       end
 
