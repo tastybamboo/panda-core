@@ -58,9 +58,14 @@ module Panda
             # Update image_url with latest OAuth URL only if no local avatar is stored
             user.update_column(:image_url, avatar_url) unless has_stored_avatar
 
-            # Try to download and store avatar if URL changed or no avatar attached
-            if avatar_url != user.oauth_avatar_url || !has_stored_avatar
-              AttachAvatarService.call(user: user, avatar_url: avatar_url)
+            # Skip OAuth avatar download when user has a manually uploaded avatar
+            # (indicated by oauth_avatar_url being nil while an avatar is attached)
+            manually_uploaded = has_stored_avatar && user.oauth_avatar_url.nil?
+            unless manually_uploaded
+              # Try to download and store avatar if URL changed or no avatar attached
+              if avatar_url != user.oauth_avatar_url || !has_stored_avatar
+                AttachAvatarService.call(user: user, avatar_url: avatar_url)
+              end
             end
           end
           return user

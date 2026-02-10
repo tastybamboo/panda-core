@@ -110,6 +110,35 @@ RSpec.describe Panda::Core::Admin::MyProfileController, type: :controller do
 
         expect(ActiveStorage::Blob.exists?(old_blob_id)).to be false
       end
+
+      it "clears oauth_avatar_url after manual avatar upload" do
+        user.update_column(:oauth_avatar_url, "https://example.com/oauth_avatar.jpg")
+
+        patch :update, params: {
+          user: {
+            name: user.name,
+            email: user.email,
+            avatar: fixture_file_upload(fixture_path, "image/jpeg")
+          }
+        }
+
+        expect(user.reload.oauth_avatar_url).to be_nil
+      end
+    end
+
+    context "when updating without avatar" do
+      it "does not clear oauth_avatar_url" do
+        user.update_column(:oauth_avatar_url, "https://example.com/oauth_avatar.jpg")
+
+        patch :update, params: {
+          user: {
+            name: "Updated Name",
+            email: user.email
+          }
+        }
+
+        expect(user.reload.oauth_avatar_url).to eq("https://example.com/oauth_avatar.jpg")
+      end
     end
 
     context "with additional configured parameters" do
