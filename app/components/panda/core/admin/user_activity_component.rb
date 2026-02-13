@@ -22,7 +22,7 @@ module Panda
         end
 
         def should_render?
-          @user.is_a?(Panda::Core::User) || time
+          @user.present? || time
         end
       end
     end

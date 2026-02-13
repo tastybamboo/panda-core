@@ -1,10 +1,10 @@
 <% if should_render? %>
-  <% if @user.is_a?(Panda::Core::User) && time %>
+  <% if @user.present? && time %>
     <%= render Panda::Core::Admin::UserDisplayComponent.new(
       user: @user,
       metadata: "#{time_ago_in_words(time)} ago"
     ) %>
-  <% elsif @user.is_a?(Panda::Core::User) %>
+  <% elsif @user.present? %>
     <%= render Panda::Core::Admin::UserDisplayComponent.new(
       user: @user,
       metadata: "Not published"
