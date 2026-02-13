@@ -1,3 +1,13 @@
+GIT
+  remote: https://github.com/ViewComponent/view_component.git
+  revision: 9bc0171763e32fcfc72216d02589b01cf1554f25
+  tag: v4.4.0
+  specs:
+    view_component (4.4.0)
+      actionview (>= 7.1.0)
+      activesupport (>= 7.1.0)
+      concurrent-ruby (~> 1)
+
 PATH
   remote: .
   specs:
@@ -518,10 +528,6 @@ GEM
     uri (1.1.1)
     useragent (0.16.11)
     version_gem (1.1.9)
-    view_component (4.3.0)
-      actionview (>= 7.1.0)
-      activesupport (>= 7.1.0)
-      concurrent-ruby (~> 1)
     webrick (1.9.2)
     websocket-driver (0.8.0)
       base64
@@ -583,6 +589,7 @@ DEPENDENCIES
   standard-rails
   stringio
   tailwindcss-rails (~> 4)
+  view_component!
   yard-activerecord
 
 BUNDLED WITH
