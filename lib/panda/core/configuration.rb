@@ -75,6 +75,14 @@ module Panda
             icon: "fa-solid fa-user"
           }
 
+          items << {
+            label: "Settings",
+            icon: "fa-solid fa-gear",
+            children: [
+              {label: "Feature Flags", path: "#{@admin_path}/feature_flags"}
+            ]
+          }
+
           items
         }
         @admin_dashboard_widgets = ->(user) { [] }

@@ -20,6 +20,7 @@ module Panda
         # Include helper modules
         helper Panda::Core::SessionsHelper
         helper Panda::Core::FormHelper
+        helper Panda::Core::FeatureFlagHelper
         helper Panda::Core::AssetHelper if defined?(Panda::Core::AssetHelper)
 
         before_action :set_current_request_details

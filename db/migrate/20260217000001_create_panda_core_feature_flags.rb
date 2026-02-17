@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+class CreatePandaCoreFeatureFlags < ActiveRecord::Migration[7.1]
+  def change
+    create_table :panda_core_feature_flags, id: :uuid do |t|
+      t.string :key, null: false
+      t.boolean :enabled, null: false, default: false
+      t.string :description
+      t.timestamps
+    end
+
+    add_index :panda_core_feature_flags, :key, unique: true
+  end
+end
