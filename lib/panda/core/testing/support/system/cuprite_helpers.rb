@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "shellwords"
+
 # Helper methods for Cuprite-based system tests
 #
 # This module provides utility methods for working with Cuprite in system tests:
@@ -72,9 +74,9 @@ module Panda
               File.binwrite(File.join(png_dir, "frame-%05d.png" % i), Base64.decode64(data))
             end
 
-            system <<~CMD
-              ffmpeg -y -framerate 8 -pattern_type glob -i '#{png_dir}/*.png' -c:v libx264 -pix_fmt yuv420p '#{path}'
-            CMD
+            escaped_png_dir = Shellwords.escape(File.join(png_dir, "*.png"))
+            escaped_path = Shellwords.escape(path.to_s)
+            system("ffmpeg -y -framerate 8 -pattern_type glob -i #{escaped_png_dir} -c:v libx264 -pix_fmt yuv420p #{escaped_path}")
           end
 
           puts "🎥 Saved video: #{path}"
