@@ -4,7 +4,7 @@
   <% if @feature_flags.any? %>
     <% @grouped_flags.each do |namespace, flags| %>
       <div class="mb-8">
-        <h2 class="text-lg font-semibold text-gray-700 mb-3 capitalize"><%= namespace.tr("_", " ") %></h2>
+        <h2 class="text-lg font-semibold text-gray-700 mb-3"><%= namespace.titleize %></h2>
 
         <%= render Panda::Core::Admin::TableComponent.new(term: "feature flag", rows: flags, icon: "fa-solid fa-toggle-on") do |table| %>
           <% table.column("Flag", width: "35%") do |flag| %>

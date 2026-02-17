@@ -26,6 +26,7 @@ module Panda
         private
 
         def set_initial_breadcrumb
+          add_breadcrumb "Settings", admin_settings_path
           add_breadcrumb "Feature Flags", admin_feature_flags_path
         end
       end
