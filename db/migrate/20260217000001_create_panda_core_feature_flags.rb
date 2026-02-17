@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreatePandaCoreFeatureFlags < ActiveRecord::Migration[7.1]
+class CreatePandaCoreFeatureFlags < ActiveRecord::Migration[8.1]
   def change
     create_table :panda_core_feature_flags, id: :uuid do |t|
       t.string :key, null: false
