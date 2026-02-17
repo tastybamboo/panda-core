@@ -18,6 +18,9 @@ module Panda
           new_state = @feature_flag.reload.enabled? ? "enabled" : "disabled"
           flash[:success] = "Feature flag \"#{@feature_flag.key}\" has been #{new_state}."
           redirect_to admin_feature_flags_path
+        rescue ActiveRecord::RecordNotFound
+          flash[:alert] = "Feature flag not found."
+          redirect_to admin_feature_flags_path
         end
 
         private

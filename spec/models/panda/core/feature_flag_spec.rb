@@ -45,9 +45,10 @@ RSpec.describe Panda::Core::FeatureFlag, type: :model do
       expect(flag.reload.enabled).to be true
     end
 
-    it "clears the cache" do
+    it "writes the new state to the cache" do
       described_class.create!(key: "test.cache_clear", enabled: false)
-      expect(Rails.cache).to receive(:delete).with("panda_core:feature_flag:test.cache_clear")
+      expect(Rails.cache).to receive(:write)
+        .with("panda_core:feature_flag:test.cache_clear", true, expires_in: 1.minute)
       described_class.enable!("test.cache_clear")
     end
 
@@ -63,9 +64,10 @@ RSpec.describe Panda::Core::FeatureFlag, type: :model do
       expect(flag.reload.enabled).to be false
     end
 
-    it "clears the cache" do
+    it "writes the new state to the cache" do
       described_class.create!(key: "test.cache_clear", enabled: true)
-      expect(Rails.cache).to receive(:delete).with("panda_core:feature_flag:test.cache_clear")
+      expect(Rails.cache).to receive(:write)
+        .with("panda_core:feature_flag:test.cache_clear", false, expires_in: 1.minute)
       described_class.disable!("test.cache_clear")
     end
   end
@@ -83,9 +85,10 @@ RSpec.describe Panda::Core::FeatureFlag, type: :model do
       expect(flag.reload.enabled).to be true
     end
 
-    it "clears the cache" do
+    it "writes the new state to the cache" do
       described_class.create!(key: "test.cache_clear", enabled: false)
-      expect(Rails.cache).to receive(:delete).with("panda_core:feature_flag:test.cache_clear")
+      expect(Rails.cache).to receive(:write)
+        .with("panda_core:feature_flag:test.cache_clear", true, expires_in: 1.minute)
       described_class.toggle!("test.cache_clear")
     end
   end

@@ -20,21 +20,21 @@ module Panda
       def self.enable!(key)
         flag = find_by!(key: key)
         flag.update!(enabled: true)
-        clear_cache(key)
+        Rails.cache.write(cache_key_for(key), true, expires_in: 1.minute)
       end
 
       # Disable a feature flag by key.
       def self.disable!(key)
         flag = find_by!(key: key)
         flag.update!(enabled: false)
-        clear_cache(key)
+        Rails.cache.write(cache_key_for(key), false, expires_in: 1.minute)
       end
 
       # Toggle a feature flag by key.
       def self.toggle!(key)
         flag = find_by!(key: key)
         flag.update!(enabled: !flag.enabled)
-        clear_cache(key)
+        Rails.cache.write(cache_key_for(key), flag.enabled, expires_in: 1.minute)
       end
 
       # Register a feature flag idempotently.
@@ -50,10 +50,7 @@ module Panda
       def self.cache_key_for(key)
         "panda_core:feature_flag:#{key}"
       end
-
-      def self.clear_cache(key)
-        Rails.cache.delete(cache_key_for(key))
-      end
+      private_class_method :cache_key_for
     end
   end
 end
