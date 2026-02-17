@@ -47,6 +47,9 @@ Panda::Core::Engine.routes.draw do
     # File category management
     resources :file_categories, only: %i[index new create edit update destroy], controller: "admin/file_categories"
 
+    # Feature flag management
+    resources :feature_flags, only: %i[index update], controller: "admin/feature_flags"
+
     # Test-only authentication endpoint (available in development and test environments)
     # This bypasses OAuth for faster, more reliable test execution
     # Development: Used by Capybara system tests which run Rails server in development mode
