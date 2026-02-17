@@ -15,16 +15,17 @@ module Panda
 
           renders_many :sub_items, SubItemComponent
 
-          def initialize(label:, icon:, path: nil, active: false, menu_id: nil, **attrs) # rubocop:disable Metrics/ParameterLists
+          def initialize(label:, icon:, path: nil, active: false, menu_id: nil, target: nil, **attrs) # rubocop:disable Metrics/ParameterLists
             @label = label
             @icon = icon
             @path = path
             @active = active
             @menu_id = menu_id
+            @target = target
             super(**attrs)
           end
 
-          attr_reader :label, :icon, :path, :active, :menu_id
+          attr_reader :label, :icon, :path, :active, :menu_id, :target
 
           def active?
             @active

@@ -114,6 +114,25 @@ module Panda
         # Extensible user menu items (for engines to add items like "API Tokens")
         @admin_user_menu_items = []
       end
+
+      # Register a new admin navigation section via NavigationRegistry.
+      # @param label [String] Section label
+      # @param icon [String] FontAwesome icon class
+      # @param after [String, nil] Insert after the section with this label
+      # @param before [String, nil] Insert before the section with this label
+      def insert_admin_menu_section(label, icon: nil, after: nil, before: nil, &block)
+        Panda::Core::NavigationRegistry.section(label, icon: icon, after: after, before: before, &block)
+      end
+
+      # Register an item to be added to an existing admin navigation section.
+      # @param label [String] Item label
+      # @param section [String] Target section label
+      # @param path [String, nil] Path (auto-prefixed with admin_path)
+      # @param url [String, nil] Full URL (used as-is)
+      # @param target [String, nil] HTML target attribute
+      def insert_admin_menu_item(label, section:, path: nil, url: nil, target: nil)
+        Panda::Core::NavigationRegistry.item(label, section: section, path: path, url: url, target: target)
+      end
     end
 
     class << self

@@ -13,17 +13,18 @@ module Panda
           INACTIVE_CLASSES = 'text-white/70 hover:bg-white/5'
 
           # rubocop:disable Metrics/ParameterLists
-          def initialize(label:, path: nil, active: false, method: nil, button_options: {}, **attrs)
+          def initialize(label:, path: nil, active: false, method: nil, button_options: {}, target: nil, **attrs)
             @label = label
             @path = path
             @active = active
             @method = method
             @button_options = button_options
+            @target = target
             super(**attrs)
           end
           # rubocop:enable Metrics/ParameterLists
 
-          attr_reader :label, :path, :active, :method, :button_options
+          attr_reader :label, :path, :active, :method, :button_options, :target
 
           def active?
             @active

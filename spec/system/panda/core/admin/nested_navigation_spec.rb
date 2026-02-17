@@ -6,7 +6,12 @@ RSpec.describe "Nested navigation", type: :system do
   let(:admin_user) { create_admin_user }
 
   before do
+    Panda::Core::NavigationRegistry.reset!
     login_with_google(admin_user)
+  end
+
+  after do
+    Panda::Core::NavigationRegistry.reset!
   end
 
   context "with nested navigation items" do
