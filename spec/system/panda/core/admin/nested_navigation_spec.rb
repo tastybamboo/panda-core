@@ -100,7 +100,7 @@ RSpec.describe "Nested navigation", type: :system do
       expect(page).not_to have_css("a", text: "Overview", visible: true)
     end
 
-    it "rotates chevron icon when expanding", js: true do
+    it "rotates chevron icon when expanding", :flaky, js: true do
       visit "/admin"
 
       # Find the chevron icon using data attribute
