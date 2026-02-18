@@ -24,7 +24,7 @@
       </div>
     </div>
   <% else %>
-    <%= helpers.link_to path, class: link_classes do %>
+    <%= helpers.link_to path, class: link_classes, target: target do %>
       <span class="text-center w-6"><i class="<%= icon %> text-xl fa-fw"></i></span>
       <span><%= label %></span>
     <% end %>

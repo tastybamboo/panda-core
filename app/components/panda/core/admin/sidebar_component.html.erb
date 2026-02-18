@@ -2,8 +2,8 @@
   <ul role="list" class="flex flex-col flex-1">
     <a class="block p-0 mt-4 mb-4 ml-2 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
     <%
-      # Get navigation items in original order for display
-      nav_items = Panda::Core.config.admin_navigation_items&.call(@user) || []
+      # Get navigation items from the registry (includes base lambda + registered sections/items)
+      nav_items = Panda::Core::NavigationRegistry.build(@user)
 
       # Helper to recursively collect all paths from nav items
       def collect_paths(items)
@@ -38,12 +38,13 @@
         icon: item[:icon],
         path: item[:path],
         active: is_active,
-        menu_id: "sub-menu-#{index}"
+        menu_id: "sub-menu-#{index}",
+        target: item[:target]
       ) do |nav_item|
         if has_children
           item[:children].each do |child|
             child_is_active = child[:path] == active_path
-            nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active)
+            nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active, target: child[:target])
           end
         end
       end %>
