@@ -65,7 +65,8 @@
           # Resolve path_helper at render time if not yet resolved
           item_path = item[:path]
           if item_path.nil? && item[:path_helper]
-            item_path = helpers.panda_core.send(item[:path_helper])
+              helper_name = item[:path_helper].to_sym
+            item_path = helpers.panda_core.public_send(helper_name) if helpers.panda_core.respond_to?(helper_name)
           end
 
           item_active = item_path && current_path.starts_with?(item_path)

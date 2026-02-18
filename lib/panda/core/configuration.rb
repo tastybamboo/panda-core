@@ -114,33 +114,64 @@ module Panda
         # Legacy extensible user menu items (prefer NavigationRegistry with position: :bottom)
         @admin_user_menu_items = []
 
-        # Register default user menu as a bottom navigation section
+        # Register default user menu as a bottom navigation section (idempotent)
         register_default_user_menu
       end
 
-      # Register a new admin navigation section via NavigationRegistry.
-      # @param label [String] Section label
-      # @param icon [String] FontAwesome icon class
+      # Register a new admin navigation section via {NavigationRegistry}.
+      #
+      # Sections with the same label as an existing base section are skipped.
+      # Use +after:+ or +before:+ to control positioning relative to other sections.
+      #
+      # @param label [String] Section label displayed in the sidebar
+      # @param icon [String] FontAwesome icon class (e.g. "fa-solid fa-users")
       # @param after [String, nil] Insert after the section with this label
       # @param before [String, nil] Insert before the section with this label
       # @param visible [Proc, nil] Lambda receiving user, hides section when false
       # @param position [Symbol] :top (default) or :bottom
+      # @yield [NavigationRegistry::SectionContext] Optional block for adding items
+      #
+      # @example Add a section with items
+      #   config.insert_admin_menu_section "Members",
+      #     icon: "fa-solid fa-users",
+      #     after: "Website" do |section|
+      #       section.item "Onboarding", path: "members/onboarding"
+      #     end
+      #
+      # @see NavigationRegistry.section
       def insert_admin_menu_section(label, icon: nil, after: nil, before: nil, visible: nil, position: :top, &block)
         Panda::Core::NavigationRegistry.section(label, icon: icon, after: after, before: before, visible: visible, position: position, &block)
       end
 
-      # Register an item to be added to an existing admin navigation section.
-      # @param label [String] Item label
-      # @param section [String] Target section label
-      # @param path [String, nil] Path (auto-prefixed with admin_path)
-      # @param url [String, nil] Full URL (used as-is)
-      # @param target [String, nil] HTML target attribute
+      # Register an item to be appended to an existing admin navigation section.
+      #
+      # If the target section doesn't exist at build time, the item is silently
+      # skipped. Use +path:+ for admin-relative paths or +url:+ for absolute URLs.
+      #
+      # @param label [String] Item label displayed in the sidebar
+      # @param section [String] Label of the target section to add to
+      # @param path [String, nil] Relative path (auto-prefixed with admin_path)
+      # @param url [String, nil] Absolute URL (used as-is, no prefixing)
+      # @param target [String, nil] HTML target attribute (e.g. "_blank")
       # @param visible [Proc, nil] Lambda receiving user, hides item when false
       # @param before [Symbol, String, nil] :all or label — position within section
       # @param after [Symbol, String, nil] :all or label — position within section
       # @param method [Symbol, nil] HTTP method (e.g. :delete)
       # @param button_options [Hash] Extra options for button_to
       # @param path_helper [Symbol, nil] Route helper resolved at build time
+      #
+      # @example Add to an existing section
+      #   config.insert_admin_menu_item "Feature Flags",
+      #     section: "Settings",
+      #     path: "feature_flags"
+      #
+      # @example Permission-gated item
+      #   config.insert_admin_menu_item "Suggestions",
+      #     section: "Tools",
+      #     path: "cms/content_suggestions",
+      #     visible: -> (user) { user.admin? }
+      #
+      # @see NavigationRegistry.item
       # rubocop:disable Metrics/ParameterLists
       def insert_admin_menu_item(label, section:, path: nil, url: nil, target: nil,
         visible: nil, before: nil, after: nil, method: nil, button_options: {}, path_helper: nil)
@@ -186,7 +217,10 @@ module Panda
       private
 
       # Register the default user menu items as a bottom navigation section.
+      # Idempotent: skips if "My Account" is already registered.
       def register_default_user_menu
+        return if Panda::Core::NavigationRegistry.sections.any? { |s| s[:label] == "My Account" }
+
         Panda::Core::NavigationRegistry.section("My Account", position: :bottom) do |s|
           s.item "My Profile", path: "my_profile/edit"
           s.item "Login & Security", path: "my_profile/logins"

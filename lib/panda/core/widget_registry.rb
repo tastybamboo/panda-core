@@ -9,12 +9,18 @@ module Panda
         attr_reader :widgets
 
         # Register a dashboard widget.
-        # @param label [String] Widget label (for identification/deduplication)
+        # Duplicate labels are replaced (last registration wins).
+        # @param label [String] Widget label (used for identification and deduplication)
         # @param component [Proc] Lambda receiving user, returns an instantiated component
         # @param visible [Proc, nil] Lambda receiving user, hides widget when false
         # @param position [Integer] Sort order (lower numbers appear first)
         def register(label, component:, visible: nil, position: 0)
-          @widgets << {label: label, component: component, visible: visible, position: position}
+          widget = {label: label, component: component, visible: visible, position: position}
+          if (index = @widgets.index { |w| w[:label] == label })
+            @widgets[index] = widget
+          else
+            @widgets << widget
+          end
         end
 
         # Build the widget list for the current user.
