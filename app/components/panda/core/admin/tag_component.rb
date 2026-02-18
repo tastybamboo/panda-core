@@ -66,6 +66,8 @@ module Panda
             "text-gray-600 bg-gray-100"
           when :auto
             "text-sky-600 bg-sky-50"
+          when :warning
+            "text-rose-600 bg-rose-50"
           when :static
             "text-gray-600 bg-gray-100"
           else
