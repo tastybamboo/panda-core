@@ -115,21 +115,46 @@ module Panda
         @admin_user_menu_items = []
       end
 
-      # Register a new admin navigation section via NavigationRegistry.
-      # @param label [String] Section label
-      # @param icon [String] FontAwesome icon class
+      # Register a new admin navigation section via {NavigationRegistry}.
+      #
+      # Sections with the same label as an existing base section are skipped.
+      # Use +after:+ or +before:+ to control positioning relative to other sections.
+      #
+      # @param label [String] Section label displayed in the sidebar
+      # @param icon [String] FontAwesome icon class (e.g. "fa-solid fa-users")
       # @param after [String, nil] Insert after the section with this label
       # @param before [String, nil] Insert before the section with this label
+      # @yield [NavigationRegistry::SectionContext] Optional block for adding items
+      #
+      # @example Add a section with items
+      #   config.insert_admin_menu_section "Members",
+      #     icon: "fa-solid fa-users",
+      #     after: "Website" do |section|
+      #       section.item "Onboarding", path: "members/onboarding"
+      #     end
+      #
+      # @see NavigationRegistry.section
       def insert_admin_menu_section(label, icon: nil, after: nil, before: nil, &block)
         Panda::Core::NavigationRegistry.section(label, icon: icon, after: after, before: before, &block)
       end
 
-      # Register an item to be added to an existing admin navigation section.
-      # @param label [String] Item label
-      # @param section [String] Target section label
-      # @param path [String, nil] Path (auto-prefixed with admin_path)
-      # @param url [String, nil] Full URL (used as-is)
-      # @param target [String, nil] HTML target attribute
+      # Register an item to be appended to an existing admin navigation section.
+      #
+      # If the target section doesn't exist at build time, the item is silently
+      # skipped. Use +path:+ for admin-relative paths or +url:+ for absolute URLs.
+      #
+      # @param label [String] Item label displayed in the sidebar
+      # @param section [String] Label of the target section to add to
+      # @param path [String, nil] Relative path (auto-prefixed with admin_path)
+      # @param url [String, nil] Absolute URL (used as-is, no prefixing)
+      # @param target [String, nil] HTML target attribute (e.g. "_blank")
+      #
+      # @example Add to an existing section
+      #   config.insert_admin_menu_item "Feature Flags",
+      #     section: "Settings",
+      #     path: "feature_flags"
+      #
+      # @see NavigationRegistry.item
       def insert_admin_menu_item(label, section:, path: nil, url: nil, target: nil)
         Panda::Core::NavigationRegistry.item(label, section: section, path: path, url: url, target: target)
       end
