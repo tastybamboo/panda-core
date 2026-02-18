@@ -3,7 +3,11 @@
     <a class="block p-0 mt-4 mb-4 ml-2 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
     <%
       # Get navigation items from the registry (includes base lambda + registered sections/items)
-      nav_items = Panda::Core::NavigationRegistry.build(@user)
+      nav_items = Panda::Core::NavigationRegistry.build(@user, helpers: helpers)
+
+      # Split into top and bottom sections
+      top_items = nav_items.select { |item| item[:position] != :bottom }
+      bottom_items = nav_items.select { |item| item[:position] == :bottom }
 
       # Helper to recursively collect all paths from nav items
       def collect_paths(items)
@@ -21,7 +25,7 @@
         .sort_by { |path| -path.length }
         .find { |path| current_path == path || current_path.starts_with?(path + "/") }
     %>
-    <% nav_items.each_with_index do |item, index| %>
+    <% top_items.each_with_index do |item, index| %>
       <%
         has_children = item[:children].present?
 
@@ -50,25 +54,32 @@
       end %>
     <% end %>
 
-    <%
-      # Check if we're in the my_profile section
-      is_my_profile_active = current_path.starts_with?("#{Panda::Core.config.admin_path}/my_profile")
-      is_edit_profile_active = current_path == helpers.panda_core.edit_admin_my_profile_path
-      is_logins_active = current_path.starts_with?(helpers.panda_core.admin_my_profile_logins_path)
-    %>
-    <%= render Panda::Core::Admin::Navigation::UserMenuComponent.new(user: helpers.current_user, active: is_my_profile_active) do |user_menu|
-      user_menu.with_sub_item(label: "My Profile", path: helpers.panda_core.edit_admin_my_profile_path, active: is_edit_profile_active)
-      user_menu.with_sub_item(label: "Login & Security", path: helpers.panda_core.admin_my_profile_logins_path, active: is_logins_active)
+    <% bottom_items.each do |section| %>
+      <%
+        is_section_active = (section[:children] || []).any? { |child|
+          child[:path] && current_path.starts_with?(child[:path])
+        }
+      %>
+      <%= render Panda::Core::Admin::Navigation::UserMenuComponent.new(user: helpers.current_user, active: is_section_active) do |user_menu|
+        (section[:children] || []).each do |item|
+          # Resolve path_helper at render time if not yet resolved
+          item_path = item[:path]
+          if item_path.nil? && item[:path_helper]
+              helper_name = item[:path_helper].to_sym
+            item_path = helpers.panda_core.public_send(helper_name) if helpers.panda_core.respond_to?(helper_name)
+          end
 
-      (Panda::Core.config.admin_user_menu_items || []).each do |menu_item|
-        menu_item_path = menu_item[:path]
-        next if menu_item_path.blank?
-        item_active = current_path.starts_with?(menu_item_path)
-        user_menu.with_sub_item(label: menu_item[:label], path: menu_item_path, active: item_active)
-      end
-
-      user_menu.with_sub_item(label: "Logout", path: helpers.panda_core.admin_logout_path, method: :delete, button_options: { id: "logout-link", data: { turbo: false } })
-    end %>
+          item_active = item_path && current_path.starts_with?(item_path)
+          user_menu.with_sub_item(
+            label: item[:label],
+            path: item_path,
+            active: item_active,
+            method: item[:method],
+            button_options: item[:button_options] || {}
+          )
+        end
+      end %>
+    <% end %>
 
     <li class="px-2 py-3">
       <span class="text-xs text-white">Panda Core v<%= Panda::Core::VERSION %></span>

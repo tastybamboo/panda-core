@@ -15,20 +15,36 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
   let(:user) { double("User") }
 
+  # Helper: filter to top-level navigation (excludes bottom sections like "My Account")
+  def top_items(result)
+    result.select { |i| i[:position] == :top }
+  end
+
   describe ".build" do
-    it "returns base lambda items when no sections or items are registered" do
+    it "returns base lambda items when no extra sections or items are registered" do
+      Panda::Core.config.admin_navigation_items = ->(user) {
+        [{label: "Dashboard", path: "/admin", icon: "fa-solid fa-house"}]
+      }
+
+      result = top_items(described_class.build(user))
+      expect(result.length).to eq(1)
+      expect(result.first).to include(label: "Dashboard", path: "/admin", icon: "fa-solid fa-house")
+    end
+
+    it "returns no top items when no lambda is configured" do
+      Panda::Core.config.admin_navigation_items = nil
+      result = top_items(described_class.build(user))
+      expect(result).to eq([])
+    end
+
+    it "sets position: :top on all base lambda items" do
       Panda::Core.config.admin_navigation_items = ->(user) {
         [{label: "Dashboard", path: "/admin", icon: "fa-solid fa-house"}]
       }
 
       result = described_class.build(user)
-      expect(result).to eq([{label: "Dashboard", path: "/admin", icon: "fa-solid fa-house"}])
-    end
-
-    it "returns an empty array when no lambda is configured" do
-      Panda::Core.config.admin_navigation_items = nil
-      result = described_class.build(user)
-      expect(result).to eq([])
+      dashboard = result.find { |i| i[:label] == "Dashboard" }
+      expect(dashboard[:position]).to eq(:top)
     end
   end
 
@@ -40,7 +56,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
       described_class.section("Tools", icon: "fa-solid fa-wrench")
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.length).to eq(2)
       expect(result.last[:label]).to eq("Tools")
       expect(result.last[:icon]).to eq("fa-solid fa-wrench")
@@ -56,7 +72,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
       described_class.section("Website", icon: "fa-solid fa-globe", after: "Dashboard")
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.map { |i| i[:label] }).to eq(["Dashboard", "Website", "Settings"])
     end
 
@@ -70,7 +86,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
       described_class.section("Website", icon: "fa-solid fa-globe", before: "Settings")
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.map { |i| i[:label] }).to eq(["Dashboard", "Website", "Settings"])
     end
 
@@ -81,7 +97,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
       described_class.section("Tools", icon: "fa-solid fa-wrench", after: "NonExistent")
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.last[:label]).to eq("Tools")
     end
 
@@ -92,7 +108,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
       described_class.section("Tools", icon: "fa-solid fa-wrench", before: "NonExistent")
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.last[:label]).to eq("Tools")
     end
 
@@ -105,7 +121,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
         s.item "Directory", path: "members/directory"
       end
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.length).to eq(1)
       expect(result.first[:children].length).to eq(2)
       expect(result.first[:children].first[:label]).to eq("Onboarding")
@@ -119,7 +135,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
       described_class.section("Settings", icon: "fa-solid fa-cog")
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.length).to eq(1)
       # Should keep original icon, not the registered one
       expect(result.first[:icon]).to eq("fa-solid fa-gear")
@@ -136,9 +152,10 @@ RSpec.describe Panda::Core::NavigationRegistry do
       described_class.item("Feature Flags", section: "Settings", path: "feature_flags")
 
       result = described_class.build(user)
-      expect(result.first[:children].length).to eq(1)
-      expect(result.first[:children].first[:label]).to eq("Feature Flags")
-      expect(result.first[:children].first[:path]).to eq("/admin/feature_flags")
+      settings = result.find { |i| i[:label] == "Settings" }
+      expect(settings[:children].length).to eq(1)
+      expect(settings[:children].first[:label]).to eq("Feature Flags")
+      expect(settings[:children].first[:path]).to eq("/admin/feature_flags")
     end
 
     it "creates children array if section has none" do
@@ -150,8 +167,9 @@ RSpec.describe Panda::Core::NavigationRegistry do
       described_class.item("Feature Flags", section: "Settings", path: "feature_flags")
 
       result = described_class.build(user)
-      expect(result.first[:children]).to be_an(Array)
-      expect(result.first[:children].first[:label]).to eq("Feature Flags")
+      settings = result.find { |i| i[:label] == "Settings" }
+      expect(settings[:children]).to be_an(Array)
+      expect(settings[:children].first[:label]).to eq("Feature Flags")
     end
 
     it "silently skips when the target section does not exist" do
@@ -161,7 +179,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
 
       described_class.item("Orphan", section: "NonExistent", path: "orphan")
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.length).to eq(1)
       expect(result.first[:label]).to eq("Dashboard")
     end
@@ -179,14 +197,16 @@ RSpec.describe Panda::Core::NavigationRegistry do
       described_class.item("Flags", section: "Settings", path: "feature_flags")
 
       result = described_class.build(user)
-      expect(result.first[:children].first[:path]).to eq("/admin/feature_flags")
+      settings = result.find { |i| i[:label] == "Settings" }
+      expect(settings[:children].first[:path]).to eq("/admin/feature_flags")
     end
 
     it "uses url: as-is without prefixing" do
       described_class.item("Docs", section: "Settings", url: "https://docs.example.com")
 
       result = described_class.build(user)
-      expect(result.first[:children].first[:path]).to eq("https://docs.example.com")
+      settings = result.find { |i| i[:label] == "Settings" }
+      expect(settings[:children].first[:path]).to eq("https://docs.example.com")
     end
 
     it "respects custom admin_path" do
@@ -194,7 +214,8 @@ RSpec.describe Panda::Core::NavigationRegistry do
       described_class.item("Flags", section: "Settings", path: "feature_flags")
 
       result = described_class.build(user)
-      expect(result.first[:children].first[:path]).to eq("/backend/feature_flags")
+      settings = result.find { |i| i[:label] == "Settings" }
+      expect(settings[:children].first[:path]).to eq("/backend/feature_flags")
     end
   end
 
@@ -209,14 +230,16 @@ RSpec.describe Panda::Core::NavigationRegistry do
       described_class.item("Docs", section: "Help", url: "https://docs.example.com", target: "_blank")
 
       result = described_class.build(user)
-      expect(result.first[:children].first[:target]).to eq("_blank")
+      help = result.find { |i| i[:label] == "Help" }
+      expect(help[:children].first[:target]).to eq("_blank")
     end
 
     it "omits target from item hash when nil" do
       described_class.item("FAQ", section: "Help", path: "faq")
 
       result = described_class.build(user)
-      expect(result.first[:children].first).not_to have_key(:target)
+      help = result.find { |i| i[:label] == "Help" }
+      expect(help[:children].first).not_to have_key(:target)
     end
 
     it "includes target in section block items" do
@@ -227,7 +250,8 @@ RSpec.describe Panda::Core::NavigationRegistry do
       end
 
       result = described_class.build(user)
-      expect(result.first[:children].first[:target]).to eq("_blank")
+      external = result.find { |i| i[:label] == "External" }
+      expect(external[:children].first[:target]).to eq("_blank")
     end
   end
 
@@ -242,7 +266,7 @@ RSpec.describe Panda::Core::NavigationRegistry do
         end
       end
 
-      result = described_class.build(user)
+      result = top_items(described_class.build(user))
       expect(result.first[:label]).to eq("Members")
       expect(result.first[:children].first[:path]).to eq("/admin/members/onboarding")
     end
@@ -258,19 +282,22 @@ RSpec.describe Panda::Core::NavigationRegistry do
       end
 
       result = described_class.build(user)
-      expect(result.first[:children].first[:label]).to eq("Feature Flags")
+      settings = result.find { |i| i[:label] == "Settings" }
+      expect(settings[:children].first[:label]).to eq("Feature Flags")
     end
   end
 
   describe ".reset!" do
-    it "clears all registered sections and items" do
+    it "clears all registered sections, items, and filters" do
       described_class.section("Tools", icon: "fa-solid fa-wrench")
       described_class.item("Flags", section: "Settings", path: "flags")
+      described_class.filter("Flags", visible: ->(user) { false })
 
       described_class.reset!
 
       expect(described_class.sections).to be_empty
       expect(described_class.items).to be_empty
+      expect(described_class.filters).to be_empty
     end
   end
 end

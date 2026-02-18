@@ -2,18 +2,14 @@
   <% container = Panda::Core::Admin::ContainerComponent.new %>
   <% container.with_heading_slot(text: "Dashboard", level: 1) %>
   <% container.with_body_slot do %>
-    <%# Hook for dashboard widgets %>
-    <% if Panda::Core.config.admin_dashboard_widgets %>
-      <% widgets = Panda::Core.config.admin_dashboard_widgets.call(current_user) %>
-      <% if widgets && widgets.any? %>
-        <div class="grid grid-cols-1 gap-5 mt-5 sm:grid-cols-3">
-          <% widgets.each do |widget| %>
-            <%= render widget %>
-          <% end %>
-        </div>
-      <% else %>
-        <%= render "panda/core/admin/dashboard/default_content" %>
-      <% end %>
+    <%# Dashboard widgets from WidgetRegistry (includes legacy lambda + registered widgets) %>
+    <% widgets = Panda::Core::WidgetRegistry.build(current_user) %>
+    <% if widgets.any? %>
+      <div class="grid grid-cols-1 gap-5 mt-5 sm:grid-cols-3">
+        <% widgets.each do |widget| %>
+          <%= render widget %>
+        <% end %>
+      </div>
     <% else %>
       <%= render "panda/core/admin/dashboard/default_content" %>
     <% end %>
