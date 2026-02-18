@@ -111,8 +111,11 @@ module Panda
         @avatar_optimization_quality = 85
         @avatar_image_processor = :vips # or :mini_magick
 
-        # Extensible user menu items (for engines to add items like "API Tokens")
+        # Legacy extensible user menu items (prefer NavigationRegistry with position: :bottom)
         @admin_user_menu_items = []
+
+        # Register default user menu as a bottom navigation section
+        register_default_user_menu
       end
 
       # Register a new admin navigation section via NavigationRegistry.
@@ -120,8 +123,10 @@ module Panda
       # @param icon [String] FontAwesome icon class
       # @param after [String, nil] Insert after the section with this label
       # @param before [String, nil] Insert before the section with this label
-      def insert_admin_menu_section(label, icon: nil, after: nil, before: nil, &block)
-        Panda::Core::NavigationRegistry.section(label, icon: icon, after: after, before: before, &block)
+      # @param visible [Proc, nil] Lambda receiving user, hides section when false
+      # @param position [Symbol] :top (default) or :bottom
+      def insert_admin_menu_section(label, icon: nil, after: nil, before: nil, visible: nil, position: :top, &block)
+        Panda::Core::NavigationRegistry.section(label, icon: icon, after: after, before: before, visible: visible, position: position, &block)
       end
 
       # Register an item to be added to an existing admin navigation section.
@@ -130,8 +135,64 @@ module Panda
       # @param path [String, nil] Path (auto-prefixed with admin_path)
       # @param url [String, nil] Full URL (used as-is)
       # @param target [String, nil] HTML target attribute
-      def insert_admin_menu_item(label, section:, path: nil, url: nil, target: nil)
-        Panda::Core::NavigationRegistry.item(label, section: section, path: path, url: url, target: target)
+      # @param visible [Proc, nil] Lambda receiving user, hides item when false
+      # @param before [Symbol, String, nil] :all or label — position within section
+      # @param after [Symbol, String, nil] :all or label — position within section
+      # @param method [Symbol, nil] HTTP method (e.g. :delete)
+      # @param button_options [Hash] Extra options for button_to
+      # @param path_helper [Symbol, nil] Route helper resolved at build time
+      # rubocop:disable Metrics/ParameterLists
+      def insert_admin_menu_item(label, section:, path: nil, url: nil, target: nil,
+        visible: nil, before: nil, after: nil, method: nil, button_options: {}, path_helper: nil)
+        Panda::Core::NavigationRegistry.item(
+          label, section: section, path: path, url: url, target: target,
+          visible: visible, before: before, after: after,
+          method: method, button_options: button_options, path_helper: path_helper
+        )
+      end
+      # rubocop:enable Metrics/ParameterLists
+
+      # Convenience: add an item to the user menu (bottom section).
+      # @param label [String] Item label
+      # @param path [String, nil] Path (auto-prefixed with admin_path)
+      # @param url [String, nil] Full URL (used as-is)
+      # @param visible [Proc, nil] Lambda receiving user, hides item when false
+      # @param position [Symbol] :before_logout (default) or :top
+      def insert_admin_user_menu_item(label, path: nil, url: nil, visible: nil, position: :before_logout)
+        before_opt = (position == :before_logout) ? "Logout" : nil
+        before_opt = :all if position == :top
+        Panda::Core::NavigationRegistry.item(
+          label, section: "My Account", path: path, url: url,
+          visible: visible, before: before_opt
+        )
+      end
+
+      # Register a post-build filter that conditionally hides items by label.
+      # @param label [String] Label to match
+      # @param visible [Proc] Lambda receiving user — item hidden when false
+      def filter_admin_menu(label, visible:)
+        Panda::Core::NavigationRegistry.filter(label, visible: visible)
+      end
+
+      # Register a dashboard widget via WidgetRegistry.
+      # @param label [String] Widget label
+      # @param component [Proc] Lambda receiving user, returns a component instance
+      # @param visible [Proc, nil] Lambda receiving user, hides widget when false
+      # @param position [Integer] Sort order (lower first)
+      def register_admin_dashboard_widget(label, component:, visible: nil, position: 0)
+        Panda::Core::WidgetRegistry.register(label, component: component, visible: visible, position: position)
+      end
+
+      private
+
+      # Register the default user menu items as a bottom navigation section.
+      def register_default_user_menu
+        Panda::Core::NavigationRegistry.section("My Account", position: :bottom) do |s|
+          s.item "My Profile", path: "my_profile/edit"
+          s.item "Login & Security", path: "my_profile/logins"
+          s.item "Logout", path_helper: :admin_logout_path, method: :delete,
+            button_options: {id: "logout-link", data: {turbo: false}}
+        end
       end
     end
 
