@@ -7,33 +7,24 @@
     ) %>
   <% end %>
 
-  <!-- Search & Filters -->
-  <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <%= form_with url: admin_users_path, method: :get, local: true, class: "flex flex-col gap-3 sm:flex-row sm:items-center w-full" do %>
-      <div class="relative flex-1 max-w-md">
-        <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"></i>
-        <%= text_field_tag :search, params[:search],
-          placeholder: "Search by name or email...",
-          class: "block w-full rounded-md bg-white px-3 py-1.5 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-primary-500" %>
-      </div>
-
-      <div class="flex gap-2">
-        <%= select_tag :status,
-          options_for_select([["All Statuses", ""], ["Enabled", "enabled"], ["Disabled", "disabled"], ["Invited", "invited"]], params[:status]),
-          class: "w-auto rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-600 sm:text-sm dark:bg-gray-700 dark:text-white dark:ring-gray-600" %>
-
-        <%= select_tag :role,
-          options_for_select([["All Roles", ""], ["Admin", "admin"], ["User", "user"]], params[:role]),
-          class: "w-auto rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-600 sm:text-sm dark:bg-gray-700 dark:text-white dark:ring-gray-600" %>
-
-        <%= submit_tag "Filter", class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:hover:bg-gray-600 cursor-pointer" %>
-
-        <% if params[:search].present? || params[:status].present? || params[:role].present? %>
-          <%= link_to "Clear", admin_users_path, class: "rounded-md px-3 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" %>
-        <% end %>
-      </div>
+  <%= render Panda::Core::Admin::SearchFilterBarComponent.new(
+    url: admin_users_path,
+    search_name: :search,
+    search_value: params[:search],
+    search_placeholder: "Search by name or email...",
+    show_clear: params[:search].present? || params[:status].present? || params[:role].present?
+  ) do |bar| %>
+    <% bar.with_filter do %>
+      <%= select_tag :status,
+        options_for_select([["All Statuses", ""], ["Enabled", "enabled"], ["Disabled", "disabled"], ["Invited", "invited"]], params[:status]),
+        class: bar.select_classes %>
     <% end %>
-  </div>
+    <% bar.with_filter do %>
+      <%= select_tag :role,
+        options_for_select([["All Roles", ""], ["Admin", "admin"], ["User", "user"]], params[:role]),
+        class: bar.select_classes %>
+    <% end %>
+  <% end %>
 
   <!-- Bulk Actions Bar -->
   <div id="bulk-actions-bar" class="hidden mb-4 rounded-lg bg-primary-50 dark:bg-primary-900/20 p-3 flex items-center justify-between">
