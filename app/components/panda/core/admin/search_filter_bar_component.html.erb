@@ -1,7 +1,9 @@
 <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
   <%= form_with url: url, method: :get, local: true, class: "flex flex-col gap-3 sm:flex-row sm:items-center w-full" do %>
     <div class="relative flex-1 max-w-md">
-      <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"></i>
+      <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
+      </div>
       <%= text_field_tag search_name, search_value,
         placeholder: search_placeholder,
         class: "block w-full rounded-md bg-white px-3 py-1.5 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-primary-500" %>
