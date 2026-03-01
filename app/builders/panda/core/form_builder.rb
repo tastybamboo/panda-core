@@ -63,6 +63,31 @@ module Panda
         end
       end
 
+      def datetime_split_field(method, options = {})
+        custom_label = options.delete(:label)
+        value = object.respond_to?(method) ? object.send(method) : nil
+
+        content_tag :div, class: container_styles, data: {controller: "datetime"} do
+          label(method, custom_label) +
+            meta_text(options) +
+            hidden_field(method, data: {datetime_target: "combinedField"}, value: value&.iso8601) +
+            content_tag(:div, class: "flex gap-3") do
+              @template.tag.input(
+                type: "date",
+                class: input_styles,
+                data: {datetime_target: "dateField", action: "change->datetime#update"}
+              ) +
+              @template.tag.input(
+                type: "time",
+                step: "60",
+                class: input_styles,
+                data: {datetime_target: "timeField", action: "change->datetime#update"}
+              )
+            end +
+            error_message(method)
+        end
+      end
+
       def text_area(method, options = {})
         # Extract custom label if provided
         custom_label = options.delete(:label)
