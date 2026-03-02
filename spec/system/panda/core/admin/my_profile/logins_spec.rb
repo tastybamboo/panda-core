@@ -13,6 +13,9 @@ RSpec.describe "Admin My Profile Logins", type: :system do
     it "shows Login & Security link in user menu", js: true do
       visit "/admin"
 
+      # Wait for sidebar to fully render before interacting with the user menu button
+      expect(page).to have_content(admin_user.name)
+
       # Open user menu
       find("button", text: admin_user.name).click
 
@@ -24,6 +27,9 @@ RSpec.describe "Admin My Profile Logins", type: :system do
     it "navigates to Login & Security page when clicked", js: true do
       visit "/admin"
 
+      # Wait for sidebar to fully render before interacting with the user menu button
+      expect(page).to have_content(admin_user.name)
+
       # Open user menu and click Login & Security
       find("button", text: admin_user.name).click
       click_on "Login & Security"
@@ -34,6 +40,9 @@ RSpec.describe "Admin My Profile Logins", type: :system do
 
     it "highlights Login & Security as active when on that page", js: true do
       visit "/admin/my_profile/logins"
+
+      # Wait for sidebar to fully render
+      expect(page).to have_content(admin_user.name)
 
       # The user menu is already open when one of its items is active,
       # so we don't need to click the button to open it
