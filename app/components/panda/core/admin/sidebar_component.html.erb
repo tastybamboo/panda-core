@@ -1,6 +1,6 @@
 <nav <%= tag.attributes(**attrs) %>>
   <ul role="list" class="flex flex-col flex-1">
-    <a class="block p-0 mt-4 mb-4 ml-2 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
+    <a class="hidden lg:block p-0 mt-4 mb-4 ml-2 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
     <%
       # Get navigation items from the registry (includes base lambda + registered sections/items)
       nav_items = Panda::Core::NavigationRegistry.build(@user, helpers: helpers)

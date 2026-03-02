@@ -10,6 +10,9 @@ application.register("image-cropper", ImageCropperController)
 import NavigationToggleController from "./navigation_toggle_controller.js"
 application.register("navigation-toggle", NavigationToggleController)
 
+import MobileSidebarController from "./mobile_sidebar_controller.js"
+application.register("mobile-sidebar", MobileSidebarController)
+
 import RowLinkController from "./row_link_controller.js"
 application.register("row-link", RowLinkController)
 
