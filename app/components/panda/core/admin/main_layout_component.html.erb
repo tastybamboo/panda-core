@@ -1,9 +1,19 @@
 <%= render Panda::Core::Shared::HeaderComponent.new(html_class: "h-full", body_class: "") %>
 
 <div class="flex h-full" id="panda-container">
-  <div class="absolute top-0 w-full lg:flex lg:fixed lg:inset-y-0 lg:z-50 lg:flex-col lg:w-72">
-    <div class="flex overflow-y-auto flex-col gap-y-5 px-4 pb-4 max-h-16 bg-gradient-admin lg:max-h-full grow" data-transition-enter="transition-all ease-in-out duration-300" data-transition-enter-from="m-h-16" data-transition-enter-to="max-h-full" data-transition-leave="transition-all ease-in-out duration-300" data-transition-leave-from="max-h-full" data-transition-leave-to="max-h-16">
-      <%= render Panda::Core::Admin::SidebarComponent.new(user: @user) %>
+  <div data-controller="mobile-sidebar" data-action="keydown.esc@window->mobile-sidebar#close">
+    <div data-mobile-sidebar-target="backdrop" class="hidden fixed inset-0 bg-gray-900/50 z-40 lg:hidden" data-action="click->mobile-sidebar#close"></div>
+    <div class="absolute top-0 w-full lg:flex lg:fixed lg:inset-y-0 z-50 lg:flex-col lg:w-72">
+      <div data-mobile-sidebar-target="sidebar" class="flex overflow-y-auto flex-col gap-y-5 px-4 pb-4 max-h-16 bg-gradient-admin lg:max-h-full grow transition-all ease-in-out duration-300">
+        <div class="flex items-center justify-between pt-4 -mb-5 lg:hidden">
+          <button data-mobile-sidebar-target="hamburger" data-action="click->mobile-sidebar#toggle" type="button" class="text-white/80 hover:text-white p-1" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars text-xl"></i>
+          </button>
+          <span class="text-white font-medium text-lg"><%= Panda::Core.config.admin_title || "Panda Admin" %></span>
+          <span class="w-7"></span>
+        </div>
+        <%= render Panda::Core::Admin::SidebarComponent.new(user: @user) %>
+      </div>
     </div>
   </div>
   <div class="flex flex-col flex-1 mt-16 ml-0 lg:mt-0 lg:ml-72" id="panda-inner-container" <% if content_for :sidebar %> data-controller="toggle" data-action="keydown.esc@window->toggle#hide keydown.escape@window->toggle#hide" tabindex="-1"<% end %>>
