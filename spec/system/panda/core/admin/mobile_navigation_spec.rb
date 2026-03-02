@@ -10,6 +10,10 @@ RSpec.describe "Mobile admin navigation", type: :system do
     expect(page).to have_current_path(%r{/admin})
   end
 
+  after do
+    page.current_window.resize_to(1440, 1000)
+  end
+
   context "at desktop width (1280x720)" do
     before do
       page.current_window.resize_to(1280, 720)
