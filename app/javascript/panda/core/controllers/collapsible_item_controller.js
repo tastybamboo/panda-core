@@ -9,8 +9,8 @@ export default class extends Controller {
   }
 
   toggle(event) {
-    // Don't toggle if clicking a button, link, input, or select inside the header
-    if (event.target.closest("button, a, input, select, textarea")) return
+    // Don't toggle if clicking a button, link, input, select, or drag handle inside the header
+    if (event.target.closest("button, a, input, select, textarea, [data-sortable-handle]")) return
 
     this.expandedValue = !this.expandedValue
     this.render()
