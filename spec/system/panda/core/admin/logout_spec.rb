@@ -11,6 +11,8 @@ RSpec.describe "Admin logout", type: :system do
 
   # Opens the user menu dropdown in the sidebar and clicks the Logout button
   def perform_logout
+    # Wait for sidebar to fully render before interacting with the user menu button
+    expect(page).to have_content(admin_user.name)
     find("button", text: admin_user.name).click
     within("#user-menu") do
       click_on "Logout"
