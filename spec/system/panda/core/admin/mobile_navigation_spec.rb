@@ -3,6 +3,11 @@
 require "system_helper"
 
 RSpec.describe "Mobile admin navigation", type: :system do
+  # Viewport dimensions used across tests — centralised so changes propagate
+  DESKTOP = [1280, 720].freeze
+  TABLET  = [768, 1024].freeze
+  MOBILE  = [375, 667].freeze
+
   let(:admin_user) { create_admin_user }
 
   before do
@@ -11,12 +16,14 @@ RSpec.describe "Mobile admin navigation", type: :system do
   end
 
   after do
-    page.current_window.resize_to(1440, 1000)
+    # Cuprite shares the browser process, so resize persists across tests.
+    # Restore to desktop size to avoid polluting subsequent specs.
+    page.current_window.resize_to(*DESKTOP)
   end
 
-  context "at desktop width (1280x720)" do
+  context "at desktop width (#{DESKTOP.join("x")})" do
     before do
-      page.current_window.resize_to(1280, 720)
+      page.current_window.resize_to(*DESKTOP)
     end
 
     it "shows full sidebar navigation" do
@@ -31,9 +38,9 @@ RSpec.describe "Mobile admin navigation", type: :system do
     end
   end
 
-  context "at tablet width (768x1024)" do
+  context "at tablet width (#{TABLET.join("x")})" do
     before do
-      page.current_window.resize_to(768, 1024)
+      page.current_window.resize_to(*TABLET)
     end
 
     it "shows the hamburger button" do
@@ -107,9 +114,9 @@ RSpec.describe "Mobile admin navigation", type: :system do
     end
   end
 
-  context "at mobile width (375x667)" do
+  context "at mobile width (#{MOBILE.join("x")})" do
     before do
-      page.current_window.resize_to(375, 667)
+      page.current_window.resize_to(*MOBILE)
     end
 
     it "shows the hamburger button" do
@@ -138,7 +145,7 @@ RSpec.describe "Mobile admin navigation", type: :system do
 
   context "responsive transition" do
     it "auto-closes sidebar when resized above 1024px" do
-      page.current_window.resize_to(768, 1024)
+      page.current_window.resize_to(*TABLET)
       visit "/admin"
 
       # Open the sidebar at tablet width
@@ -147,7 +154,7 @@ RSpec.describe "Mobile admin navigation", type: :system do
       expect(find("[data-mobile-sidebar-target='sidebar']")[:class]).to include("max-h-screen")
 
       # Resize to desktop width — controller should auto-close
-      page.current_window.resize_to(1280, 720)
+      page.current_window.resize_to(*DESKTOP)
 
       # Wait for the matchMedia listener to fire
       sidebar = find("[data-mobile-sidebar-target='sidebar']")
