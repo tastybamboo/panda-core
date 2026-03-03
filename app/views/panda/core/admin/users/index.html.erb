@@ -12,7 +12,7 @@
     search_name: :search,
     search_value: params[:search],
     search_placeholder: "Search by name or email...",
-    show_clear: params[:search].present? || params[:status].present? || params[:role].present?
+    show_clear: params[:search].present? || params[:status].present? || params[:role].present? || Panda::Core::User.metadata_filter_active?(params)
   ) do |bar| %>
     <% bar.with_filter do %>
       <%= select_tag :status,
@@ -23,6 +23,13 @@
       <%= select_tag :role,
         options_for_select([["All Roles", ""], ["Admin", "admin"], ["User", "user"]], params[:role]),
         class: bar.select_classes %>
+    <% end %>
+    <% Panda::Core::User.filterable_metadata_fields.each do |key, config| %>
+      <% bar.with_filter do %>
+        <%= select_tag key,
+          options_for_select(config[:filter_options], params[key.to_sym]),
+          class: bar.select_classes %>
+      <% end %>
     <% end %>
   <% end %>
 
@@ -70,6 +77,9 @@
             <%= render Panda::Core::Admin::TagComponent.new(text: "Admin", status: :active) %>
           <% else %>
             <%= render Panda::Core::Admin::TagComponent.new(text: "User", status: :inactive) %>
+          <% end %>
+          <% if user.internal? %>
+            <%= render Panda::Core::Admin::TagComponent.new(text: "Internal", status: :auto) %>
           <% end %>
         <% end %>
 

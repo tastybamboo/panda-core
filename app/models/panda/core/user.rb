@@ -4,6 +4,11 @@ module Panda
   module Core
     class User < ApplicationRecord
       include HasUUID
+      include HasMetadata
+
+      metadata_field :internal, type: :boolean, filterable: true,
+        label: "Visibility", default_scope: :external,
+        filter_options: [["All Users", ""], ["Staff Users", "internal"], ["External Users", "external"]]
 
       self.table_name = "panda_core_users"
 

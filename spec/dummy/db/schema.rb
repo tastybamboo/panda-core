@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_17_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_03_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -154,6 +154,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_000001) do
     t.datetime "last_login_at"
     t.string "last_login_ip"
     t.integer "login_count", default: 0, null: false
+    t.jsonb "metadata", default: {}, null: false
     t.string "name"
     t.string "oauth_avatar_url"
     t.datetime "updated_at", null: false
@@ -161,6 +162,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_000001) do
     t.index ["enabled"], name: "index_panda_core_users_on_enabled"
     t.index ["invitation_token"], name: "index_panda_core_users_on_invitation_token", unique: true
     t.index ["invited_by_id"], name: "index_panda_core_users_on_invited_by_id"
+    t.index ["metadata"], name: "index_panda_core_users_on_metadata", using: :gin
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

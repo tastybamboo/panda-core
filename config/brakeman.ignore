@@ -1,29 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Command Injection",
-      "warning_code": 14,
-      "fingerprint": "29d5b60b583fc98e293f6ac47f153bbf5db48a03963f8c9a7711bd251ecf2d81",
-      "check_name": "Execute",
-      "message": "Possible command injection",
-      "file": "lib/panda/core/testing/support/system/cuprite_helpers.rb",
-      "line": 78,
-      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
-      "code": "system(\"ffmpeg -y -framerate 8 -pattern_type glob -i '#{File.join(dir, \"frames\")}/*.png' -c:v libx264 -pix_fmt yuv420p '#{capybara_artifacts_dir.join(\"#{example.metadata[:full_description].parameterize}.mp4\")}'\\n\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Panda::Core::Testing::CupriteHelpers",
-        "method": "record_video!"
-      },
-      "user_input": "File.join(dir, \"frames\")",
-      "confidence": "Medium",
-      "cwe_id": [
-        77
-      ],
-      "note": "This does not use user input and is based on environment variables and the current folder"
-    },
-    {
       "warning_type": "Cross-Site Request Forgery",
       "warning_code": 86,
       "fingerprint": "fdf51189b80e32937b18aea1d088b9de2397d9a958f4a961030b37ebeae4e53d",
@@ -48,13 +25,13 @@
     {
       "warning_type": "Mass Assignment",
       "warning_code": 105,
-      "fingerprint": "3922b601ed6a13edb741983d20520c7835ce372f237d7d9387afdbf88ea86092",
+      "fingerprint": "7b32da2eebb702da28834b0ac77f1a3801b9abb4b09527ce7726070b5d91ee7a",
       "check_name": "PermitAttributes",
       "message": "Potentially dangerous key allowed for mass assignment",
       "file": "app/controllers/panda/core/admin/users_controller.rb",
-      "line": 60,
+      "line": 169,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "params.require(:user).permit(:name, :email, :admin)",
+      "code": "params.require(:user).permit(:name, :email, :admin, :internal)",
       "render_path": null,
       "location": {
         "type": "method",
@@ -66,7 +43,7 @@
       "cwe_id": [
         915
       ],
-      "note": "Admin-only controller behind authenticate_admin_user! - only admins can modify user roles"
+      "note": "Admin-only controller behind authenticate_admin_user! - only admins can modify user roles and metadata"
     }
   ],
   "brakeman_version": "7.1.2"

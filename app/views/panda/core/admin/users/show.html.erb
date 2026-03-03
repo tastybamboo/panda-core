@@ -24,6 +24,9 @@
             <% else %>
               <%= render Panda::Core::Admin::TagComponent.new(text: "Standard User", status: :inactive) %>
             <% end %>
+            <% if @user.internal? %>
+              <%= render Panda::Core::Admin::TagComponent.new(text: "Internal", status: :auto) %>
+            <% end %>
             <% if !@user.enabled? %>
               <%= render Panda::Core::Admin::TagComponent.new(text: "Disabled", status: :inactive) %>
             <% elsif @user.invitation_token.present? %>

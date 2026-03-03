@@ -22,6 +22,8 @@ module Panda
           when "user" then @users = @users.where(User.admin_column => false)
           end
 
+          @users = User.apply_metadata_filters(@users, params)
+
           case params[:sort]
           when "name" then @users = @users.order(name: sort_direction)
           when "email" then @users = @users.order(email: sort_direction)
@@ -164,7 +166,7 @@ module Panda
         end
 
         def user_params
-          params.require(:user).permit(:name, :email, :admin)
+          params.require(:user).permit(:name, :email, :admin, :internal)
         end
 
         def sort_direction
