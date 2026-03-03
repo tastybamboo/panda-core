@@ -33,6 +33,10 @@
           meta: @user == current_user ? "You cannot change your own admin status." : "Grant this user full administrative access.",
           disabled: (@user == current_user)
         } %>
+        <%= f.check_box :internal, {
+          label: "Internal Account",
+          meta: "Exclude from reports and analytics."
+        } %>
       </div>
     <% end %>
 
