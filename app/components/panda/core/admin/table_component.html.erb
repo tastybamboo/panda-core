@@ -1,6 +1,29 @@
 <% if rows.any? %>
-  <%# Table with rows %>
-  <div class="mb-12 w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white" data-controller="row-link" data-action="click->row-link#click">
+  <% if responsive? %>
+    <%# Mobile card view - hidden on lg screens %>
+    <div class="mb-12 space-y-3 lg:hidden">
+      <% rows.each do |row| %>
+        <div class="rounded-2xl border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-colors" data-controller="row-link" data-action="click->row-link#click">
+          <% columns.each_with_index do |column, i| %>
+            <% cell_content = render_cell_content(row, column.cell) %>
+            <% if i == 0 %>
+              <div class="font-medium text-gray-900 text-sm mb-2"><%= cell_content %></div>
+            <% else %>
+              <% if cell_content.present? && cell_content.to_s.strip.present? %>
+                <div class="flex justify-between items-baseline py-1">
+                  <span class="text-xs text-gray-400"><%= column.label %></span>
+                  <span class="text-sm text-gray-600"><%= cell_content %></span>
+                </div>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Desktop table view %>
+  <div class="mb-12 w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white <%= 'hidden lg:block' if responsive? %>" data-controller="row-link" data-action="click->row-link#click">
     <%# Header %>
     <div class="table w-full" style="table-layout: fixed;">
       <div class="table-header-group">

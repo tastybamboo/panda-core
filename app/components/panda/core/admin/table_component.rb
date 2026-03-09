@@ -6,13 +6,18 @@ module Panda
       class TableComponent < Panda::Core::Base
         attr_reader :term, :rows, :icon
 
-        def initialize(term: "", rows: [], icon: "", **attrs, &block)
+        def initialize(term: "", rows: [], icon: "", responsive: true, **attrs, &block)
           @term = term
           @rows = rows
           @icon = icon
+          @responsive = responsive
           @columns = []
           @setup_block = block
           super(**attrs)
+        end
+
+        def responsive?
+          @responsive
         end
 
         def column(label, width: nil, &cell_block)
