@@ -130,6 +130,7 @@ module Panda
       # @param after [String, nil] Insert after the section with this label
       # @param before [String, nil] Insert before the section with this label
       # @param visible [Proc, nil] Lambda receiving user, hides section when false
+      # @param permission [Symbol, nil] Permission key — hides section unless user is authorized
       # @param position [Symbol] :top (default) or :bottom
       # @yield [NavigationRegistry::SectionContext] Optional block for adding items
       #
@@ -141,8 +142,8 @@ module Panda
       #     end
       #
       # @see NavigationRegistry.section
-      def insert_admin_menu_section(label, icon: nil, after: nil, before: nil, visible: nil, position: :top, &block)
-        Panda::Core::NavigationRegistry.section(label, icon: icon, after: after, before: before, visible: visible, position: position, &block)
+      def insert_admin_menu_section(label, icon: nil, after: nil, before: nil, visible: nil, permission: nil, position: :top, &block)
+        Panda::Core::NavigationRegistry.section(label, icon: icon, after: after, before: before, visible: visible, permission: permission, position: position, &block)
       end
 
       # Register an item to be appended to an existing admin navigation section.
@@ -171,15 +172,15 @@ module Panda
       #   config.insert_admin_menu_item "Suggestions",
       #     section: "Tools",
       #     path: "cms/content_suggestions",
-      #     visible: -> (user) { user.admin? }
+      #     permission: :review_content
       #
       # @see NavigationRegistry.item
       # rubocop:disable Metrics/ParameterLists
       def insert_admin_menu_item(label, section:, path: nil, url: nil, target: nil,
-        visible: nil, before: nil, after: nil, method: nil, button_options: {}, path_helper: nil)
+        visible: nil, permission: nil, before: nil, after: nil, method: nil, button_options: {}, path_helper: nil)
         Panda::Core::NavigationRegistry.item(
           label, section: section, path: path, url: url, target: target,
-          visible: visible, before: before, after: after,
+          visible: visible, permission: permission, before: before, after: after,
           method: method, button_options: button_options, path_helper: path_helper
         )
       end
