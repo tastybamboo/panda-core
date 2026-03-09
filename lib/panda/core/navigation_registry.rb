@@ -311,11 +311,14 @@ module Panda
           base
         end
 
-        # Clear all registrations (for test isolation).
+        # Clear all registrations and re-register defaults (for test isolation).
+        # This ensures the default "My Account" bottom section is always present
+        # after a reset, preventing order-dependent test failures.
         def reset!
           @sections = []
           @items = []
           @filters = []
+          Panda::Core.config.send(:register_default_user_menu)
         end
 
         private
