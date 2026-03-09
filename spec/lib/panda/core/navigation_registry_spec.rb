@@ -288,14 +288,15 @@ RSpec.describe Panda::Core::NavigationRegistry do
   end
 
   describe ".reset!" do
-    it "clears all registered sections, items, and filters" do
+    it "clears custom registrations and re-registers defaults" do
       described_class.section("Tools", icon: "fa-solid fa-wrench")
       described_class.item("Flags", section: "Settings", path: "flags")
       described_class.filter("Flags", visible: ->(user) { false })
 
       described_class.reset!
 
-      expect(described_class.sections).to be_empty
+      # Custom sections are cleared, only the default "My Account" bottom section remains
+      expect(described_class.sections.map { |s| s[:label] }).to eq(["My Account"])
       expect(described_class.items).to be_empty
       expect(described_class.filters).to be_empty
     end
