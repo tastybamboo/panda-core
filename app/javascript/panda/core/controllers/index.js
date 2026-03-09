@@ -28,6 +28,9 @@ application.register("clipboard", ClipboardController)
 import AvatarUploadController from "./avatar_upload_controller.js"
 application.register("avatar-upload", AvatarUploadController)
 
+import GlobalSearchController from "./global_search_controller.js"
+application.register("global-search", GlobalSearchController)
+
 // Import and register TailwindCSS Stimulus Components
 // These are needed for UI components like slideover, modals, alerts, etc.
 import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components.js"

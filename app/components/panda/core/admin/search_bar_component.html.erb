@@ -1,0 +1,19 @@
+<div class="relative px-2 mb-2" data-controller="global-search" data-global-search-url-value="<%= search_url %>">
+  <div class="relative">
+    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-xs pointer-events-none"></i>
+    <input
+      type="text"
+      placeholder="Search..."
+      autocomplete="off"
+      data-global-search-target="input"
+      data-action="input->global-search#onInput keydown->global-search#onInputKeydown focus->global-search#onFocus"
+      class="w-full rounded-lg border border-white/10 bg-white/5 pl-9 pr-12 py-2 text-sm text-white placeholder-white/40 focus:bg-white/10 focus:border-white/20 focus:outline-none focus:ring-0 transition-colors"
+    />
+    <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-white/30 border border-white/15 rounded px-1.5 py-0.5 pointer-events-none"><%= shortcut_hint %></kbd>
+  </div>
+
+  <div
+    data-global-search-target="results"
+    class="hidden absolute left-2 right-2 top-full mt-1 max-h-80 overflow-y-auto rounded-xl border border-white/10 bg-gray-900/95 backdrop-blur-sm shadow-xl z-50"
+  ></div>
+</div>
