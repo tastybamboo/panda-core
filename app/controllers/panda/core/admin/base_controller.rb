@@ -7,7 +7,6 @@ module Panda
       # Provides authentication, helpers, and hooks for extending functionality
       class BaseController < ::ActionController::Base
         include Panda::Core::Authorizable
-        include Panda::Core::AdminAuthorization
 
         layout "panda/core/admin"
 
@@ -26,6 +25,10 @@ module Panda
 
         before_action :set_current_request_details
         before_action :authenticate_admin_user!
+
+        # Must be included AFTER the authentication before_actions above,
+        # because enforce_registry_permissions! needs current_user to be set.
+        include Panda::Core::AdminAuthorization
 
         helper_method :breadcrumbs
         helper_method :current_user
