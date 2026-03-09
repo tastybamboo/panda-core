@@ -44,6 +44,18 @@ module Panda
             OmniAuth.configure do |c|
               c.allowed_request_methods = [:post]
               c.path_prefix = "#{Panda::Core.config.admin_path}/auth"
+
+              # OmniAuth's built-in AuthenticityTokenProtection uses
+              # Rack::Protection's :csrf session key, but Rails stores its
+              # CSRF token under :_csrf_token. This session key mismatch
+              # causes "Forbidden" errors when submitting the admin login form.
+              #
+              # Disabling OmniAuth's request_validation_phase is safe because:
+              # - Production OAuth providers (Google, GitHub, Microsoft) are
+              #   protected by the OAuth state parameter in the callback phase
+              # - The developer provider only runs in development/test
+              # - The login form still requires POST (allowed_request_methods)
+              c.request_validation_phase = nil
             end
           end
         end
