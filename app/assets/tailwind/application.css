@@ -240,9 +240,9 @@
     --color-gray-950: rgb(3, 7, 18);
   }
 
-  /* Admin gradient backgrounds - neutral gray for chrome */
+  /* Admin gradient backgrounds - customizable via CSS custom properties */
   .bg-gradient-admin {
-    background: linear-gradient(to bottom right, rgb(17, 24, 39), rgb(55, 65, 81));
+    background: linear-gradient(to bottom right, var(--gradient-admin-from, rgb(17, 24, 39)), var(--gradient-admin-to, rgb(55, 65, 81)));
     border-bottom-left-radius: 0;
   }
 

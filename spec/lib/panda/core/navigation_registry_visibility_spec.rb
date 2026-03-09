@@ -422,6 +422,142 @@ RSpec.describe Panda::Core::NavigationRegistry, "visibility and filtering" do
     end
   end
 
+  describe "permission:" do
+    before do
+      Panda::Core.config.admin_navigation_items = ->(user) { [] }
+    end
+
+    describe "on sections" do
+      it "shows section when user has permission" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) {
+          action == :manage_settings
+        }
+
+        described_class.section("Settings", icon: "fa-solid fa-gear", permission: :manage_settings)
+
+        result = described_class.build(regular_user)
+        expect(result.map { |i| i[:label] }).to include("Settings")
+      end
+
+      it "hides section when user lacks permission" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) { false }
+
+        described_class.section("Settings", icon: "fa-solid fa-gear", permission: :manage_settings)
+
+        result = described_class.build(regular_user)
+        expect(result.map { |i| i[:label] }).not_to include("Settings")
+      end
+
+      it "always shows section for admin users" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) { false }
+
+        described_class.section("Settings", icon: "fa-solid fa-gear", permission: :manage_settings)
+
+        result = described_class.build(admin_user)
+        expect(result.map { |i| i[:label] }).to include("Settings")
+      end
+    end
+
+    describe "on registered items" do
+      it "shows item when user has permission" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) {
+          action == :manage_roles
+        }
+
+        described_class.section("Settings", icon: "fa-solid fa-gear")
+        described_class.item("Roles", section: "Settings", path: "roles", permission: :manage_roles)
+
+        result = described_class.build(regular_user)
+        settings = result.find { |i| i[:label] == "Settings" }
+        expect(settings[:children].map { |c| c[:label] }).to include("Roles")
+      end
+
+      it "hides item when user lacks permission" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) { false }
+
+        described_class.section("Settings", icon: "fa-solid fa-gear")
+        described_class.item("Roles", section: "Settings", path: "roles", permission: :manage_roles)
+
+        result = described_class.build(regular_user)
+        settings = result.find { |i| i[:label] == "Settings" }
+        expect(settings[:children].map { |c| c[:label] }).not_to include("Roles")
+      end
+    end
+
+    describe "on inline section items" do
+      it "shows inline item when user has permission" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) {
+          action == :edit_content
+        }
+
+        described_class.section("Content", icon: "fa-solid fa-file") do |s|
+          s.item "Pages", path: "pages", permission: :edit_content
+        end
+
+        result = described_class.build(regular_user)
+        content = result.find { |i| i[:label] == "Content" }
+        expect(content[:children].map { |c| c[:label] }).to include("Pages")
+      end
+
+      it "hides inline item when user lacks permission" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) { false }
+
+        described_class.section("Content", icon: "fa-solid fa-file") do |s|
+          s.item "Pages", path: "pages", permission: :edit_content
+        end
+
+        result = described_class.build(regular_user)
+        content = result.find { |i| i[:label] == "Content" }
+        expect(content[:children].map { |c| c[:label] }).not_to include("Pages")
+      end
+    end
+
+    describe "on base lambda items" do
+      it "filters base lambda items with permission: key" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) { false }
+        Panda::Core.config.admin_navigation_items = ->(user) {
+          [
+            {label: "Dashboard", path: "/admin", icon: "fa-solid fa-house"},
+            {label: "Settings", icon: "fa-solid fa-gear", permission: :manage_settings,
+             children: [{label: "General", path: "/admin/settings"}]}
+          ]
+        }
+
+        result = described_class.build(regular_user)
+        expect(result.map { |i| i[:label] }).to include("Dashboard")
+        expect(result.map { |i| i[:label] }).not_to include("Settings")
+      end
+
+      it "filters base lambda children with permission: key" do
+        Panda::Core.config.authorization_policy = ->(user, action, _resource) {
+          action == :manage_settings
+        }
+        Panda::Core.config.admin_navigation_items = ->(user) {
+          [{label: "Settings", icon: "fa-solid fa-gear", children: [
+            {label: "General", path: "/admin/settings"},
+            {label: "Roles", path: "/admin/roles", permission: :manage_roles}
+          ]}]
+        }
+
+        result = described_class.build(regular_user)
+        settings = result.find { |i| i[:label] == "Settings" }
+        labels = settings[:children].map { |c| c[:label] }
+        expect(labels).to include("General")
+        expect(labels).not_to include("Roles")
+      end
+    end
+
+    it "visible: takes precedence over permission:" do
+      Panda::Core.config.authorization_policy = ->(user, action, _resource) { true }
+
+      described_class.section("Hidden", icon: "fa-solid fa-eye-slash",
+        permission: :something, visible: ->(user) { false })
+
+      result = described_class.build(regular_user)
+      expect(result.map { |i| i[:label] }).not_to include("Hidden")
+    end
+  end
+
   describe "legacy admin_user_menu_items backward compatibility" do
     it "migrates legacy items into the My Account section before Logout" do
       Panda::Core.config.admin_user_menu_items = [

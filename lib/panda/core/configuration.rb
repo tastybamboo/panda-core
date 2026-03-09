@@ -33,7 +33,8 @@ module Panda
         :avatar_max_dimension,
         :avatar_optimization_quality,
         :avatar_image_processor,
-        :admin_user_menu_items
+        :admin_user_menu_items,
+        :additional_head_content
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -98,6 +99,7 @@ module Panda
         @admin_title = "Panda Admin"
         @initial_admin_breadcrumb = nil  # Proc that returns [label, path]
         @dashboard_redirect_path = nil  # Path to redirect to after login (defaults to admin_root_path)
+        @additional_head_content = nil  # Proc/lambda returning HTML to inject into <head> (e.g. theme stylesheets, fonts)
 
         # Avatar configuration
         @avatar_variants = {

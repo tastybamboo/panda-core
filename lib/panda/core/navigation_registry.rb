@@ -101,19 +101,37 @@ module Panda
         # @param url [String, nil] Absolute URL (used as-is)
         # @param target [String, nil] HTML target attribute (e.g. "_blank")
         # @param visible [Proc, nil] Lambda receiving user, hides item when false
+        # @param permission [Symbol, nil] Permission key — item hidden unless user is authorized.
+        #   Checked via +config.authorization_policy+. Overridden by +visible:+ if both given.
         # @param method [Symbol, nil] HTTP method (e.g. :delete for logout buttons)
         # @param button_options [Hash] Extra options for button_to rendering
         # @param path_helper [Symbol, nil] Route helper name, resolved at build time via helpers
         # rubocop:disable Metrics/ParameterLists
-        def item(label, path: nil, url: nil, target: nil, visible: nil,
+        def item(label, path: nil, url: nil, target: nil, visible: nil, permission: nil,
           method: nil, button_options: {}, path_helper: nil)
+          effective_visible = visible || permission_to_visible(permission)
           @items << {
             label: label, path: path, url: url, target: target,
-            visible: visible, method: method, button_options: button_options,
+            visible: effective_visible, method: method, button_options: button_options,
             path_helper: path_helper
           }
         end
         # rubocop:enable Metrics/ParameterLists
+
+        private
+
+        # Convert a permission key into a visibility lambda.
+        # @param permission [Symbol, nil]
+        # @return [Proc, nil]
+        def permission_to_visible(permission)
+          return nil unless permission
+
+          ->(user) {
+            next true if user.respond_to?(:admin?) && user.admin?
+            policy = Panda::Core.config.authorization_policy
+            policy&.call(user, permission, nil) || false
+          }
+        end
       end
 
       @sections = []
@@ -134,6 +152,8 @@ module Panda
         # @param after [String, nil] Insert after the section with this label
         # @param before [String, nil] Insert before the section with this label
         # @param visible [Proc, nil] Lambda receiving user, hides section when false
+        # @param permission [Symbol, nil] Permission key — section hidden unless user is authorized.
+        #   Checked via +config.authorization_policy+. Overridden by +visible:+ if both given.
         # @param position [Symbol] :top (default) or :bottom — controls sidebar placement
         # @yield [SectionContext] Optional block for adding items to the section
         #
@@ -143,24 +163,25 @@ module Panda
         #   end
         #
         # @example Add a permission-gated section
-        #   section("Settings", icon: "fa-solid fa-gear",
-        #     visible: -> (user) { user.admin? })
+        #   section("Settings", icon: "fa-solid fa-gear", permission: :manage_settings)
         #
         # @example Add a bottom section (rendered with UserMenuComponent)
         #   section("Notifications", position: :bottom) do |s|
         #     s.item "All", path: "notifications"
         #   end
         # rubocop:disable Metrics/ParameterLists
-        def section(label, icon: nil, after: nil, before: nil, visible: nil, position: :top, &block)
+        def section(label, icon: nil, after: nil, before: nil, visible: nil, permission: nil, position: :top, &block)
           context = SectionContext.new
           yield context if block
+
+          effective_visible = visible || permission_to_visible(permission)
 
           @sections << {
             label: label,
             icon: icon,
             after: after,
             before: before,
-            visible: visible,
+            visible: effective_visible,
             position: position,
             items: context.items
           }
@@ -179,6 +200,8 @@ module Panda
         # @param url [String, nil] Absolute URL (used as-is, no prefixing)
         # @param target [String, nil] HTML target attribute (e.g. "_blank")
         # @param visible [Proc, nil] Lambda receiving user, hides item when false
+        # @param permission [Symbol, nil] Permission key — item hidden unless user is authorized.
+        #   Checked via +config.authorization_policy+. Overridden by +visible:+ if both given.
         # @param before [Symbol, String, nil] :all to insert at beginning, or label to insert before
         # @param after [Symbol, String, nil] :all to insert at end (default), or label to insert after
         # @param method [Symbol, nil] HTTP method (e.g. :delete for logout buttons)
@@ -188,22 +211,20 @@ module Panda
         # @example Add to an existing section with auto-prefixed path
         #   item("Feature Flags", section: "Settings", path: "feature_flags")
         #
-        # @example Add an external link
-        #   item("Docs", section: "Help", url: "https://docs.example.com", target: "_blank")
-        #
-        # @example Permission-gated item positioned before "Roles"
-        #   item("General", section: "Settings", path: "general",
-        #     visible: -> (user) { user.admin? }, before: "Roles")
+        # @example Permission-gated item
+        #   item("Roles", section: "Settings", path: "cms/roles",
+        #     permission: :manage_roles)
         # rubocop:disable Metrics/ParameterLists
-        def item(label, section:, path: nil, url: nil, target: nil, visible: nil,
+        def item(label, section:, path: nil, url: nil, target: nil, visible: nil, permission: nil,
           before: nil, after: nil, method: nil, button_options: {}, path_helper: nil)
+          effective_visible = visible || permission_to_visible(permission)
           @items << {
             label: label,
             section: section,
             path: path,
             url: url,
             target: target,
-            visible: visible,
+            visible: effective_visible,
             before: before,
             after: after,
             method: method,
@@ -233,6 +254,9 @@ module Panda
         def build(user, helpers: nil)
           base = Panda::Core.config.admin_navigation_items&.call(user) || []
           admin_path = Panda::Core.config.admin_path
+
+          # Convert permission: keys from base lambda items into _visible lambdas
+          apply_permission_visibility!(base)
 
           # Apply registered sections
           @sections.each do |section|
@@ -319,6 +343,36 @@ module Panda
         end
 
         private
+
+        # Convert permission: keys into _visible lambdas for base nav items.
+        # Walks sections and their children from the base lambda.
+        def apply_permission_visibility!(items)
+          items.each do |item|
+            if item[:permission] && !item[:_visible]
+              item[:_visible] = permission_to_visible(item.delete(:permission))
+            end
+            next unless item[:children]
+            item[:children].each do |child|
+              if child[:permission] && !child[:_visible]
+                child[:_visible] = permission_to_visible(child.delete(:permission))
+              end
+            end
+          end
+        end
+
+        # Convert a permission key into a visibility lambda.
+        # Admin users always pass; others are checked via authorization_policy.
+        # @param permission [Symbol, nil]
+        # @return [Proc, nil]
+        def permission_to_visible(permission)
+          return nil unless permission
+
+          ->(user) {
+            next true if user.respond_to?(:admin?) && user.admin?
+            policy = Panda::Core.config.authorization_policy
+            policy&.call(user, permission, nil) || false
+          }
+        end
 
         # Resolve path:, url:, or path_helper: into a final :path value.
         # Includes :target, :method, :button_options when present.
