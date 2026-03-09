@@ -40,6 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tailwind_merge", "~> 1.3"
 
   # File format parsing
+  spec.add_dependency "csv"
   spec.add_dependency "xsv", "~> 1.0"
 
   # Database dependencies
