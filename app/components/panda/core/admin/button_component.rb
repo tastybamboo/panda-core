@@ -39,7 +39,16 @@ module Panda
             "".html_safe
           end
           text_html = @text.titleize
-          (icon_html + text_html).html_safe
+
+          if icon_right?
+            (text_html + icon_html).html_safe
+          else
+            (icon_html + text_html).html_safe
+          end
+        end
+
+        def icon_right?
+          @action.in?(%i[save create add new])
         end
 
         def computed_icon
