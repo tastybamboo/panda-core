@@ -1,0 +1,51 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
+  <% component.with_heading_slot(text: "Preview Import", level: 1) %>
+
+  <%= render Panda::Core::Admin::PanelComponent.new do %>
+    <p class="text-sm text-gray-600 mb-4">
+      Showing first <%= @preview_rows.size %> rows. Review the mapped data below before importing.
+    </p>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Row</th>
+            <% @mapping.each do |csv_col, field_name| %>
+              <% defn = @field_definitions.find { |d| d.name.to_s == field_name } %>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                <%= defn&.label || field_name %>
+              </th>
+            <% end %>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @preview_rows.each_with_index do |row, i| %>
+            <% attrs, errors = @import_session.importable_class.import_row(row, @mapping) %>
+            <tr class="<%= errors.any? ? 'bg-red-50' : '' %>">
+              <td class="px-3 py-2 text-sm text-gray-500"><%= i + 2 %></td>
+              <% @mapping.each do |csv_col, field_name| %>
+                <td class="px-3 py-2 text-sm text-gray-900"><%= row[csv_col] %></td>
+              <% end %>
+              <td class="px-3 py-2 text-sm">
+                <% if errors.any? %>
+                  <span class="text-red-600"><%= errors.join(", ") %></span>
+                <% else %>
+                  <span class="text-green-600"><i class="fa-solid fa-check"></i> OK</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex items-center gap-3 mt-6">
+      <%= button_to import_admin_import_session_path(@import_session), method: :post, class: "inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition cursor-pointer" do %>
+        <i class="fa-solid fa-file-import mr-2"></i> Start Import
+      <% end %>
+      <%= link_to "Back to mapping", column_map_admin_import_session_path(@import_session), class: "text-sm text-gray-500 hover:text-gray-700" %>
+    </div>
+  <% end %>
+<% end %>

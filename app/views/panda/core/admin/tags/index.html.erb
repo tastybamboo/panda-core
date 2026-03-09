@@ -1,0 +1,41 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
+  <% component.with_heading_slot(text: "Tags", level: 1) do %>
+    <%= link_to new_admin_tag_path, class: "inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-white hover:bg-primary/90 transition" do %>
+      <i class="fa-solid fa-plus"></i> New Tag
+    <% end %>
+  <% end %>
+
+  <% if @tags.any? %>
+    <%= render Panda::Core::Admin::TableComponent.new(term: "tag", rows: @tags, icon: "fa-solid fa-tag") do |table| %>
+      <% table.column("Tag", width: "40%") do |tag| %>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: <%= tag.display_colour %>"></span>
+          <span class="font-medium"><%= tag.name %></span>
+        </div>
+      <% end %>
+
+      <% table.column("Used", width: "20%") do |tag| %>
+        <span class="text-sm text-gray-500"><%= pluralize(tag.taggings_count, "record") %></span>
+      <% end %>
+
+      <% table.column("", width: "40%") do |tag| %>
+        <div class="flex justify-end gap-2">
+          <%= link_to edit_admin_tag_path(tag), class: "inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700" do %>
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+          <% end %>
+          <%= button_to admin_tag_path(tag), method: :delete, class: "inline-flex items-center gap-1 text-sm text-red-500 hover:text-red-700", data: {turbo_confirm: "Delete tag \"#{tag.name}\"?"} do %>
+            <i class="fa-solid fa-trash"></i> Delete
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= render Panda::Core::Admin::EmptyStateComponent.new(
+      title: "No tags yet",
+      description: "Tags help you organise and filter your records.",
+      icon: "fa-solid fa-tag",
+      action_text: "Create your first tag",
+      action_path: new_admin_tag_path
+    ) %>
+  <% end %>
+<% end %>

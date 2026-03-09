@@ -1,0 +1,48 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
+  <% component.with_heading_slot(text: "Import History", level: 1) %>
+
+  <% if @import_sessions.any? %>
+    <%= render Panda::Core::Admin::TableComponent.new(term: "import", rows: @import_sessions, icon: "fa-solid fa-file-import") do |table| %>
+      <% table.column("Type", width: "20%") do |session| %>
+        <span class="font-medium"><%= session.importable_type %></span>
+      <% end %>
+
+      <% table.column("Status", width: "15%") do |session| %>
+        <% case session.status %>
+        <% when "complete" %>
+          <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Complete</span>
+        <% when "failed" %>
+          <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Failed</span>
+        <% when "importing" %>
+          <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Importing</span>
+        <% else %>
+          <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"><%= session.status.capitalize %></span>
+        <% end %>
+      <% end %>
+
+      <% table.column("Records", width: "15%") do |session| %>
+        <span class="text-sm text-gray-500"><%= session.imported_count %> / <%= session.total_rows %></span>
+      <% end %>
+
+      <% table.column("By", width: "20%") do |session| %>
+        <span class="text-sm text-gray-500"><%= session.user.name %></span>
+      <% end %>
+
+      <% table.column("Date", width: "20%") do |session| %>
+        <span class="text-sm text-gray-500"><%= session.created_at.strftime("%d %b %Y %H:%M") %></span>
+      <% end %>
+
+      <% table.column("", width: "10%") do |session| %>
+        <%= link_to admin_import_session_path(session), class: "text-sm text-primary hover:text-primary/80" do %>
+          View <i class="fa-solid fa-arrow-right ml-1"></i>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= render Panda::Core::Admin::EmptyStateComponent.new(
+      title: "No imports yet",
+      description: "CSV imports will appear here once you've imported data.",
+      icon: "fa-solid fa-file-import"
+    ) %>
+  <% end %>
+<% end %>

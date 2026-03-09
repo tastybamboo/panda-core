@@ -53,6 +53,19 @@ Panda::Core::Engine.routes.draw do
     # Feature flag management
     resources :feature_flags, only: %i[index update], controller: "admin/feature_flags"
 
+    # Tags
+    resources :tags, only: %i[index new create edit update destroy], controller: "admin/tags"
+
+    # CSV Import
+    resources :import_sessions, only: %i[index new create show], controller: "admin/import_sessions" do
+      member do
+        get :column_map
+        patch :update_mapping
+        get :preview
+        post :import
+      end
+    end
+
     # Test-only authentication endpoint (available in development and test environments)
     # This bypasses OAuth for faster, more reliable test execution
     # Development: Used by Capybara system tests which run Rails server in development mode
