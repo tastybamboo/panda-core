@@ -3,7 +3,7 @@
 
   <%= render Panda::Core::Admin::PanelComponent.new do %>
     <p class="text-sm text-gray-600 mb-6">
-      Match each CSV column to a field in your data. Leave unmatched columns as "Skip" to ignore them.
+      Match each column from your file to a field in your data. Leave unmatched columns as "Skip" to ignore them.
     </p>
 
     <%= form_tag update_mapping_admin_import_session_path(@import_session), method: :patch, class: "space-y-4" do %>

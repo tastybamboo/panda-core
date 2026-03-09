@@ -13,11 +13,19 @@ module Panda
         end
 
         def new
-          @importable_type = params[:type]
+          @importable_type = params[:importable_type]
         end
 
         def create
           tenant = resolve_tenant
+          uploaded_file = params[:import_file]
+
+          if uploaded_file.present? && FileParser.xls?(uploaded_file.original_filename)
+            @importable_type = params[:importable_type]
+            flash.now[:error] = "XLS format is not supported. Please save your spreadsheet as XLSX, CSV, or TSV and try again."
+            render :new, status: :unprocessable_entity
+            return
+          end
 
           @import_session = ImportSession.new(
             importable_type: params[:importable_type],
@@ -26,8 +34,8 @@ module Panda
             status: "mapping"
           )
 
-          if params[:csv_file].present?
-            @import_session.csv_file.attach(params[:csv_file])
+          if uploaded_file.present?
+            @import_session.import_file.attach(uploaded_file)
           end
 
           if @import_session.save
@@ -42,7 +50,7 @@ module Panda
         end
 
         def column_map
-          @headers = @import_session.csv_headers
+          @headers = @import_session.file_headers
           @field_options = @import_session.column_options
         end
 

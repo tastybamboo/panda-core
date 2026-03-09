@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 module Panda
   module Core
     class CsvImportService
@@ -13,7 +11,7 @@ module Panda
 
       def call
         import_session.update!(status: "importing", started_at: Time.current)
-        rows = import_session.csv_rows
+        rows = import_session.file_rows
         import_session.update!(total_rows: rows.size)
 
         klass = import_session.importable_class

@@ -39,6 +39,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "view_component", "~> 4.2"
   spec.add_dependency "tailwind_merge", "~> 1.3"
 
+  # File format parsing
+  spec.add_dependency "xsv", "~> 1.0"
+
   # Database dependencies
   spec.add_development_dependency "pg"
   spec.add_dependency "webrick"

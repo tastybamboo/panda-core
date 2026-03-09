@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 module Panda
   module Core
     class ImportSession < ApplicationRecord
@@ -11,7 +9,7 @@ module Panda
 
       belongs_to :user, class_name: "Panda::Core::User"
       belongs_to :tenant, polymorphic: true, optional: true
-      has_one_attached :csv_file
+      has_one_attached :import_file
 
       validates :importable_type, presence: true
       validates :status, inclusion: {in: STATUSES}
@@ -22,19 +20,21 @@ module Panda
         importable_type.constantize
       end
 
-      def csv_headers
-        return [] unless csv_file.attached?
-        row = CSV.parse(csv_file.download, headers: false).first
-        row || []
+      def file_parser
+        return nil unless import_file.attached?
+        @file_parser ||= FileParser.new(import_file.filename.to_s, import_file.download)
       end
 
-      def csv_rows
-        return [] unless csv_file.attached?
-        CSV.parse(csv_file.download, headers: true)
+      def file_headers
+        file_parser&.headers || []
+      end
+
+      def file_rows
+        file_parser&.rows || []
       end
 
       def preview_rows(limit: 5)
-        csv_rows.first(limit)
+        file_rows.first(limit)
       end
 
       def column_options
