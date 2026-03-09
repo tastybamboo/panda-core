@@ -27,6 +27,7 @@ module Panda
           purge_old_avatar_if_replacing
 
           if current_user.update(user_params)
+            rename_avatar_blob
             clear_oauth_avatar_url_after_manual_upload
             flash[:success] = "Your profile has been updated successfully."
             redirect_to edit_admin_my_profile_path
@@ -47,6 +48,17 @@ module Panda
         def purge_old_avatar_if_replacing
           return unless params.dig(:user, :avatar).present? && current_user.avatar.attached?
           current_user.avatar.purge
+        end
+
+        # Rename the avatar blob to a consistent "avatar-full-name.ext" format
+        # so it's identifiable in the file gallery.
+        def rename_avatar_blob
+          upload = params.dig(:user, :avatar)
+          return unless upload.present? && current_user.avatar.attached?
+
+          extension = File.extname(upload.original_filename)
+          new_filename = "avatar-#{current_user.name.parameterize}#{extension}"
+          current_user.avatar.blob.update!(filename: new_filename)
         end
 
         # Clear oauth_avatar_url when user manually uploads an avatar.
