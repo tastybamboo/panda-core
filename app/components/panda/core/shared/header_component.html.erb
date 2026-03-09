@@ -22,6 +22,10 @@
       <%= render "panda/cms/shared/favicons" %>
     <% end %>
 
+    <% if Panda::Core.config.additional_head_content.respond_to?(:call) %>
+      <%= Panda::Core.config.additional_head_content.call.html_safe %>
+    <% end %>
+
     <%= helpers.content_for :head %>
   </head>
   <body class="overflow-hidden h-full <%= @body_class %>" data-environment="<%= Rails.env %>">
