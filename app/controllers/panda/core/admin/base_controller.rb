@@ -7,7 +7,6 @@ module Panda
       # Provides authentication, helpers, and hooks for extending functionality
       class BaseController < ::ActionController::Base
         include Panda::Core::Authorizable
-        include Panda::Core::AdminAuthorization
 
         layout "panda/core/admin"
 
