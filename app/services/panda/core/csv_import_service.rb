@@ -2,7 +2,7 @@
 
 module Panda
   module Core
-    class CsvImportService
+    class CSVImportService
       attr_reader :import_session
 
       def initialize(import_session)
