@@ -49,8 +49,8 @@
         <% item_section = item[:section].presence %>
         <% if item_section && item_section != current_section %>
           <% current_section = item_section %>
-          <li class="px-3 <%= section_count > 0 ? 'mt-5' : '' %> mb-1">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-white/40"><%= current_section %></span>
+          <li class="px-3 <%= section_count > 0 ? 'mt-3' : '' %> mb-0.5">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 sidebar-section-label"><%= current_section %></span>
           </li>
           <% section_count += 1 %>
         <% end %>
