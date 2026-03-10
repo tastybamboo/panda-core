@@ -135,6 +135,18 @@ module Panda
       if Gem.loaded_specs["chartkick"]
         config.app_middleware.insert_before(Rack::Static, Panda::Core::ChartkickAssetMiddleware)
       end
+
+      #
+      # Auto-include Chartkick view helper when the chartkick gem is available
+      # so host apps don't need to declare it per-controller
+      #
+      initializer "panda_core.chartkick_helper" do
+        if Gem.loaded_specs["chartkick"]
+          ActiveSupport.on_load(:action_controller) do
+            helper ::Chartkick::Helper
+          end
+        end
+      end
     end
   end
 end

@@ -88,7 +88,7 @@ module Panda
           @import_session.update!(status: "importing")
 
           # Run synchronously for now — swap to CsvImportJob.perform_later for async
-          CsvImportService.new(@import_session).call
+          CSVImportService.new(@import_session).call
 
           redirect_to admin_import_session_path(@import_session), success: "Import complete."
         rescue => e
