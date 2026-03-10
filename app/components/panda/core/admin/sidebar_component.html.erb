@@ -1,16 +1,31 @@
 <nav <%= tag.attributes(**attrs) %>>
   <ul role="list" class="flex flex-col flex-1">
-    <a class="hidden lg:block p-0 mt-4 mb-4 ml-2 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
+    <%# Logo area — uses admin_logo config or falls back to admin_title text %>
+    <li class="hidden lg:block mt-4 mb-4 px-2">
+      <% if admin_logo %>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <%= safe_html(admin_logo) %>
+          </div>
+          <% if admin_settings_path %>
+            <%= helpers.link_to admin_settings_path, class: "flex items-center justify-center w-7 h-7 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors", title: "Settings" do %>
+              <i class="fa-solid fa-gear text-sm"></i>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <a class="p-0 text-xl font-medium text-white"><%= Panda::Core.config.admin_title || "Panda Admin" %></a>
+      <% end %>
+    </li>
+
     <%= render Panda::Core::Admin::SearchBarComponent.new %>
+
     <%
-      # Get navigation items from the registry (includes base lambda + registered sections/items)
       nav_items = Panda::Core::NavigationRegistry.build(@user, helpers: helpers)
 
-      # Split into top and bottom sections
       top_items = nav_items.select { |item| item[:position] != :bottom }
       bottom_items = nav_items.select { |item| item[:position] == :bottom }
 
-      # Helper to recursively collect all paths from nav items
       def collect_paths(items)
         items.flat_map do |item|
           paths = item[:path] ? [item[:path]] : []
@@ -19,40 +34,81 @@
         end
       end
 
-      # Find the most specific matching path by checking longest paths first
       all_paths = collect_paths(nav_items).compact
       current_path = helpers.request&.path || "/"
       active_path = all_paths
         .sort_by { |path| -path.length }
         .find { |path| current_path == path || current_path.starts_with?(path + "/") }
     %>
-    <% top_items.each_with_index do |item, index| %>
-      <%
-        has_children = item[:children].present?
 
-        # For items with children, check if the active path belongs to one of its children
-        if has_children
-          is_active = item[:children].any? { |child| child[:path] == active_path }
-        else
-          is_active = item[:path] == active_path
-        end
-      %>
-
-      <%= render Panda::Core::Admin::Navigation::ItemComponent.new(
-        label: item[:label],
-        icon: item[:icon],
-        path: item[:path],
-        active: is_active,
-        menu_id: "sub-menu-#{index}",
-        target: item[:target]
-      ) do |nav_item|
-        if has_children
-          item[:children].each do |child|
-            child_is_active = child[:path] == active_path
-            nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active, target: child[:target])
+    <% if sectioned?(top_items) %>
+      <%# Section-aware navigation — insert headings when section changes, preserving order %>
+      <% current_section = nil %>
+      <% section_count = 0 %>
+      <% top_items.each_with_index do |item, index| %>
+        <% item_section = item[:section].presence %>
+        <% if item_section && item_section != current_section %>
+          <% current_section = item_section %>
+          <li class="px-3 <%= section_count > 0 ? 'mt-5' : '' %> mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-white/40"><%= current_section %></span>
+          </li>
+          <% section_count += 1 %>
+        <% end %>
+        <%
+          has_children = item[:children].present?
+          if has_children
+            is_active = item[:children].any? { |child| child[:path] == active_path }
+          else
+            is_active = item[:path] == active_path
           end
-        end
-      end %>
+        %>
+        <%= render Panda::Core::Admin::Navigation::ItemComponent.new(
+          label: item[:label],
+          icon: item[:icon],
+          path: item[:path],
+          active: is_active,
+          menu_id: "sub-menu-#{section_count}-#{index}",
+          target: item[:target],
+          badge: item[:badge],
+          badge_color: item[:badge_color]
+        ) do |nav_item|
+          if has_children
+            item[:children].each do |child|
+              child_is_active = child[:path] == active_path
+              nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active, target: child[:target])
+            end
+          end
+        end %>
+      <% end %>
+    <% else %>
+      <%# Legacy flat navigation (no section keys) %>
+      <% top_items.each_with_index do |item, index| %>
+        <%
+          has_children = item[:children].present?
+          if has_children
+            is_active = item[:children].any? { |child| child[:path] == active_path }
+          else
+            is_active = item[:path] == active_path
+          end
+        %>
+        <%= render Panda::Core::Admin::Navigation::ItemComponent.new(
+          label: item[:label],
+          icon: item[:icon],
+          path: item[:path],
+          active: is_active,
+          menu_id: "sub-menu-#{index}",
+          target: item[:target],
+          badge: item[:badge],
+          badge_color: item[:badge_color]
+        ) do |nav_item|
+          if has_children
+            item[:children].each do |child|
+              child_is_active = child[:path] == active_path
+              nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active, target: child[:target])
+            end
+          end
+        end %>
+      <% end %>
     <% end %>
 
     <% bottom_items.each do |section| %>
@@ -63,7 +119,6 @@
       %>
       <%= render Panda::Core::Admin::Navigation::UserMenuComponent.new(user: helpers.current_user, active: is_section_active) do |user_menu|
         (section[:children] || []).each do |item|
-          # Resolve path_helper at render time if not yet resolved
           item_path = item[:path]
           if item_path.nil? && item[:path_helper]
               helper_name = item[:path_helper].to_sym
@@ -82,8 +137,13 @@
       end %>
     <% end %>
 
-    <li class="px-2 py-3">
-      <span class="text-xs text-white">Panda Core v<%= Panda::Core::VERSION %></span>
+    <% sidebar_footer = Panda::Core.config.admin_sidebar_footer %>
+    <li class="px-2 py-3 mt-auto border-t border-white/10">
+      <% if sidebar_footer %>
+        <%= safe_html(sidebar_footer) %>
+      <% else %>
+        <span class="text-xs text-white/30">Panda Core v<%= Panda::Core::VERSION %></span>
+      <% end %>
     </li>
   </ul>
 </nav>
