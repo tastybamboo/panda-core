@@ -30,7 +30,7 @@ module Panda
       end
 
       def tag_ids=(ids)
-        self.tags = Panda::Core::Tag.where(id: ids.reject(&:blank?))
+        self.tags = Panda::Core::Tag.where(id: Array(ids).reject(&:blank?))
       end
     end
   end

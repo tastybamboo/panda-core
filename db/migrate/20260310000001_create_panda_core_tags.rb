@@ -3,8 +3,8 @@
 class CreatePandaCoreTags < ActiveRecord::Migration[8.1]
   def change
     create_table :panda_core_tags, id: :uuid do |t|
-      t.string :tenant_type, null: false
-      t.bigint :tenant_id, null: false
+      t.string :tenant_type
+      t.bigint :tenant_id
       t.string :name, null: false
       t.string :colour
       t.integer :taggings_count, default: 0, null: false

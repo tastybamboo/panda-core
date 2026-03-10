@@ -57,8 +57,8 @@ module Panda
       end
 
       def build_tenant_attrs
-        return {} unless import_session.tenant_id
-        {tenant_id: import_session.tenant_id}
+        return {} unless import_session.tenant
+        {tenant: import_session.tenant}
       end
     end
   end

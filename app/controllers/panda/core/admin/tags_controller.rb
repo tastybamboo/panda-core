@@ -55,7 +55,7 @@ module Panda
         private
 
         def set_tag
-          @tag = Tag.find(params[:id])
+          @tag = Tag.for_tenant(resolve_tenant).find(params[:id])
         end
 
         def tag_params

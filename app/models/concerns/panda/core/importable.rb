@@ -38,6 +38,7 @@ module Panda
 
       class_methods do
         def importable(&block)
+          raise ArgumentError, "importable requires a block to define fields" unless block
           config = Configuration.new
           block.call(config)
           self.import_configuration = config

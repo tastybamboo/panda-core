@@ -61,9 +61,9 @@ export default class extends Controller {
                 class="flex items-center gap-2 w-full px-3 py-2 text-sm text-left hover:bg-gray-50 focus:bg-gray-50"
                 data-action="click->tag-input#selectTag"
                 data-tag-id="${tag.id}"
-                data-tag-name="${this.escapeHtml(tag.name)}"
-                data-tag-colour="${tag.colour}">
-          <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${tag.colour}"></span>
+                data-tag-name="${this.escapeAttr(tag.name)}"
+                data-tag-colour="${this.escapeAttr(tag.colour)}">
+          <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${this.escapeAttr(tag.colour)}"></span>
           ${this.escapeHtml(tag.name)}
         </button>
       `).join("")
@@ -163,8 +163,14 @@ export default class extends Controller {
   }
 
   escapeHtml(str) {
+    if (!str) return ""
     const div = document.createElement("div")
     div.textContent = str
     return div.innerHTML
+  }
+
+  escapeAttr(str) {
+    if (!str) return ""
+    return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
   }
 }

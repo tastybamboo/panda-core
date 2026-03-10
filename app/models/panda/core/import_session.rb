@@ -13,11 +13,15 @@ module Panda
 
       validates :importable_type, presence: true
       validates :status, inclusion: {in: STATUSES}
+      validate :importable_type_must_be_importable
 
       scope :recent, -> { order(created_at: :desc) }
 
       def importable_class
-        importable_type.constantize
+        klass = importable_type.safe_constantize
+        raise ArgumentError, "Unknown importable type: #{importable_type}" unless klass
+        raise ArgumentError, "#{importable_type} is not importable" unless klass.include?(Panda::Core::Importable)
+        klass
       end
 
       def file_parser
@@ -57,6 +61,18 @@ module Panda
 
       def failed?
         status == "failed"
+      end
+
+      private
+
+      def importable_type_must_be_importable
+        return if importable_type.blank?
+        klass = importable_type.safe_constantize
+        if klass.nil?
+          errors.add(:importable_type, "is not a valid class")
+        elsif !klass.include?(Panda::Core::Importable)
+          errors.add(:importable_type, "is not importable")
+        end
       end
     end
   end
