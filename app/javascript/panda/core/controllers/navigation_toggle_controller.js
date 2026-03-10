@@ -8,12 +8,20 @@ export default class extends Controller {
   static collapsedButtonClasses = ["rounded-xl", "hover:bg-white/5", "text-white/80"]
 
   connect() {
+    // Suppress transitions on connect to prevent visual jump during Turbo navigation
+    this.menuTarget.classList.remove("transition-all", "duration-200", "ease-out")
+
     const hasActiveChild = this.menuTarget.querySelector('[class*="bg-primary-500"]')
     if (hasActiveChild) {
       this.expand()
     } else {
       this.collapse()
     }
+
+    // Re-enable transitions for user interactions
+    requestAnimationFrame(() => {
+      this.menuTarget.classList.add("transition-all", "duration-200", "ease-out")
+    })
   }
 
   toggle(event) {

@@ -396,6 +396,8 @@ module Panda
           resolved[:target] = item[:target] if item[:target]
           resolved[:method] = item[:method] if item[:method]
           resolved[:button_options] = item[:button_options] if item[:button_options]&.any?
+          resolved[:badge] = item[:badge] if item[:badge]
+          resolved[:badge_color] = item[:badge_color] if item[:badge_color]
           resolved
         end
 
