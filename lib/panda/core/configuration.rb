@@ -26,6 +26,9 @@ module Panda
         :login_logo_path,
         :login_page_title,
         :admin_title,
+        :admin_logo,
+        :admin_settings_path,
+        :admin_sidebar_footer,
         :initial_admin_breadcrumb,
         :dashboard_redirect_path,
         :avatar_variants,
@@ -97,6 +100,9 @@ module Panda
         @login_logo_path = nil
         @login_page_title = "Panda Admin"
         @admin_title = "Panda Admin"
+        @admin_logo = nil  # Proc/lambda returning HTML for sidebar logo area (e.g. SVG + title)
+        @admin_settings_path = nil  # Path for the settings gear icon in the logo area (nil hides it)
+        @admin_sidebar_footer = nil  # Proc/lambda returning HTML for the bottom of the sidebar (replaces version text)
         @initial_admin_breadcrumb = nil  # Proc that returns [label, path]
         @dashboard_redirect_path = nil  # Path to redirect to after login (defaults to admin_root_path)
         @additional_head_content = nil  # Proc/lambda returning HTML to inject into <head> (e.g. theme stylesheets, fonts)

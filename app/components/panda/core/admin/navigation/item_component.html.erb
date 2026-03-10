@@ -11,6 +11,7 @@
                 class="<%= parent_classes %>">
           <span class="text-center w-6"><i class="<%= icon %> text-xl fa-fw"></i></span>
           <span class="flex-1 text-left"><%= label %></span>
+          <%= badge_tag %>
           <i class="fa-solid fa-chevron-right text-xs transition-transform duration-150 ease-in-out"
              data-navigation-toggle-target="icon"></i>
         </button>
@@ -26,7 +27,8 @@
   <% else %>
     <%= helpers.link_to path, class: link_classes, target: target do %>
       <span class="text-center w-6"><i class="<%= icon %> text-xl fa-fw"></i></span>
-      <span><%= label %></span>
+      <span class="flex-1"><%= label %></span>
+      <%= badge_tag %>
     <% end %>
   <% end %>
 </li>

@@ -11,7 +11,7 @@ module Panda
     # Single source of truth for acronyms used across all Panda gems.
     # Referenced by Shared::InflectionsConfig (engine initializer) and
     # applied eagerly below for generator/CLI contexts.
-    ACRONYMS = %w[CMS SEO AI URL UUID].freeze
+    ACRONYMS = %w[CMS CSV SEO AI URL UUID].freeze
 
     # Session key for storing authenticated Panda Core admin user ID
     # Namespaced to avoid conflicts with host application user sessions

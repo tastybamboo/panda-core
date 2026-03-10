@@ -287,6 +287,37 @@ RSpec.describe Panda::Core::NavigationRegistry do
     end
   end
 
+  describe "badge and badge_color" do
+    before do
+      Panda::Core.config.admin_navigation_items = ->(user) {
+        [{label: "Settings", icon: "fa-solid fa-gear", children: []}]
+      }
+      Panda::Core.config.admin_path = "/admin"
+    end
+
+    it "includes badge and badge_color when set on a section item" do
+      described_class.section("Tools", icon: "fa-solid fa-wrench") do |s|
+        s.item "Flags", path: "flags", badge: 3, badge_color: "#FF0000"
+      end
+
+      result = described_class.build(user)
+      tools = result.find { |i| i[:label] == "Tools" }
+      flags = tools[:children].first
+      expect(flags[:badge]).to eq(3)
+      expect(flags[:badge_color]).to eq("#FF0000")
+    end
+
+    it "omits badge keys when not set" do
+      described_class.item("Flags", section: "Settings", path: "flags")
+
+      result = described_class.build(user)
+      settings = result.find { |i| i[:label] == "Settings" }
+      flags = settings[:children].first
+      expect(flags).not_to have_key(:badge)
+      expect(flags).not_to have_key(:badge_color)
+    end
+  end
+
   describe ".reset!" do
     it "clears custom registrations and re-registers defaults" do
       described_class.section("Tools", icon: "fa-solid fa-wrench")
