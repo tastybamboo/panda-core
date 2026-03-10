@@ -108,12 +108,12 @@ module Panda
         # @param path_helper [Symbol, nil] Route helper name, resolved at build time via helpers
         # rubocop:disable Metrics/ParameterLists
         def item(label, path: nil, url: nil, target: nil, visible: nil, permission: nil,
-          method: nil, button_options: {}, path_helper: nil)
+          method: nil, button_options: {}, path_helper: nil, badge: nil, badge_color: nil)
           effective_visible = visible || permission_to_visible(permission)
           @items << {
             label: label, path: path, url: url, target: target,
             visible: effective_visible, method: method, button_options: button_options,
-            path_helper: path_helper
+            path_helper: path_helper, badge: badge, badge_color: badge_color
           }
         end
         # rubocop:enable Metrics/ParameterLists

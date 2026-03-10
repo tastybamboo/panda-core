@@ -26,8 +26,14 @@ module Panda
           items.any? { |item| item[:section].present? }
         end
 
-        def group_by_section(items)
-          items.group_by { |item| item[:section] || "" }
+        def safe_html(value)
+          raw = value.respond_to?(:call) ? value.call : value
+          helpers.sanitize(raw, tags: %w[svg path ellipse circle rect line polyline polygon g defs use
+                                         span a i div img br strong em b], attributes: %w[
+            viewBox fill stroke stroke-width stroke-linecap stroke-linejoin opacity cx cy rx ry r
+            x y x1 y1 x2 y2 width height d points transform xmlns class href style id
+            data-turbo-track rel
+          ])
         end
 
         private

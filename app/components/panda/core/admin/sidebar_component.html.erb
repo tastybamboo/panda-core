@@ -5,7 +5,7 @@
       <% if admin_logo %>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <%= admin_logo.respond_to?(:call) ? admin_logo.call.html_safe : admin_logo.html_safe %>
+            <%= safe_html(admin_logo) %>
           </div>
           <% if admin_settings_path %>
             <%= helpers.link_to admin_settings_path, class: "flex items-center justify-center w-7 h-7 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors", title: "Settings" do %>
@@ -42,40 +42,43 @@
     %>
 
     <% if sectioned?(top_items) %>
-      <%# Section-grouped navigation %>
-      <% group_by_section(top_items).each_with_index do |(section_name, items), section_index| %>
-        <% if section_name.present? %>
-          <li class="px-3 <%= section_index > 0 ? 'mt-5' : '' %> mb-1">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-white/40"><%= section_name %></span>
+      <%# Section-aware navigation — insert headings when section changes, preserving order %>
+      <% current_section = nil %>
+      <% section_count = 0 %>
+      <% top_items.each_with_index do |item, index| %>
+        <% item_section = item[:section].presence %>
+        <% if item_section && item_section != current_section %>
+          <% current_section = item_section %>
+          <li class="px-3 <%= section_count > 0 ? 'mt-5' : '' %> mb-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-white/40"><%= current_section %></span>
           </li>
+          <% section_count += 1 %>
         <% end %>
-        <% items.each_with_index do |item, index| %>
-          <%
-            has_children = item[:children].present?
-            if has_children
-              is_active = item[:children].any? { |child| child[:path] == active_path }
-            else
-              is_active = item[:path] == active_path
+        <%
+          has_children = item[:children].present?
+          if has_children
+            is_active = item[:children].any? { |child| child[:path] == active_path }
+          else
+            is_active = item[:path] == active_path
+          end
+        %>
+        <%= render Panda::Core::Admin::Navigation::ItemComponent.new(
+          label: item[:label],
+          icon: item[:icon],
+          path: item[:path],
+          active: is_active,
+          menu_id: "sub-menu-#{section_count}-#{index}",
+          target: item[:target],
+          badge: item[:badge],
+          badge_color: item[:badge_color]
+        ) do |nav_item|
+          if has_children
+            item[:children].each do |child|
+              child_is_active = child[:path] == active_path
+              nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active, target: child[:target])
             end
-          %>
-          <%= render Panda::Core::Admin::Navigation::ItemComponent.new(
-            label: item[:label],
-            icon: item[:icon],
-            path: item[:path],
-            active: is_active,
-            menu_id: "sub-menu-#{section_index}-#{index}",
-            target: item[:target],
-            badge: item[:badge],
-            badge_color: item[:badge_color]
-          ) do |nav_item|
-            if has_children
-              item[:children].each do |child|
-                child_is_active = child[:path] == active_path
-                nav_item.with_sub_item(label: child[:label], path: child[:path], active: child_is_active, target: child[:target])
-              end
-            end
-          end %>
-        <% end %>
+          end
+        end %>
       <% end %>
     <% else %>
       <%# Legacy flat navigation (no section keys) %>
@@ -135,10 +138,12 @@
     <% end %>
 
     <% sidebar_footer = Panda::Core.config.admin_sidebar_footer %>
-    <% if sidebar_footer %>
-      <li class="px-2 py-3 mt-auto border-t border-white/10">
-        <%= sidebar_footer.respond_to?(:call) ? sidebar_footer.call.html_safe : sidebar_footer.html_safe %>
-      </li>
-    <% end %>
+    <li class="px-2 py-3 mt-auto border-t border-white/10">
+      <% if sidebar_footer %>
+        <%= safe_html(sidebar_footer) %>
+      <% else %>
+        <span class="text-xs text-white/30">Panda Core v<%= Panda::Core::VERSION %></span>
+      <% end %>
+    </li>
   </ul>
 </nav>

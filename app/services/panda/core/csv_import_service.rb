@@ -25,7 +25,7 @@ module Panda
         import_session.update!(status: "complete", completed_at: Time.current)
       rescue => e
         import_session.update!(status: "failed", completed_at: Time.current)
-        Rails.logger.error("[CsvImportService] Import #{import_session.id} failed: #{e.message}")
+        Rails.logger.error("[CSVImportService] Import #{import_session.id} failed: #{e.message}")
         raise
       end
 

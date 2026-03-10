@@ -44,6 +44,13 @@ module Panda
           def link_classes
             "#{BASE_CLASSES} rounded-xl mb-2 #{active? ? "#{ACTIVE_CLASSES} relative" : INACTIVE_CLASSES}"
           end
+
+          def badge_tag
+            return unless badge
+            helpers.content_tag(:span, badge,
+              class: "ml-auto px-1.5 py-0.5 text-[10px] font-semibold rounded-full text-white",
+              style: "background-color: #{badge_color || "#52B788"}")
+          end
         end
       end
     end
