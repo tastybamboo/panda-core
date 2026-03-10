@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_10_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -95,6 +95,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_000001) do
     t.index ["file_category_id"], name: "index_panda_core_file_categorizations_on_file_category_id"
   end
 
+  create_table "panda_core_import_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.jsonb "column_mapping", default: {}, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.integer "error_count", default: 0, null: false
+    t.jsonb "errors_log", default: [], null: false
+    t.string "importable_type", null: false
+    t.integer "imported_count", default: 0, null: false
+    t.integer "processed_rows", default: 0, null: false
+    t.integer "skipped_count", default: 0, null: false
+    t.datetime "started_at"
+    t.string "status", default: "pending", null: false
+    t.bigint "tenant_id"
+    t.string "tenant_type"
+    t.integer "total_rows", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.uuid "user_id", null: false
+    t.index ["status"], name: "index_panda_core_import_sessions_on_status"
+    t.index ["tenant_type", "tenant_id"], name: "index_panda_core_import_sessions_on_tenant_type_and_tenant_id"
+    t.index ["user_id"], name: "index_panda_core_import_sessions_on_user_id"
+  end
+
   create_table "panda_core_presences", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "last_seen_at", null: false
@@ -106,6 +128,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_000001) do
     t.index ["presenceable_type", "presenceable_id", "user_id"], name: "index_unique_presence", unique: true
     t.index ["presenceable_type", "presenceable_id"], name: "index_presences_on_presenceable"
     t.index ["user_id"], name: "index_panda_core_presences_on_user_id"
+  end
+
+  create_table "panda_core_taggings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "tag_id", null: false
+    t.string "taggable_id", null: false
+    t.string "taggable_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id", "taggable_type", "taggable_id"], name: "idx_panda_core_taggings_unique", unique: true
+    t.index ["tag_id"], name: "index_panda_core_taggings_on_tag_id"
+    t.index ["taggable_type", "taggable_id"], name: "idx_panda_core_taggings_on_taggable"
+  end
+
+  create_table "panda_core_tags", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "colour"
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.integer "taggings_count", default: 0, null: false
+    t.bigint "tenant_id"
+    t.string "tenant_type"
+    t.datetime "updated_at", null: false
+    t.index ["tenant_type", "tenant_id", "name"], name: "idx_panda_core_tags_on_tenant_and_name", unique: true
+    t.index ["tenant_type", "tenant_id"], name: "index_panda_core_tags_on_tenant_type_and_tenant_id"
   end
 
   create_table "panda_core_user_activities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -170,7 +215,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_000001) do
   add_foreign_key "panda_core_file_categories", "panda_core_file_categories", column: "parent_id"
   add_foreign_key "panda_core_file_categorizations", "active_storage_blobs", column: "blob_id"
   add_foreign_key "panda_core_file_categorizations", "panda_core_file_categories", column: "file_category_id"
+  add_foreign_key "panda_core_import_sessions", "panda_core_users", column: "user_id"
   add_foreign_key "panda_core_presences", "panda_core_users", column: "user_id"
+  add_foreign_key "panda_core_taggings", "panda_core_tags", column: "tag_id"
   add_foreign_key "panda_core_user_activities", "panda_core_users", column: "user_id"
   add_foreign_key "panda_core_user_sessions", "panda_core_users", column: "revoked_by_id", on_delete: :nullify
   add_foreign_key "panda_core_user_sessions", "panda_core_users", column: "user_id"

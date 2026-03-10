@@ -65,7 +65,7 @@ export default class extends Controller {
 
     if (!groups || groups.length === 0) {
       container.innerHTML = `
-        <div class="px-4 py-6 text-center text-sm text-white/50">
+        <div class="px-4 py-6 text-center text-sm text-white/80">
           No results found
         </div>
       `
@@ -75,7 +75,7 @@ export default class extends Controller {
 
     let html = ""
     groups.forEach(group => {
-      const icon = group.icon ? `<i class="${this.escapeAttr(group.icon)} mr-1.5"></i>` : ""
+      const icon = group.icon ? `<i class="${this.escapeAttr(group.icon)} mr-2.5"></i>` : ""
       html += `<div class="px-3 pt-3 pb-1"><span class="text-xs font-semibold text-white/40 uppercase tracking-wider">${icon}${this.escapeHtml(group.name)}</span></div>`
 
       group.results.forEach(result => {
@@ -83,7 +83,7 @@ export default class extends Controller {
           ? `<span class="text-xs text-white/40 truncate">${this.escapeHtml(result.description)}</span>`
           : ""
         html += `
-          <a href="${this.escapeAttr(result.href)}" class="search-result flex flex-col gap-0.5 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer" data-action="keydown->global-search#onResultKeydown">
+          <a href="${this.escapeAttr(result.href)}" class="search-result flex flex-col gap-0.5 px-3 py-2 rounded-lg hover:bg-white/15 transition-colors cursor-pointer" data-action="keydown->global-search#onResultKeydown">
             <span class="text-sm text-white/90 truncate">${this.escapeHtml(result.name)}</span>
             ${desc}
           </a>

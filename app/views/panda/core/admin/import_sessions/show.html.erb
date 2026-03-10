@@ -1,0 +1,87 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
+  <% component.with_heading_slot(text: "Import Results", level: 1) %>
+
+  <%= render Panda::Core::Admin::PanelComponent.new do %>
+    <%# Status badge %>
+    <div class="mb-6">
+      <% case @import_session.status %>
+      <% when "complete" %>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+          <i class="fa-solid fa-check-circle"></i> Complete
+        </span>
+      <% when "importing" %>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
+          <i class="fa-solid fa-spinner fa-spin"></i> Importing...
+        </span>
+      <% when "failed" %>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-sm font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
+          <i class="fa-solid fa-exclamation-circle"></i> Failed
+        </span>
+      <% end %>
+    </div>
+
+    <%# Stats %>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
+      <div class="rounded-lg bg-gray-50 p-4">
+        <div class="text-2xl font-semibold text-gray-900"><%= @import_session.total_rows %></div>
+        <div class="text-sm text-gray-500">Total rows</div>
+      </div>
+      <div class="rounded-lg bg-green-50 p-4">
+        <div class="text-2xl font-semibold text-green-700"><%= @import_session.imported_count %></div>
+        <div class="text-sm text-green-600">Imported</div>
+      </div>
+      <div class="rounded-lg bg-red-50 p-4">
+        <div class="text-2xl font-semibold text-red-700"><%= @import_session.error_count %></div>
+        <div class="text-sm text-red-600">Errors</div>
+      </div>
+      <div class="rounded-lg bg-gray-50 p-4">
+        <div class="text-2xl font-semibold text-gray-900"><%= @import_session.skipped_count %></div>
+        <div class="text-sm text-gray-500">Skipped</div>
+      </div>
+    </div>
+
+    <%# Progress bar %>
+    <% if @import_session.importing? %>
+      <div class="mb-6">
+        <div class="flex justify-between text-sm text-gray-600 mb-1">
+          <span>Progress</span>
+          <span><%= @import_session.progress_percentage %>%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div class="bg-primary h-2.5 rounded-full transition-all" style="width: <%= @import_session.progress_percentage %>%"></div>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Errors log %>
+    <% if @import_session.errors_log.any? %>
+      <div class="mt-6">
+        <h3 class="text-sm font-medium text-gray-900 mb-3">Errors (<%= @import_session.errors_log.size %> rows)</h3>
+        <div class="max-h-64 overflow-y-auto rounded-lg border border-red-200">
+          <table class="min-w-full divide-y divide-red-100">
+            <thead class="bg-red-50">
+              <tr>
+                <th class="px-3 py-2 text-left text-xs font-medium text-red-700">Row</th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-red-700">Errors</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-red-50">
+              <% @import_session.errors_log.each do |entry| %>
+                <tr>
+                  <td class="px-3 py-2 text-sm text-gray-900"><%= entry["row"] %></td>
+                  <td class="px-3 py-2 text-sm text-red-600"><%= Array(entry["errors"]).join(", ") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="mt-6">
+      <a href="javascript:history.back()" class="text-sm text-gray-500 hover:text-gray-700">
+        <i class="fa-solid fa-arrow-left mr-1"></i> Back
+      </a>
+    </div>
+  <% end %>
+<% end %>

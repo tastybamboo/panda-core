@@ -1,0 +1,21 @@
+<%= render Panda::Core::Admin::PanelComponent.new do %>
+  <%= panda_form_with(model: tag, url: tag.persisted? ? admin_tag_path(tag) : admin_tags_path) do |f| %>
+    <div class="space-y-4">
+      <%= f.text_field :name, label: "Name" %>
+
+      <div>
+        <%= f.label :colour, "Colour" %>
+        <div class="flex items-center gap-3 mt-1">
+          <input type="color" name="tag[colour]" value="<%= tag.colour || '#6b7280' %>"
+                 class="h-10 w-14 rounded border border-gray-300 cursor-pointer">
+          <span class="text-sm text-gray-500">Choose a colour for the tag badge</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center gap-3">
+      <%= f.submit tag.persisted? ? "Update Tag" : "Create Tag", class: "inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition cursor-pointer" %>
+      <%= link_to "Cancel", admin_tags_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+    </div>
+  <% end %>
+<% end %>

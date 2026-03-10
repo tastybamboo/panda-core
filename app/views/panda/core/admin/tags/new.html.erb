@@ -1,0 +1,4 @@
+<%= render Panda::Core::Admin::ContainerComponent.new do |component| %>
+  <% component.with_heading_slot(text: "New Tag", level: 1) %>
+  <%= render "form", tag: @tag %>
+<% end %>

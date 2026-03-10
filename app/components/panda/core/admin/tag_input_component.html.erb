@@ -1,0 +1,37 @@
+<div data-controller="tag-input"
+     data-tag-input-url-value="<%= tags_url %>"
+     data-tag-input-selected-value="<%= selected_tags_json %>"
+     class="relative">
+
+  <%# Selected tags as pills + hidden inputs %>
+  <div data-tag-input-target="selected" class="flex flex-wrap gap-1.5 mb-2">
+    <% selected_tags.each do |tag| %>
+      <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"
+            style="background-color: <%= tag.display_colour %>1a; color: <%= tag.display_colour %>; border: 1px solid <%= tag.display_colour %>33;"
+            data-tag-id="<%= tag.id %>">
+        <%= tag.name %>
+        <button type="button" class="ml-0.5 hover:opacity-70" data-action="tag-input#removeTag" data-tag-id="<%= tag.id %>">&times;</button>
+      </span>
+    <% end %>
+  </div>
+
+  <%# Hidden inputs for form submission %>
+  <div data-tag-input-target="hiddenInputs">
+    <% selected_tags.each do |tag| %>
+      <input type="hidden" name="<%= field_name %>" value="<%= tag.id %>" data-tag-id="<%= tag.id %>">
+    <% end %>
+  </div>
+
+  <%# Search input %>
+  <input type="text"
+         data-tag-input-target="input"
+         data-action="input->tag-input#search keydown->tag-input#keydown"
+         placeholder="Search or add tags..."
+         autocomplete="off"
+         class="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary">
+
+  <%# Results dropdown %>
+  <div data-tag-input-target="results"
+       class="absolute z-10 mt-1 hidden w-full rounded-lg border border-gray-200 bg-white shadow-lg max-h-48 overflow-y-auto">
+  </div>
+</div>

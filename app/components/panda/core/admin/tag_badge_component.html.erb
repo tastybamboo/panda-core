@@ -1,0 +1,7 @@
+<span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"
+      style="background-color: <%= colour %>1a; color: <%= colour %>; border: 1px solid <%= colour %>33;">
+  <%= tag.name %>
+  <% if removable %>
+    <button type="button" class="ml-0.5 hover:opacity-70" data-action="tag-input#removeTag" data-tag-id="<%= tag.id %>">&times;</button>
+  <% end %>
+</span>
