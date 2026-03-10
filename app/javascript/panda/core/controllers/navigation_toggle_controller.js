@@ -9,19 +9,26 @@ export default class extends Controller {
 
   connect() {
     // Suppress transitions on connect to prevent visual jump during Turbo navigation
-    this.menuTarget.classList.remove("transition-all", "duration-200", "ease-out")
+    const menu = this.menuTarget
+    menu.classList.remove("transition-all", "duration-200", "ease-out")
 
-    const hasActiveChild = this.menuTarget.querySelector('[class*="bg-primary-500"]')
+    const hasActiveChild = menu.querySelector('[class*="bg-primary-500"]')
     if (hasActiveChild) {
       this.expand()
     } else {
       this.collapse()
     }
 
-    // Re-enable transitions for user interactions
-    requestAnimationFrame(() => {
-      this.menuTarget.classList.add("transition-all", "duration-200", "ease-out")
+    // Re-enable transitions for user interactions; store RAF ID so disconnect() can cancel it
+    this._rafId = requestAnimationFrame(() => {
+      menu.classList.add("transition-all", "duration-200", "ease-out")
     })
+  }
+
+  disconnect() {
+    if (this._rafId) {
+      cancelAnimationFrame(this._rafId)
+    }
   }
 
   toggle(event) {
