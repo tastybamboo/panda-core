@@ -49,7 +49,7 @@
         <% item_section = item[:section].presence %>
         <% if item_section && item_section != current_section %>
           <% current_section = item_section %>
-          <li class="px-3 <%= section_count > 0 ? 'mt-3' : '' %> mb-0.5">
+          <li class="px-3 <%= section_count > 0 ? (compact_navigation? ? 'mt-3' : 'mt-5') : '' %> <%= compact_navigation? ? 'mb-0.5' : 'mb-1' %>">
             <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 sidebar-section-label"><%= current_section %></span>
           </li>
           <% section_count += 1 %>
@@ -70,7 +70,8 @@
           menu_id: "sub-menu-#{section_count}-#{index}",
           target: item[:target],
           badge: item[:badge],
-          badge_color: item[:badge_color]
+          badge_color: item[:badge_color],
+          compact: compact_navigation?
         ) do |nav_item|
           if has_children
             item[:children].each do |child|
@@ -99,7 +100,8 @@
           menu_id: "sub-menu-#{index}",
           target: item[:target],
           badge: item[:badge],
-          badge_color: item[:badge_color]
+          badge_color: item[:badge_color],
+          compact: compact_navigation?
         ) do |nav_item|
           if has_children
             item[:children].each do |child|

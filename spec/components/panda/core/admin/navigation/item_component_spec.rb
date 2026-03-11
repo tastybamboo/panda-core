@@ -39,4 +39,40 @@ RSpec.describe Panda::Core::Admin::Navigation::ItemComponent, type: :component d
       expect(output).to have_css("span.rounded-full", text: "3")
     end
   end
+
+  describe "compact mode" do
+    it "uses compact padding" do
+      component = described_class.new(**base_attrs, compact: true)
+      output = render_inline(component).to_html
+
+      expect(output).to include("py-1.5")
+      expect(output).not_to include("py-2.5")
+    end
+
+    it "uses compact margin" do
+      component = described_class.new(**base_attrs, compact: true)
+      output = render_inline(component).to_html
+
+      expect(output).to include("mb-0.5")
+      expect(output).not_to include("mb-2")
+    end
+  end
+
+  describe "spacious mode (default)" do
+    it "uses spacious padding" do
+      component = described_class.new(**base_attrs)
+      output = render_inline(component).to_html
+
+      expect(output).to include("py-2.5")
+      expect(output).not_to include("py-1.5")
+    end
+
+    it "uses spacious margin" do
+      component = described_class.new(**base_attrs)
+      output = render_inline(component).to_html
+
+      expect(output).to include("mb-2")
+      expect(output).not_to include("mb-0.5")
+    end
+  end
 end
