@@ -1,13 +1,15 @@
 ---
 assert_lefthook_installed: true
 colors: true
+post-commit:
+  jobs:
+    - name: auto-bundle-update
+      run: bash bin/bundle-auto-update
 pre-commit:
   parallel: true
   jobs:
     - name: bundle-audit
       run: bundle exec bundle-audit --update
-    - name: bundle-outdated
-      run: bundle outdated --strict
     - name: standardrb
       run: bundle exec standardrb
       glob: '*.rb'
