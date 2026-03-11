@@ -37,7 +37,8 @@ module Panda
         :avatar_optimization_quality,
         :avatar_image_processor,
         :admin_user_menu_items,
-        :additional_head_content
+        :additional_head_content,
+        :compact_navigation
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -118,6 +119,9 @@ module Panda
         @avatar_max_dimension = 800
         @avatar_optimization_quality = 85
         @avatar_image_processor = :vips # or :mini_magick
+
+        # Navigation density — false (spacious, default) or true (compact, for apps with many nav items)
+        @compact_navigation = false
 
         # Legacy extensible user menu items (prefer NavigationRegistry with position: :bottom)
         @admin_user_menu_items = []

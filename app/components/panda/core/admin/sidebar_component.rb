@@ -22,6 +22,10 @@ module Panda
           Panda::Core.config.admin_settings_path
         end
 
+        def compact_navigation?
+          Panda::Core.config.compact_navigation
+        end
+
         def sectioned?(items)
           items.any? { |item| item[:section].present? }
         end
