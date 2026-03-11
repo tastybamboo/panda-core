@@ -26,6 +26,10 @@ module Panda
           Panda::Core.config.compact_navigation
         end
 
+        def admin_logo_actions
+          Panda::Core.config.admin_logo_actions || []
+        end
+
         def sectioned?(items)
           items.any? { |item| item[:section].present? }
         end

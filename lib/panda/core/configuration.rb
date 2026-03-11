@@ -28,6 +28,7 @@ module Panda
         :admin_title,
         :admin_logo,
         :admin_settings_path,
+        :admin_logo_actions,
         :admin_sidebar_footer,
         :initial_admin_breadcrumb,
         :dashboard_redirect_path,
@@ -103,6 +104,7 @@ module Panda
         @admin_title = "Panda Admin"
         @admin_logo = nil  # Proc/lambda returning HTML for sidebar logo area (e.g. SVG + title)
         @admin_settings_path = nil  # Path for the settings gear icon in the logo area (nil hides it)
+        @admin_logo_actions = []  # Array of {path:, icon:, title:} hashes rendered as icon links next to the settings gear
         @admin_sidebar_footer = nil  # Proc/lambda returning HTML for the bottom of the sidebar (replaces version text)
         @initial_admin_breadcrumb = nil  # Proc that returns [label, path]
         @dashboard_redirect_path = nil  # Path to redirect to after login (defaults to admin_root_path)

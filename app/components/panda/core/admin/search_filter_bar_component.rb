@@ -19,7 +19,7 @@ module Panda
         attr_reader :url, :search_name, :search_value, :search_placeholder, :clear_url, :show_clear
 
         def select_classes
-          "w-auto rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-600 sm:text-sm dark:bg-gray-700 dark:text-white dark:ring-gray-600"
+          "h-9 w-auto rounded-md border-0 py-1.5 pl-3 pr-10 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600"
         end
       end
     end

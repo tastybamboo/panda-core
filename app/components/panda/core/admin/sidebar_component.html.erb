@@ -7,10 +7,19 @@
           <div class="flex items-center gap-2">
             <%= safe_html(admin_logo) %>
           </div>
-          <% if admin_settings_path %>
-            <%= helpers.link_to admin_settings_path, class: "flex items-center justify-center w-7 h-7 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors", title: "Settings" do %>
-              <i class="fa-solid fa-gear text-sm"></i>
-            <% end %>
+          <% if admin_logo_actions.any? || admin_settings_path %>
+            <div class="flex items-center gap-1">
+              <% admin_logo_actions.each do |action| %>
+                <%= helpers.link_to action[:path], class: "flex items-center justify-center w-7 h-7 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors", title: action[:title] do %>
+                  <i class="<%= action[:icon] %> text-sm"></i>
+                <% end %>
+              <% end %>
+              <% if admin_settings_path %>
+                <%= helpers.link_to admin_settings_path, class: "flex items-center justify-center w-7 h-7 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors", title: "Settings" do %>
+                  <i class="fa-solid fa-gear text-sm"></i>
+                <% end %>
+              <% end %>
+            </div>
           <% end %>
         </div>
       <% else %>
