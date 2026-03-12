@@ -44,7 +44,45 @@
         915
       ],
       "note": "Admin-only controller behind authenticate_admin_user! - only admins can modify user roles and metadata"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "46a409fd77a42e7e6db3d8c22a494fa102be16bb04ca613494baf0e3f75710e8",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/panda/core/admin/users/edit.html.erb",
+      "line": 41,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "Panda::Core.config.admin_user_edit_content.call(User.find(params[:id]), f, self)",
+      "render_path": null,
+      "location": null,
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": "Hook content is controlled by the host application developer, not user input. The raw call is intentional to render host-provided HTML."
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "f60426d4ca96ba191b9a49da3b27193b2dc00fdcb93574037165d98b3dbab0d4",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/panda/core/admin/users/show.html.erb",
+      "line": 36,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "Panda::Core.config.admin_user_show_content.call(User.find(params[:id]), self)",
+      "render_path": null,
+      "location": null,
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": "Hook content is controlled by the host application developer, not user input. The raw call is intentional to render host-provided HTML."
     }
   ],
-  "brakeman_version": "7.1.2"
+  "brakeman_version": "8.0.4"
 }
