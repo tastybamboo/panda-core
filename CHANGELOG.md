@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-03-12
+
+Panda Core reaches 1.0 — the configuration API, navigation registry, component
+library, and extension hooks are now stable.
+
+### Added
+
+- **User Management Hooks** — four `nil`-default configuration accessors for host apps to extend user views and lifecycle
+  - `admin_user_edit_content` — `Proc(user, form_builder, view_context)` renders extra fields inside the edit form
+  - `admin_user_after_update` — `Proc(user, params, current_user)` fires in the success path of `UsersController#update`
+  - `admin_user_show_content` — `Proc(user, view_context)` renders content on the user show page
+  - `admin_user_index_columns` — `Proc(user, view_context)` appends content inside the Role column on the user index
+- **NavigationRegistry** — declarative, composable sidebar navigation system (#144)
+  - `insert_admin_menu_section` — top-level sections with `icon:`, `after:`/`before:`, `visible:`, `permission:`, `:top`/`:bottom` positioning
+  - `insert_admin_menu_item` — items within sections supporting `path_helper:`, `method:`, `button_options:`, `target:`
+  - `insert_admin_user_menu_item` — convenience method for the "My Account" bottom section
+  - `filter_admin_menu` — post-build visibility filters by label
+  - Default "My Account" section auto-registered with My Profile, Login & Security, Logout
+- **WidgetRegistry** — `register_admin_dashboard_widget` for dashboard widget management
+- **Admin Logo Actions** — `admin_logo_actions` config renders icon links beside the settings gear
+- **Compact Navigation** — `compact_navigation` toggle for tighter sidebar spacing (#146, #148)
+- **Permission Keywords** — `permission:` keyword on nav sections and items for authorization-gated visibility (#140)
+- **Sidebar Customisation** — `admin_logo` Proc, `admin_settings_path`, `admin_sidebar_footer` Proc
+
+### Tags & Import System
+
+- Tenant-scoped Tags with full CRUD admin UI and search (#142)
+- Multi-format Import wizard supporting CSV, TSV, and XLSX (via xsv gem)
+- `Importable` concern — DSL for declaring importable fields with labels, required flags, and transform lambdas
+- Import sessions with progress tracking, duplicate detection, and column mapping
+- Import history view with status, row counts, and error logs
+
+### Fixed
+
+- **Sidebar Navigation Jump** — removed `transition-all` from the sidebar scroll container; mobile open/close transitions are now applied dynamically by the Stimulus controller only during active toggles, preventing Turbo page visits from animating the `max-h` change on desktop (#143)
+- **OmniAuth CSRF** — session key mismatch causing CSRF verification failures during OAuth callbacks (#138)
+- **AdminAuthorization Load Order** — include order in BaseController ensures auth checks run after authentication (#141)
+- **Search Filter Bar Sizing** — layout issues when combined with `admin_logo_actions`
+
+### Development
+
+- **Auto-update Post-commit Hook** — replaced the `bundle-outdated` pre-commit check with a post-commit hook (`bin/bundle-auto-update`) that automatically runs `bundle update` and creates a follow-up commit when gems are outdated (#147)
+
 ## [0.12.2] - 2025-12-12
 
 ### Added
