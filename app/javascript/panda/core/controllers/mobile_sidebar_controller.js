@@ -24,6 +24,7 @@ export default class extends Controller {
 
   open() {
     this._isOpen = true
+    this._enableTransition()
     this.sidebarTarget.classList.remove("max-h-16")
     this.sidebarTarget.classList.add("max-h-screen")
     this.backdropTarget.classList.remove("hidden")
@@ -32,10 +33,21 @@ export default class extends Controller {
 
   close() {
     this._isOpen = false
+    this._enableTransition()
     this.sidebarTarget.classList.remove("max-h-screen")
     this.sidebarTarget.classList.add("max-h-16")
     this.backdropTarget.classList.add("hidden")
     this.hamburgerTarget.setAttribute("aria-expanded", "false")
+  }
+
+  // Apply transition only during active mobile toggles to prevent
+  // Turbo page visits from animating the sidebar height on desktop.
+  _enableTransition() {
+    const el = this.sidebarTarget
+    el.classList.add("transition-all", "ease-in-out", "duration-300")
+    el.addEventListener("transitionend", () => {
+      el.classList.remove("transition-all", "ease-in-out", "duration-300")
+    }, { once: true })
   }
 
   _handleBreakpoint(event) {
