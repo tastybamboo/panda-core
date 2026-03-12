@@ -5,11 +5,11 @@ require_relative "lib/panda/core/version"
 Gem::Specification.new do |spec|
   spec.name = "panda-core"
   spec.version = Panda::Core::VERSION
-  spec.authors = ["Otaina Limited", "James Inman"]
+  spec.authors = ["James Inman", "Otaina Limited"]
   spec.email = ["james@otaina.co.uk"]
 
-  spec.summary = "Core libraries and development tools for Tasty Bamboo projects"
-  spec.description = "Shared development tools, configurations, and utilities for Panda CMS and its related projects"
+  spec.summary = "Core framework for Panda-powered Rails applications"
+  spec.description = "Authentication, admin UI components, navigation, tags, imports, and extension hooks for Rails apps built on the Panda ecosystem"
   spec.homepage = "https://github.com/tastybamboo/panda-core"
   spec.license = "BSD-3-Clause"
   spec.required_ruby_version = ">= 3.0.0"
