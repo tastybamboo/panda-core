@@ -32,6 +32,9 @@
             <% elsif @user.invitation_token.present? %>
               <%= render Panda::Core::Admin::TagComponent.new(text: "Invited", status: :draft) %>
             <% end %>
+            <% if (hook = Panda::Core.config.admin_user_show_content) %>
+              <%= raw hook.call(@user, self) %>
+            <% end %>
           </div>
         </div>
 

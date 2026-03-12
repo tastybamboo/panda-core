@@ -39,7 +39,11 @@ module Panda
         :avatar_image_processor,
         :admin_user_menu_items,
         :additional_head_content,
-        :compact_navigation
+        :compact_navigation,
+        :admin_user_edit_content,
+        :admin_user_after_update,
+        :admin_user_show_content,
+        :admin_user_index_columns
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -124,6 +128,12 @@ module Panda
 
         # Navigation density — false (spacious, default) or true (compact, for apps with many nav items)
         @compact_navigation = false
+
+        # User management hooks — Procs that host apps set to inject content into user views/callbacks
+        @admin_user_edit_content = nil   # Proc(user, form_builder, view_context) → HTML
+        @admin_user_after_update = nil   # Proc(user, params, current_user)
+        @admin_user_show_content = nil   # Proc(user, view_context) → HTML
+        @admin_user_index_columns = nil  # Proc(user, view_context) → HTML
 
         # Legacy extensible user menu items (prefer NavigationRegistry with position: :bottom)
         @admin_user_menu_items = []

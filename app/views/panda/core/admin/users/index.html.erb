@@ -81,6 +81,9 @@
           <% if user.internal? %>
             <%= render Panda::Core::Admin::TagComponent.new(text: "Internal", status: :auto) %>
           <% end %>
+          <% if (hook = Panda::Core.config.admin_user_index_columns) %>
+            <%= raw hook.call(user, self) %>
+          <% end %>
         <% end %>
 
         <% table.column("Status", width: "15%") do |user| %>

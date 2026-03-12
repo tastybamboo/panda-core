@@ -37,6 +37,9 @@
           label: "Internal Account",
           meta: "Exclude from reports and analytics."
         } %>
+        <% if (hook = Panda::Core.config.admin_user_edit_content) %>
+          <%= raw hook.call(@user, f, self) %>
+        <% end %>
       </div>
     <% end %>
 

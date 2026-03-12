@@ -53,6 +53,9 @@ module Panda
 
         def update
           if @user.update(user_params)
+            if (hook = Panda::Core.config.admin_user_after_update)
+              hook.call(@user, params, current_user)
+            end
             UserActivity.log!(user: current_user, action: "updated_user", resource: @user, request: request)
             flash[:success] = "User has been updated successfully."
             redirect_to admin_users_path
