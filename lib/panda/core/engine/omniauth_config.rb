@@ -154,6 +154,18 @@ module Panda
               options = (settings[:options] || {}).dup
               options[:name] = settings[:path_name] if settings[:path_name].present?
 
+              # Inject a setup lambda that gates providers per-request (e.g. per-tenant)
+              # and allows dynamic redirect_uri override for multi-subdomain OAuth flows.
+              gate = Panda::Core.config.authentication_provider_gate
+              if gate && symbol != :developer
+                provider_name = name.to_s
+                options[:setup] = ->(env) {
+                  unless gate.call(provider_name, env)
+                    raise OmniAuth::Error, "Provider not enabled for this workspace"
+                  end
+                }
+              end
+
               if settings[:client_id] && settings[:client_secret]
                 builder.provider symbol, settings[:client_id], settings[:client_secret], options
               else

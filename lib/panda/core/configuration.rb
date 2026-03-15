@@ -14,6 +14,9 @@ module Panda
         :mailer_default_url_options,
         :session_token_cookie,
         :authentication_providers,
+        :authentication_provider_resolver,
+        :authentication_provider_gate,
+        :authentication_validator,
         :admin_path,
         :admin_navigation_items,
         :admin_dashboard_widgets,
@@ -57,6 +60,9 @@ module Panda
         @mailer_default_url_options = {host: "localhost:3000"}
         @session_token_cookie = :panda_session
         @authentication_providers = {}
+        @authentication_provider_resolver = nil
+        @authentication_provider_gate = nil
+        @authentication_validator = nil
         @admin_path = "/admin"
         @default_theme = "default"
 
@@ -140,6 +146,18 @@ module Panda
 
         # Register default user menu as a bottom navigation section (idempotent)
         register_default_user_menu
+      end
+
+      # Returns the authentication providers for the given request.
+      # If an +authentication_provider_resolver+ proc is configured it is
+      # called with the request to allow per-tenant provider filtering.
+      # Otherwise the static +authentication_providers+ hash is returned.
+      def resolved_authentication_providers(request = nil)
+        if authentication_provider_resolver && request
+          authentication_provider_resolver.call(request)
+        else
+          authentication_providers
+        end
       end
 
       # Register a new admin navigation section via {NavigationRegistry}.

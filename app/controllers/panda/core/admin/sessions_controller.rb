@@ -10,7 +10,8 @@ module Panda
         skip_before_action :authenticate_admin_user!, only: [:new, :create, :destroy, :failure]
 
         def new
-          @providers = Core.config.authentication_providers.select do |key, config|
+          providers = Core.config.resolved_authentication_providers(request)
+          @providers = providers.select do |key, config|
             # Developer provider doesn't need credentials, only shown in development
             if key.to_sym == :developer
               Rails.env.development?
@@ -27,7 +28,8 @@ module Panda
           # Find the actual provider key (might be using path_name override)
           provider = find_provider_by_path(provider_path)
 
-          unless provider && Core.config.authentication_providers.key?(provider)
+          resolved = Core.config.resolved_authentication_providers(request)
+          unless provider && resolved.key?(provider)
             redirect_to admin_login_path, flash: {error: "Authentication provider not enabled"}
             return
           end
@@ -35,6 +37,15 @@ module Panda
           user = User.find_or_create_from_auth_hash(auth)
 
           if user.persisted?
+            # Per-login validation hook (e.g. email domain restrictions)
+            if Core.config.authentication_validator
+              validation_error = Core.config.authentication_validator.call(user, auth, request)
+              if validation_error
+                redirect_to admin_login_path, flash: {error: validation_error}
+                return
+              end
+            end
+
             # Check if user is authorized to access the admin area.
             # Admin users always have access. Non-admin users are checked
             # via the configurable authorization_policy (e.g. role-based access
@@ -56,6 +67,17 @@ module Panda
             ActiveSupport::Notifications.instrument("panda.core.user_login",
               user: user,
               provider: provider)
+
+            # Redirect to originating subdomain if auth callback landed on root domain
+            origin = session.delete(:origin_subdomain)
+            if origin.present? && request.host.split(".").first != origin
+              scheme = request.scheme
+              base_domain = request.host.sub(/\A[^.]+\./, "")
+              port = request.port
+              port_suffix = [80, 443].include?(port) ? "" : ":#{port}"
+              redirect_to "#{scheme}://#{origin}.#{base_domain}#{port_suffix}#{Core.config.admin_path}", flash: {success: "Successfully logged in as #{user.name}"}
+              return
+            end
 
             # Use configured dashboard path or default to admin_root_path
             redirect_path = Panda::Core.config.dashboard_redirect_path || admin_root_path
@@ -92,11 +114,13 @@ module Panda
 
         # Find the provider key by path name (handles path_name override)
         def find_provider_by_path(provider_path)
+          providers = Core.config.resolved_authentication_providers(request)
+
           # First check if it's a direct match
-          return provider_path if Core.config.authentication_providers.key?(provider_path)
+          return provider_path if providers.key?(provider_path)
 
           # Then check if any provider has a matching path_name
-          Core.config.authentication_providers.each do |key, config|
+          providers.each do |key, config|
             return key if config[:path_name]&.to_sym == provider_path
           end
 
