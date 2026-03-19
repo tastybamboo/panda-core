@@ -22,7 +22,7 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.p-4.text-black")
+      expect(output).to have_css("div.px-4.py-3.text-black")
       expect(output).to have_text("Just body content")
     end
 
