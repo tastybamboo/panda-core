@@ -207,6 +207,40 @@ RSpec.describe Panda::Core::FormBuilder, type: :helper do
     end
   end
 
+  describe "#telephone_field" do
+    it "renders with a label and white input styling" do
+      result = builder.telephone_field(:name, label: "Phone Number")
+
+      expect(result).to include("Phone Number")
+      expect(result).to include("panda-core-field-container")
+      expect(result).to include("bg-white")
+    end
+
+    it "uses the default label when no custom label is provided" do
+      result = builder.telephone_field(:name)
+
+      expect(result).to include("Name")
+      expect(result).to include('name="user[name]"')
+    end
+  end
+
+  describe "#url_field" do
+    it "renders with a label and white input styling" do
+      result = builder.url_field(:name, label: "Website")
+
+      expect(result).to include("Website")
+      expect(result).to include("panda-core-field-container")
+      expect(result).to include("bg-white")
+    end
+
+    it "uses the default label when no custom label is provided" do
+      result = builder.url_field(:name)
+
+      expect(result).to include("Name")
+      expect(result).to include('name="user[name]"')
+    end
+  end
+
   describe "integration: multiple fields with custom labels" do
     it "handles different field types with custom labels in the same form" do
       text_result = builder.text_field(:name, label: "Full Name")
