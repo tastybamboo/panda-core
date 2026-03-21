@@ -26,3 +26,6 @@ pin "@tailwindplus/elements", to: "https://esm.sh/@tailwindplus/elements@1", pre
 # Cropper.js - Image cropping library (via esm.sh for reliable ES module support)
 pin "cropperjs", to: "https://esm.sh/cropperjs@1.6.2"
 # Note: Cropper.css is loaded separately via stylesheet_link_tag in views that use cropper
+
+# Vanilla Calendar Pro - Date picker library (vendored for reliability)
+pin "vanilla-calendar-pro", to: "/panda/core/vendor/vanilla-calendar-pro.js" # @3.1.0

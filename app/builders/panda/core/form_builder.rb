@@ -357,11 +357,43 @@ module Panda
       end
 
       def date_field(method, options = {})
-        # Extract custom label if provided
         custom_label = options.delete(:label)
+        date_min = options.delete(:min)
+        date_max = options.delete(:max)
 
-        content_tag :div, class: container_styles do
-          label(method, custom_label) + meta_text(options) + super(method, options.reverse_merge(class: input_styles))
+        # Format current value for display
+        raw_value = object.respond_to?(method) ? object.send(method) : nil
+        iso_value = if raw_value.respond_to?(:strftime)
+          raw_value.strftime("%Y-%m-%d")
+        else
+          raw_value
+        end
+        display_value = if raw_value.respond_to?(:strftime)
+          raw_value.strftime("%-d %b %Y")
+        elsif raw_value.is_a?(String) && raw_value.present?
+          raw_value
+        else
+          ""
+        end
+
+        controller_data = {controller: "datepicker"}
+        controller_data[:datepicker_date_min_value] = date_min.to_s if date_min
+        controller_data[:datepicker_date_max_value] = date_max.to_s if date_max
+
+        content_tag :div, class: "#{container_styles} relative", data: controller_data do
+          label(method, custom_label) +
+            meta_text(options) +
+            hidden_field(method, value: iso_value, data: {datepicker_target: "hidden"}) +
+            @template.text_field_tag(
+              nil,
+              display_value,
+              class: "#{input_styles} cursor-pointer",
+              readonly: true,
+              placeholder: options[:placeholder] || "Select date...",
+              data: {datepicker_target: "display", action: "click->datepicker#toggle focus->datepicker#toggle"}
+            ) +
+            content_tag(:div, "", class: "hidden absolute z-50 mt-1 left-0", data: {datepicker_target: "calendar"}) +
+            error_message(method)
         end
       end
 
