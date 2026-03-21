@@ -8,6 +8,7 @@ export default class extends Controller {
     this.selectedIds = new Set(this.selectedValue.map(t => t.id))
     this.debounceTimer = null
     this.highlightIndex = -1
+    this.allTags = null
 
     // Close on outside click
     this.outsideClickHandler = (e) => {
@@ -20,31 +21,37 @@ export default class extends Controller {
     document.removeEventListener("click", this.outsideClickHandler)
   }
 
-  search() {
-    clearTimeout(this.debounceTimer)
+  async showAll() {
+    await this.ensureTagsLoaded()
+
     const query = this.inputTarget.value.trim()
+    const available = this.allTags.filter(t => !this.selectedIds.has(t.id))
 
-    if (query.length < 1) {
-      this.hideResults()
-      return
+    if (query.length > 0) {
+      const lower = query.toLowerCase()
+      const filtered = available.filter(t => t.name.toLowerCase().includes(lower))
+      this.renderResults(filtered, query)
+    } else {
+      this.renderResults(available, "")
     }
-
-    this.debounceTimer = setTimeout(() => this.fetchResults(query), 200)
   }
 
-  async fetchResults(query) {
+  search() {
+    clearTimeout(this.debounceTimer)
+    this.debounceTimer = setTimeout(() => this.showAll(), 200)
+  }
+
+  async ensureTagsLoaded() {
+    if (this.allTags) return
+
     try {
-      const url = `${this.urlValue}?q=${encodeURIComponent(query)}`
-      const response = await fetch(url, {
+      const response = await fetch(this.urlValue, {
         headers: { "Accept": "application/json" }
       })
-      const tags = await response.json()
-
-      // Filter out already selected
-      const available = tags.filter(t => !this.selectedIds.has(t.id))
-      this.renderResults(available, query)
+      this.allTags = await response.json()
     } catch (e) {
       console.error("[tag-input] fetch error:", e)
+      this.allTags = []
     }
   }
 
