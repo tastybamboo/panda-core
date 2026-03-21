@@ -1,0 +1,6 @@
+<%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
+  <% panel.with_heading_slot { heading } %>
+  <div class="<%= prose_classes %>">
+    <%= simple_format(text) %>
+  </div>
+<% end %>

@@ -1,0 +1,8 @@
+<%= render Panda::Core::Admin::PanelComponent.new do |panel| %>
+  <% panel.with_heading_slot { heading } %>
+  <div class="flex flex-wrap gap-2">
+    <% tags.each do |tag| %>
+      <%= render Panda::Core::Admin::TagBadgeComponent.new(tag: tag) %>
+    <% end %>
+  </div>
+<% end %>
