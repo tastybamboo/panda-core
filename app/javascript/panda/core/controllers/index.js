@@ -34,6 +34,12 @@ application.register("global-search", GlobalSearchController)
 import TagInputController from "./tag_input_controller.js"
 application.register("tag-input", TagInputController)
 
+import DatepickerController from "./datepicker_controller.js"
+application.register("datepicker", DatepickerController)
+
+import DaterangeController from "./daterange_controller.js"
+application.register("daterange", DaterangeController)
+
 // Import and register TailwindCSS Stimulus Components
 // These are needed for UI components like slideover, modals, alerts, etc.
 import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components.js"
