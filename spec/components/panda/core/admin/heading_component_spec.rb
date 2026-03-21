@@ -64,6 +64,35 @@ RSpec.describe Panda::Core::Admin::HeadingComponent, type: :component do
       expect(output).to have_css("h2.border-b.pb-4")
     end
 
+    it "renders with dropdown_button slot" do
+      component = described_class.new(text: "Tasks") do |heading|
+        heading.with_dropdown_button(text: "View Board") do |db|
+          db.with_item(label: "Fundraising", href: "/boards/1")
+          db.with_item(label: "Events", href: "/boards/2")
+        end
+      end
+      output = Capybara.string(render_inline(component).to_html)
+
+      expect(output).to have_css("span.actions")
+      expect(output).to have_button("View Board")
+      expect(output).to have_link("Fundraising", href: "/boards/1")
+      expect(output).to have_link("Events", href: "/boards/2")
+    end
+
+    it "renders dropdown_buttons before regular buttons" do
+      component = described_class.new(text: "Tasks") do |heading|
+        heading.with_button(text: "Add Task", action: :add, href: "/tasks/new")
+        heading.with_dropdown_button(text: "View Board") do |db|
+          db.with_item(label: "Board 1", href: "/boards/1")
+        end
+      end
+      html = render_inline(component).to_html
+
+      dropdown_pos = html.index("View Board")
+      button_pos = html.index("Add Task")
+      expect(dropdown_pos).to be < button_pos
+    end
+
     it "does not render an icon by default" do
       component = described_class.new(text: "Pages", level: 1)
       output = Capybara.string(render_inline(component).to_html)

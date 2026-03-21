@@ -5,6 +5,7 @@ module Panda
     module Admin
       class HeadingComponent < Panda::Core::Base
         renders_many :buttons, Panda::Core::Admin::ButtonComponent
+        renders_many :dropdown_buttons, Panda::Core::Admin::DropdownButtonComponent
 
         def initialize(text: "", icon: "", meta: nil, level: 2, additional_styles: nil, **attrs, &block)
           @text = text
