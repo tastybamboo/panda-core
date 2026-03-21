@@ -8,8 +8,11 @@
       <% end %>
       <span><%= text %></span>
     </div>
-    <% if buttons.any? %>
+    <% if buttons.any? || dropdown_buttons.any? %>
       <span class="actions flex gap-x-2 mt-1 min-h-[2.5rem]">
+        <% dropdown_buttons.each do |dropdown_button| %>
+          <%= dropdown_button %>
+        <% end %>
         <% buttons.each do |button| %>
           <%= button %>
         <% end %>
