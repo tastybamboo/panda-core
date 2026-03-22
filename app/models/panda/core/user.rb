@@ -76,6 +76,15 @@ module Panda
           return user
         end
 
+        # Check if user creation is restricted (e.g. invite-only mode)
+        restrict = Panda::Core.config.restrict_user_creation
+        restricted = restrict.respond_to?(:call) ? restrict.call(auth_hash) : restrict
+        if restricted
+          user = new(email: auth_hash.info.email.downcase, name: auth_hash.info.name || "Unknown User")
+          user.errors.add(:base, "No account exists for this email address. Please contact your administrator.")
+          return user
+        end
+
         attributes = {
           :email => auth_hash.info.email.downcase,
           :name => auth_hash.info.name || "Unknown User",

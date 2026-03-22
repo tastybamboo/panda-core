@@ -129,6 +129,9 @@
           <%= f.text_field :name, required: true, placeholder: "Full name" %>
           <%= f.email_field :email, required: true, placeholder: "email@example.com" %>
           <%= f.check_box :admin, { label: "Administrator", meta: "Grant full administrative access." } %>
+          <% if (hook = Panda::Core.config.invite_form_content) %>
+            <%= raw hook.call(f, self) %>
+          <% end %>
         </div>
       <% end %>
       <%= render Panda::Core::Admin::FormFooterComponent.new(submit_text: "Send Invitation") %>

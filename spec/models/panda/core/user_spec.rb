@@ -109,6 +109,48 @@ RSpec.describe Panda::Core::User, type: :model do
         described_class.find_or_create_from_auth_hash(auth_hash)
       end
 
+      context "when restrict_user_creation is enabled" do
+        after { Panda::Core.config.restrict_user_creation = false }
+
+        it "returns an unpersisted user with errors when set to true" do
+          Panda::Core.config.restrict_user_creation = true
+
+          expect {
+            user = described_class.find_or_create_from_auth_hash(auth_hash)
+            expect(user).not_to be_persisted
+            expect(user.errors[:base]).to include("No account exists for this email address. Please contact your administrator.")
+          }.not_to change(described_class, :count)
+        end
+
+        it "supports a callable for conditional restriction" do
+          Panda::Core.config.restrict_user_creation = ->(auth) { auth.info.email.end_with?("@blocked.com") }
+
+          # Non-blocked email should create normally
+          expect {
+            described_class.find_or_create_from_auth_hash(auth_hash)
+          }.to change(described_class, :count).by(1)
+        end
+
+        it "blocks creation when callable returns true" do
+          Panda::Core.config.restrict_user_creation = ->(_auth) { true }
+
+          expect {
+            user = described_class.find_or_create_from_auth_hash(auth_hash)
+            expect(user).not_to be_persisted
+            expect(user.errors[:base]).to be_present
+          }.not_to change(described_class, :count)
+        end
+
+        it "still finds existing users even when restricted" do
+          Panda::Core.config.restrict_user_creation = true
+          existing = described_class.create!(email: "test@example.com", name: "Existing")
+
+          user = described_class.find_or_create_from_auth_hash(auth_hash)
+          expect(user).to eq(existing)
+          expect(user).to be_persisted
+        end
+      end
+
       it "calls AttachAvatarService when oauth_avatar_url differs from auth hash URL" do
         # OAuth avatar update scenario: oauth_avatar_url is set but differs from new URL
         described_class.create!(email: "test@example.com", name: "Existing User", oauth_avatar_url: "https://old-oauth.com/avatar.jpg")
