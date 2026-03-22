@@ -18,13 +18,12 @@ module Panda
         def create
           user = Panda::Core::User.find(params[:user_id])
 
-          # Check if user is admin (mimics real OAuth behavior)
-          unless user.admin?
-            # Non-admin users are redirected to login with error (mimics real OAuth flow)
+          # Mirror real SessionsController: admin users always pass,
+          # non-admin users checked via authorization_policy
+          policy = Panda::Core.config.authorization_policy
+          unless user.admin? || policy.call(user, :access_admin, nil)
             flash[:alert] = "You do not have permission to access the admin area."
-            # Keep flash for one more request to survive redirect in tests
             flash.keep(:alert) if Rails.env.test?
-            # Use string path since route helpers aren't available in ActionController::Base
             redirect_to "#{Panda::Core.config.admin_path || "/admin"}/login", allow_other_host: false, status: :found
             return
           end

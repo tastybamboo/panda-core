@@ -20,6 +20,42 @@ RSpec.describe "Admin Sessions", type: :request do
         expect(response).to redirect_to("/admin/login")
         expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_nil
       end
+
+      context "when authorization_policy grants access" do
+        around do |example|
+          original_policy = Panda::Core.config.authorization_policy
+          Panda::Core.config.authorization_policy = ->(_user, _action, _resource) { true }
+          example.run
+        ensure
+          Panda::Core.config.authorization_policy = original_policy
+        end
+
+        it "creates session and redirects to admin area" do
+          post "/admin/test_sessions", params: {user_id: regular_user.id}
+
+          expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(regular_user.id)
+          expect(response).to redirect_to("/admin")
+          expect(flash[:alert]).to be_nil
+        end
+      end
+
+      context "when authorization_policy denies access" do
+        around do |example|
+          original_policy = Panda::Core.config.authorization_policy
+          Panda::Core.config.authorization_policy = ->(_user, _action, _resource) { false }
+          example.run
+        ensure
+          Panda::Core.config.authorization_policy = original_policy
+        end
+
+        it "sets flash alert and redirects to login" do
+          post "/admin/test_sessions", params: {user_id: regular_user.id}
+
+          expect(flash[:alert]).to eq("You do not have permission to access the admin area.")
+          expect(response).to redirect_to("/admin/login")
+          expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_nil
+        end
+      end
     end
 
     context "when user is an admin" do
@@ -73,6 +109,24 @@ RSpec.describe "Admin Sessions", type: :request do
         expect(flash[:alert]).to eq("You do not have permission to access the admin area.")
         expect(response).to redirect_to("/admin/login")
         expect(session[Panda::Core::ADMIN_SESSION_KEY]).to be_nil
+      end
+
+      context "when authorization_policy grants access" do
+        around do |example|
+          original_policy = Panda::Core.config.authorization_policy
+          Panda::Core.config.authorization_policy = ->(_user, _action, _resource) { true }
+          example.run
+        ensure
+          Panda::Core.config.authorization_policy = original_policy
+        end
+
+        it "creates session and redirects to admin area" do
+          get "/admin/test_login/#{regular_user.id}"
+
+          expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(regular_user.id)
+          expect(response).to redirect_to("/admin")
+          expect(flash[:alert]).to be_nil
+        end
       end
     end
   end
