@@ -75,6 +75,9 @@ module Panda
           )
 
           if result.success?
+            if (hook = Panda::Core.config.after_user_invited)
+              hook.call(result.payload[:user], params, current_user)
+            end
             flash[:success] = "Invitation sent to #{params[:email]}."
           else
             flash[:error] = result.errors.join(", ")

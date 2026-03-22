@@ -46,7 +46,10 @@ module Panda
         :admin_user_edit_content,
         :admin_user_after_update,
         :admin_user_show_content,
-        :admin_user_index_columns
+        :admin_user_index_columns,
+        :restrict_user_creation,
+        :after_user_invited,
+        :invite_form_content
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -140,6 +143,15 @@ module Panda
         @admin_user_after_update = nil   # Proc(user, params, current_user)
         @admin_user_show_content = nil   # Proc(user, view_context) → HTML
         @admin_user_index_columns = nil  # Proc(user, view_context) → HTML
+
+        # Authentication restriction — when truthy, find_or_create_from_auth_hash
+        # will NOT create new User records for unknown emails on OAuth login.
+        # Accepts a boolean or a callable (receives auth_hash, returns truthy to restrict).
+        @restrict_user_creation = false
+
+        # Invitation hooks — host app can extend the invite flow
+        @after_user_invited = nil        # Proc(user, params, current_user) — called after successful invite
+        @invite_form_content = nil       # Proc(form_builder, view_context) → HTML — extra fields in invite form
 
         # Legacy extensible user menu items (prefer NavigationRegistry with position: :bottom)
         @admin_user_menu_items = []
