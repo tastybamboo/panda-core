@@ -24,8 +24,9 @@ RSpec.describe "Admin Sessions", type: :request do
       context "when authorization_policy grants access" do
         around do |example|
           original_policy = Panda::Core.config.authorization_policy
-          Panda::Core.config.authorization_policy = ->(user, action, resource) { true }
+          Panda::Core.config.authorization_policy = ->(_user, _action, _resource) { true }
           example.run
+        ensure
           Panda::Core.config.authorization_policy = original_policy
         end
 
@@ -41,8 +42,9 @@ RSpec.describe "Admin Sessions", type: :request do
       context "when authorization_policy denies access" do
         around do |example|
           original_policy = Panda::Core.config.authorization_policy
-          Panda::Core.config.authorization_policy = ->(user, action, resource) { false }
+          Panda::Core.config.authorization_policy = ->(_user, _action, _resource) { false }
           example.run
+        ensure
           Panda::Core.config.authorization_policy = original_policy
         end
 
@@ -112,8 +114,9 @@ RSpec.describe "Admin Sessions", type: :request do
       context "when authorization_policy grants access" do
         around do |example|
           original_policy = Panda::Core.config.authorization_policy
-          Panda::Core.config.authorization_policy = ->(user, action, resource) { true }
+          Panda::Core.config.authorization_policy = ->(_user, _action, _resource) { true }
           example.run
+        ensure
           Panda::Core.config.authorization_policy = original_policy
         end
 
