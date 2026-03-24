@@ -22,6 +22,7 @@ module Panda
         helper Panda::Core::FormHelper
         helper Panda::Core::FeatureFlagHelper
         helper Panda::Core::AssetHelper if defined?(Panda::Core::AssetHelper)
+        helper Panda::Core::ActiveStorageHelper
 
         before_action :set_current_request_details
         before_action :authenticate_admin_user!
