@@ -25,6 +25,24 @@ if defined?(ViewComponent) && Rails.application && Rails.application.config.resp
   Rails.application.config.view_component.test_controller = "ViewComponentTestController"
 end
 
+# Ensure test schema is up to date, auto-registering engine migration versions
+# that db:schema:load doesn't track. When schema:load creates tables from
+# schema.rb, it only records the max version in schema_migrations. Engine
+# migrations appear as "pending" even though their columns already exist.
+begin
+  ActiveRecord::Migration.maintain_test_schema!
+rescue ActiveRecord::PendingMigrationError
+  sm = ActiveRecord::SchemaMigration.new(ActiveRecord::Base.connection_pool)
+  existing = sm.versions.map(&:to_i).to_set
+  migrator = ActiveRecord::MigrationContext.new(ActiveRecord::Migrator.migrations_paths)
+  missing = migrator.migrations.map(&:version).reject { |v| existing.include?(v) }
+  if missing.any?
+    missing.each { |v| sm.create_version(v.to_s) }
+  else
+    raise
+  end
+end
+
 # Configure fixtures
 ActiveRecord::FixtureSet.context_class.send :include, ActiveSupport::Testing::TimeHelpers
 
