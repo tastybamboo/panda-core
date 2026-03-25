@@ -53,12 +53,8 @@ require "panda/core/testing/rails_helper"
 
 Rails.application.eager_load!
 
-# Ensures that the test database schema matches the current schema file.
-begin
-  ActiveRecord::Migration.maintain_test_schema!
-rescue ActiveRecord::PendingMigrationError => e
-  abort e.to_s.strip
-end
+# Schema migration registration is handled by the shared testing helper
+# (panda/core/testing/rails_helper.rb) — no need for maintain_test_schema! here.
 
 # Core-specific RSpec configuration
 RSpec.configure do |config|
