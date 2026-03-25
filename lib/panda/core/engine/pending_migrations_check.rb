@@ -12,8 +12,9 @@ module Panda
               next unless Rails.env.local?
 
               check_for_pending_panda_migrations
-            rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished
+            rescue ActiveRecord::NoDatabaseError, ActiveRecord::ConnectionNotEstablished, NoMethodError
               # Skip when DB isn't available (asset precompilation, etc.)
+              # or when migration API differs across Rails versions
             end
           end
         end
@@ -21,7 +22,8 @@ module Panda
         private
 
         def check_for_pending_panda_migrations
-          context = ActiveRecord::MigrationContext.new(Rails.application.paths["db/migrate"].to_a)
+          paths = ActiveRecord::Migrator.migrations_paths
+          context = ActiveRecord::MigrationContext.new(paths)
           return unless context.needs_migration?
 
           pending = context.open.pending_migrations
@@ -29,7 +31,7 @@ module Panda
           return if panda_pending.empty?
 
           install_tasks = Panda::Core::ModuleRegistry.modules.keys
-            .unshift("panda-core")
+            .unshift("panda-core").uniq
             .map { |gem_name| "#{gem_name.tr("-", "_")}:install:migrations" }
             .join(" ")
 
