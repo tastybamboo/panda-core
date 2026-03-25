@@ -28,11 +28,14 @@ module Panda
           panda_pending = pending.select { |m| m.filename.match?(/panda/i) }
           return if panda_pending.empty?
 
+          install_tasks = Panda::Core::ModuleRegistry.modules.keys
+            .unshift("panda-core")
+            .map { |gem_name| "#{gem_name.tr("-", "_")}:install:migrations" }
+            .join(" ")
+
           Rails.logger.warn(
             "\n⚠️  #{panda_pending.size} pending Panda migration(s) detected.\n" \
-            "   Run: bundle exec rake panda:install_migrations\n" \
-            "   (or: bin/rails panda_core:install:migrations panda_cms:install:migrations " \
-            "panda_helpdesk:install:migrations db:migrate)\n"
+            "   Run: bin/rails #{install_tasks} db:migrate\n"
           )
         end
       end
