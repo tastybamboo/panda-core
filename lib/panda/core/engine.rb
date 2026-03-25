@@ -18,6 +18,7 @@ require_relative "engine/omniauth_config"
 require_relative "engine/view_component_config"
 require_relative "engine/admin_controller_config"
 require_relative "engine/route_config"
+require_relative "engine/pending_migrations_check"
 
 module Panda
   module Core
@@ -39,6 +40,7 @@ module Panda
       include ViewComponentConfig
       include AdminControllerConfig
       include RouteConfig
+      include PendingMigrationsCheck
 
       #
       # Misc configuration point
