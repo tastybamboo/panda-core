@@ -190,8 +190,7 @@ module Panda
           content_tag :div, class: container_styles do
             label(method, custom_label) +
               meta_text(options) +
-              # Cropper stylesheet
-              @template.content_tag(:link, nil, rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css") +
+              # Note: cropperjs 2.x uses Web Components with built-in styles — no external CSS needed
               # File input
               content_tag(:div, class: "mt-2") do
                 super(method, options.reverse_merge(
