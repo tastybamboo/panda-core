@@ -24,13 +24,13 @@ RSpec.describe Panda::Core::AssetHelper, type: :helper do
       it "includes cropperjs from the importmap" do
         result = helper.panda_core_javascript
         expect(result).to include('"cropperjs"')
-        expect(result).to include("https://esm.sh/cropperjs@1.6.2")
+        expect(result).to include("/panda/core/vendor/cropperjs@2.1.0.js")
       end
 
       it "includes tailwindplus/elements from the importmap" do
         result = helper.panda_core_javascript
         expect(result).to include('"@tailwindplus/elements"')
-        expect(result).to include("https://esm.sh/@tailwindplus/elements@1")
+        expect(result).to include("/panda/core/vendor/@tailwindplus--elements@1.0.22.js")
       end
 
       it "includes correct file paths with .js extension for local modules" do
@@ -41,24 +41,25 @@ RSpec.describe Panda::Core::AssetHelper, type: :helper do
         expect(result).not_to include('"/panda/core/application"') # Should not be missing .js
       end
 
-      # Test to ensure inline importmap stays in sync with config/importmap.rb
-      it "includes all CDN packages from config/importmap.rb" do
-        # Read the importmap config file
+      it "has no external CDN URLs in the importmap" do
+        importmap_config = File.read(Panda::Core::Engine.root.join("config/importmap.rb"))
+        cdn_pins = importmap_config.scan(/pin\s+"[^"]+",\s+to:\s+"(https:\/\/[^"]+)"/)
+        expect(cdn_pins).to be_empty, "Expected no CDN URLs in importmap.rb but found: #{cdn_pins.flatten.join(", ")}"
+      end
+
+      it "includes all vendored packages from config/importmap.rb" do
         importmap_config = File.read(Panda::Core::Engine.root.join("config/importmap.rb"))
 
-        # Extract CDN packages (those pinned to https:// URLs)
-        cdn_packages = []
-        importmap_config.scan(/pin\s+"([^"]+)",\s+to:\s+"(https:\/\/[^"]+)"/) do |package, url|
-          cdn_packages << {package: package, url: url}
+        # Extract vendored packages (those pinned to /panda/ paths)
+        vendored_packages = []
+        importmap_config.scan(/pin\s+"([^"]+)",\s+to:\s+"(\/panda\/[^"]+)"/) do |package, path|
+          vendored_packages << {package: package, path: path}
         end
 
         result = helper.panda_core_javascript
 
-        # Verify each CDN package is in the inline importmap
-        cdn_packages.each do |pkg|
-          expect(result).to include(%("#{pkg[:package]}": "#{pkg[:url]}"))
-            .or(include(%("#{pkg[:package]}":"#{pkg[:url]}")))
-            .or(include(%("#{pkg[:package]}": "#{pkg[:url].split("@").first}@))),
+        vendored_packages.each do |pkg|
+          expect(result).to include(%("#{pkg[:package]}")),
             "Expected inline importmap to include #{pkg[:package]} from config/importmap.rb"
         end
       end

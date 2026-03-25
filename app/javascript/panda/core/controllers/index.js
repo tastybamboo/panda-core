@@ -40,6 +40,12 @@ application.register("datepicker", DatepickerController)
 import DaterangeController from "./daterange_controller.js"
 application.register("daterange", DaterangeController)
 
+import FileGalleryController from "./file_gallery_controller.js"
+application.register("file-gallery", FileGalleryController)
+
+import FileUploadController from "./file_upload_controller.js"
+application.register("file-upload", FileUploadController)
+
 // Import and register TailwindCSS Stimulus Components
 // These are needed for UI components like slideover, modals, alerts, etc.
 import { Alert, Autosave, ColorPreview, Dropdown, Modal, Tabs, Popover, Toggle, Slideover } from "../tailwindcss-stimulus-components.js"

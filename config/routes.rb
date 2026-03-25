@@ -47,6 +47,9 @@ Panda::Core::Engine.routes.draw do
       end
     end
 
+    # File management
+    resources :files, controller: "admin/files"
+
     # File category management
     resources :file_categories, only: %i[index new create edit update destroy], controller: "admin/file_categories"
 
