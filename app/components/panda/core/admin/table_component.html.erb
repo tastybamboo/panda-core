@@ -31,7 +31,18 @@
         <% columns.each do |column| %>
           <% header_style = column.width ? "width: #{column.width};" : nil %>
           <div class="table-cell sticky top-0 z-10 px-4 py-3 align-middle" style="<%= header_style %>">
-            <%= column.label %>
+            <% if column.sortable? %>
+              <a href="<%= sort_url_for(column) %>" class="inline-flex items-center gap-1 hover:text-gray-900 transition-colors group" aria-label="Sort by <%= column.label %>">
+                <%= column.label %>
+                <% if (indicator = sort_indicator_for(column)) %>
+                  <span class="text-gray-700 text-xs" aria-hidden="true"><%= indicator %></span>
+                <% else %>
+                  <span class="text-gray-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">↕</span>
+                <% end %>
+              </a>
+            <% else %>
+              <%= column.label %>
+            <% end %>
           </div>
         <% end %>
         </div>
