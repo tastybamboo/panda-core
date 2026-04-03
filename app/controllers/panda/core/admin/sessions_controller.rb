@@ -68,6 +68,22 @@ module Panda
               user: user,
               provider: provider)
 
+            # Post-authentication redirect hook (e.g. workspace picker).
+            # Wrapped in its own rescue so a broken hook falls through to the
+            # default redirect rather than hitting the outer rescue (which
+            # would redirect to login with the session already created).
+            if (redirect_proc = Panda::Core.config.post_authentication_redirect)
+              begin
+                redirect_url = redirect_proc.call(user, request)
+                if redirect_url.present?
+                  redirect_to redirect_url, allow_other_host: true, flash: {success: "Successfully logged in as #{user.name}"}
+                  return
+                end
+              rescue => e
+                Rails.logger.error "post_authentication_redirect hook failed: #{e.class}: #{e.message}"
+              end
+            end
+
             # Redirect to originating subdomain if auth callback landed on root domain
             origin = session.delete(:origin_subdomain)
             if origin.present? && request.host.split(".").first != origin
