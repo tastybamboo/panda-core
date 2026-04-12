@@ -593,7 +593,7 @@ DEPENDENCIES
   simplecov_json_formatter
   simplecov_lcov_formatter
   sqlite3
-  standard (~> 1.43, >= 0)
+  standard
   standard-rails
   stringio
   tailwindcss-rails (~> 4)
@@ -601,4 +601,4 @@ DEPENDENCIES
   yard-activerecord
 
 BUNDLED WITH
-  4.0.4
+   2.4.19
