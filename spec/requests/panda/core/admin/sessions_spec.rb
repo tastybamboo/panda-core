@@ -287,7 +287,6 @@ RSpec.describe "Admin Sessions", type: :request do
         expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
         expect(response).to redirect_to(panda_core.admin_root_path)
       end
-
       it "appends the stored path suffix to the redirect URL" do
         Panda::Core.config.post_authentication_redirect = ->(_user, _request) { "https://workspace.example.com/admin" }
 

@@ -154,9 +154,9 @@ module Panda
         @after_user_invited = nil        # Proc(user, params, current_user) — called after successful invite
         @invite_form_content = nil       # Proc(form_builder, view_context) → HTML — extra fields in invite form
 
-        # Post-authentication redirect hook — Proc(user, request) → URL string or nil
-        # When configured and returning a URL, overrides the default redirect after login.
-        # Return nil to fall through to the existing redirect logic.
+        # Post-authentication redirect — Proc(user, request) → URL string or nil.
+        # Called after successful OAuth login. Return a URL to redirect there,
+        # or nil to fall through to the default redirect logic.
         @post_authentication_redirect = nil
 
         # Legacy extensible user menu items (prefer NavigationRegistry with position: :bottom)

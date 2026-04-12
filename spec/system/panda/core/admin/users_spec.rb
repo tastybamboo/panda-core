@@ -53,6 +53,13 @@ RSpec.describe "Admin Users Management", type: :system do
       expect(page).to have_content(admin_user.name)
       expect(page).to have_content(admin_user.email)
     end
+
+    it "shows breadcrumbs on show page" do
+      visit "/admin/users/#{admin_user.id}"
+
+      expect(page).to have_link("Users", href: "/admin/users")
+      expect(page).to have_content(admin_user.name)
+    end
   end
 
   describe "User edit page" do
@@ -123,6 +130,22 @@ RSpec.describe "Admin Users Management", type: :system do
 
       expect(page).to have_link("Users", href: "/admin/users")
       expect(page).to have_content("Edit")
+    end
+
+    it "shows breadcrumbs on activity page" do
+      visit "/admin/users/#{admin_user.id}/activity"
+
+      expect(page).to have_link("Users", href: "/admin/users")
+      expect(page).to have_link(admin_user.name, href: "/admin/users/#{admin_user.id}")
+      expect(page).to have_content("Activity")
+    end
+
+    it "shows breadcrumbs on sessions page" do
+      visit "/admin/users/#{admin_user.id}/sessions"
+
+      expect(page).to have_link("Users", href: "/admin/users")
+      expect(page).to have_link(admin_user.name, href: "/admin/users/#{admin_user.id}")
+      expect(page).to have_content("Sessions")
     end
   end
 end

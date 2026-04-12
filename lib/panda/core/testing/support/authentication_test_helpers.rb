@@ -18,30 +18,34 @@ module Panda
       def create_admin_user(attributes = {})
         ensure_columns_loaded
         admin_id = "8f481fcb-d9c8-55d7-ba17-5ea5d9ed8b7a"
-        Panda::Core::User.find_or_create_by!(id: admin_id) do |user|
-          user.email = attributes[:email] || "admin@example.com"
-          user.name = attributes[:name] || "Admin User"
-          user.image_url = attributes[:image_url] || default_image_url
-          user.admin = attributes[:admin] || true
-          # Only set OAuth fields if they exist on the model
-          user.uid = attributes[:uid] || "admin_oauth_uid_123" if user.respond_to?(:uid=)
-          user.provider = attributes[:provider] || "google_oauth2" if user.respond_to?(:provider=)
-        end
+        user = Panda::Core::User.find_or_initialize_by(id: admin_id)
+        user.email = attributes[:email] || "admin@example.com"
+        user.name = attributes[:name] || "Admin User"
+        user.image_url = attributes[:image_url] || default_image_url
+        user.admin = attributes.fetch(:admin, true)
+        user.enabled = attributes.fetch(:enabled, true) if user.respond_to?(:enabled=)
+        # Only set OAuth fields if they exist on the model
+        user.uid = attributes[:uid] || "admin_oauth_uid_123" if user.respond_to?(:uid=)
+        user.provider = attributes[:provider] || "google_oauth2" if user.respond_to?(:provider=)
+        user.save! if user.new_record? || user.changed?
+        user
       end
 
       # Create a regular user with fixed ID for consistent fixture references
       def create_regular_user(attributes = {})
         ensure_columns_loaded
         regular_id = "9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d"
-        Panda::Core::User.find_or_create_by!(id: regular_id) do |user|
-          user.email = attributes[:email] || "user@example.com"
-          user.name = attributes[:name] || "Regular User"
-          user.image_url = attributes[:image_url] || default_image_url(dark: true)
-          user.admin = attributes[:admin] || false
-          # Only set OAuth fields if they exist on the model
-          user.uid = attributes[:uid] || "user_oauth_uid_456" if user.respond_to?(:uid=)
-          user.provider = attributes[:provider] || "google_oauth2" if user.respond_to?(:provider=)
-        end
+        user = Panda::Core::User.find_or_initialize_by(id: regular_id)
+        user.email = attributes[:email] || "user@example.com"
+        user.name = attributes[:name] || "Regular User"
+        user.image_url = attributes[:image_url] || default_image_url(dark: true)
+        user.admin = attributes.fetch(:admin, false)
+        user.enabled = attributes.fetch(:enabled, true) if user.respond_to?(:enabled=)
+        # Only set OAuth fields if they exist on the model
+        user.uid = attributes[:uid] || "user_oauth_uid_456" if user.respond_to?(:uid=)
+        user.provider = attributes[:provider] || "google_oauth2" if user.respond_to?(:provider=)
+        user.save! if user.new_record? || user.changed?
+        user
       end
 
       # Backwards compatibility with fixture access patterns

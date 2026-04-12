@@ -72,8 +72,11 @@ module Panda
             # which redirect branch is taken below.
             post_auth_path = session.delete(:post_auth_redirect_path)
 
-            # Post-authentication redirect hook (e.g. workspace picker)
-            if (redirect_proc = Panda::Core.config.post_authentication_redirect)&.respond_to?(:call)
+            # Post-authentication redirect hook (e.g. workspace picker).
+            # Wrapped in its own rescue so a broken hook falls through to the
+            # default redirect rather than hitting the outer rescue (which
+            # would redirect to login with the session already created).
+            if (redirect_proc = Panda::Core.config.post_authentication_redirect)
               begin
                 redirect_url = redirect_proc.call(user, request)
                 if redirect_url.present?
