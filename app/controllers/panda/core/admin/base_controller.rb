@@ -67,7 +67,7 @@ module Panda
             admin_prefix = Core.config.admin_path
             if request.path.start_with?(admin_prefix) &&
                 !request.path.start_with?("#{admin_prefix}/login") &&
-                !request.path.include?("/auth/")
+                !request.path.start_with?("#{admin_prefix}/auth/")
               session[:post_auth_redirect_path] = request.path
             end
 
