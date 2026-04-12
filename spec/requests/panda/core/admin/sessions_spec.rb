@@ -278,6 +278,16 @@ RSpec.describe "Admin Sessions", type: :request do
         expect(received_request).to be_a(ActionDispatch::Request)
       end
 
+      it "falls through to default redirect when the hook raises" do
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { raise "broken hook" }
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
+        expect(response).to redirect_to(panda_core.admin_root_path)
+      end
+
       it "appends the stored path suffix to the redirect URL" do
         Panda::Core.config.post_authentication_redirect = ->(_user, _request) { "https://workspace.example.com/admin" }
 

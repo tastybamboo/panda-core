@@ -73,11 +73,15 @@ module Panda
             post_auth_path = session.delete(:post_auth_redirect_path)
 
             # Post-authentication redirect hook (e.g. workspace picker)
-            if (redirect_proc = Panda::Core.config.post_authentication_redirect)
-              redirect_url = redirect_proc.call(user, request)
-              if redirect_url.present?
-                redirect_to append_admin_path_suffix(redirect_url, post_auth_path), allow_other_host: true, flash: {success: "Successfully logged in as #{user.name}"}
-                return
+            if (redirect_proc = Panda::Core.config.post_authentication_redirect)&.respond_to?(:call)
+              begin
+                redirect_url = redirect_proc.call(user, request)
+                if redirect_url.present?
+                  redirect_to append_admin_path_suffix(redirect_url, post_auth_path), allow_other_host: true, flash: {success: "Successfully logged in as #{user.name}"}
+                  return
+                end
+              rescue => e
+                Rails.logger.error "post_authentication_redirect hook failed: #{e.class}: #{e.message}"
               end
             end
 
