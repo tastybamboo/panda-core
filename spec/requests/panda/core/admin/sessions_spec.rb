@@ -232,8 +232,12 @@ RSpec.describe "Admin Sessions", type: :request do
     end
 
     context "when post_authentication_redirect is configured" do
+      before do
+        @original_redirect = Panda::Core.config.post_authentication_redirect
+      end
+
       after do
-        Panda::Core.config.post_authentication_redirect = nil
+        Panda::Core.config.post_authentication_redirect = @original_redirect
       end
 
       it "redirects to the URL returned by the hook" do
@@ -272,6 +276,28 @@ RSpec.describe "Admin Sessions", type: :request do
 
         expect(received_user).to eq(admin_user)
         expect(received_request).to be_a(ActionDispatch::Request)
+      end
+
+      it "appends the stored path suffix to the redirect URL" do
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { "https://workspace.example.com/admin" }
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback",
+          env: {
+            "omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2],
+            "rack.session" => {"post_auth_redirect_path" => "/admin/users/123"}
+          }
+
+        expect(response).to redirect_to("https://workspace.example.com/admin/users/123")
+      end
+
+      it "does not modify the URL when no path was stored" do
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { "https://workspace.example.com/admin" }
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(response).to redirect_to("https://workspace.example.com/admin")
       end
     end
 
