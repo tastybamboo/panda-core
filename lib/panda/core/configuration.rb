@@ -49,7 +49,8 @@ module Panda
         :admin_user_index_columns,
         :restrict_user_creation,
         :after_user_invited,
-        :invite_form_content
+        :invite_form_content,
+        :post_authentication_redirect
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -152,6 +153,11 @@ module Panda
         # Invitation hooks — host app can extend the invite flow
         @after_user_invited = nil        # Proc(user, params, current_user) — called after successful invite
         @invite_form_content = nil       # Proc(form_builder, view_context) → HTML — extra fields in invite form
+
+        # Post-authentication redirect hook — Proc(user, request) → URL string or nil
+        # When configured and returning a URL, overrides the default redirect after login.
+        # Return nil to fall through to the existing redirect logic.
+        @post_authentication_redirect = nil
 
         # Legacy extensible user menu items (prefer NavigationRegistry with position: :bottom)
         @admin_user_menu_items = []

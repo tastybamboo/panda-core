@@ -230,6 +230,62 @@ RSpec.describe "Admin Sessions", type: :request do
         expect(response).to redirect_to(panda_core.admin_login_path)
       end
     end
+
+    context "when post_authentication_redirect is configured" do
+      after do
+        Panda::Core.config.post_authentication_redirect = nil
+      end
+
+      it "redirects to the URL returned by the hook" do
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { "https://workspace.example.com/admin" }
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
+        expect(flash[:success]).to eq("Successfully logged in as #{admin_user.name}")
+        expect(response).to redirect_to("https://workspace.example.com/admin")
+      end
+
+      it "falls through to default redirect when the hook returns nil" do
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { nil }
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
+        expect(flash[:success]).to eq("Successfully logged in as #{admin_user.name}")
+        expect(response).to redirect_to(panda_core.admin_root_path)
+      end
+
+      it "passes user and request to the hook" do
+        received_user = nil
+        received_request = nil
+        Panda::Core.config.post_authentication_redirect = ->(user, request) {
+          received_user = user
+          received_request = request
+          nil
+        }
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(received_user).to eq(admin_user)
+        expect(received_request).to be_a(ActionDispatch::Request)
+      end
+    end
+
+    context "when post_authentication_redirect is not configured" do
+      it "uses default redirect behaviour" do
+        Panda::Core.config.post_authentication_redirect = nil
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
+        expect(response).to redirect_to(panda_core.admin_root_path)
+      end
+    end
   end
 
   describe "GET /admin/auth/failure" do
