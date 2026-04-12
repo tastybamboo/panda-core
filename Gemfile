@@ -2,9 +2,6 @@
 
 source "https://rubygems.org"
 
-# Pin ViewComponent to 4.4.0 from GitHub (fixes ERB compilation with Ruby 4.0 + Rails 8.1)
-gem "view_component", github: "ViewComponent/view_component", tag: "v4.6.0"
-
 # Specify your gem's dependencies in panda-core.gemspec
 gemspec
 
