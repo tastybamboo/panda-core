@@ -108,6 +108,12 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
   end
 
   describe "sortable columns" do
+    def link_params(output, text)
+      href = output.find_link(text)[:href]
+      uri = URI.parse(href)
+      {path: uri.path, params: uri.query ? URI.decode_www_form(uri.query).to_h : {}}
+    end
+
     it "renders sortable header as a link with sort params" do
       with_request_url "/admin/users" do
         render_inline(described_class.new(term: "user", rows: users) do |table|
@@ -117,7 +123,9 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_link("Name", href: "/admin/users?direction=asc&sort=name")
+      result = link_params(output, "Name")
+      expect(result[:path]).to eq("/admin/users")
+      expect(result[:params]).to eq("sort" => "name", "direction" => "asc")
       expect(output).not_to have_link("Email")
     end
 
@@ -129,7 +137,9 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_link("Name", href: "/admin/users?direction=desc&sort=name")
+      result = link_params(output, "Name")
+      expect(result[:path]).to eq("/admin/users")
+      expect(result[:params]).to include("sort" => "name", "direction" => "desc")
       expect(output).to have_text("↑")
     end
 
@@ -141,7 +151,9 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_link("Name", href: "/admin/users?direction=asc&sort=name")
+      result = link_params(output, "Name")
+      expect(result[:path]).to eq("/admin/users")
+      expect(result[:params]).to include("sort" => "name", "direction" => "asc")
       expect(output).to have_text("↓")
     end
 
@@ -153,7 +165,9 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_link("Name", href: "/admin/users?direction=asc&search=alice&sort=name")
+      result = link_params(output, "Name")
+      expect(result[:path]).to eq("/admin/users")
+      expect(result[:params]).to eq("search" => "alice", "sort" => "name", "direction" => "asc")
     end
 
     it "uses custom sort_key" do

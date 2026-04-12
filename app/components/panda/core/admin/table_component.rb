@@ -81,7 +81,7 @@ module Panda
           @label = label
           @width = width
           @sortable = sortable
-          @sort_key = sort_key || label.to_s.downcase.gsub(/\s+/, "_")
+          @sort_key = sort_key || ActiveSupport::Inflector.parameterize(label.to_s, separator: "_")
           @cell = block
         end
 
