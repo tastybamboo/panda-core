@@ -61,6 +61,18 @@ RSpec.describe "Admin Users", type: :request do
       expect(response).to redirect_to("/admin/users")
       expect(target.reload.name).to eq("Robert")
     end
+
+    it "re-renders the edit page with breadcrumbs when the update is invalid" do
+      target = Panda::Core::User.create!(name: "Bob", email: "bob-invalid@example.com")
+
+      patch "/admin/users/#{target.id}", params: {user: {email: ""}}
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("Users")
+      expect(response.body).to include("Edit")
+      expect(response.body).to include("Email")
+      expect(target.reload.email).to eq("bob-invalid@example.com")
+    end
   end
 
   describe "POST /admin/users/invite" do
@@ -105,6 +117,46 @@ RSpec.describe "Admin Users", type: :request do
     end
   end
 
+  describe "POST /admin/users/bulk_action" do
+    it "enables the selected users" do
+      disabled_user = Panda::Core::User.create!(name: "Disabled", email: "bulk-enable@example.com", enabled: false)
+
+      post "/admin/users/bulk_action", params: {bulk_action: "enable", user_ids: [disabled_user.id]}
+
+      expect(response).to redirect_to("/admin/users")
+      expect(flash[:success]).to eq("1 user(s) enabled.")
+      expect(disabled_user.reload.enabled).to be true
+    end
+
+    it "disables selected users except the current user" do
+      other_user = Panda::Core::User.create!(name: "Other User", email: "bulk-disable@example.com", enabled: true)
+
+      post "/admin/users/bulk_action", params: {bulk_action: "disable", user_ids: [admin_user.id, other_user.id]}
+
+      expect(response).to redirect_to("/admin/users")
+      expect(flash[:success]).to eq("1 user(s) disabled (excluding yourself).")
+      expect(admin_user.reload.enabled).to be true
+      expect(other_user.reload.enabled).to be false
+    end
+
+    it "rejects requests without any valid user ids" do
+      post "/admin/users/bulk_action", params: {bulk_action: "enable", user_ids: ["not-a-uuid"]}
+
+      expect(response).to redirect_to("/admin/users")
+      expect(flash[:alert]).to eq("No valid users selected.")
+    end
+
+    it "rejects unknown bulk actions" do
+      target = Panda::Core::User.create!(name: "Target", email: "bulk-unknown@example.com", enabled: true)
+
+      post "/admin/users/bulk_action", params: {bulk_action: "archive", user_ids: [target.id]}
+
+      expect(response).to redirect_to("/admin/users")
+      expect(flash[:error]).to eq("Unknown action.")
+      expect(target.reload.enabled).to be true
+    end
+  end
+
   describe "GET /admin/users/:id/activity" do
     it "renders the activity page" do
       get "/admin/users/#{admin_user.id}/activity"
@@ -116,6 +168,25 @@ RSpec.describe "Admin Users", type: :request do
     it "renders the sessions page" do
       get "/admin/users/#{admin_user.id}/sessions"
       expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe "DELETE /admin/users/:id/sessions/:session_id" do
+    it "revokes the selected session" do
+      user_session = Panda::Core::UserSession.create!(
+        user: admin_user,
+        session_id: "request-session-123",
+        active: true,
+        last_active_at: Time.current
+      )
+
+      delete "/admin/users/#{admin_user.id}/sessions/#{user_session.id}"
+
+      expect(response).to redirect_to("/admin/users/#{admin_user.id}")
+      expect(flash[:success]).to eq("Session revoked.")
+      expect(user_session.reload.active).to be false
+      expect(user_session.revoked_at).to be_present
+      expect(user_session.revoked_by).to eq(admin_user)
     end
   end
 end

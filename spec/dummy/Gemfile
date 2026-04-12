@@ -29,13 +29,6 @@ gem "omniauth-google-oauth2"
 gem "omniauth-github"
 gem "omniauth-microsoft_graph"
 
-# Load all panda gems from the monorepo (UI gems with CSS/components)
-gem "panda-core"
-gem "panda-cms", github: "tastybamboo/panda-cms", branch: "chore/test-migrations"
-gem "panda-editor"
-
-# gem "panda-cms-pro"
-
 group :test do
   gem "debug", platforms: %i[mri windows]
   gem "rspec"
