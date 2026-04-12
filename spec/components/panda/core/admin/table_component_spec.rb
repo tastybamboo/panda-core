@@ -111,7 +111,7 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
     def link_params(output, text)
       href = output.find_link(text)[:href]
       uri = URI.parse(href)
-      {path: uri.path, params: URI.decode_www_form(uri.query).to_h}
+      {path: uri.path, params: uri.query ? URI.decode_www_form(uri.query).to_h : {}}
     end
 
     it "renders sortable header as a link with sort params" do
