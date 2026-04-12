@@ -62,6 +62,15 @@ module Panda
 
         def authenticate_admin_user!
           unless user_signed_in?
+            # Preserve the requested path so it can be restored after authentication.
+            # Skip login/auth paths to avoid redirect loops.
+            admin_prefix = Core.config.admin_path
+            if request.path.start_with?(admin_prefix) &&
+                !request.path.start_with?("#{admin_prefix}/login") &&
+                !request.path.start_with?("#{admin_prefix}/auth/")
+              session[:post_auth_redirect_path] = request.path
+            end
+
             redirect_to panda_core.admin_login_path,
               flash: {error: "Please login to view this!"}
             return

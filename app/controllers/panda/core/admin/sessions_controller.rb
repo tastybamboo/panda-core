@@ -68,12 +68,20 @@ module Panda
               user: user,
               provider: provider)
 
+            # Consume stored redirect path once so it is cleared regardless of
+            # which redirect branch is taken below.
+            post_auth_path = session.delete(:post_auth_redirect_path)
+
             # Post-authentication redirect hook (e.g. workspace picker)
-            if (redirect_proc = Panda::Core.config.post_authentication_redirect)
-              redirect_url = redirect_proc.call(user, request)
-              if redirect_url.present?
-                redirect_to redirect_url, allow_other_host: true, flash: {success: "Successfully logged in as #{user.name}"}
-                return
+            if (redirect_proc = Panda::Core.config.post_authentication_redirect)&.respond_to?(:call)
+              begin
+                redirect_url = redirect_proc.call(user, request)
+                if redirect_url.present?
+                  redirect_to append_admin_path_suffix(redirect_url, post_auth_path), allow_other_host: true, flash: {success: "Successfully logged in as #{user.name}"}
+                  return
+                end
+              rescue => e
+                Rails.logger.error "post_authentication_redirect hook failed: #{e.class}: #{e.message}"
               end
             end
 
@@ -84,7 +92,8 @@ module Panda
               base_domain = request.host.sub(/\A[^.]+\./, "")
               port = request.port
               port_suffix = [80, 443].include?(port) ? "" : ":#{port}"
-              redirect_to "#{scheme}://#{origin}.#{base_domain}#{port_suffix}#{Core.config.admin_path}", flash: {success: "Successfully logged in as #{user.name}"}
+              base_url = "#{scheme}://#{origin}.#{base_domain}#{port_suffix}#{Core.config.admin_path}"
+              redirect_to append_admin_path_suffix(base_url, post_auth_path), allow_other_host: true, flash: {success: "Successfully logged in as #{user.name}"}
               return
             end
 
@@ -120,6 +129,24 @@ module Panda
         end
 
         private
+
+        # Append the path segment that follows the admin prefix from +stored_path+
+        # to +base_url+.  Returns +base_url+ unchanged when there is no meaningful
+        # suffix (e.g. no stored path, or the stored path is the admin root itself).
+        #
+        # Example: base_url="https://workspace.example.com/admin", stored_path="/admin/users/123"
+        # → "https://workspace.example.com/admin/users/123"
+        def append_admin_path_suffix(base_url, stored_path)
+          return base_url if stored_path.blank?
+
+          admin_prefix = Core.config.admin_path
+          return base_url unless stored_path.start_with?(admin_prefix)
+
+          suffix = stored_path[admin_prefix.length..]
+          return base_url if suffix.blank? || suffix == "/"
+
+          base_url.chomp("/") + suffix
+        end
 
         # Find the provider key by path name (handles path_name override)
         def find_provider_by_path(provider_path)

@@ -107,6 +107,71 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
     end
   end
 
+  describe "sortable columns" do
+    it "renders sortable header as a link with sort params" do
+      with_request_url "/admin/users" do
+        render_inline(described_class.new(term: "user", rows: users) do |table|
+          table.column("Name", sortable: true) { |user| user.name }
+          table.column("Email") { |user| user.email }
+        end)
+      end
+      output = Capybara.string(rendered_content)
+
+      expect(output).to have_link("Name", href: "/admin/users?direction=asc&sort=name")
+      expect(output).not_to have_link("Email")
+    end
+
+    it "toggles to desc when already sorting asc on same column" do
+      with_request_url "/admin/users?sort=name&direction=asc" do
+        render_inline(described_class.new(term: "user", rows: users, sort: "name", sort_direction: "asc") do |table|
+          table.column("Name", sortable: true) { |user| user.name }
+        end)
+      end
+      output = Capybara.string(rendered_content)
+
+      expect(output).to have_link("Name", href: "/admin/users?direction=desc&sort=name")
+      expect(output).to have_text("↑")
+    end
+
+    it "shows descending indicator and toggles back to asc" do
+      with_request_url "/admin/users?sort=name&direction=desc" do
+        render_inline(described_class.new(term: "user", rows: users, sort: "name", sort_direction: "desc") do |table|
+          table.column("Name", sortable: true) { |user| user.name }
+        end)
+      end
+      output = Capybara.string(rendered_content)
+
+      expect(output).to have_link("Name", href: "/admin/users?direction=asc&sort=name")
+      expect(output).to have_text("↓")
+    end
+
+    it "preserves existing query params" do
+      with_request_url "/admin/users?search=alice" do
+        render_inline(described_class.new(term: "user", rows: users) do |table|
+          table.column("Name", sortable: true) { |user| user.name }
+        end)
+      end
+      output = Capybara.string(rendered_content)
+
+      expect(output).to have_link("Name", href: "/admin/users?direction=asc&search=alice&sort=name")
+    end
+
+    it "uses custom sort_key" do
+      column = Panda::Core::Admin::Column.new("Full Name", nil, sortable: true, sort_key: "last_name")
+      expect(column.sort_key).to eq("last_name")
+    end
+
+    it "derives sort_key from label when not provided" do
+      column = Panda::Core::Admin::Column.new("Full Name", nil, sortable: true)
+      expect(column.sort_key).to eq("full_name")
+    end
+
+    it "non-sortable columns have no link" do
+      column = Panda::Core::Admin::Column.new("Actions", nil)
+      expect(column.sortable?).to be false
+    end
+  end
+
   describe "header styling" do
     it "applies header styling" do
       render_inline(described_class.new(term: "user", rows: users) do |table|
