@@ -19,6 +19,7 @@ require_relative "engine/view_component_config"
 require_relative "engine/admin_controller_config"
 require_relative "engine/route_config"
 require_relative "engine/pending_migrations_check"
+require_relative "engine/sqlite_schema_compatibility"
 
 module Panda
   module Core
@@ -41,6 +42,7 @@ module Panda
       include AdminControllerConfig
       include RouteConfig
       include PendingMigrationsCheck
+      include SqliteSchemaCompatibility
 
       #
       # Misc configuration point

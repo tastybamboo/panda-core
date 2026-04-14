@@ -287,6 +287,29 @@ RSpec.describe "Admin Sessions", type: :request do
         expect(session[Panda::Core::ADMIN_SESSION_KEY]).to eq(admin_user.id)
         expect(response).to redirect_to(panda_core.admin_root_path)
       end
+      it "appends the stored path suffix to the redirect URL" do
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { "https://workspace.example.com/admin" }
+
+        # Visiting a protected admin page while unauthenticated stores the path in the session.
+        get "/admin/users"
+        expect(response).to redirect_to(panda_core.admin_login_path)
+        expect(session[:post_auth_redirect_path]).to eq("/admin/users")
+
+        # After OAuth the stored path is appended to the hook URL.
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(response).to redirect_to("https://workspace.example.com/admin/users")
+      end
+
+      it "does not modify the URL when no path was stored" do
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { "https://workspace.example.com/admin" }
+
+        mock_oauth_for_user(admin_user, provider: :google_oauth2)
+        post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
+
+        expect(response).to redirect_to("https://workspace.example.com/admin")
+      end
     end
 
     context "when post_authentication_redirect is not configured" do
