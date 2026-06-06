@@ -9,7 +9,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    action_text-trix (2.1.18)
+    action_text-trix (2.1.19)
       railties
     actioncable (8.1.3)
       actionpack (= 8.1.3)
@@ -83,8 +83,10 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
+    auth-sanitizer (0.2.0)
+      version_gem (~> 1.1, >= 1.1.9)
     base64 (0.3.0)
-    bigdecimal (4.1.1)
+    bigdecimal (4.1.2)
     builder (3.3.0)
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
@@ -114,13 +116,13 @@ GEM
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
     io-console (0.8.2)
-    irb (1.17.0)
+    irb (1.18.0)
       pp (>= 0.6.0)
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.19.8)
-    jwt (2.10.3)
+    jwt (3.2.0)
       base64
     logger (1.7.0)
     loofah (2.25.1)
@@ -132,12 +134,12 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.1.0)
+    marcel (1.2.1)
     mini_mime (1.1.5)
-    minitest (6.0.3)
+    minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
-    multi_xml (0.8.1)
+    multi_xml (0.9.1)
       bigdecimal (>= 3.1, < 5)
     net-http (0.9.1)
       uri (>= 0.11.1)
@@ -155,13 +157,14 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.3-x86_64-linux-gnu)
       racc (~> 1.4)
-    oauth2 (2.0.18)
+    oauth2 (2.0.20)
+      auth-sanitizer (~> 0.1, >= 0.1.3)
       faraday (>= 0.17.3, < 4.0)
       jwt (>= 1.0, < 4.0)
       logger (~> 1.2)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
-      snaky_hash (~> 2.0, >= 2.0.3)
+      snaky_hash (~> 2.0, >= 2.0.4)
       version_gem (~> 1.1, >= 1.1.9)
     omniauth (2.1.4)
       hashie (>= 3.4.6)
@@ -176,8 +179,8 @@ GEM
       oauth2 (~> 2.0)
       omniauth (~> 2.0)
       omniauth-oauth2 (~> 1.8)
-    omniauth-microsoft_graph (2.1.0)
-      jwt (~> 2.0)
+    omniauth-microsoft_graph (2.2.0)
+      jwt (>= 2.0, < 4.0)
       omniauth (~> 2.0)
       omniauth-oauth2 (~> 1.8.0)
     omniauth-oauth2 (1.8.0)
@@ -194,10 +197,10 @@ GEM
       activesupport (>= 7.0.0)
       rack
       railties (>= 7.0.0)
-    psych (5.3.1)
+    psych (5.4.0)
       date
       stringio
-    puma (8.0.0)
+    puma (8.0.2)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
@@ -242,7 +245,7 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       tsort (>= 0.2)
       zeitwerk (~> 2.6)
-    rake (13.3.1)
+    rake (13.4.2)
     rdoc (7.2.0)
       erb
       psych (>= 4.0.0)
@@ -271,7 +274,7 @@ GEM
       rspec-support (>= 3.13.0, < 5.0.0)
     rspec-support (3.13.7)
     securerandom (0.4.1)
-    snaky_hash (2.0.3)
+    snaky_hash (2.0.4)
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
     stimulus-rails (1.3.4)
@@ -280,8 +283,8 @@ GEM
     tailwindcss-rails (4.4.0)
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
-    tailwindcss-ruby (4.2.2-arm64-darwin)
-    tailwindcss-ruby (4.2.2-x86_64-linux-gnu)
+    tailwindcss-ruby (4.3.0-arm64-darwin)
+    tailwindcss-ruby (4.3.0-x86_64-linux-gnu)
     thor (1.5.0)
     timeout (0.6.1)
     tsort (0.2.0)
@@ -292,12 +295,12 @@ GEM
       concurrent-ruby (~> 1.0)
     uri (1.1.1)
     useragent (0.16.11)
-    version_gem (1.1.9)
-    websocket-driver (0.8.0)
+    version_gem (1.1.10)
+    websocket-driver (0.8.1)
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.7.5)
+    zeitwerk (2.8.2)
 
 PLATFORMS
   arm64-darwin
@@ -321,4 +324,4 @@ DEPENDENCIES
   turbo-rails (~> 2.0)
 
 BUNDLED WITH
-   2.7.2
+  4.0.3
