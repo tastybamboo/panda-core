@@ -163,9 +163,55 @@
     --color-gray-800: rgb(31, 41, 55);
     --color-gray-900: rgb(17, 24, 39);
     --color-gray-950: rgb(3, 7, 18);
+
+    /*
+     * Panda admin chrome tokens — opt-in theming for the residual gem-rendered
+     * admin surfaces (PanelComponent, TableComponent, TagComponent badges, form
+     * inputs, the custom-select trigger, checkbox accent). Every value below is
+     * a var() reference to an existing token, so it resolves to exactly today's
+     * literal colour — this block changes nothing visually for the default
+     * theme. Host apps (e.g. Panda CMS) that never set a theme, or that use
+     * "default"/"sky", are unaffected. A host app can override any of these
+     * tokens directly instead of adopting a whole new html[data-theme] block.
+     */
+    --panda-panel-bg: var(--color-white);
+    --panda-panel-border: var(--color-gray-200);
+    --panda-panel-radius: var(--radius-2xl);
+    --panda-table-header-bg: var(--color-gray-50);
+    --panda-table-border: var(--color-gray-200);
+    --panda-table-row-border: color-mix(in srgb, var(--color-gray-200) 70%, transparent);
+    --panda-table-cell-color: var(--color-gray-600);
+    --panda-badge-success-bg: var(--color-emerald-50);
+    --panda-badge-success-fg: var(--color-emerald-600);
+    --panda-badge-warning-bg: var(--color-amber-50);
+    --panda-badge-warning-fg: var(--color-amber-600);
+    --panda-badge-info-bg: var(--color-sky-50);
+    --panda-badge-info-fg: var(--color-sky-600);
+    --panda-badge-error-bg: var(--color-rose-50);
+    --panda-badge-error-fg: var(--color-rose-600);
+    --panda-badge-neutral-bg: var(--color-gray-100);
+    --panda-badge-neutral-fg: var(--color-gray-600);
+    --panda-input-border: var(--color-gray-300);
+    --panda-input-radius: var(--radius-xl);
+    --panda-input-focus-ring: var(--color-primary-500);
+    --panda-select-trigger-border: var(--color-gray-200);
+    --panda-checkbox-accent: var(--color-primary-500);
   }
 
-  html[data-theme='ocean'] {
+  /*
+   * NAMING NOTE (2026-07): this block was briefly named `html[data-theme='ocean']`
+   * (commit aa7f021, "Update color palette to Glacier/Teal theme"), diverging from
+   * `Panda::Core.config.available_themes`, which has always shipped
+   * `[["Default", "default"], ["Sky", "sky"]]` (since the auth migration from
+   * panda-cms). Since `available_themes` populates the theme <select> in
+   * my_profile/edit.html.erb, any user who picked the second theme before aa7f021
+   * — or since, via a host app that left available_themes at its default — has
+   * "sky" persisted in `current_theme`, not "ocean". Renaming the CSS block back
+   * to `sky` (rather than renaming the config to `ocean`) restores that match
+   * without silently losing anyone's saved preference. Do not rename this block
+   * without also migrating `Panda::Core::User#current_theme` data.
+   */
+  html[data-theme='sky'] {
     --color-white: rgb(249, 249, 249); /* #F9F9F9 */
     --color-black: rgb(26, 22, 29); /* #1A161D */
 
@@ -181,7 +227,7 @@
     --color-inactive: rgb(219, 234, 254); /* blue-100 */
     --color-error: rgb(220, 38, 38); /* red-600 */
 
-    /* Primary color scale - Ocean (Blue) */
+    /* Primary color scale - Sky (Blue) */
     --color-primary-50: rgb(239, 246, 255); /* blue-50 */
     --color-primary-100: rgb(219, 234, 254); /* blue-100 */
     --color-primary-200: rgb(191, 219, 254); /* blue-200 */
@@ -219,7 +265,7 @@
     --color-warning-600: rgb(217, 119, 6);
     --color-warning-700: rgb(180, 83, 9);
 
-    /* Semantic colors - Info (Teal - different from primary for ocean theme) */
+    /* Semantic colors - Info (Teal - different from primary for sky theme) */
     --color-info-50: rgb(241, 249, 250);
     --color-info-100: rgb(219, 238, 242);
     --color-info-500: rgb(60, 135, 158);
@@ -238,6 +284,97 @@
     --color-gray-800: rgb(31, 41, 55);
     --color-gray-900: rgb(17, 24, 39);
     --color-gray-950: rgb(3, 7, 18);
+
+    /* Panda admin chrome tokens — see html[data-theme='default'] for the
+       full explanation. Same literal colours as default: these are
+       theme-agnostic chrome tokens, unaffected by the sky/default primary
+       colour split. */
+    --panda-panel-bg: var(--color-white);
+    --panda-panel-border: var(--color-gray-200);
+    --panda-panel-radius: var(--radius-2xl);
+    --panda-table-header-bg: var(--color-gray-50);
+    --panda-table-border: var(--color-gray-200);
+    --panda-table-row-border: color-mix(in srgb, var(--color-gray-200) 70%, transparent);
+    --panda-table-cell-color: var(--color-gray-600);
+    --panda-badge-success-bg: var(--color-emerald-50);
+    --panda-badge-success-fg: var(--color-emerald-600);
+    --panda-badge-warning-bg: var(--color-amber-50);
+    --panda-badge-warning-fg: var(--color-amber-600);
+    --panda-badge-info-bg: var(--color-sky-50);
+    --panda-badge-info-fg: var(--color-sky-600);
+    --panda-badge-error-bg: var(--color-rose-50);
+    --panda-badge-error-fg: var(--color-rose-600);
+    --panda-badge-neutral-bg: var(--color-gray-100);
+    --panda-badge-neutral-fg: var(--color-gray-600);
+    --panda-input-border: var(--color-gray-300);
+    --panda-input-radius: var(--radius-xl);
+    --panda-input-focus-ring: var(--color-primary-500);
+    --panda-select-trigger-border: var(--color-gray-200);
+    --panda-checkbox-accent: var(--color-primary-500);
+  }
+
+  /*
+   * Alder CRM theme ("Deep Roots") — lets Alder CRM (and any other host app
+   * with the same design system) delete its app-side `!important` CSS
+   * overrides for the residual gem-rendered admin surfaces it still uses:
+   * login (admin_simple layout), /admin/users, My Profile, and the
+   * TagsPanel/TagInput field widgets. Selecting this theme (available_themes
+   * / current_theme = "alder") is the only step required on the host-app
+   * side — no template changes.
+   *
+   * The primary scale below is copied verbatim from Alder CRM's own
+   * app/assets/tailwind/application.css :root block so panda-core admin
+   * pages (e.g. admin/users/index and show, which render bg-primary-50,
+   * text-primary-600/700, focus:ring-primary-500 directly) match Alder's
+   * brand exactly rather than approximating it.
+   *
+   * Legacy --color-white/-light/-mid/-dark and the generic
+   * --color-success/error/warning/info-* families are intentionally left
+   * undefined here (they fall back to the base @theme literals) — nothing on
+   * the residual pages above consumes them.
+   */
+  html[data-theme='alder'] {
+    /* Primary color scale - Alder "Deep Roots" (Dark Emerald) */
+    --color-primary-50: #ECFDF5;
+    --color-primary-100: #D1FAE5;
+    --color-primary-200: #A7F3D0;
+    --color-primary-300: #6EE7B7;
+    --color-primary-400: #52B788; /* accent */
+    --color-primary-500: #2D6A4F;
+    --color-primary-600: #1B4332; /* brand anchor */
+    --color-primary-700: #163B2B;
+    --color-primary-800: #122F23;
+    --color-primary-900: #0D241B;
+    --color-primary-950: #081A13;
+
+    /* Sidebar/login body gradient — already themeable via .bg-gradient-admin,
+       no template change needed. */
+    --gradient-admin-from: #1B4332;
+    --gradient-admin-to: #2D6A4F;
+
+    /* Panda admin chrome tokens */
+    --panda-panel-bg: #FFFFFF;
+    --panda-panel-border: #F1F3F5;
+    --panda-panel-radius: 12px;
+    --panda-table-header-bg: transparent;
+    --panda-table-border: #F1F3F5;
+    --panda-table-row-border: #F8F9FA;
+    --panda-table-cell-color: #495057;
+    --panda-badge-success-bg: #D3F9D8;
+    --panda-badge-success-fg: #2B8A3E;
+    --panda-badge-warning-bg: #FFF3BF;
+    --panda-badge-warning-fg: #E67700;
+    --panda-badge-info-bg: #D0EBFF;
+    --panda-badge-info-fg: #1971C2;
+    --panda-badge-error-bg: #FFE3E3;
+    --panda-badge-error-fg: #E03131;
+    --panda-badge-neutral-bg: #F1F3F5;
+    --panda-badge-neutral-fg: #868E96;
+    --panda-input-border: #DEE2E6;
+    --panda-input-radius: 8px;
+    --panda-input-focus-ring: var(--color-primary-400); /* #52B788 */
+    --panda-select-trigger-border: #DEE2E6;
+    --panda-checkbox-accent: var(--color-primary-600); /* #1B4332 */
   }
 
   /* Admin gradient backgrounds - customizable via CSS custom properties */
@@ -272,6 +409,15 @@
     @apply dark:bg-white/5 dark:text-white dark:border-white/10 dark:placeholder:text-gray-500;
     @apply disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed;
     background-color: #fff;
+    /* Themeable border/radius/focus-ring — see --panda-input-* tokens above.
+       Fallbacks match the @apply values on this rule exactly, so this is a
+       no-op for consumers that never set a data-theme. */
+    border-color: var(--panda-input-border, var(--color-gray-300));
+    border-radius: var(--panda-input-radius, var(--radius-xl));
+
+    &:focus {
+      outline-color: var(--panda-input-focus-ring, var(--color-primary-500));
+    }
   }
 
   textarea {
@@ -280,6 +426,12 @@
     @apply dark:bg-white/5 dark:text-white dark:border-white/10 dark:placeholder:text-gray-500;
     @apply disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed;
     background-color: #fff;
+    border-color: var(--panda-input-border, var(--color-gray-300));
+    border-radius: var(--panda-input-radius, var(--radius-xl));
+
+    &:focus {
+      outline-color: var(--panda-input-focus-ring, var(--color-primary-500));
+    }
   }
 
   /* Select specific styling */
@@ -293,6 +445,12 @@
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.75rem center;
     background-size: 1.25em 1.25em;
+    border-color: var(--panda-input-border, var(--color-gray-300));
+    border-radius: var(--panda-input-radius, var(--radius-xl));
+
+    &:focus {
+      outline-color: var(--panda-input-focus-ring, var(--color-primary-500));
+    }
   }
 
   /* Checkbox and radio styling */
@@ -307,9 +465,11 @@
     @apply rounded-full;
   }
 
-  /* Ensure form controls use primary brand color */
+  /* Ensure form controls use primary brand color. Checkbox/radio accent is
+     themeable independently of primary-500 via --panda-checkbox-accent
+     (falls back to primary-500, today's behaviour, when unset). */
   input, select, textarea {
-    accent-color: var(--color-primary-500);
+    accent-color: var(--panda-checkbox-accent, var(--color-primary-500));
   }
 
   /* Label styling */
