@@ -112,7 +112,7 @@ module Panda
 
         # Profile and UI customization
         @additional_user_params = []
-        @available_themes = [["Default", "default"], ["Sky", "sky"]]
+        @available_themes = [["Default", "default"], ["Sky", "sky"], ["Alder", "alder"]]
         @login_logo_path = nil
         @login_page_title = "Panda Admin"
         @admin_title = "Panda Admin"

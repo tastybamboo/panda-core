@@ -28,7 +28,11 @@ export default class extends Controller {
     this.trigger.setAttribute("role", "combobox")
     this.trigger.setAttribute("aria-expanded", "false")
     this.trigger.setAttribute("aria-haspopup", "listbox")
-    this.trigger.className = "flex items-center justify-between w-full h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-left focus:border-transparent focus:ring-2 focus:ring-primary-500 cursor-pointer"
+    // Border/radius are themeable via --panda-select-trigger-border /
+    // --panda-input-radius (see app/assets/tailwind/application.css); the
+    // var() fallbacks resolve to today's rounded-xl/border-gray-200 exactly,
+    // so this is a no-op unless a host app sets data-theme.
+    this.trigger.className = "flex items-center justify-between w-full h-11 rounded-[var(--panda-input-radius,var(--radius-xl))] border border-[var(--panda-select-trigger-border,var(--color-gray-200))] bg-white px-3 py-2 text-sm text-left focus:border-transparent focus:ring-2 focus:ring-primary-500 cursor-pointer"
     this.trigger.innerHTML = `
       <span class="truncate ${isPlaceholder ? "text-gray-400" : "text-gray-900"}">${this.escapeHtml(selectedOption ? selectedOption.text : "")}</span>
       <svg class="w-4 h-4 text-gray-400 shrink-0 ml-2 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
