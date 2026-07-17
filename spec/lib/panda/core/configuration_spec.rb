@@ -22,6 +22,12 @@ RSpec.describe Panda::Core do
       expect(config.user_class).to eq("Panda::Core::User")
     end
 
+    it "includes the alder theme alongside default and sky" do
+      expect(described_class.config.available_themes).to eq(
+        [["Default", "default"], ["Sky", "sky"], ["Alder", "alder"]]
+      )
+    end
+
     it "allows setting configuration values" do
       described_class.configure do |config|
         config.user_class = "CustomUser"
