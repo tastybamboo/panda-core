@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-07-17
+
+### Added
+
+- **Themeable admin chrome** — the residual gem-rendered admin surfaces (login,
+  `/admin/users`, My Profile, TagsPanel/TagInput) are now themeable via CSS
+  custom properties, so host apps with their own design system no longer need
+  brittle `!important` overrides
+  - New `--panda-panel-*`, `--panda-table-*`, `--panda-badge-{success,error,
+    warning,info,neutral}-*`, `--panda-input-*`, `--panda-select-trigger-*`,
+    and `--panda-checkbox-accent` tokens, consumed by `PanelComponent`,
+    `TableComponent`, `TagComponent`, `FormInputComponent`, and the
+    custom-select Stimulus controller
+  - `PanelComponent`, `TableComponent`, and `TagComponent` now render
+    arbitrary-value Tailwind utilities (`bg-[var(--panda-panel-bg,...)]`)
+    whose fallbacks resolve to today's literal colours — no visual change for
+    existing consumers (Panda CMS) unless a theme is explicitly selected
+  - New `alder` theme (`html[data-theme='alder']`) implementing Alder CRM's
+    "Deep Roots" design system
+- `available_themes` now includes `["Alder", "alder"]` alongside the existing
+  `["Default", "default"], ["Sky", "sky"]`
+
+### Fixed
+
+- **Theme naming mismatch** — `html[data-theme='ocean']` (introduced in the
+  Glacier/Teal palette update) never matched `available_themes`' `"sky"`
+  value, so selecting the second theme option silently fell back to the
+  unthemed default. Renamed the CSS block back to `sky` (its original name
+  before the palette update) rather than renaming the config, since
+  `current_theme` is free-text user data and only "sky" could ever have been
+  persisted through the theme `<select>`
+- **JS Tailwind source path** — `ModuleRegistry`'s `javascripts` glob pointed
+  at `app/assets/javascript/panda/core` (a directory that has never existed);
+  Stimulus controllers were never scanned for Tailwind classes and relied on
+  those classes coincidentally appearing elsewhere. Corrected to
+  `app/javascript/panda/core`
+
 ## [1.0.0] - 2026-03-12
 
 Panda Core reaches 1.0 — the configuration API, navigation registry, component
