@@ -112,6 +112,13 @@ module Panda
 
         # Profile and UI customization
         @additional_user_params = []
+        # Themes offered in the My Profile dropdown as [label, value] pairs.
+        # Assigning this REPLACES the default list — host apps registering
+        # their own theme should include any built-ins they still want, e.g.
+        #   config.available_themes = [["Default", "default"], ["Acme", "acme"]]
+        # The value is stamped as <html data-theme="..."> on admin pages;
+        # supply the matching html[data-theme='...'] variable block via
+        # config.additional_head_content (see app/assets/tailwind/application.css).
         @available_themes = [["Default", "default"], ["Sky", "sky"]]
         @login_logo_path = nil
         @login_page_title = "Panda Admin"

@@ -1,9 +1,14 @@
+<%# Chrome (bg/border/radius, header/row borders, cell text colour) is
+    themeable via the --panda-panel-* / --panda-table-* tokens — see
+    app/assets/tailwind/application.css. Fallbacks resolve to today's
+    literal utilities exactly, so this is a no-op unless a host app sets
+    data-theme. %>
 <% if rows.any? %>
   <% if responsive? %>
     <%# Mobile card view - hidden on lg screens %>
     <div class="mb-12 space-y-3 lg:hidden">
       <% rows.each do |row| %>
-        <div class="rounded-2xl border border-gray-200 bg-white p-4 hover:bg-gray-50 transition-colors" data-controller="row-link" data-action="click->row-link#click">
+        <div class="rounded-[var(--panda-panel-radius,var(--radius-2xl))] border border-[var(--panda-panel-border,var(--color-gray-200))] bg-[var(--panda-panel-bg,var(--color-white))] p-4 hover:bg-gray-50 transition-colors" data-controller="row-link" data-action="click->row-link#click">
           <% columns.each_with_index do |column, i| %>
             <% cell_content = render_cell_content(row, column.cell) %>
             <% if i == 0 %>
@@ -23,11 +28,11 @@
   <% end %>
 
   <%# Desktop table view %>
-  <div class="mb-12 w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white <%= 'hidden lg:block' if responsive? %>" data-controller="row-link" data-action="click->row-link#click">
+  <div class="mb-12 w-full overflow-x-auto rounded-[var(--panda-panel-radius,var(--radius-2xl))] border border-[var(--panda-panel-border,var(--color-gray-200))] bg-[var(--panda-panel-bg,var(--color-white))] <%= 'hidden lg:block' if responsive? %>" data-controller="row-link" data-action="click->row-link#click">
     <%# Header %>
     <div class="table w-full" style="table-layout: fixed;">
       <div class="table-header-group">
-        <div class="table-row text-sm font-medium text-gray-500 truncate bg-gray-50 border-b border-gray-200">
+        <div class="table-row text-sm font-medium text-gray-500 truncate bg-[var(--panda-table-header-bg,var(--color-gray-50))] border-b border-[var(--panda-table-border,var(--color-gray-200))]">
         <% columns.each do |column| %>
           <% header_style = column.width ? "width: #{column.width};" : nil %>
           <% aria_sort = if column.sortable? && sort == column.sort_key
@@ -58,7 +63,7 @@
          <% rows.each do |row| %>
            <div class="table-row odd:bg-white even:bg-gray-50/60 hover:bg-gray-100 cursor-pointer" data-<%= term %>-id="<%= row.id %>">
              <% columns.each do |column| %>
-              <div class="table-cell px-4 py-3 text-sm align-middle break-words border-b border-gray-200/70 text-gray-600">
+              <div class="table-cell px-4 py-3 text-sm align-middle break-words border-b border-[var(--panda-table-row-border,color-mix(in_srgb,var(--color-gray-200)_70%,transparent))] text-[var(--panda-table-cell-color,var(--color-gray-600))]">
                 <%= render_cell_content(row, column.cell) %>
               </div>
             <% end %>

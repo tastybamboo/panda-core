@@ -22,6 +22,22 @@ RSpec.describe Panda::Core do
       expect(config.user_class).to eq("Panda::Core::User")
     end
 
+    it "ships only the built-in themes by default" do
+      expect(described_class.config.available_themes).to eq(
+        [["Default", "default"], ["Sky", "sky"]]
+      )
+    end
+
+    it "replaces (not appends to) the theme list when a host app assigns available_themes" do
+      described_class.configure do |config|
+        config.available_themes = [["Default", "default"], ["Acme", "acme"]]
+      end
+
+      expect(described_class.config.available_themes).to eq(
+        [["Default", "default"], ["Acme", "acme"]]
+      )
+    end
+
     it "allows setting configuration values" do
       described_class.configure do |config|
         config.user_class = "CustomUser"

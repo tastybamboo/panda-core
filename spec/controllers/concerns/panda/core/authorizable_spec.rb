@@ -134,6 +134,7 @@ RSpec.describe Panda::Core::Authorizable do
     it "registers a before_action that calls authorize!" do
       test_class = Class.new(ActionController::Base) do
         include Panda::Core::Authorizable
+
         require_permission :edit_content, only: [:edit, :update]
       end
 

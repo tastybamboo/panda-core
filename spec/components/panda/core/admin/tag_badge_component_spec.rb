@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Panda::Core::Admin::TagBadgeComponent, type: :component do
-  TagStub = Struct.new(:id, :name, :display_colour, keyword_init: true) unless defined?(TagStub)
+  TagStub = Struct.new(:id, :name, :display_colour) unless defined?(TagStub)
   let(:tag_object) { TagStub.new(id: 1, name: "Urgent", display_colour: "#e11d48") }
 
   describe "rendering" do

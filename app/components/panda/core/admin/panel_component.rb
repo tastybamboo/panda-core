@@ -9,7 +9,7 @@ module Panda
         renders_one :body_slot
 
         def initialize(**attrs)
-          super(**attrs)
+          super
         end
       end
     end

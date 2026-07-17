@@ -195,9 +195,29 @@ RSpec.describe Panda::Core::Admin::TableComponent, type: :component do
       end)
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.table-row.bg-gray-50")
       expect(output).to have_css("div.table-row.text-gray-500")
       expect(output).to have_css("div.table-row.font-medium")
+      expect(rendered_content).to include("bg-[var(--panda-table-header-bg,var(--color-gray-50))]")
+    end
+  end
+
+  describe "theming" do
+    it "renders chrome as arbitrary-value utilities whose fallbacks match today's literal colours (regression: no visual change for the default theme)" do
+      render_inline(described_class.new(term: "user", rows: users) do |table|
+        table.column("Name") { |user| user.name }
+      end)
+      html = rendered_content
+
+      # Outer card chrome reuses the same --panda-panel-* tokens as PanelComponent
+      expect(html).to include("bg-[var(--panda-panel-bg,var(--color-white))]")
+      expect(html).to include("border-[var(--panda-panel-border,var(--color-gray-200))]")
+      expect(html).to include("rounded-[var(--panda-panel-radius,var(--radius-2xl))]")
+      # Header row
+      expect(html).to include("bg-[var(--panda-table-header-bg,var(--color-gray-50))]")
+      expect(html).to include("border-[var(--panda-table-border,var(--color-gray-200))]")
+      # Row cells
+      expect(html).to include("border-[var(--panda-table-row-border,color-mix(in_srgb,var(--color-gray-200)_70%,transparent))]")
+      expect(html).to include("text-[var(--panda-table-cell-color,var(--color-gray-600))]")
     end
   end
 end

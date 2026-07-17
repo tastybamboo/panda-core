@@ -7,10 +7,10 @@ module Panda
         # User profile menu component for the sidebar footer
         # Displays user avatar/name with expandable menu for profile, security, and logout
         class UserMenuComponent < Panda::Core::Base
-          BASE_CLASSES = 'transition-all group flex items-center w-full gap-x-3 px-3 py-2.5 ' \
-                         'text-sm font-medium cursor-pointer'
-          EXPANDED_BUTTON_CLASSES = 'bg-white/15 text-white rounded-t-xl'
-          INACTIVE_CLASSES = 'text-white/80 hover:bg-white/5 rounded-xl'
+          BASE_CLASSES = "transition-all group flex items-center w-full gap-x-3 px-3 py-2.5 " \
+                         "text-sm font-medium cursor-pointer"
+          EXPANDED_BUTTON_CLASSES = "bg-white/15 text-white rounded-t-xl"
+          INACTIVE_CLASSES = "text-white/80 hover:bg-white/5 rounded-xl"
 
           renders_many :sub_items, SubItemComponent
 
