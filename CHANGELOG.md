@@ -9,23 +9,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Themeable admin chrome** — the residual gem-rendered admin surfaces (login,
-  `/admin/users`, My Profile, TagsPanel/TagInput) are now themeable via CSS
-  custom properties, so host apps with their own design system no longer need
-  brittle `!important` overrides
+- **Themeable admin chrome (bring your own theme)** — the gem-rendered admin
+  surfaces (login, `/admin/users`, My Profile, TagsPanel/TagInput) are now
+  themeable via CSS custom properties, so host apps with their own design
+  system no longer need brittle `!important` overrides
   - New `--panda-panel-*`, `--panda-table-*`, `--panda-badge-{success,error,
     warning,info,neutral}-*`, `--panda-input-*`, `--panda-select-trigger-*`,
     and `--panda-checkbox-accent` tokens, consumed by `PanelComponent`,
     `TableComponent`, `TagComponent`, `FormInputComponent`, and the
     custom-select Stimulus controller
-  - `PanelComponent`, `TableComponent`, and `TagComponent` now render
-    arbitrary-value Tailwind utilities (`bg-[var(--panda-panel-bg,...)]`)
-    whose fallbacks resolve to today's literal colours — no visual change for
-    existing consumers (Panda CMS) unless a theme is explicitly selected
-  - New `alder` theme (`html[data-theme='alder']`) implementing Alder CRM's
-    "Deep Roots" design system
-- `available_themes` now includes `["Alder", "alder"]` alongside the existing
-  `["Default", "default"], ["Sky", "sky"]`
+  - Components render arbitrary-value Tailwind utilities
+    (`bg-[var(--panda-panel-bg,...)]`) whose fallbacks resolve to today's
+    literal colours — no visual change for existing consumers (Panda CMS)
+    unless a theme is explicitly selected
+  - The gem ships no host-app themes: a consuming app registers its theme
+    name via config and supplies the variable block in its own stylesheet:
+
+    ```ruby
+    Panda::Core.configure do |config|
+      # Assignment REPLACES the default list — include built-ins you still want
+      config.available_themes = [["Default", "default"], ["Acme", "acme"]]
+      config.default_theme = "acme"
+      config.additional_head_content = -> {
+        %(<link rel="stylesheet" href="/assets/acme-admin-theme.css">)
+      }
+    end
+    ```
+
+    ```css
+    /* acme-admin-theme.css */
+    html[data-theme='acme'] {
+      --color-primary-500: #2d6a4f;   /* brand scale, if desired */
+      --gradient-admin-from: #1b4332; /* sidebar/login gradient */
+      --panda-panel-bg: #ffffff;      /* any of the chrome tokens */
+      --panda-panel-radius: 12px;
+    }
+    ```
+
+    `HeaderComponent` stamps `data-theme` (the user's `current_theme`, or
+    `default_theme` when signed out — including the login page) on `<html>`,
+    and `additional_head_content` renders in every admin layout's `<head>`,
+    so the block activates automatically; any token left undefined falls
+    back to the gem default
 
 ### Fixed
 

@@ -314,68 +314,28 @@
   }
 
   /*
-   * Alder CRM theme ("Deep Roots") — lets Alder CRM (and any other host app
-   * with the same design system) delete its app-side `!important` CSS
-   * overrides for the residual gem-rendered admin surfaces it still uses:
-   * login (admin_simple layout), /admin/users, My Profile, and the
-   * TagsPanel/TagInput field widgets. Selecting this theme (available_themes
-   * / current_theme = "alder") is the only step required on the host-app
-   * side — no template changes.
+   * Bring-your-own theme: host apps can supply additional theme blocks in
+   * their own stylesheets — the gem does not need to know about them. A
+   * consuming app:
    *
-   * The primary scale below is copied verbatim from Alder CRM's own
-   * app/assets/tailwind/application.css :root block so panda-core admin
-   * pages (e.g. admin/users/index and show, which render bg-primary-50,
-   * text-primary-600/700, focus:ring-primary-500 directly) match Alder's
-   * brand exactly rather than approximating it.
+   *   1. Registers the theme so it appears in the My Profile dropdown and
+   *      can be the default:
+   *        config.available_themes = [["Default", "default"], ["Acme", "acme"]]
+   *        config.default_theme = "acme"
+   *      (assigning available_themes REPLACES the gem's default list)
+   *   2. Ships a stylesheet defining the variables, loaded on gem-rendered
+   *      pages via config.additional_head_content (rendered in the <head>
+   *      of every admin layout, including the login page):
+   *        html[data-theme='acme'] {
+   *          --color-primary-500: ...;    /- brand scale, if desired -/
+   *          --gradient-admin-from: ...;  /- sidebar/login gradient -/
+   *          --panda-panel-bg: ...;       /- any of the chrome tokens -/
+   *        }
    *
-   * Legacy --color-white/-light/-mid/-dark and the generic
-   * --color-success/error/warning/info-* families are intentionally left
-   * undefined here (they fall back to the base @theme literals) — nothing on
-   * the residual pages above consumes them.
+   * HeaderComponent stamps data-theme from Current.user&.current_theme ||
+   * config.default_theme on <html>, so the block activates automatically.
+   * Any token left undefined falls back to the gem default.
    */
-  html[data-theme='alder'] {
-    /* Primary color scale - Alder "Deep Roots" (Dark Emerald) */
-    --color-primary-50: #ECFDF5;
-    --color-primary-100: #D1FAE5;
-    --color-primary-200: #A7F3D0;
-    --color-primary-300: #6EE7B7;
-    --color-primary-400: #52B788; /* accent */
-    --color-primary-500: #2D6A4F;
-    --color-primary-600: #1B4332; /* brand anchor */
-    --color-primary-700: #163B2B;
-    --color-primary-800: #122F23;
-    --color-primary-900: #0D241B;
-    --color-primary-950: #081A13;
-
-    /* Sidebar/login body gradient — already themeable via .bg-gradient-admin,
-       no template change needed. */
-    --gradient-admin-from: #1B4332;
-    --gradient-admin-to: #2D6A4F;
-
-    /* Panda admin chrome tokens */
-    --panda-panel-bg: #FFFFFF;
-    --panda-panel-border: #F1F3F5;
-    --panda-panel-radius: 12px;
-    --panda-table-header-bg: transparent;
-    --panda-table-border: #F1F3F5;
-    --panda-table-row-border: #F8F9FA;
-    --panda-table-cell-color: #495057;
-    --panda-badge-success-bg: #D3F9D8;
-    --panda-badge-success-fg: #2B8A3E;
-    --panda-badge-warning-bg: #FFF3BF;
-    --panda-badge-warning-fg: #E67700;
-    --panda-badge-info-bg: #D0EBFF;
-    --panda-badge-info-fg: #1971C2;
-    --panda-badge-error-bg: #FFE3E3;
-    --panda-badge-error-fg: #E03131;
-    --panda-badge-neutral-bg: #F1F3F5;
-    --panda-badge-neutral-fg: #868E96;
-    --panda-input-border: #DEE2E6;
-    --panda-input-radius: 8px;
-    --panda-input-focus-ring: var(--color-primary-400); /* #52B788 */
-    --panda-select-trigger-border: #DEE2E6;
-    --panda-checkbox-accent: var(--color-primary-600); /* #1B4332 */
-  }
 
   /* Admin gradient backgrounds - customizable via CSS custom properties */
   .bg-gradient-admin {
