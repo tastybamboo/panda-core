@@ -7,10 +7,10 @@ module Panda
         # A child item within an expandable navigation menu
         # Can render as a link or a button (for logout, etc.)
         class SubItemComponent < Panda::Core::Base
-          BASE_CLASSES = 'group flex items-center w-full px-3 py-2 cursor-pointer ' \
-                         'text-sm font-medium transition-colors'
-          ACTIVE_CLASSES = 'bg-primary-500/20 text-white'
-          INACTIVE_CLASSES = 'text-white/70 hover:bg-white/5'
+          BASE_CLASSES = "group flex items-center w-full px-3 py-2 cursor-pointer " \
+                         "text-sm font-medium transition-colors"
+          ACTIVE_CLASSES = "bg-primary-500/20 text-white"
+          INACTIVE_CLASSES = "text-white/70 hover:bg-white/5"
 
           # rubocop:disable Metrics/ParameterLists
           def initialize(label:, path: nil, active: false, method: nil, button_options: {}, target: nil, **attrs)

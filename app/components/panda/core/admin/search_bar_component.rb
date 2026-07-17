@@ -5,7 +5,7 @@ module Panda
     module Admin
       class SearchBarComponent < Panda::Core::Base
         def initialize(**attrs)
-          super(**attrs)
+          super
         end
 
         def render?

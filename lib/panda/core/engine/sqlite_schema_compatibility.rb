@@ -16,8 +16,8 @@ module Panda
             sqlite_adapter.singleton_class.prepend(Module.new do
               def native_database_types_with_panda_sqlite_compatibility
                 super.merge(
-                  uuid: { name: "varchar" },
-                  jsonb: { name: "json" }
+                  uuid: {name: "varchar"},
+                  jsonb: {name: "json"}
                 )
               end
               alias_method :native_database_types, :native_database_types_with_panda_sqlite_compatibility

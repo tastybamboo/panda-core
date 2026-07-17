@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Panda::Core::Admin::TagInputComponent, type: :component do
-  TagStub = Struct.new(:id, :name, :display_colour, keyword_init: true) unless defined?(TagStub)
+  TagStub = Struct.new(:id, :name, :display_colour) unless defined?(TagStub)
   let(:tag1) { TagStub.new(id: 1, name: "Priority", display_colour: "#dc2626") }
   let(:tag2) { TagStub.new(id: 2, name: "Follow-up", display_colour: "#2563eb") }
 

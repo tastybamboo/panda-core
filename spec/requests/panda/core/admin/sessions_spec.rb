@@ -252,7 +252,7 @@ RSpec.describe "Admin Sessions", type: :request do
       end
 
       it "falls through to default redirect when the hook returns nil" do
-        Panda::Core.config.post_authentication_redirect = ->(_user, _request) { nil }
+        Panda::Core.config.post_authentication_redirect = ->(_user, _request) {}
 
         mock_oauth_for_user(admin_user, provider: :google_oauth2)
         post "/admin/auth/google_oauth2/callback", env: {"omniauth.auth" => OmniAuth.config.mock_auth[:google_oauth2]}
