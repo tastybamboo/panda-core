@@ -302,6 +302,13 @@ module Panda
           relative_path = path.sub(%r{^/panda/}, "")
           return @app.call(env) if relative_path.empty?
 
+          # Reject path traversal. PATH_INFO is already percent-decoded by the
+          # server, so encoded forms (e.g. %2e%2e) arrive here as literal "..".
+          # Without this guard a request such as
+          #   /panda/core/../../../../config/master.key
+          # would resolve outside the module roots and leak arbitrary files.
+          return @app.call(env) unless safe_relative_path?(relative_path)
+
           # Try to find the file in registered modules
           if ENV["RSPEC_DEBUG"]
             puts "[JavaScriptMiddleware] Looking for: #{path} (relative: #{relative_path})"
@@ -342,6 +349,26 @@ module Panda
 
         private
 
+        # Reject absolute paths, null bytes, and any ".." traversal segment.
+        def safe_relative_path?(relative_path)
+          return false if relative_path.include?("\0")
+          return false if relative_path.start_with?("/")
+
+          segments = relative_path.split("/")
+          segments.none? { |segment| segment == ".." }
+        end
+
+        # Verify that a resolved candidate file is contained within its base
+        # directory. Defence-in-depth alongside safe_relative_path? in #call —
+        # guards against symlink escapes and any traversal that slips through.
+        def within_base?(base, candidate)
+          base_real = File.realpath(base)
+          candidate_real = File.realpath(candidate)
+          candidate_real == base_real || candidate_real.start_with?("#{base_real}#{File::SEPARATOR}")
+        rescue Errno::ENOENT
+          false
+        end
+
         def find_javascript_file(relative_path)
           # Build list of paths to try - include .js extension fallback
           paths_to_try = [relative_path]
@@ -356,12 +383,14 @@ module Panda
 
             paths_to_try.each do |path|
               # Check in app/javascript/panda/ (primary location)
-              candidate = root.join("app/javascript/panda", path)
-              return candidate.to_s if candidate.exist? && candidate.file?
+              app_base = root.join("app/javascript/panda")
+              candidate = app_base.join(path)
+              return candidate.to_s if servable?(app_base, candidate)
 
               # Fallback to public/panda/ (for CI environments where assets are copied)
-              public_candidate = root.join("public/panda", path)
-              return public_candidate.to_s if public_candidate.exist? && public_candidate.file?
+              public_base = root.join("public/panda")
+              public_candidate = public_base.join(path)
+              return public_candidate.to_s if servable?(public_base, public_candidate)
             end
           end
 
@@ -369,16 +398,24 @@ module Panda
           if defined?(Rails.root)
             paths_to_try.each do |path|
               # Check app/javascript/panda/ in Rails.root
-              rails_candidate = Rails.root.join("app/javascript/panda", path)
-              return rails_candidate.to_s if rails_candidate.exist? && rails_candidate.file?
+              rails_app_base = Rails.root.join("app/javascript/panda")
+              rails_candidate = rails_app_base.join(path)
+              return rails_candidate.to_s if servable?(rails_app_base, rails_candidate)
 
               # Fallback to public/panda/ in Rails.root
-              rails_public_candidate = Rails.root.join("public/panda", path)
-              return rails_public_candidate.to_s if rails_public_candidate.exist? && rails_public_candidate.file?
+              rails_public_base = Rails.root.join("public/panda")
+              rails_public_candidate = rails_public_base.join(path)
+              return rails_public_candidate.to_s if servable?(rails_public_base, rails_public_candidate)
             end
           end
 
           nil
+        end
+
+        # A candidate is servable only if it exists, is a regular file, and
+        # resolves to a location inside its intended base directory.
+        def servable?(base, candidate)
+          candidate.exist? && candidate.file? && within_base?(base, candidate)
         end
 
         def serve_file(file_path, env)
