@@ -54,4 +54,43 @@ RSpec.describe Panda::Core::ModuleRegistry::JavaScriptMiddleware do
 
     expect(status).to eq(404)
   end
+
+  describe "path traversal protection" do
+    # These must be rejected *before* find_javascript_file is consulted, so we
+    # deliberately do not stub it — a regression would fall through to the real
+    # resolver and read a file outside the module roots.
+    it "refuses to serve traversal paths and passes through to downstream" do
+      status, = middleware.call(Rack::MockRequest.env_for("/panda/core/../../../../../../etc/hosts"))
+
+      expect(status).to eq(404)
+    end
+
+    it "refuses percent-decoded traversal (arrives as literal .. in PATH_INFO)" do
+      # Rack::MockRequest decodes just as a real server would.
+      status, = middleware.call(Rack::MockRequest.env_for("/panda/core/%2e%2e/%2e%2e/%2e%2e/etc/hosts"))
+
+      expect(status).to eq(404)
+    end
+
+    it "refuses absolute paths after the /panda/ prefix" do
+      status, = middleware.call(Rack::MockRequest.env_for("/panda//etc/hosts"))
+
+      expect(status).to eq(404)
+    end
+
+    it "does not serve a real file reached via traversal even if it exists" do
+      secret = tmp_dir.join("secret.txt")
+      File.write(secret, "TOP SECRET")
+      # Point find_javascript_file at the real file to prove the containment
+      # check in servable? is what stops it (belt-and-braces with the guard).
+      allow(middleware).to receive(:find_javascript_file).and_call_original
+
+      status, _headers, body = middleware.call(
+        Rack::MockRequest.env_for("/panda/../tmp/js_middleware_test/secret.txt")
+      )
+
+      expect(status).to eq(404)
+      expect(body.first).not_to include("TOP SECRET")
+    end
+  end
 end
