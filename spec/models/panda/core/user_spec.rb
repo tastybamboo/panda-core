@@ -163,6 +163,108 @@ RSpec.describe Panda::Core::User, type: :model do
 
         described_class.find_or_create_from_auth_hash(auth_hash)
       end
+
+      context "email verification" do
+        before { allow(Panda::Core::AttachAvatarService).to receive(:call) }
+
+        def auth_for(provider:, email: "victim@example.com", info: {}, extra: nil)
+          hash = {
+            provider: provider,
+            uid: "abc123",
+            info: {email: email, name: "Some User"}.merge(info)
+          }
+          hash[:extra] = extra if extra
+          OmniAuth::AuthHash.new(hash)
+        end
+
+        it "creates the user when the provider marks the email verified" do
+          auth = auth_for(provider: "google_oauth2", info: {email_verified: true})
+
+          expect {
+            user = described_class.find_or_create_from_auth_hash(auth)
+            expect(user).to be_persisted
+          }.to change(described_class, :count).by(1)
+        end
+
+        it "honours a verified signal nested under extra.raw_info" do
+          auth = auth_for(provider: "some_oidc", extra: {raw_info: {email_verified: true}})
+
+          expect {
+            described_class.find_or_create_from_auth_hash(auth)
+          }.to change(described_class, :count).by(1)
+        end
+
+        it "treats the string \"true\" as verified" do
+          auth = auth_for(provider: "some_oidc", info: {email_verified: "true"})
+
+          expect {
+            described_class.find_or_create_from_auth_hash(auth)
+          }.to change(described_class, :count).by(1)
+        end
+
+        it "rejects an explicitly unverified email without creating a user" do
+          auth = auth_for(provider: "google_oauth2", info: {email_verified: false})
+
+          expect {
+            user = described_class.find_or_create_from_auth_hash(auth)
+            expect(user).not_to be_persisted
+            expect(user.errors[:base].join).to match(/could not be verified/)
+          }.not_to change(described_class, :count)
+        end
+
+        it "does NOT match an existing account when the email is unverified" do
+          existing = described_class.create!(email: "victim@example.com", name: "Victim")
+          auth = auth_for(provider: "some_untrusted_oauth2", email: "victim@example.com")
+
+          user = described_class.find_or_create_from_auth_hash(auth)
+
+          expect(user).not_to be_persisted
+          expect(user.id).to be_nil
+          expect(existing.reload).to be_present
+        end
+
+        it "trusts a provider on the allow-list that omits the email_verified field" do
+          # github returns no email_verified signal but is opted in by default.
+          auth = auth_for(provider: "github")
+
+          expect {
+            user = described_class.find_or_create_from_auth_hash(auth)
+            expect(user).to be_persisted
+          }.to change(described_class, :count).by(1)
+        end
+
+        it "rejects a provider not on the allow-list that omits the field" do
+          auth = auth_for(provider: "some_untrusted_oauth2")
+
+          expect {
+            user = described_class.find_or_create_from_auth_hash(auth)
+            expect(user).not_to be_persisted
+          }.not_to change(described_class, :count)
+        end
+
+        it "finds an existing account when a trusted provider verifies the email" do
+          existing = described_class.create!(email: "victim@example.com", name: "Victim")
+          auth = auth_for(provider: "google_oauth2", email: "victim@example.com", info: {email_verified: true})
+
+          user = described_class.find_or_create_from_auth_hash(auth)
+
+          expect(user).to eq(existing)
+        end
+
+        it "trusts the developer strategy only in development" do
+          auth = auth_for(provider: "developer")
+
+          allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new("production"))
+          expect {
+            described_class.find_or_create_from_auth_hash(auth)
+          }.not_to change(described_class, :count)
+
+          allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new("development"))
+          expect {
+            described_class.find_or_create_from_auth_hash(auth)
+          }.to change(described_class, :count).by(1)
+        end
+      end
     end
   end
 

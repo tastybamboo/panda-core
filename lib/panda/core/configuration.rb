@@ -50,7 +50,8 @@ module Panda
         :restrict_user_creation,
         :after_user_invited,
         :invite_form_content,
-        :post_authentication_redirect
+        :post_authentication_redirect,
+        :trusted_email_providers
 
       def initialize
         @user_class = "Panda::Core::User"
@@ -67,6 +68,19 @@ module Panda
         @authentication_provider_resolver = nil
         @authentication_provider_gate = nil
         @authentication_validator = nil
+        # OAuth providers whose asserted email address may be trusted as proof
+        # of ownership when the provider does NOT return an explicit
+        # `email_verified` signal. Providers that DO return the signal (e.g.
+        # Google/OIDC) are honoured regardless of this list. Operators must
+        # opt a provider in here; anything not listed (and without a verified
+        # signal) is treated as unverified to avoid account-takeover via a
+        # provider that lets users assert arbitrary emails.
+        #
+        # Defaults to the first-party providers this engine ships support for,
+        # all of which verify email ownership (Google also returns an explicit
+        # signal). A generic/self-hosted OAuth2/OIDC/SAML provider an operator
+        # adds is NOT trusted by default and must be listed here explicitly.
+        @trusted_email_providers = %i[google_oauth2 github microsoft_graph]
         @admin_path = "/admin"
         @default_theme = "default"
 
