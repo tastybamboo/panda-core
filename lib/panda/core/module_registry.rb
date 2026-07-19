@@ -386,8 +386,18 @@ module Panda
           content = File.read(file_path)
 
           # Determine content type
+          #
+          # .mjs (ES modules) must be served as a JS MIME type, not the
+          # `text/plain` the `else` branch used to fall back to — browsers
+          # enforce strict MIME-type checking for `<script type="module">`/
+          # dynamic `import()` and refuse to execute a module served as
+          # text/plain, which silently breaks Turbo (and every module that
+          # imports one of these vendor .mjs files) in every environment,
+          # including production. Found via aldercrm's panda-editor
+          # EditorJS vendor bundles serving as text/plain in both dev and
+          # production.
           content_type = case File.extname(file_path)
-          when ".js"
+          when ".js", ".mjs"
             "application/javascript; charset=utf-8"
           when ".json"
             "application/json; charset=utf-8"
