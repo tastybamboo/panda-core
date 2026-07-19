@@ -49,6 +49,20 @@ module Panda
       }
 
       def self.find_or_create_from_auth_hash(auth_hash)
+        # Email is the cross-provider identity key, so we must only trust it
+        # when the identity provider actually attests the user owns it.
+        # Otherwise a provider that lets a user assert an arbitrary email
+        # (a generic OAuth2/OIDC/SAML strategy, or a misconfigured one) would
+        # allow matching into an existing account — an account-takeover vector.
+        unless email_verified_for_auth?(auth_hash)
+          user = new(
+            email: auth_hash.info.email.to_s.downcase,
+            name: auth_hash.info.name || "Unknown User"
+          )
+          user.errors.add(:base, "Your email address could not be verified with the identity provider. Please contact your administrator.")
+          return user
+        end
+
         user = find_by(email: auth_hash.info.email.downcase)
 
         avatar_url = auth_hash.info.image
@@ -101,6 +115,62 @@ module Panda
 
         user
       end
+
+      # Whether the provider's asserted email may be trusted as proof of
+      # ownership for this authentication.
+      #
+      # Precedence:
+      #   1. An explicit `email_verified` signal from the provider (checked in
+      #      both `info` and `extra.raw_info`) is authoritative — truthy means
+      #      verified, an explicit false means NOT verified (no fallback).
+      #   2. When the provider returns no such signal, fall back to the
+      #      `trusted_email_providers` allow-list so operators must opt a
+      #      provider in. The dev-only `developer` strategy is trusted only in
+      #      the development environment.
+      def self.email_verified_for_auth?(auth_hash)
+        signal = extract_email_verified_signal(auth_hash)
+        return truthy_verification?(signal) unless signal.nil?
+
+        provider = indifferent_lookup(auth_hash, :provider).to_s
+        return false if provider.empty?
+        return true if provider == "developer" && Rails.env.development?
+
+        trusted = Panda::Core.config.trusted_email_providers || []
+        trusted.map(&:to_s).include?(provider)
+      end
+
+      # Pull an `email_verified` value from the standard OmniAuth locations.
+      # Returns nil when the provider asserts nothing (so the caller can fall
+      # back to the trust policy), and preserves an explicit `false`.
+      def self.extract_email_verified_signal(auth_hash)
+        info = indifferent_lookup(auth_hash, :info)
+        info_signal = indifferent_lookup(info, :email_verified)
+        return info_signal unless info_signal.nil?
+
+        extra = indifferent_lookup(auth_hash, :extra)
+        raw_info = indifferent_lookup(extra, :raw_info)
+        indifferent_lookup(raw_info, :email_verified)
+      end
+
+      # OmniAuth strategies variously return booleans or strings ("true").
+      def self.truthy_verification?(value)
+        value == true || value.to_s.strip.casecmp("true").zero?
+      end
+
+      # Fetch a key from an OmniAuth::AuthHash (Hashie::Mash) or a plain Hash
+      # without losing an explicit `false` value. Returns nil when absent.
+      def self.indifferent_lookup(hash, key)
+        return nil unless hash.respond_to?(:key?)
+
+        if hash.key?(key.to_s)
+          hash[key.to_s]
+        elsif hash.key?(key.to_sym)
+          hash[key.to_sym]
+        end
+      end
+
+      private_class_method :email_verified_for_auth?, :extract_email_verified_signal,
+        :truthy_verification?, :indifferent_lookup
 
       # Admin status check
       def admin?
