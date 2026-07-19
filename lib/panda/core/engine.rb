@@ -155,6 +155,6 @@ Panda::Core::ModuleRegistry.register(
     helpers: "app/helpers/panda/core/**/*.rb",
     views: "app/views/panda/core/**/*.erb",
     layouts: "app/views/layouts/panda/core/**/*.erb",
-    javascripts: "app/assets/javascript/panda/core/**/*.js"
+    javascripts: "app/javascript/panda/core/**/*.js"
   }
 )

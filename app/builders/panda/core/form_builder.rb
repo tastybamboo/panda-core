@@ -93,12 +93,12 @@ module Panda
                 class: input_styles,
                 data: {datetime_target: "dateField", action: "change->datetime#update"}
               ) +
-              @template.tag.input(
-                type: "time",
-                step: "60",
-                class: input_styles,
-                data: {datetime_target: "timeField", action: "change->datetime#update"}
-              )
+                @template.tag.input(
+                  type: "time",
+                  step: "60",
+                  class: input_styles,
+                  data: {datetime_target: "timeField", action: "change->datetime#update"}
+                )
             end +
             error_message(method)
         end
@@ -138,7 +138,7 @@ module Panda
         html_options = html_options.reverse_merge(class: select_styles)
         html_options[:data] = (html_options[:data] || {}).merge("custom-select-target": "select")
 
-        content_tag :div, class: container_styles, data: { controller: "custom-select" } do
+        content_tag :div, class: container_styles, data: {controller: "custom-select"} do
           label(method, custom_label) + meta_text(options) + super(method, choices, options, html_options) + select_svg + error_message(method)
         end
       end
@@ -150,7 +150,7 @@ module Panda
         html_options = html_options.reverse_merge(class: input_styles)
         html_options[:data] = (html_options[:data] || {}).merge("custom-select-target": "select")
 
-        content_tag :div, class: container_styles, data: { controller: "custom-select" } do
+        content_tag :div, class: container_styles, data: {controller: "custom-select"} do
           label(method, custom_label) + meta_text(options) + super(method, collection, value_method, text_method, options, html_options) + error_message(method)
         end
       end
@@ -159,7 +159,7 @@ module Panda
         html_options = html_options.reverse_merge(class: select_styles)
         html_options[:data] = (html_options[:data] || {}).merge("custom-select-target": "select")
 
-        content_tag :div, class: container_styles, data: { controller: "custom-select" } do
+        content_tag :div, class: container_styles, data: {controller: "custom-select"} do
           label(method) + meta_text(options) + super(
             method,
             priority_zones,

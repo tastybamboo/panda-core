@@ -44,7 +44,7 @@ module Panda
           base_classes = "mt-6 pt-4"
           base_classes += " border-t border-gray-200" if border_top
 
-          { class: base_classes }
+          {class: base_classes}
         end
 
         def heading_classes

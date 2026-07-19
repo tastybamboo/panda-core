@@ -37,8 +37,13 @@ module Panda
         private
 
         def input_classes
-          classes = "block w-full h-11 rounded-xl border border-gray-300 bg-white px-3 py-2 text-gray-900 " \
-                    "placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-primary-500 " \
+          # Border/radius/focus-ring are themeable via the --panda-input-*
+          # tokens (see app/assets/tailwind/application.css). The var()
+          # fallbacks resolve to today's rounded-xl/border-gray-300/
+          # outline-primary-500 exactly, so this is a no-op unless a host
+          # app sets data-theme.
+          classes = "block w-full h-11 rounded-[var(--panda-input-radius,var(--radius-xl))] border border-[var(--panda-input-border,var(--color-gray-300))] bg-white px-3 py-2 text-gray-900 " \
+                    "placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--panda-input-focus-ring,var(--color-primary-500))] " \
                     "dark:bg-white/5 dark:text-white dark:border-white/10 dark:placeholder:text-gray-500"
 
           if @disabled

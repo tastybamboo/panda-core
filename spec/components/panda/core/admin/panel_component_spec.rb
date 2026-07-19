@@ -11,7 +11,8 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       end
       output = Capybara.string(rendered_content)
 
-      expect(output).to have_css("div.rounded-2xl.shadow-sm")
+      expect(output).to have_css("div.shadow-sm")
+      expect(rendered_content).to include("rounded-[var(--panda-panel-radius,var(--radius-2xl))]")
       expect(output).to have_css("div.text-gray-500", text: "Recent Activity")
       expect(output).to have_text("Activity content goes here")
     end
@@ -33,7 +34,8 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       output = Capybara.string(rendered_content)
 
       expect(output).to have_text("Empty Panel")
-      expect(output).to have_css("div.bg-white.rounded-2xl")
+      expect(rendered_content).to include("bg-[var(--panda-panel-bg,var(--color-white))]")
+      expect(rendered_content).to include("rounded-[var(--panda-panel-radius,var(--radius-2xl))]")
     end
 
     it "applies panel styling to heading" do
@@ -43,6 +45,19 @@ RSpec.describe Panda::Core::Admin::PanelComponent, type: :component do
       output = Capybara.string(rendered_content)
 
       expect(output).to have_css("div.text-sm.font-medium.px-4.py-3.text-gray-500")
+    end
+  end
+
+  describe "theming" do
+    it "renders bg/border/radius as arbitrary-value utilities whose fallbacks match today's literal colours (regression: no visual change for the default theme)" do
+      render_inline(described_class.new) do |panel|
+        panel.with_heading_slot { "Recent Activity" }
+      end
+      html = rendered_content
+
+      expect(html).to include("bg-[var(--panda-panel-bg,var(--color-white))]")
+      expect(html).to include("border-[var(--panda-panel-border,var(--color-gray-200))]")
+      expect(html).to include("rounded-[var(--panda-panel-radius,var(--radius-2xl))]")
     end
   end
 end

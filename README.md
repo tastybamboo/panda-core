@@ -149,6 +149,59 @@ This is useful when:
 - You're running multiple admin interfaces
 - You need different admin paths per environment
 
+### Theming the Admin Chrome
+
+The admin UI's chrome (panels, tables, status badges, form inputs, the
+custom-select trigger, checkbox accent, and the sidebar/login gradient) reads
+from CSS custom properties, declared per theme in
+`app/assets/tailwind/application.css`. Two themes ship with the gem
+(`default` and `sky`); host apps can bring their own without patching the gem:
+
+1. **Register the theme** so it appears in the My Profile dropdown and can be
+   the default. Assigning `available_themes` **replaces** the built-in list,
+   so include any built-ins you still want to offer:
+
+   ```ruby
+   Panda::Core.configure do |config|
+     config.available_themes = [["Default", "default"], ["Acme", "acme"]]
+     config.default_theme = "acme"
+     config.additional_head_content = -> {
+       %(<link rel="stylesheet" href="/assets/acme-admin-theme.css">)
+     }
+   end
+   ```
+
+2. **Supply the variable block** in the stylesheet you inject. Any token you
+   leave undefined falls back to the gem default:
+
+   ```css
+   html[data-theme='acme'] {
+     /* Brand colour scale (used by buttons, links, focus rings, ...) */
+     --color-primary-500: #2d6a4f;
+     --color-primary-600: #1b4332;
+
+     /* Sidebar / login-page gradient */
+     --gradient-admin-from: #1b4332;
+     --gradient-admin-to: #2d6a4f;
+
+     /* Admin chrome tokens (see application.css for the full catalogue) */
+     --panda-panel-bg: #ffffff;
+     --panda-panel-border: #f1f3f5;
+     --panda-panel-radius: 12px;
+     --panda-table-header-bg: transparent;
+     --panda-badge-success-bg: #d3f9d8;
+     --panda-badge-success-fg: #2b8a3e;
+     --panda-input-border: #dee2e6;
+     --panda-input-radius: 8px;
+     --panda-checkbox-accent: #1b4332;
+   }
+   ```
+
+Every admin layout (including the login page) stamps
+`<html data-theme="...">` from the signed-in user's `current_theme`, falling
+back to `config.default_theme`, and renders `additional_head_content` in its
+`<head>` — so the theme applies automatically once configured.
+
 ### Asset Pipeline
 
 Panda Core provides the **single source of truth** for all Panda admin interface styling. This includes:

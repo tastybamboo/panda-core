@@ -15,9 +15,7 @@ module Panda
             super()
           end
 
-          def provider_info
-            @provider_info
-          end
+          attr_reader :provider_info
 
           def connected?
             @is_connected

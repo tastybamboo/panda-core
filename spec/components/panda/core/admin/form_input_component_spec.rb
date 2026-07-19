@@ -174,7 +174,6 @@ RSpec.describe Panda::Core::Admin::FormInputComponent, type: :component do
 
       expect(output).to have_css("input.block")
       expect(output).to have_css("input.w-full")
-      expect(output).to have_css("input.rounded-xl")
     end
 
     it "includes focus outline classes" do
@@ -182,6 +181,17 @@ RSpec.describe Panda::Core::Admin::FormInputComponent, type: :component do
       output = Capybara.string(render_inline(component).to_html)
 
       expect(output).to have_css("input[class*='focus:outline']")
+    end
+  end
+
+  describe "theming" do
+    it "renders border/radius/focus-ring as arbitrary-value utilities whose fallbacks match today's literal colours (regression: no visual change for the default theme)" do
+      component = described_class.new(name: "test", value: "", placeholder: "")
+      html = render_inline(component).to_html
+
+      expect(html).to include("rounded-[var(--panda-input-radius,var(--radius-xl))]")
+      expect(html).to include("border-[var(--panda-input-border,var(--color-gray-300))]")
+      expect(html).to include("focus:outline-[var(--panda-input-focus-ring,var(--color-primary-500))]")
     end
   end
 end

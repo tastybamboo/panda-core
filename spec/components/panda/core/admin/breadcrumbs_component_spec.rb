@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Panda::Core::Admin::BreadcrumbsComponent, type: :component do
-  CrumbStub = Struct.new(:name, :path, keyword_init: true) unless defined?(CrumbStub)
+  CrumbStub = Struct.new(:name, :path) unless defined?(CrumbStub)
   let(:crumb1) { CrumbStub.new(name: "People", path: "/admin/people") }
   let(:crumb2) { CrumbStub.new(name: "Alice Smith", path: "/admin/people/1") }
 

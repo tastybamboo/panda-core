@@ -55,7 +55,7 @@ module Panda
         end
 
         def submit_data_attrs
-          attrs = { disable_with: "Saving..." }
+          attrs = {disable_with: "Saving..."}
           attrs[:action] = submit_action if submit_action
           attrs
         end

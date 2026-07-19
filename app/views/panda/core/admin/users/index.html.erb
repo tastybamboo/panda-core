@@ -59,9 +59,9 @@
           <%= link_to admin_user_path(user), class: "block-link flex items-center gap-3 group" do %>
             <% url = user.avatar_url(size: :thumb) %>
             <% if url.present? %>
-              <img src="<%= url %>" alt="<%= user.name %>" class="h-10 w-10 rounded-full object-cover">
+              <img src="<%= url %>" alt="<%= user.name %>" class="h-10 w-10 shrink-0 rounded-full object-cover">
             <% else %>
-              <div class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+              <div class="h-10 w-10 shrink-0 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
                 <i class="fa-solid fa-user text-gray-400 dark:text-gray-300"></i>
               </div>
             <% end %>

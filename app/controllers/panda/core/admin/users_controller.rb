@@ -24,12 +24,12 @@ module Panda
 
           @users = User.apply_metadata_filters(@users, params)
 
-          case params[:sort]
-          when "name" then @users = @users.order(name: sort_direction)
-          when "email" then @users = @users.order(email: sort_direction)
-          when "last_login" then @users = @users.order(last_login_at: sort_direction)
-          when "created" then @users = @users.order(created_at: sort_direction)
-          else @users = @users.order(name: :asc)
+          @users = case params[:sort]
+          when "name" then @users.order(name: sort_direction)
+          when "email" then @users.order(email: sort_direction)
+          when "last_login" then @users.order(last_login_at: sort_direction)
+          when "created" then @users.order(created_at: sort_direction)
+          else @users.order(name: :asc)
           end
 
           @page = [params.fetch(:page, 1).to_i, 1].max

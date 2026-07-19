@@ -31,7 +31,6 @@ module Panda
           end
         end
 
-
         private
 
         def default_attrs
