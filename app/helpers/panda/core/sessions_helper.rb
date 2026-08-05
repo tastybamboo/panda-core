@@ -7,7 +7,8 @@ module Panda
       PROVIDER_ICON_MAP = {
         google_oauth2: "google",
         microsoft_graph: "microsoft",
-        github: "github"
+        github: "github",
+        apple: "apple"
       }.freeze
 
       # Map of providers that don't use fa-brands (use fa-solid instead)
@@ -20,6 +21,7 @@ module Panda
         google_oauth2: "Google",
         microsoft_graph: "Microsoft",
         github: "GitHub",
+        apple: "Apple",
         developer: "Developer"
       }.freeze
 

@@ -17,6 +17,11 @@ module Panda
           name: "GitHub",
           icon: "fa-brands fa-github",
           color: "#333"
+        },
+        apple: {
+          name: "Apple",
+          icon: "fa-brands fa-apple",
+          color: "#000000"
         }
       }.freeze
 
@@ -42,6 +47,13 @@ module Panda
           providers << :microsoft_graph
         rescue LoadError
           # Microsoft OAuth functionality not available
+        end
+
+        begin
+          require "omniauth/strategies/apple"
+          providers << :apple
+        rescue LoadError
+          # Sign in with Apple not available (host app must add omniauth-apple)
         end
 
         providers

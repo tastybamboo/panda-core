@@ -28,6 +28,7 @@ gem "tailwindcss-rails", "~> 4"
 gem "omniauth-google-oauth2"
 gem "omniauth-github"
 gem "omniauth-microsoft_graph"
+gem "omniauth-apple"
 
 group :test do
   gem "debug", platforms: %i[mri windows]

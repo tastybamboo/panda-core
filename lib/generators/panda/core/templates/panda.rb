@@ -12,7 +12,22 @@ Panda::Core.configure do |config|
 
   # Authentication providers
   # Add the corresponding OmniAuth gem for each provider you enable
-  # (e.g. omniauth-google-oauth2, omniauth-github, omniauth-microsoft_graph).
+  # (e.g. omniauth-google-oauth2, omniauth-github, omniauth-microsoft_graph,
+  # omniauth-apple).
+  #
+  # Sign in with Apple uses JWT options instead of a static client_secret:
+  #
+  #   apple: {
+  #     enabled: true,
+  #     name: "Apple",
+  #     client_id: Rails.application.credentials.dig(:apple, :client_id),
+  #     options: {
+  #       scope: "email name",
+  #       team_id: Rails.application.credentials.dig(:apple, :team_id),
+  #       key_id: Rails.application.credentials.dig(:apple, :key_id),
+  #       pem: Rails.application.credentials.dig(:apple, :pem)
+  #     }
+  #   }
   #
   # In development, GitHub OAuth works out of the box with shared dev credentials
   # (restricted to localhost:3000). For production, add your own credentials via

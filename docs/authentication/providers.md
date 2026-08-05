@@ -9,6 +9,7 @@ The following providers are supported:
 - **Google** (`google_oauth2`)
 - **Microsoft** (`microsoft_graph`) 
 - **GitHub** (`github`)
+- **Apple** (`apple` — Sign in with Apple)
 
 ## Configuration
 
@@ -39,6 +40,16 @@ microsoft:
 github:
   client_id: your_client_id
   client_secret: your_client_secret
+
+# For Sign in with Apple (Services ID + .p8 key)
+apple:
+  client_id: your.services.id
+  team_id: YOUR_TEAM_ID
+  key_id: YOUR_KEY_ID
+  pem: |
+    -----BEGIN PRIVATE KEY-----
+    ...
+    -----END PRIVATE KEY-----
 ```
 
 ### 3. Enable Providers
@@ -87,10 +98,26 @@ Panda::Core.configure do |config|
       options: {
         scope: "user:email"
       }
+    },
+
+    # Sign in with Apple — no static client_secret; JWT is derived from
+    # team_id / key_id / pem via omniauth-apple.
+    apple: {
+      name: "Apple",
+      icon: "apple",
+      client_id: Rails.application.credentials.dig(:apple, :client_id),
+      options: {
+        scope: "email name",
+        team_id: Rails.application.credentials.dig(:apple, :team_id),
+        key_id: Rails.application.credentials.dig(:apple, :key_id),
+        pem: Rails.application.credentials.dig(:apple, :pem)
+      }
     }
   }
 end
 ```
+
+Add the matching OmniAuth gem to the host app (`omniauth-apple`, etc.).
 
 ## Provider Setup Guides
 
@@ -131,6 +158,19 @@ end
    - Development: `http://localhost:3000/admin/auth/github/callback`
    - Production: `https://your-app.com/admin/auth/github/callback`
 
+### Sign in with Apple
+
+1. In [Apple Developer](https://developer.apple.com/account/) create an App ID
+   with Sign in with Apple enabled, plus a Services ID used as `client_id`
+2. Create a Sign in with Apple key (`.p8`) and note the Key ID and Team ID
+3. Register the return URL on the Services ID:
+   - Development: `http://localhost:3000/admin/auth/apple/callback`
+     (or your auth host equivalent)
+   - Production: `https://your-app.com/admin/auth/apple/callback`
+4. Add `gem "omniauth-apple"` to the host app and configure credentials as
+   shown above (no static `client_secret` — panda-core passes Apple's JWT
+   options through to the strategy)
+
 ## Customizing Provider Display
 
 ### Display Names
@@ -148,11 +188,14 @@ If not specified, the provider name will be humanized (e.g., `google_oauth2` bec
 
 ### Icons
 
-Provider buttons use FontAwesome icons. For the three built-in providers (`google_oauth2`, `microsoft_graph`, `github`), icons are automatically mapped to the correct FontAwesome icon names:
+Provider buttons use FontAwesome icons. For the built-in providers
+(`google_oauth2`, `microsoft_graph`, `github`, `apple`), icons are
+automatically mapped to the correct FontAwesome icon names:
 
 - `google_oauth2` → `fa-google`
 - `microsoft_graph` → `fa-microsoft`
 - `github` → `fa-github`
+- `apple` → `fa-apple`
 
 You can override the icon for any provider:
 

@@ -16,7 +16,8 @@ module Panda
             if key.to_sym == :developer
               Rails.env.development?
             else
-              config[:client_id].present? && config[:client_secret].present?
+              symbol = Engine::OmniauthConfig::PROVIDER_REGISTRY[key.to_s] || key.to_sym
+              Engine::OmniauthConfig.credentials_configured?(symbol, config)
             end
           end.keys
         end

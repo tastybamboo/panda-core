@@ -28,6 +28,42 @@ RSpec.describe Panda::Core::Engine::OmniauthConfig do
     it "maps gh to github" do
       expect(described_class::PROVIDER_REGISTRY["gh"]).to eq(:github)
     end
+
+    it "maps apple to apple" do
+      expect(described_class::PROVIDER_REGISTRY["apple"]).to eq(:apple)
+    end
+  end
+
+  describe ".credentials_configured?" do
+    it "requires client_id and client_secret for standard OAuth providers" do
+      expect(described_class.credentials_configured?(:google_oauth2, {
+        client_id: "CID",
+        client_secret: "SECRET"
+      })).to be(true)
+
+      expect(described_class.credentials_configured?(:google_oauth2, {
+        client_id: "CID",
+        client_secret: ""
+      })).to be(false)
+    end
+
+    it "requires Apple JWT options instead of a static client_secret" do
+      apple_settings = {
+        client_id: "com.example.service",
+        options: {
+          team_id: "TEAMID",
+          key_id: "KEYID",
+          pem: "-----BEGIN PRIVATE KEY-----\nMII\n-----END PRIVATE KEY-----"
+        }
+      }
+
+      expect(described_class.credentials_configured?(:apple, apple_settings)).to be(true)
+      expect(described_class.credentials_configured?(:apple, apple_settings.merge(options: {}))).to be(false)
+      expect(described_class.credentials_configured?(:apple, {
+        client_id: "com.example.service",
+        client_secret: "ignored"
+      })).to be(false)
+    end
   end
 
   describe "#configure_provider" do
@@ -44,6 +80,31 @@ RSpec.describe Panda::Core::Engine::OmniauthConfig do
       instance.send(:configure_provider, builder, "google", {
         client_id: "CID",
         client_secret: "SECRET"
+      })
+    end
+
+    it "configures Apple with JWT options and an empty static secret" do
+      pem = "-----BEGIN PRIVATE KEY-----\nMII\n-----END PRIVATE KEY-----"
+      expect(builder).to receive(:provider).with(
+        :apple,
+        "com.example.service",
+        "",
+        {team_id: "TEAMID", key_id: "KEYID", pem: pem}
+      )
+
+      instance.send(:configure_provider, builder, "apple", {
+        client_id: "com.example.service",
+        options: {team_id: "TEAMID", key_id: "KEYID", pem: pem}
+      })
+    end
+
+    it "skips Apple when JWT options are incomplete" do
+      expect(builder).not_to receive(:provider)
+      expect(Rails.logger).to receive(:info).with(/Skipping OmniAuth provider/)
+
+      instance.send(:configure_provider, builder, "apple", {
+        client_id: "com.example.service",
+        client_secret: "unused"
       })
     end
 

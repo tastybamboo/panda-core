@@ -38,6 +38,7 @@ group :development, :test do
   gem "omniauth-google-oauth2"
   gem "omniauth-github"
   gem "omniauth-microsoft_graph"
+  gem "omniauth-apple"
 end
 
 group :development do
