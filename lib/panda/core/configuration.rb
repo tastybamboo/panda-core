@@ -80,7 +80,7 @@ module Panda
         # all of which verify email ownership (Google also returns an explicit
         # signal). A generic/self-hosted OAuth2/OIDC/SAML provider an operator
         # adds is NOT trusted by default and must be listed here explicitly.
-        @trusted_email_providers = %i[google_oauth2 github microsoft_graph]
+        @trusted_email_providers = %i[google_oauth2 github microsoft_graph apple]
         @admin_path = "/admin"
         @default_theme = "default"
 

@@ -16,6 +16,10 @@ RSpec.describe Panda::Core::SessionsHelper, type: :helper do
       it "returns 'github' for github" do
         expect(helper.oauth_provider_icon(:github)).to eq("github")
       end
+
+      it "returns 'apple' for apple" do
+        expect(helper.oauth_provider_icon(:apple)).to eq("apple")
+      end
     end
 
     context "with custom icon in provider config" do

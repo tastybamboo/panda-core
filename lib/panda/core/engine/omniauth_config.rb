@@ -22,9 +22,46 @@ module Panda
           "github" => :github,
           "gh" => :github,
 
+          # Apple (Sign in with Apple)
+          "apple" => :apple,
+
           # Developer
           "developer" => :developer
         }.freeze
+
+        # Whether a provider has enough credentials to register / show on login.
+        # Apple uses a JWT client secret derived from team_id / key_id / pem
+        # (no static client_secret).
+        def self.credentials_configured?(symbol, settings)
+          case symbol.to_sym
+          when :developer
+            true
+          when :apple
+            apple_credentials_configured?(settings)
+          else
+            settings[:client_id].present? && settings[:client_secret].present?
+          end
+        end
+
+        def self.apple_credentials_configured?(settings)
+          settings[:client_id].present? &&
+            settings.dig(:options, :team_id).present? &&
+            settings.dig(:options, :key_id).present? &&
+            settings.dig(:options, :pem).present?
+        end
+
+        # Register a provider on an OmniAuth::Builder.
+        # Apple's strategy ignores the static secret and signs a JWT from options.
+        def self.register_provider(builder, symbol, settings, options)
+          case symbol.to_sym
+          when :apple
+            builder.provider :apple, settings[:client_id], "", options
+          when :developer
+            builder.provider :developer, options
+          else
+            builder.provider symbol, settings[:client_id], settings[:client_secret], options
+          end
+        end
 
         class_methods do
           # Load YAML provider overrides during engine definition (before middleware setup)
@@ -51,8 +88,8 @@ module Panda
               # causes "Forbidden" errors when submitting the admin login form.
               #
               # Disabling OmniAuth's request_validation_phase is safe because:
-              # - Production OAuth providers (Google, GitHub, Microsoft) are
-              #   protected by the OAuth state parameter in the callback phase
+              # - Production OAuth providers (Google, GitHub, Microsoft, Apple)
+              #   are protected by the OAuth state parameter in the callback phase
               # - The developer provider only runs in development/test
               # - The login form still requires POST (allowed_request_methods)
               c.request_validation_phase = nil
@@ -87,21 +124,15 @@ module Panda
 
           return if symbol == :developer && !Rails.env.development?
 
-          # Skip providers without credentials (except developer which doesn't need them)
-          has_credentials = settings[:client_id].present? && settings[:client_secret].present?
-          if symbol != :developer && !has_credentials
-            Rails.logger.info("[panda-core] Skipping OmniAuth provider #{name.inspect}: missing client_id or client_secret") if defined?(Rails.logger)
+          unless OmniauthConfig.credentials_configured?(symbol, settings)
+            Rails.logger.info("[panda-core] Skipping OmniAuth provider #{name.inspect}: missing credentials") if defined?(Rails.logger)
             return
           end
 
           options = (settings[:options] || {}).dup
           options[:name] = settings[:path_name] if settings[:path_name].present?
 
-          if settings[:client_id] && settings[:client_secret]
-            builder.provider symbol, settings[:client_id], settings[:client_secret], options
-          else
-            builder.provider symbol, options
-          end
+          OmniauthConfig.register_provider(builder, symbol, settings, options)
         end
 
         included do
@@ -144,10 +175,8 @@ module Panda
 
               next if symbol == :developer && !Rails.env.development?
 
-              # Skip providers without credentials (except developer which doesn't need them)
-              has_credentials = settings[:client_id].present? && settings[:client_secret].present?
-              if symbol != :developer && !has_credentials
-                Rails.logger.info("[panda-core] Skipping OmniAuth provider #{name.inspect}: missing client_id or client_secret") if defined?(Rails.logger)
+              unless OmniauthConfig.credentials_configured?(symbol, settings)
+                Rails.logger.info("[panda-core] Skipping OmniAuth provider #{name.inspect}: missing credentials") if defined?(Rails.logger)
                 next
               end
 
@@ -166,11 +195,7 @@ module Panda
                 }
               end
 
-              if settings[:client_id] && settings[:client_secret]
-                builder.provider symbol, settings[:client_id], settings[:client_secret], options
-              else
-                builder.provider symbol, options
-              end
+              OmniauthConfig.register_provider(builder, symbol, settings, options)
             end
           end
         end
