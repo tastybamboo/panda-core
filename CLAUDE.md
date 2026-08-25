@@ -23,6 +23,29 @@ The dummy Rails application in `spec/dummy` provides the test environment for th
 - Run commands like `bundle exec rspec`, `rails db:migrate`, etc. from there
 - The dummy app's database configuration supports both PostgreSQL (default) and SQLite (via `DATABASE_ADAPTER=sqlite` env var)
 
+### Database provisioning: `db:migrate` and `db:schema:load` are not the same
+
+`db:schema:load` reads `spec/dummy/db/schema.rb` and never enumerates
+`db/migrate`; deploys do the opposite. Nothing about running one proves anything
+about the other, and they have diverged silently before.
+
+```bash
+bin/verify-migration-paths   # migrates from empty and asserts the schema still matches
+```
+
+It runs as the `migration-paths` CI job. Two rules follow from it:
+
+- **After changing a migration, regenerate and commit the schema** — `bin/rails
+  db:drop db:create db:migrate` dumps `spec/dummy/db/schema.rb`.
+- **Editing a released migration only fixes databases that do not exist yet.** If
+  deployed databases are also wrong, they need a *new* migration.
+
+Active Storage primary keys are the host app's decision, not this gem's: Rails'
+own `CreateActiveStorageTables` reads `Rails.configuration.generators` at
+migration time, so a host that sets `primary_key_type: :uuid` gets uuid blob ids
+and one that does not gets bigint. panda-core migrations must read that type
+rather than assume one. See [docs/migration-paths.md](docs/migration-paths.md).
+
 ### Database Support
 
 Panda Core supports both PostgreSQL and SQLite3 for development and testing:

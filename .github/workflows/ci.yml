@@ -157,6 +157,53 @@ jobs:
             spec/dummy/tmp/capybara/**
           if-no-files-found: ignore
 
+  migration-paths:
+    name: Migration paths
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tastybamboo/panda-ci:ruby-4.0.1
+    env:
+      BUNDLE_PATH: vendor/bundle
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:password@postgres:5432/test
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache gems
+        uses: actions/cache@v5
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-stable-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-stable-
+            ${{ runner.os }}-gems-
+
+      - name: Bundle install
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      # The other jobs provision with db:schema:load, which never enumerates
+      # db/migrate. This one runs the migrations in order against an empty
+      # database and asserts the result still matches the committed schema.
+      - name: Verify db:migrate and db:schema:load agree
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          bin/verify-migration-paths
+
   lint:
     name: Linters
     runs-on: ubuntu-latest

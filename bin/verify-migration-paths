@@ -1,0 +1,148 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Verifies that the two ways of provisioning a database build the same thing.
+#
+# `db:schema:load` reads spec/dummy/db/schema.rb and never enumerates db/migrate,
+# so no amount of schema-load-based CI proves the migrations still run, or that
+# they still build the database the schema describes. They have diverged silently
+# before — see docs/migration-paths.md.
+#
+# Two scenarios are migrated from empty:
+#
+#   bigint  the default host app. Its schema dump must match the committed
+#           spec/dummy/db/schema.rb exactly. That is the assertion that keeps
+#           `db:migrate` and `db:schema:load` honest.
+#   uuid    a host app with `config.generators ... primary_key_type: :uuid`
+#           (Alder CRM does this). Rails' own Active Storage and Action Text
+#           migrations read that setting at migration time, so this host gets uuid
+#           blob ids and panda-core's migrations have to follow the host rather
+#           than assume a type.
+#
+# Usage:  bin/verify-migration-paths
+# Env:    DATABASE_URL  base connection; each scenario appends its own suffix.
+
+require "fileutils"
+require "uri"
+
+$stdout.sync = true
+
+ROOT = File.expand_path("..", __dir__)
+SCHEMA_PATH = File.join(ROOT, "spec/dummy/db/schema.rb")
+UUID_SCHEMA_PATH = File.join(ROOT, "tmp/uuid_host_schema.rb")
+BASE_URL = ENV["DATABASE_URL"] || "postgres://postgres:password@localhost:5432/panda_core_dummy"
+
+# The schema facts that differ between host apps. Probed from the live database so
+# the two scenarios can be checked against each other and against the host's own
+# Active Storage tables, rather than against hardcoded types.
+PROBED_COLUMNS = [
+  %w[active_storage_blobs id],
+  %w[active_storage_attachments blob_id],
+  %w[active_storage_attachments record_id],
+  %w[panda_core_file_categorizations blob_id],
+  %w[panda_core_tags tenant_id],
+  %w[panda_core_import_sessions tenant_id]
+].freeze
+
+PROBE = <<~RUBY_SOURCE
+  connection = ActiveRecord::Base.connection
+  #{PROBED_COLUMNS.inspect}.each do |table, column|
+    type = connection.columns(table).find { |c| c.name == column }&.type
+    puts "\#{table}.\#{column}=\#{type.inspect}"
+  end
+RUBY_SOURCE
+
+Dir.chdir(ROOT)
+
+def scenario_url(label)
+  uri = URI.parse(BASE_URL)
+  database = uri.path.delete_prefix("/").sub(/_(bigint|uuid)_paths\z/, "")
+  uri.path = "/#{database}_#{label}_paths"
+  uri.to_s
+end
+
+def run!(env, *command)
+  puts "  $ #{command.join(" ")}"
+  return if system(env, *command)
+
+  abort "\n\e[31mFAILED\e[0m: #{command.join(" ")}"
+end
+
+def migrate_from_empty(label, extra_env, schema_path)
+  puts "\n\e[36m▶ #{label} host app: db:create db:migrate from empty\e[0m"
+
+  env = {
+    "RAILS_ENV" => "test",
+    "DATABASE_URL" => scenario_url(label),
+    "SCHEMA" => schema_path
+  }.merge(extra_env)
+
+  run!(env, "bin/rails", "db:drop", "db:create")
+  run!(env, "bin/rails", "db:migrate")
+
+  output = IO.popen(env, ["bin/rails", "runner", PROBE], &:read)
+  abort "\n\e[31mFAILED\e[0m: could not probe the #{label} schema" unless $?.success?
+
+  output.scan(/^(\S+)=(\S+)$/).each_with_object({}) do |(column, type), facts|
+    puts "    #{column} #{type}"
+    facts[column] = type
+  end
+end
+
+FAILURES = []
+
+def check(description)
+  if yield
+    puts "  \e[32m✓\e[0m #{description}"
+  else
+    puts "  \e[31m✗\e[0m #{description}"
+    FAILURES << description
+  end
+end
+
+FileUtils.mkdir_p(File.dirname(UUID_SCHEMA_PATH))
+
+# The uuid host runs first and dumps elsewhere, so that the committed schema.rb is
+# left holding the bigint host's dump — the one it is supposed to describe.
+uuid = migrate_from_empty("uuid", {"PANDA_CORE_UUID_PRIMARY_KEYS" => "1"}, UUID_SCHEMA_PATH)
+bigint = migrate_from_empty("bigint", {}, SCHEMA_PATH)
+
+puts "\n\e[36m▶ Assertions\e[0m"
+
+check("committed spec/dummy/db/schema.rb matches a migrate from empty") do
+  system("git", "diff", "--exit-code", "--", "spec/dummy/db/schema.rb", out: File::NULL)
+end
+
+{"bigint" => bigint, "uuid" => uuid}.each do |label, facts|
+  blob_key_type = facts["active_storage_blobs.id"]
+
+  check("#{label} host: panda_core_file_categorizations.blob_id follows active_storage_blobs.id (#{blob_key_type})") do
+    facts["panda_core_file_categorizations.blob_id"] == blob_key_type
+  end
+
+  check("#{label} host: active_storage_attachments.record_id is a string") do
+    facts["active_storage_attachments.record_id"] == ":string"
+  end
+
+  %w[panda_core_tags.tenant_id panda_core_import_sessions.tenant_id].each do |column|
+    check("#{label} host: #{column} is a string") do
+      facts[column] == ":string"
+    end
+  end
+end
+
+check("the two host apps really do build different Active Storage tables") do
+  bigint["active_storage_blobs.id"] != uuid["active_storage_blobs.id"]
+end
+
+if FAILURES.empty?
+  puts "\n\e[32mBoth provisioning paths agree.\e[0m"
+  exit 0
+end
+
+warn "\n\e[31m#{FAILURES.size} assertion(s) failed.\e[0m"
+warn "If the schema dump drifted, db/migrate and spec/dummy/db/schema.rb no longer"
+warn "describe the same database. Regenerate the schema from the migrations and"
+warn "commit the result:"
+warn "  bin/rails db:drop db:create db:migrate"
+exit 1
