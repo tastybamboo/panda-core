@@ -146,7 +146,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_000002) do
     t.datetime "created_at", null: false
     t.string "name", null: false
     t.integer "taggings_count", default: 0, null: false
-    t.bigint "tenant_id"
+    t.string "tenant_id"
     t.string "tenant_type"
     t.datetime "updated_at", null: false
     t.index ["tenant_type", "tenant_id", "name"], name: "idx_panda_core_tags_on_tenant_and_name", unique: true
