@@ -18,6 +18,7 @@
 # Usage:  bin/verify-uuid-host-migrations
 # Env:    DATABASE_URL  base connection; the scenario appends its own suffix.
 
+require "fileutils"
 require "uri"
 
 $stdout.sync = true
@@ -44,16 +45,23 @@ RUBY_SOURCE
 
 Dir.chdir(ROOT)
 
+# Take only the connection details from DATABASE_URL and force our own database
+# name, so this never drops the caller's development or test database.
 uri = URI.parse(BASE_URL)
-uri.path = "/#{uri.path.delete_prefix("/").sub(/_uuid_host\z/, "")}_uuid_host"
+uri.path = "/panda_core_uuid_host"
+
+# db:migrate dumps the schema afterwards. That dump describes the uuid host, not
+# the default host the committed schema.rb is for, so send it somewhere harmless
+# — and create the directory, because a fresh checkout has no tmp/ and the dump
+# failing is what makes db:migrate exit non-zero after every migration succeeded.
+SCHEMA_DUMP = File.join(ROOT, "tmp/uuid_host_schema.rb")
+FileUtils.mkdir_p(File.dirname(SCHEMA_DUMP))
 
 ENV_FOR_SCENARIO = {
   "RAILS_ENV" => "test",
   "DATABASE_URL" => uri.to_s,
   "PANDA_CORE_UUID_PRIMARY_KEYS" => "1",
-  # The dump would describe the uuid host, not the default one the committed
-  # schema.rb is for. Send it somewhere harmless.
-  "SCHEMA" => File.join(ROOT, "tmp/uuid_host_schema.rb")
+  "SCHEMA" => SCHEMA_DUMP
 }.freeze
 
 def run!(*command)

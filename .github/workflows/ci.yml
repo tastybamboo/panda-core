@@ -245,9 +245,11 @@ jobs:
       # The schema job covers the default host app. A host that sets
       # primary_key_type: :uuid legitimately builds a different schema, so it has
       # no schema.rb to compare against and needs its own consistency check.
+      # Only the connection details are used; the script substitutes its own
+      # database name so it never drops the one it was pointed at.
       - name: Migrate from empty as a uuid host app
         env:
-          DATABASE_URL: postgres://postgres:password@postgres:5432/uuid_host
+          DATABASE_URL: postgres://postgres:password@postgres:5432/test
         run: bin/verify-uuid-host-migrations
 
   lint:
