@@ -161,7 +161,7 @@ jobs:
     name: Migration paths
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tastybamboo/panda-ci:ruby-4.0.1
+      image: ghcr.io/tastybamboo/panda-ci:ruby-4.0
     env:
       BUNDLE_PATH: vendor/bundle
       RAILS_ENV: test
