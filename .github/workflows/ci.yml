@@ -157,15 +157,14 @@ jobs:
             spec/dummy/tmp/capybara/**
           if-no-files-found: ignore
 
-  migration-paths:
-    name: Migration paths
+  schema:
+    name: Schema (migrations vs schema.rb)
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/tastybamboo/panda-ci:ruby-4.0
     env:
       BUNDLE_PATH: vendor/bundle
       RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:password@postgres:5432/test
     services:
       postgres:
         image: postgres:17
@@ -186,9 +185,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-stable-${{ hashFiles('Gemfile.lock') }}
+          key: ${{ runner.os }}-gems-schema-${{ hashFiles('Gemfile.lock') }}
           restore-keys: |
-            ${{ runner.os }}-gems-stable-
+            ${{ runner.os }}-gems-schema-
             ${{ runner.os }}-gems-
 
       - name: Bundle install
@@ -196,13 +195,60 @@ jobs:
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
-      # The other jobs provision with db:schema:load, which never enumerates
-      # db/migrate. This one runs the migrations in order against an empty
-      # database and asserts the result still matches the committed schema.
-      - name: Verify db:migrate and db:schema:load agree
+      # The test jobs build their database with db:schema:load, which never
+      # enumerates db/migrate. This job is the only one that runs the gem's
+      # migrations in order against an empty database.
+      - name: Apply migrations from empty and compare to schema.rb
+        env:
+          DATABASE_URL: postgres://postgres:password@postgres:5432/schema_check
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          bin/verify-migration-paths
+          bundle exec rake app:db:create
+
+  uuid-host:
+    name: Schema (uuid host app)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tastybamboo/panda-ci:ruby-4.0
+    env:
+      BUNDLE_PATH: vendor/bundle
+      RAILS_ENV: test
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache gems
+        uses: actions/cache@v5
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-schema-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-schema-
+            ${{ runner.os }}-gems-
+
+      - name: Bundle install
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      # The schema job covers the default host app. A host that sets
+      # primary_key_type: :uuid legitimately builds a different schema, so it has
+      # no schema.rb to compare against and needs its own consistency check.
+      - name: Migrate from empty as a uuid host app
+        env:
+          DATABASE_URL: postgres://postgres:password@postgres:5432/uuid_host
+        run: bin/verify-uuid-host-migrations
 
   lint:
     name: Linters

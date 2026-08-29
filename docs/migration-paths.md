@@ -11,32 +11,43 @@ Nothing about running one proves anything about the other. panda-core's CI ran
 `db:create db:schema:load` in every job, so **no CI job had ever executed the
 migrations in order against an empty database**. They diverged, twice, silently.
 
-`bin/verify-migration-paths` now closes that gap and runs as the `migration-paths`
-job in CI. Run it locally with:
+Two CI jobs now close that gap, because one check cannot cover both kinds of
+host application:
+
+| Job | Task | Covers |
+|---|---|---|
+| `schema` | `panda:core:schema:check` | The **default** host. Replays every migration into an empty database and diffs the dump against the committed `spec/dummy/db/schema.rb`. Also refuses duplicate migration versions. |
+| `uuid-host` | `bin/verify-uuid-host-migrations` | A host that sets `primary_key_type: :uuid`. It legitimately builds a *different* schema, so there is no `schema.rb` to compare against — the job asserts internal consistency instead. |
+
+Run them locally with:
 
 ```bash
-bin/verify-migration-paths
+DATABASE_URL=postgres://localhost/panda_core_schema_check \
+  bundle exec rails db:drop db:create app:panda:core:schema:check
+bin/verify-uuid-host-migrations
 ```
 
-## What it checks
+The `uuid-host` job asserts that `panda_core_file_categorizations.blob_id` has
+the same type as `active_storage_blobs.id`, that
+`active_storage_attachments.record_id` is a string, and that the polymorphic
+`tenant_id` columns are strings. Reverting the `blob_id` fix below fails it with
+the original `DatatypeMismatch` while `panda:core:schema:check` stays green —
+which is exactly why both jobs exist.
 
-It migrates from empty twice, as two different kinds of host app, and asserts:
+## Regenerating the schema: mind the working directory
 
-1. **The bigint host's schema dump matches the committed `spec/dummy/db/schema.rb`
-   exactly.** This is the assertion that matters. If a migration is edited without
-   regenerating the schema, or a schema is hand-edited, the job fails.
-2. **`panda_core_file_categorizations.blob_id` has the same type as
-   `active_storage_blobs.id`**, in both hosts.
-3. **`active_storage_attachments.record_id` is a string**, in both hosts.
-4. **The polymorphic `tenant_id` columns are strings**, in both hosts.
-5. The two hosts really do build different Active Storage tables — otherwise the
-   uuid scenario would be silently testing nothing.
-
-If assertion 1 fails after a deliberate migration change, regenerate and commit:
+`bin/rails` at the **repository root** sets `ENGINE_PATH`, so the engine's
+`db/migrate` is on the migration path. From there `db:migrate` runs all 32
+migrations and dumps a correct `spec/dummy/db/schema.rb`:
 
 ```bash
-bin/rails db:drop db:create db:migrate   # dumps spec/dummy/db/schema.rb
+bin/rails db:drop db:create db:migrate
 ```
+
+`spec/dummy/bin/rails` does **not**. From inside `spec/dummy` only that app's own
+three migrations run — no `panda_core_*` tables at all — and the dump silently
+overwrites `schema.rb` with a version missing every engine table. CLAUDE.md tells
+you to run Rails tasks from `spec/dummy`; for `db:migrate` specifically, do not.
 
 ## Why there are two kinds of host app
 

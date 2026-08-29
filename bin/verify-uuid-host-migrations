@@ -1,0 +1,117 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Migrates from empty as a host application that sets
+# `config.generators ... primary_key_type: :uuid` (Alder CRM does), and checks the
+# columns whose type depends on that choice.
+#
+# `panda:core:schema:check` already replays the migrations as the *default* host
+# and diffs the dump against the committed schema.rb. That covers one host. It
+# cannot cover this one, because a uuid host legitimately builds a different
+# schema: Rails' own CreateActiveStorageTables and CreateActionTextTables read
+# Rails.configuration.generators at migration time, so this host gets uuid blob
+# ids where the default host gets bigint. There is no single schema.rb to compare
+# against — only the internal consistency checked here.
+#
+# See docs/migration-paths.md.
+#
+# Usage:  bin/verify-uuid-host-migrations
+# Env:    DATABASE_URL  base connection; the scenario appends its own suffix.
+
+require "uri"
+
+$stdout.sync = true
+
+ROOT = File.expand_path("..", __dir__)
+BASE_URL = ENV["DATABASE_URL"] || "postgres://postgres:password@localhost:5432/panda_core_dummy"
+
+PROBED_COLUMNS = [
+  %w[active_storage_blobs id],
+  %w[active_storage_attachments blob_id],
+  %w[active_storage_attachments record_id],
+  %w[panda_core_file_categorizations blob_id],
+  %w[panda_core_tags tenant_id],
+  %w[panda_core_import_sessions tenant_id]
+].freeze
+
+PROBE = <<~RUBY_SOURCE
+  connection = ActiveRecord::Base.connection
+  #{PROBED_COLUMNS.inspect}.each do |table, column|
+    type = connection.columns(table).find { |c| c.name == column }&.type
+    puts "\#{table}.\#{column}=\#{type.inspect}"
+  end
+RUBY_SOURCE
+
+Dir.chdir(ROOT)
+
+uri = URI.parse(BASE_URL)
+uri.path = "/#{uri.path.delete_prefix("/").sub(/_uuid_host\z/, "")}_uuid_host"
+
+ENV_FOR_SCENARIO = {
+  "RAILS_ENV" => "test",
+  "DATABASE_URL" => uri.to_s,
+  "PANDA_CORE_UUID_PRIMARY_KEYS" => "1",
+  # The dump would describe the uuid host, not the default one the committed
+  # schema.rb is for. Send it somewhere harmless.
+  "SCHEMA" => File.join(ROOT, "tmp/uuid_host_schema.rb")
+}.freeze
+
+def run!(*command)
+  puts "  $ #{command.join(" ")}"
+  return if system(ENV_FOR_SCENARIO, *command)
+
+  abort "\n\e[31mFAILED\e[0m: #{command.join(" ")}"
+end
+
+puts "\n\e[36m▶ uuid host app: db:create db:migrate from empty\e[0m"
+run!("bin/rails", "db:drop", "db:create")
+run!("bin/rails", "db:migrate")
+
+output = IO.popen(ENV_FOR_SCENARIO, ["bin/rails", "runner", PROBE], &:read)
+abort "\n\e[31mFAILED\e[0m: could not probe the schema" unless $?.success?
+
+facts = output.scan(/^(\S+)=(\S+)$/).each_with_object({}) do |(column, type), collected|
+  puts "    #{column} #{type}"
+  collected[column] = type
+end
+
+FAILURES = []
+
+def check(description)
+  if yield
+    puts "  \e[32m✓\e[0m #{description}"
+  else
+    puts "  \e[31m✗\e[0m #{description}"
+    FAILURES << description
+  end
+end
+
+puts "\n\e[36m▶ Assertions\e[0m"
+
+check("this really is a uuid host: active_storage_blobs.id is a uuid") do
+  facts["active_storage_blobs.id"] == ":uuid"
+end
+
+check("panda_core_file_categorizations.blob_id follows active_storage_blobs.id") do
+  facts["panda_core_file_categorizations.blob_id"] == facts["active_storage_blobs.id"]
+end
+
+check("active_storage_attachments.record_id is a string") do
+  facts["active_storage_attachments.record_id"] == ":string"
+end
+
+%w[panda_core_tags.tenant_id panda_core_import_sessions.tenant_id].each do |column|
+  check("#{column} is a string") do
+    facts[column] == ":string"
+  end
+end
+
+if FAILURES.empty?
+  puts "\n\e[32mThe uuid host builds a consistent database.\e[0m"
+  exit 0
+end
+
+warn "\n\e[31m#{FAILURES.size} assertion(s) failed.\e[0m"
+warn "A column that hardcodes a type the host app decides will fail here while"
+warn "passing panda:core:schema:check. See docs/migration-paths.md."
+exit 1

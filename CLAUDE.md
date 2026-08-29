@@ -29,14 +29,25 @@ The dummy Rails application in `spec/dummy` provides the test environment for th
 `db/migrate`; deploys do the opposite. Nothing about running one proves anything
 about the other, and they have diverged silently before.
 
+Two CI jobs cover it, because the default host app and a host app that sets
+`primary_key_type: :uuid` legitimately build different schemas:
+
 ```bash
-bin/verify-migration-paths   # migrates from empty and asserts the schema still matches
+# schema job — replays the migrations and diffs the dump against schema.rb
+DATABASE_URL=postgres://localhost/panda_core_schema_check \
+  bundle exec rails db:drop db:create app:panda:core:schema:check
+
+# uuid-host job — migrates from empty as a uuid host and checks consistency
+bin/verify-uuid-host-migrations
 ```
 
-It runs as the `migration-paths` CI job. Two rules follow from it:
+Two rules follow from them:
 
 - **After changing a migration, regenerate and commit the schema** — `bin/rails
-  db:drop db:create db:migrate` dumps `spec/dummy/db/schema.rb`.
+  db:drop db:create db:migrate` **from the repository root** dumps
+  `spec/dummy/db/schema.rb`. Do not run `db:migrate` from inside `spec/dummy`:
+  the engine's migrations are not on the path there, and the dump silently
+  overwrites `schema.rb` with a version missing every `panda_core_*` table.
 - **Editing a released migration only fixes databases that do not exist yet.** If
   deployed databases are also wrong, they need a *new* migration.
 
