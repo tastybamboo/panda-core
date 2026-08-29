@@ -157,6 +157,54 @@ jobs:
             spec/dummy/tmp/capybara/**
           if-no-files-found: ignore
 
+  schema:
+    name: Schema (migrations vs schema.rb)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tastybamboo/panda-ci:ruby-4.0
+    env:
+      BUNDLE_PATH: vendor/bundle
+      RAILS_ENV: test
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache gems
+        uses: actions/cache@v5
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-schema-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-schema-
+            ${{ runner.os }}-gems-
+
+      - name: Bundle install
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      # The test jobs build their database with db:schema:load, which never
+      # enumerates db/migrate. This job is the only one that runs the gem's
+      # migrations in order against an empty database.
+      - name: Apply migrations from empty and compare to schema.rb
+        env:
+          DATABASE_URL: postgres://postgres:password@postgres:5432/schema_check
+        run: |
+          bundle exec rake app:db:create
+          bundle exec rake app:panda:core:schema:check
+
   lint:
     name: Linters
     runs-on: ubuntu-latest
