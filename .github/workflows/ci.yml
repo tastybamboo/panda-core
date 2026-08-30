@@ -203,7 +203,54 @@ jobs:
           DATABASE_URL: postgres://postgres:password@postgres:5432/schema_check
         run: |
           bundle exec rake app:db:create
-          bundle exec rake app:panda:core:schema:check
+
+  uuid-host:
+    name: Schema (uuid host app)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/tastybamboo/panda-ci:ruby-4.0
+    env:
+      BUNDLE_PATH: vendor/bundle
+      RAILS_ENV: test
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Cache gems
+        uses: actions/cache@v5
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-schema-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-schema-
+            ${{ runner.os }}-gems-
+
+      - name: Bundle install
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      # The schema job covers the default host app. A host that sets
+      # primary_key_type: :uuid legitimately builds a different schema, so it has
+      # no schema.rb to compare against and needs its own consistency check.
+      # Only the connection details are used; the script substitutes its own
+      # database name so it never drops the one it was pointed at.
+      - name: Migrate from empty as a uuid host app
+        env:
+          DATABASE_URL: postgres://postgres:password@postgres:5432/test
+        run: bin/verify-uuid-host-migrations
 
   lint:
     name: Linters

@@ -85,12 +85,19 @@ namespace :panda do
           Either the migration is wrong, or schema.rb was never regenerated after
           it changed.
 
-          Note that `rails db:migrate` will not regenerate it: the engine's
-          db/migrate is not on the application's migration path, so only
-          spec/dummy's own migrations would run. If the migrations are correct,
-          copy the dump this task just produced over the committed schema:
+          If the migrations are correct, regenerate the schema. Either copy the
+          dump this task just produced:
 
             cp #{actual_path} #{committed_path}
+
+          or migrate from the repository root, whose bin/rails puts the engine's
+          db/migrate on the migration path:
+
+            bin/rails db:drop db:create db:migrate
+
+          Do NOT run db:migrate from inside spec/dummy. There the engine's
+          migrations are not on the path, only spec/dummy's own three run, and
+          the dump that overwrites schema.rb is missing every panda_core table.
         MESSAGE
       end
     end

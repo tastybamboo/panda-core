@@ -27,5 +27,16 @@ module Dummy
 
     # Don't use API-only mode to support ViewComponent components
     config.api_only = false
+
+    # Host apps differ on primary key type, and that decides what Rails' own
+    # Active Storage / Action Text migrations build (they read
+    # Rails.configuration.generators at migration time). bin/verify-migration-paths
+    # migrates the dummy app both ways so panda-core's migrations are exercised
+    # against a bigint host app and a uuid host app. See docs/migration-paths.md.
+    if ENV["PANDA_CORE_UUID_PRIMARY_KEYS"].present?
+      config.generators do |g|
+        g.orm :active_record, primary_key_type: :uuid
+      end
+    end
   end
 end
