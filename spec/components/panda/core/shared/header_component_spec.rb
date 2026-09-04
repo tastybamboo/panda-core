@@ -40,11 +40,39 @@ RSpec.describe Panda::Core::Shared::HeaderComponent, type: :component do
       expect(html).to include("data-theme=")
     end
 
-    it "includes FontAwesome stylesheet" do
+    it "includes the FontAwesome stylesheet from a same-origin path" do
       component = described_class.new
       html = render_inline(component).to_html
 
-      expect(html).to include("fontawesome-free")
+      # Vendored, not from a CDN: style-src 'self' refuses the CDN stylesheet and
+      # font-src 'self' refuses the webfonts behind it.
+      expect(html).to include('<link rel="stylesheet" href="/panda-core-assets/fontawesome/css/all.min.css">')
+      expect(html).not_to include("cdn.jsdelivr.net")
+    end
+
+    it "loads the es-module-shims polyfill from a same-origin path, without async" do
+      html = render_inline(described_class.new).to_html
+
+      # The shim has to merge importmaps before any module script evaluates, which
+      # async does not guarantee.
+      expect(html).to include('<script src="/panda-core-assets/es-module-shims.js"></script>')
+      expect(html).not_to include("ga.jspm.io")
+    end
+
+    # These two read rendered_content rather than to_html: render_inline parses
+    # the result as a fragment, which drops the doctype and the <html> and <head>
+    # wrappers along with their attributes.
+    it "declares the character encoding inside the first 1024 bytes" do
+      render_inline(described_class.new)
+
+      # The HTML spec ignores a charset declaration that lands any later.
+      expect(rendered_content.byteslice(0, 1024)).to match(/<meta charset="utf-8">/)
+    end
+
+    it "declares a document language" do
+      render_inline(described_class.new)
+
+      expect(rendered_content).to match(/<html lang="[^"]+"/)
     end
 
     xit "applies custom html_class" do

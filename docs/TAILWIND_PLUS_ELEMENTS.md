@@ -23,17 +23,7 @@ The library provides eight foundational primitives:
 
 Tailwind Plus Elements is pre-configured in Panda Core's importmap. Choose one of the following methods to load it:
 
-### Option 1: Direct CDN (Recommended)
-
-The simplest approach - add this script tag to your HTML layout:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-```
-
-**Benefits:** Fastest to set up, cached across sites, no build step needed.
-
-### Option 2: Import via JavaScript
+### Option 1: Import via JavaScript (Recommended)
 
 Import in your application JavaScript file:
 
@@ -42,7 +32,26 @@ Import in your application JavaScript file:
 import "panda/core/tailwindplus-elements"
 ```
 
-This will load the library from the configured importmap (using esm.sh CDN).
+This resolves through Panda Core's importmap to the copy vendored at
+`app/javascript/panda/core/vendor/@tailwindplus--elements@1.0.22.js`, served
+from your own origin.
+
+**Benefits:** no third-party origin, so it works unchanged under a strict
+`script-src 'self'` Content Security Policy, and the version is pinned in
+`config/importmap.rb` rather than floating.
+
+### Option 2: Direct CDN
+
+Add this script tag to your HTML layout:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+```
+
+**Note:** a Content Security Policy of `script-src 'self'` refuses this, silently
+— the tag stays in the markup and the browser drops it, so the components simply
+never initialise. Prefer Option 1 unless you are deliberately allowing the CDN
+origin in your policy.
 
 ### Option 3: Lazy Load
 

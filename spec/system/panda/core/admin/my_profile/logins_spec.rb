@@ -113,10 +113,23 @@ RSpec.describe "Admin My Profile Logins", type: :system do
     end
 
     it "displays provider icons", js: true do
-      # FontAwesome JS replaces <i> tags with <svg> elements
-      expect(page).to have_css("svg[data-prefix='fab'][data-icon='microsoft']")
-      expect(page).to have_css("svg[data-prefix='fab'][data-icon='google']")
-      expect(page).to have_css("svg[data-prefix='fab'][data-icon='github']")
+      # Icons render from the vendored Font Awesome webfont CSS, as <i> elements
+      # with a ::before glyph. Font Awesome's JS SVG watcher — which used to
+      # rewrite these into <svg data-prefix=...> — is deliberately off: it sizes
+      # its replacements with a <style> injected via document.head.insertBefore
+      # and carries no nonce (Font Awesome 7.2.0 has no nonce option at all), so
+      # a strict style-src drops that style and the icons render at raw viewBox
+      # size. See app/javascript/panda/core/fontawesome-config.js.
+      expect(page).to have_css("i.fa-brands.fa-microsoft", visible: :all)
+      expect(page).to have_css("i.fa-brands.fa-google", visible: :all)
+      expect(page).to have_css("i.fa-brands.fa-github", visible: :all)
+
+      # Guard the failure the watcher used to cause: an icon the CSS never
+      # reached has no glyph and collapses to zero width.
+      width = page.evaluate_script(
+        "document.querySelector('i.fa-brands.fa-github').getBoundingClientRect().width"
+      )
+      expect(width).to be > 0
     end
 
     it "shows not connected status for all providers", js: true do
@@ -125,7 +138,7 @@ RSpec.describe "Admin My Profile Logins", type: :system do
       google_section = find("h3", text: "Google").ancestor("div.flex.items-center.justify-between")
       within(google_section) do
         expect(page).to have_content("Not connected")
-        expect(page).not_to have_css("svg[data-icon='check-circle']")
+        expect(page).not_to have_css("i.fa-circle-check, svg[data-icon='check-circle']")
       end
     end
 

@@ -1,4 +1,7 @@
 import { Application } from '@hotwired/stimulus'
+// Must precede the Font Awesome import: it disables the SVG watcher, whose
+// un-nonced <style> injection is dropped by a strict style-src. See the module.
+import './fontawesome-config.js'
 import '@fortawesome/fontawesome-free'
 
 const application = Application.start()
