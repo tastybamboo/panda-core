@@ -7,7 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **The admin `<head>` can now satisfy a strict Content Security Policy.** Under
+  `script-src 'self'` / `style-src 'self'` with a per-request nonce, every screen
+  on the `panda/core/admin` and `panda/core/admin_simple` layouts came out with
+  no icons and no JavaScript. Nothing errored — the tags were in the markup and
+  the browser dropped them silently, so Stimulus controllers simply never
+  connected. Four separate causes, all in `Shared::HeaderComponent`:
+  - `panda_core_javascript` hand-builds `<script type="importmap">` and the
+    module entry points as raw strings, and emitted them with no nonce, so
+    `script-src 'self'` rejected all of them. This was the one that mattered:
+    losing the importmap takes Turbo and every Stimulus controller with it.
+    The tags now carry `content_security_policy_nonce` when there is one (and no
+    `nonce` attribute at all when there is not — an empty nonce matches no
+    policy, so emitting `nonce=""` would break apps that have no CSP).
+  - Font Awesome loaded from `cdn.jsdelivr.net`, refused by `style-src 'self'`
+    along with its webfonts by `font-src 'self'`. Both are now vendored under
+    `public/panda-core-assets/fontawesome/` and served by the existing
+    `Rack::Static` mount. The upstream CSS is unmodified; the same
+    `fa-solid` / `fa-brands` glyphs resolve.
+  - es-module-shims loaded from `ga.jspm.io`, refused by `script-src 'self'`.
+    Now vendored at `public/panda-core-assets/es-module-shims.js`. Its `async`
+    attribute is also dropped, which was wrong independently of CSP: the shim
+    has to merge importmaps *before* any module script evaluates.
+  - `additional_head_content` was invoked as a bare `.call` with no receiver and
+    no arguments, so a host app's lambda had no view context and no request —
+    `content_security_policy_nonce` was nil inside it, and anything it injected
+    was un-nonced too. An arity-0 lambda is now evaluated against the view
+    context; an arity-1 lambda is yielded it. Existing lambdas that just return
+    a string keep working unchanged.
+- **Font Awesome's SVG watcher is disabled** (`app/javascript/panda/core/fontawesome-config.js`).
+  It replaced each `fa-solid` `<i>` with an inline `<svg>` and sized the result
+  with a `<style>` injected through `document.head.insertBefore` — carrying no
+  nonce, because Font Awesome 7.2.0 has no nonce option at all. A strict
+  `style-src` dropped that style and the replaced icons rendered at raw viewBox
+  size. Icons now render from the vendored webfont CSS instead, so the watcher
+  is redundant as well as CSP-hostile. Host apps that matched `svg[data-icon=…]`
+  should match `i.fa-solid.fa-…` instead.
+- **`<meta charset="utf-8">` is emitted** as the first element in `<head>`. The
+  HTML spec honours a charset declaration only inside the first 1024 bytes,
+  which only the component can guarantee — injecting one through
+  `additional_head_content` lands it thousands of bytes in. Encoding previously
+  rested on the `Content-Type` header alone.
+- **`<html>` carries a `lang` attribute**, which screen readers need to pick a
+  pronunciation.
+
 ### Added
+
+- `panda_core_importmap_tag` and `panda_core_script_tags` split what
+  `panda_core_javascript` emits into the importmap and the module entry points.
+  A host app that emits its own importmap needs exactly one in the document —
+  browsers with native import-map support honour the first and ignore the rest —
+  so such an app can now merge `Panda::Core::ModuleRegistry.combined_importmap`
+  into its own importmap and call `panda_core_script_tags` for the entry points.
+  `panda_core_javascript` is unchanged for everyone else.
 
 - **Sign in with Apple** — `apple` is a first-class OmniAuth provider alongside
   Google, Microsoft, and GitHub. Host apps add `omniauth-apple` and configure

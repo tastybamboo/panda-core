@@ -11,7 +11,7 @@ RSpec.describe Panda::Core::AssetHelper, type: :helper do
 
       it "generates an inline importmap" do
         result = helper.panda_core_javascript
-        expect(result).to include('<script type="importmap">')
+        expect(result).to include('<script type="importmap"')
       end
 
       it "includes required JavaScript modules" do
@@ -72,9 +72,69 @@ RSpec.describe Panda::Core::AssetHelper, type: :helper do
 
       it "still uses importmap (Rails 8 approach)" do
         result = helper.panda_core_javascript
-        expect(result).to include('<script type="importmap">')
+        expect(result).to include('<script type="importmap"')
         expect(result).to include('"panda/core/application"')
       end
+    end
+  end
+
+  describe "nonces" do
+    # These tags are built as raw strings rather than through
+    # javascript_importmap_tags, so nothing applies the nonce for us. Under
+    # script-src 'self' an un-nonced inline script is dropped silently, taking
+    # Turbo and every Stimulus controller with it.
+    context "when the request carries a CSP nonce" do
+      before do
+        allow(helper).to receive(:content_security_policy_nonce).and_return("test-nonce-value")
+      end
+
+      it "nonces the importmap tag" do
+        expect(helper.panda_core_importmap_tag).to include('<script type="importmap" nonce="test-nonce-value">')
+      end
+
+      it "nonces every module entry point" do
+        tags = helper.panda_core_script_tags.scan(/<script type="module"[^>]*>/)
+
+        expect(tags).not_to be_empty
+        expect(tags).to all(include('nonce="test-nonce-value"'))
+      end
+
+      it "escapes the nonce it interpolates" do
+        allow(helper).to receive(:content_security_policy_nonce).and_return(%(a"><script>x</script>))
+
+        expect(helper.panda_core_importmap_tag).not_to include("<script>x</script>")
+      end
+    end
+
+    context "when there is no nonce" do
+      before do
+        allow(helper).to receive(:content_security_policy_nonce).and_return(nil)
+      end
+
+      # An app with no CSP configured gets nil back. Emitting nonce="" there is
+      # worse than emitting nothing: an empty nonce matches no policy.
+      it "emits no nonce attribute at all" do
+        result = helper.panda_core_javascript
+
+        expect(result).to include('<script type="importmap">')
+        expect(result).not_to include('nonce=""')
+      end
+    end
+  end
+
+  describe "#panda_core_importmap_tag and #panda_core_script_tags" do
+    # A host app emitting its own importmap needs exactly one in the document:
+    # browsers with native import-map support honour the first and ignore the
+    # rest. Splitting the entry points out lets such an app merge Panda's pins
+    # into its own importmap and still get the entry points.
+    it "together produce what panda_core_javascript produces" do
+      expect(helper.panda_core_javascript)
+        .to eq(helper.panda_core_importmap_tag + helper.panda_core_script_tags)
+    end
+
+    it "emits entry points without an importmap" do
+      expect(helper.panda_core_script_tags).not_to include("type=\"importmap\"")
+      expect(helper.panda_core_script_tags).to include('import "panda/core/application"')
     end
   end
 
