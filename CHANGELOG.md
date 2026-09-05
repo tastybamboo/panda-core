@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-04
+
 ### Fixed
 
 - **The admin `<head>` can now satisfy a strict Content Security Policy.** Under

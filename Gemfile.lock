@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    panda-core (1.1.1)
+    panda-core (1.2.0)
       csv
       image_processing (~> 1.2)
       importmap-rails
