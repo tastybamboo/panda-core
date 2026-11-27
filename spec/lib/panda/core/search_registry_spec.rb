@@ -129,6 +129,50 @@ RSpec.describe Panda::Core::SearchRegistry do
       expect(result[:groups].first[:results].first[:name]).to eq("Alice Smith")
     end
 
+    describe "limit, more and group" do
+      let(:provider_class) do
+        Class.new do
+          def self.admin_search(query, limit: 5)
+            (1..8).map { |i| {name: "Person #{i}", description: "", href: "/admin/people/#{i}"} }.first(limit)
+          end
+
+          def self.searchable_config
+            {group: "People"}
+          end
+        end
+      end
+
+      before { described_class.register(name: "people", search_class: provider_class) }
+
+      it "shows at most limit results and says there are more" do
+        group = described_class.admin_search("person", limit: 5)[:groups].first
+
+        expect(group[:results].length).to eq(5)
+        expect(group[:more]).to be(true)
+      end
+
+      it "says there is no more when everything fits" do
+        group = described_class.admin_search("person", limit: 8)[:groups].first
+
+        expect(group[:results].length).to eq(8)
+        expect(group[:more]).to be(false)
+      end
+
+      it "searches only the named group, case-insensitively" do
+        other = Class.new do
+          def self.admin_search(query, limit: 5) = [{name: "Fund", description: "", href: "/admin/funds/1"}]
+
+          def self.searchable_config = {group: "Funds"}
+        end
+        described_class.register(name: "funds", search_class: other)
+
+        groups = described_class.admin_search("x", limit: 50, group: "people")[:groups]
+
+        expect(groups.map { |g| g[:name] }).to eq(["People"])
+        expect(groups.first[:results].length).to eq(8)
+      end
+    end
+
     it "skips providers without admin_search" do
       editor_only_class = Class.new do
         def self.editor_search(query, limit:)
