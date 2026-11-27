@@ -17,7 +17,7 @@ module Panda
 
           respond_to do |format|
             format.html
-            format.json { render json: @tags.limit(10).map { |t| {id: t.id, name: t.name, colour: t.display_colour} } }
+            format.json { render json: @tags.limit(10).map { |t| tag_json(t) } }
           end
         end
 
@@ -29,10 +29,16 @@ module Panda
           tenant = resolve_tenant
           @tag = Tag.new(tag_params.merge(tenant: tenant))
 
-          if @tag.save
-            redirect_to admin_tags_path, success: "Tag created."
-          else
-            render :new, status: :unprocessable_entity
+          # The tag picker creates a tag inline ("Create tag 'tru'") with a JSON
+          # POST and needs the new tag back, or the validation errors to show.
+          respond_to do |format|
+            if @tag.save
+              format.html { redirect_to admin_tags_path, success: "Tag created." }
+              format.json { render json: tag_json(@tag), status: :created }
+            else
+              format.html { render :new, status: :unprocessable_entity }
+              format.json { render json: {errors: @tag.errors.full_messages}, status: :unprocessable_entity }
+            end
           end
         end
 
@@ -56,6 +62,10 @@ module Panda
 
         def set_tag
           @tag = Tag.for_tenant(resolve_tenant).find(params[:id])
+        end
+
+        def tag_json(tag)
+          {id: tag.id, name: tag.name, colour: tag.display_colour}
         end
 
         def tag_params

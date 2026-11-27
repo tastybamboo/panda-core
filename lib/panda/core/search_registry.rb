@@ -35,22 +35,31 @@ module Panda
         # Search all registered providers (admin format with grouping)
         # @param query [String] Search query
         # @param limit [Integer] Max results per provider
-        # @return [Hash] { groups: [{ name:, icon:, results: [{ href:, name:, description: }] }] }
-        def admin_search(query, limit: 5)
+        # @param group [String, nil] Only search the provider whose group name
+        #   (or provider name) matches, case-insensitively, for a "Show all"
+        # @return [Hash] { groups: [{ name:, icon:, more:, results: [{ href:, name:, description: }] }] }
+        #   `more` is true when the provider had results beyond `limit`.
+        def admin_search(query, limit: 5, group: nil)
           return {groups: []} if query.blank?
 
           groups = @providers.filter_map do |provider|
             klass = provider[:search_class]
             next unless klass.respond_to?(:admin_search)
 
-            results = klass.admin_search(query, limit: limit)
+            config = klass.respond_to?(:searchable_config) ? klass.searchable_config : {}
+            name = config[:group] || provider[:name].to_s.titleize
+            next if group && ![name, provider[:name].to_s].any? { |candidate| candidate.casecmp?(group.to_s) }
+
+            # Ask for one more than is shown, to know whether there is more
+            # without a second query or a provider-side count.
+            results = klass.admin_search(query, limit: limit + 1)
             next if results.empty?
 
-            config = klass.respond_to?(:searchable_config) ? klass.searchable_config : {}
             {
-              name: config[:group] || provider[:name].to_s.titleize,
+              name: name,
               icon: config[:icon],
-              results: results
+              more: results.length > limit,
+              results: results.first(limit)
             }
           rescue => e
             Rails.logger.warn("[panda-core] Admin search provider #{provider[:name]} failed: #{e.message}") if defined?(Rails.logger)

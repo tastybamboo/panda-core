@@ -65,6 +65,29 @@ RSpec.describe "Admin Tags", type: :request do
     end
   end
 
+  describe "POST /admin/tags.json" do
+    it "creates a tag and returns it" do
+      expect {
+        post "/admin/tags", params: {tag: {name: "Trustee", colour: "#00ff00"}}, as: :json
+      }.to change(Panda::Core::Tag, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+      json = JSON.parse(response.body)
+      expect(json["name"]).to eq("Trustee")
+      expect(json["colour"]).to eq("#00ff00")
+      expect(json["id"]).to be_present
+    end
+
+    it "returns the validation errors for a duplicate name" do
+      Panda::Core::Tag.create!(name: "Trustee")
+
+      post "/admin/tags", params: {tag: {name: "trustee"}}, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(JSON.parse(response.body)["errors"].join).to include("Name")
+    end
+  end
+
   describe "GET /admin/tags/:id/edit" do
     it "renders the edit form" do
       tag = Panda::Core::Tag.create!(name: "Edit Me")
